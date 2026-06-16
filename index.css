@@ -79,6 +79,7 @@
 @import url('./components/vibe.css');
 @import url('./components/phone-frame.css');
 @import url('./components/app-shell.css');
+@import url('./components/promo-banner.css');
 @import url('./components/screen-transition.css');
 
 /* Override: iOS Dynamic Type "xxLarge" (2XL) — активируется .__type-scale-2xl на <html> */

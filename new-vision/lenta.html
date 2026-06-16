@@ -47,6 +47,8 @@
           <button class="tabs-tab ds-title-xl __state-on">Лента</button>
           <button class="tabs-tab ds-title-xl">Сегодня</button>
           <button class="tabs-tab ds-title-xl">Подарки</button>
+          <button class="tabs-tab ds-title-xl">Обсуждение</button>
+          <div class="button-circle-wrapper __size-32 __style-secondary"><button class="button-circle" aria-label="Создать"><span class="icon __slot-plus"></span></button></div>
         </div>
       </div>
 
@@ -576,6 +578,16 @@
         </div>
         <div class="button-wrapper __size-36 __full-width" style="display: block; margin-top: 10px; padding: 0 16px;">
           <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Вступить</span></button>
+        </div>
+      </div>
+
+      <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же).
+           Пока картинки нет, фон — фирменный оранжевый (перекроется, когда ляжет jpg). -->
+      <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
+        <p class="promo-banner__title">Народный день подарков!</p>
+        <div class="promo-banner__actions">
+          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
         </div>
       </div>
 
