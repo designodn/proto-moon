@@ -91,3 +91,7 @@
 - «Кто поливал» = 3 `.uni-cell` в `.nv-sheet__body`.
 - Футер `.nv-sheet__footer`: position STATIC (не sticky CSS), но «липкий по лейауту» — панель flex column, body `.nv-sheet__body` overflow:auto (скроллится), футер последним ребёнком пинится у низа панели (y=760, bottom=844). Кнопка «Закрыть» 358px на всю строку → closeSheet.
 - Все 6 сценариев PASS (открытие, контент, выбор 3-й плитки, закрытие кнопкой, закрытие по overlay-тапу сверху y=60, Полить=no-op).
+- Ревью-правки (commit e794153, проверено 2026-06-16, все PASS):
+  - НАВБАР `.nv-sheet__navbar`: justify-content flex-start; порядок детей [0]=`.button-inline-wrapper.__size-24.__view-secondary` (крестик close, data-sheet-close), [1]=`.nv-sheet__title`. closeLeft=16 < titleLeft=52, т.е. ✕ слева. Крестик закрывает шторку (click→нет __open).
+  - «Кто поливал»: 3 uni-cell, имена теперь `.ds-title-s` (было ds-body-l), avatar `.__size-44`. CSS-патч `.nv-gift-watered .uni-cell{align-items:center;gap:var(--space-3)}` → computed align-items=center, gap=12px (DS uni-cell сам не задаёт).
+  - Футер «Закрыть»: `button-container __style-secondary` (НЕ primary). bg=rgba(131,102,86,0.12) серо-беж, color чёрный (был primary).
