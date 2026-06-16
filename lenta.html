@@ -1030,11 +1030,7 @@
   </div>
 
   <script>
-    // Календарик в навбаре → раздел «Сегодня».
-    (function () {
-      var cal = document.getElementById('calendarBtn');
-      if (cal) cal.addEventListener('click', function () { window.location.href = 'today.html'; });
-    })();
+    // Календарик в навбаре → раздел «Сегодня» (логика в components/calendar-date.js).
 
     // Колокольчик в навбаре → страница оповещений.
     (function () {
