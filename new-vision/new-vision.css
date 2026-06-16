@@ -28,7 +28,6 @@
 @import url('./feeds/nv-feed-contest.css');   /* «Конкурс» */
 @import url('./feeds/nv-feed-group.css');     /* «Вступай в сообщество» */
 @import url('./feeds/nv-feed-congrats.css');  /* «Поздравления» (ДР / подарки / открытка) */
-@import url('./feeds/nv-feed-advice.css');    /* «Нужен совет» карточками */
 
 /* ── Оверрайды (после всех @import) ────────────────────────────────────── */
 
