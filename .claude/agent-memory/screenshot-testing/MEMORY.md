@@ -16,6 +16,13 @@
 - Разделитель: `.uni-cell-wrapper:not(:last-child)::after`, left=72px (= padding-left + 44 + 12), height 1px, цвет rgba(131,102,86,0.08). Корректно начинается после лид-визуала.
 - КЛИП: стикеры/точки лежат внутри `.uni-cell-container` (overflow:hidden!), НО геометрически ни один не выходит за края контейнера (стикеры на 4-14px внутри низа). Проверять не классом, а сравнением getBoundingClientRect стикера vs контейнера-клиппера. Сейчас clipped:false у всех.
 
+## promo-banner (первый блок okruzhenie.html, проверено 2026-06-16, PASS)
+- `.promo-banner` (padding 12/16) > `.promo-banner__card` (h=64, border-radius 20px, overflow:hidden, bg #ffd6c4 = rgb(255,214,196)), width карты 358 (390 - 2×16).
+- Декор: bow z-index:1 ПОВЕРХ car (z:auto). car height 96px, bow height 70px — оба ВЫШЕ карты 64px и геометрически выходят за низ (carExceedsBottom 16, bowExceedsBottom ~12.6) — это by design, клиппится overflow:hidden карты (визуально срез чистый по скруглению). НЕ путать с багом.
+- Картинки локальные ../assets/around/banner-{bow,car}.png — грузятся: bow naturalW 1201, car naturalW 1100, complete:true.
+- Гэп до первой ячейки 12px (next .uni-cell-wrapper top=188, cardBottom=176) — наезда нет, разделители ниже не съехали.
+- Заголовок `.promo-banner__title` (fw 700, 2 строки) + inline `.promo-banner__arrow` «→».
+
 ## Computed animation-name (все применены)
 - `.__cat-win .picture/.avatar ::after` → au-shine 3.2s
 - `.__cat-win .lead-sticker` → au-medal-bob 2.4s (transform-матрица меняется по кадрам — живой bob)

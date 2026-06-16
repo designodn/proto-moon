@@ -36,6 +36,73 @@
 .activity-header:active .activity-header__chevron { transform: translateX(2px); }
 
 /* ============================================================
+   ПРОМО-БАННЕР — «Копите народные билеты →»
+   Персиковая плашка во всю ширину наверху списка: жирный заголовок
+   со стрелкой + декоративная картинка (машина + коробка с бантом),
+   которая выходит за нижний/верхний край и обрезается скруглением.
+   ============================================================ */
+.promo-banner {
+  padding: 12px 16px;
+}
+.promo-banner__card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 64px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #ffd6c4;
+  color: var(--static-text-and-icons-base-primary);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.promo-banner__card:active { transform: scale(0.99); }
+.promo-banner__title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-family);
+  font-size: 19px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+.promo-banner__arrow {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform 200ms ease;
+}
+.promo-banner__card:active .promo-banner__arrow { transform: translateX(3px); }
+
+/* Декоративная композиция справа — обе картинки бликуют за край плашки */
+.promo-banner__art {
+  position: relative;
+  width: 124px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.promo-banner__car {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 96px;
+  width: auto;
+  pointer-events: none;
+}
+.promo-banner__bow {
+  position: absolute;
+  left: -4px;
+  bottom: -8px;
+  height: 70px;
+  width: auto;
+  transform: rotate(-9deg);
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.20));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
    СПИСОК-СТРАНИЦА — вертикальный список с хайрлайн-разделителями
    ============================================================ */
 .activity-list {
