@@ -253,6 +253,22 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
+/* Стих — крупный засечный шрифт (Source Serif Pro 24/28). Шрифт подключает
+   хост-страница (Google Fonts). Фолбэк — общий serif. */
+.text-feed__body.__poem {
+  font-family: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 400;
+  white-space: pre-line;
+}
+/* Крупная новость/цитата — тот же кегль, но гротеск (Roboto 24/28). */
+.text-feed__body.__news {
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
 .text-feed__body-full { display: none; }
 .text-feed__body-toggle:has(> input:checked) .text-feed__body-full { display: inline; }
 

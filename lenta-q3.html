@@ -1185,7 +1185,7 @@
       if (!e.target.closest) return;
       var post = e.target.closest('.text-feed');
       if (!post) return;
-      if (e.target.closest('.actions-bar, button, a, input')) return;
+      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more')) return;
       e.preventDefault();
       // Связываем открытый пост с лентой: текст, картинку и акшн-кнопки
       // переносим как есть в post.html через sessionStorage.
