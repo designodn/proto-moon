@@ -11,7 +11,7 @@
  *     </button>
  *   </div>
  *
- * SIZES:  .__size-16 | 20 | 24 | 36 | 44 | 56 | 72 | 96
+ * SIZES:  .__size-16 | 20 | 24 | 32 | 36 | 44 | 56 | 72 | 96
  * STYLES: .__style-primary | __style-secondary
  *         .__style-primary-on-color | __style-secondary-on-color
  *         .__style-floating | __style-on-image | __style-custom
@@ -34,6 +34,7 @@
 .button-circle-wrapper.__size-16 { --button-circle-size: 16px; --button-circle-icon: 12px; }
 .button-circle-wrapper.__size-20 { --button-circle-size: 20px; --button-circle-icon: 16px; }
 .button-circle-wrapper.__size-24 { --button-circle-size: 24px; --button-circle-icon: 16px; }
+.button-circle-wrapper.__size-32 { --button-circle-size: 32px; --button-circle-icon: 16px; }
 .button-circle-wrapper.__size-36 { --button-circle-size: 36px; --button-circle-icon: 20px; }
 .button-circle-wrapper.__size-44 { --button-circle-size: 44px; --button-circle-icon: 24px; }
 .button-circle-wrapper.__size-56 { --button-circle-size: 56px; --button-circle-icon: 24px; }
