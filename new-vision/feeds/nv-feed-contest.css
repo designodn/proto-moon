@@ -1,0 +1,41 @@
+/**
+ * New Vision — FeedContest (фид «Конкурс»)
+ *
+ * Уникален для вижн-ленты (нет в q3, нет в общей DS).
+ * Карточный визуал даёт общий .island; здесь — только раскладка контента
+ * и заголовок. Layout повторяет логику .feed-base: вертикальная стопка с
+ * gap, горизонтальный паддинг 16 на всех детях кроме full-bleed-медиа.
+ *
+ *   <article class="feed-contest island">
+ *     <nav class="breadcrumbs">…</nav>
+ *     <h2 class="nv-feed__title">…</h2>
+ *     <div class="picture-stack">…</div>
+ *     <div class="button-wrapper __full-width">…</div>
+ *   </article>
+ */
+
+.feed-contest {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.feed-contest > * {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.feed-contest > :not(.media):not(.picture-stack) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Стопка превью работ — горизонтальный скролл, паддинг внутри */
+.feed-contest .picture-stack {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  scrollbar-width: none;
+}
+.feed-contest .picture-stack::-webkit-scrollbar { display: none; }
+.feed-contest .picture-stack > * { flex: 0 0 auto; }
