@@ -1,0 +1,605 @@
+/**
+ * OK Design System — Moment (полноэкранный просмотрщик сториз/моментов)
+ *
+ *   <div class="moment">
+ *     <img class="moment__media" src="..." alt="">
+ *     <div class="moment__scrim"></div>
+ *
+ *     <div class="moment__statusbar">
+ *       <span class="moment__statusbar-time">9:41</span>
+ *       <span class="moment__statusbar-indicators"> … </span>
+ *     </div>
+ *
+ *     <div class="moment__topbar">
+ *       <!-- Сегментов столько, сколько сториз в блоке, из которого открыт viewer -->
+ *       <div class="moment__progress">
+ *         <div class="moment__progress-segment __state-done"></div>
+ *         <div class="moment__progress-segment __state-active"></div>
+ *         <div class="moment__progress-segment"></div>
+ *         <div class="moment__progress-segment"></div>
+ *         <div class="moment__progress-segment"></div>
+ *       </div>
+ *       <div class="moment__header">
+ *         <div class="avatar __size-36 __type-image"><img src="..." alt=""></div>
+ *         <div class="moment__header-text">
+ *           <div class="moment__header-title">День рождения Анастасии</div>
+ *           <div class="moment__header-subtitle">3 часа назад</div>
+ *         </div>
+ *         <div class="moment__header-actions">
+ *           <button class="button-inline-wrapper __view-primary-on-color __size-24">…</button>
+ *           <button class="button-inline-wrapper __view-primary-on-color __size-24">…</button>
+ *         </div>
+ *       </div>
+ *     </div>
+ *
+ *     <!-- Тап-зоны: левая половина — prev, правая — next.
+ *          Поведение поднимает components/moment.js -->
+ *     <div class="moment__nav">
+ *       <button class="moment__nav-zone __side-prev" aria-label="Назад"></button>
+ *       <button class="moment__nav-zone __side-next" aria-label="Дальше"></button>
+ *     </div>
+ *
+ *     <!-- Опциональный CTA (вариант макета «с кнопкой») -->
+ *     <div class="moment__cta">
+ *       <div class="button-wrapper __size-44 __style-primary __full-width">
+ *         <button class="button-container __style-primary"><span class="button-content">Поздравить</span></button>
+ *       </div>
+ *     </div>
+ *
+ *     <div class="moment__handle"></div>
+ *   </div>
+ *
+ * VARIABLES (можно переопределить на .moment):
+ *   --moment-duration  — длительность активного сегмента (default 5s)
+ */
+
+.moment {
+  --moment-duration: 5s;
+
+  position: relative;
+  width: 360px;
+  height: 800px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #000;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  font-family: var(--font-family);
+  isolation: isolate;
+  user-select: none;
+}
+
+/* Полноэкранный режим — viewer натягивается на родителя (например, .phone-frame).
+   Используется, когда moment работает как overlay, а не как preview-карточка. */
+.moment.__fullscreen {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+.moment.__fullscreen .moment__scrim,
+.moment.__fullscreen .moment__media { border-radius: 0; }
+
+/* Полноэкранная картинка сториз */
+.moment__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Линейный градиент сверху — для читаемости header'а.
+   160h, opacity 0.4, black → transparent (как в Figma). */
+.moment__scrim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   STATUS BAR — белый, поверх скрима, 52h
+   (свой, а не из meshok-up: там фон --dynamic-surface-base-secondary !important)
+   ============================================================ */
+.moment__statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 10px 12px;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  z-index: 3;
+  pointer-events: none;
+}
+.moment__statusbar-time {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0.14px;
+}
+.moment__statusbar-indicators {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ============================================================
+   TOPBAR — обёртка для progress + header. Лежит под status bar'ом
+   (52px от верха) и поверх скрима.
+   ============================================================ */
+.moment__topbar {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Полоска прогресса. Сегментов рендерим столько, сколько сториз в блоке. */
+.moment__progress {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5px;
+  padding: var(--space-3);
+}
+
+.moment__progress-segment {
+  flex: 1 1 0;
+  height: 2px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Заливка сегмента — отдельный слой, который анимируется в active-состоянии. */
+.moment__progress-segment::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--static-text-and-icons-base-inverse-primary);
+  border-radius: 2px;
+  transform: translateX(-100%);
+}
+
+/* Просмотренный сегмент — полностью залит. */
+.moment__progress-segment.__state-done::after {
+  transform: translateX(0);
+}
+
+/* Активный сегмент — заливается по таймеру.
+   Длительность управляется через --moment-duration на .moment. */
+.moment__progress-segment.__state-active::after {
+  animation: moment-progress var(--moment-duration, 5s) linear forwards;
+}
+
+/* Пауза для активного сегмента (если останавливаем таймер на touch/hold) */
+.moment.__state-paused .moment__progress-segment.__state-active::after {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   LONG-PRESS — при удержании прячем все UI-контролы (как в Instagram),
+   оставляем только контент сториз и опц. CTA-кнопку. Анимация прогресса
+   ставится на паузу через .__state-paused (см. выше).
+   ============================================================ */
+.moment__statusbar,
+.moment__topbar,
+.moment__scrim,
+.moment__handle {
+  transition: opacity 200ms ease;
+}
+.moment.__state-pressed .moment__statusbar,
+.moment.__state-pressed .moment__topbar,
+.moment.__state-pressed .moment__scrim,
+.moment.__state-pressed .moment__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes moment-progress {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ============================================================
+   BODY — опциональный слот произвольного контента под header'ом.
+   Используется, например, в ВВЗ-сториз: заголовок «Возможно вы знаете»
+   + список vvz-card. Не относится к layout картинки media — body
+   рисуется поверх неё (как и header).
+   ============================================================ */
+.moment__body {
+  position: absolute;
+  top: 116px; /* ниже status-bar (52) + progress (26) + header (38) */
+  left: 0;
+  right: 0;
+  bottom: 88px;  /* выше CTA: 44 (cta.bottom) + 44 (cta height) = 88. Воздух
+                     до CTA задаётся padding-bottom (32). */
+  z-index: 2;
+  /* 16 сверху и по бокам, 32 снизу (по дизайну). */
+  padding: var(--space-4) var(--space-4) var(--space-8);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* Grid 2 row'а: первая (title) занимает auto, вторая (сетка карточек)
+     забирает весь остаток через 1fr — гарантированно растягивается на
+     любой высоте экрана, без flex-grow проблем со scroll-контейнером. */
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  row-gap: var(--space-4);
+}
+.moment__body::-webkit-scrollbar { display: none; }
+
+/* Типографика — DS-класс .ds-title-xl, навешивается в moment.js рядом
+   с .moment__body-title. Здесь только специфика: цвет, выравнивание,
+   отступ под сетку. */
+.moment__body-title {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  margin: 0;
+}
+
+/* Сетка 2×2 для карточек ВВЗ внутри body. Ряды — по высоте контента
+   (grid-auto-rows: min-content), карточки прижаты к верху под заголовком
+   (align-content: start). Это даёт карточкам естественную высоту с
+   фиксированными отступами по дизайну (… → 12 → кнопка), а не «резиновый»
+   гэп от растягивания на всю высоту. Карточки в одном ряду всё равно равны
+   по высоте (title/subtitle — одна строка с ellipsis), поэтому кнопки ровно
+   выровнены. */
+.moment__body-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: min-content;
+  align-content: start;
+  gap: var(--space-2);
+  min-height: 0;
+}
+/* В сетке карточка занимает всю ячейку — ширину задаёт модификатор .__stories */
+.moment__body-grid > .vvz-card {
+  min-width: 0;
+}
+
+
+.moment__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  min-height: 38px;
+}
+/* Аватарка в шапке копируется из стака целиком (applyAuthor → innerHTML).
+   Возможные DS-аддоны (🎂, «+» и т.п.) в маленькой шапочной аватарке
+   выглядят инородно — гасим их там. */
+.moment__header .avatar__addon { display: none; }
+.moment__header-text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.moment__header-title {
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.moment__header-subtitle {
+  font-family: var(--font-family);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+  color: var(--static-text-and-icons-base-inverse-tertiary, rgba(255, 255, 255, 0.6));
+}
+
+/* Кнопки more / close в шапке — обычные .button-inline-wrapper.
+   Через z-index гарантируем, что они выше тап-зон prev/next. */
+.moment__header > .button-inline-wrapper {
+  position: relative;
+  z-index: 4;
+}
+.moment__header > .button-inline-wrapper + .button-inline-wrapper {
+  margin-left: var(--space-4);
+}
+
+/* ============================================================
+   NAV — невидимые тап-зоны для prev/next.
+   Лежат ПОД header/CTA по z-index, чтобы те получали клики первыми.
+   ============================================================ */
+.moment__nav {
+  position: absolute;
+  /* ниже status-bar (52) + progress (4+12*2≈26) + header (38) + запас 8
+     = 124. Чтобы тап-зоны не перехватывали клики по крестику/more/avatar. */
+  top: 124px;
+  bottom: 80px; /* выше CTA/handle */
+  left: 0;
+  right: 0;
+  display: flex;
+  z-index: 2;
+}
+.moment__nav-zone {
+  flex: 1 1 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   CTA — опциональная кнопка снизу.
+   bottom = 44 (как в Figma: 800 − 712 − 44 = ...).
+   Сама кнопка — обычный button-wrapper __size-44 __style-primary __full-width.
+   ============================================================ */
+.moment__cta {
+  position: absolute;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  padding: 0 var(--space-4);
+  display: flex;
+  z-index: 4;
+}
+.moment__cta .button-wrapper {
+  flex: 1 1 0;
+}
+.moment__cta .button-container {
+  width: 100%;
+}
+
+/* ============================================================
+   BDAY — именинный шаблон сториз.
+   Включается через .moment.__view-bday. Внутри слот .moment__bday
+   занимает нижнюю половину карточки и состоит из:
+     • blur-слоя (backdrop-blur, маска снизу-вверх — плавный fade-in
+       блюра, чтобы верхняя часть фото оставалась резкой);
+     • контентного блока с тремя строками текста (kicker / heading
+       / name), отцентрированными по горизонтали.
+   Header (avatar + title + subtitle) остаётся видимым.
+   ============================================================ */
+.moment__bday {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+/* Progressive blur 0 → 80px — стек из 6 слоёв backdrop-filter с
+   возрастающими радиусами. У каждого слоя маска `linear-gradient(
+   transparent var(--p), black 100%)` — слой невидим выше своей точки
+   --p и плавно «включается» вниз. Слои не сбрасываются у нижней
+   кромки → у самого низа активны все 6, и итоговый размыв доминируется
+   самым большим (80px). Сверху работает только L1 (2px) — почти резко.
+   Никаких видимых полос — переход непрерывный за счёт перекрытий. */
+.moment__bday-blur {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.moment__bday-blur-step {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
+    rgba(0, 0, 0, 1) 100%);
+          mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
+    rgba(0, 0, 0, 1) 100%);
+}
+.moment__bday-blur-step.__b-1 {
+  --bday-blur-p: 0%;
+  -webkit-backdrop-filter: blur(2px);  backdrop-filter: blur(2px);
+}
+.moment__bday-blur-step.__b-2 {
+  --bday-blur-p: 16%;
+  -webkit-backdrop-filter: blur(5px);  backdrop-filter: blur(5px);
+}
+.moment__bday-blur-step.__b-3 {
+  --bday-blur-p: 33%;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.moment__bday-blur-step.__b-4 {
+  --bday-blur-p: 50%;
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+}
+.moment__bday-blur-step.__b-5 {
+  --bday-blur-p: 66%;
+  -webkit-backdrop-filter: blur(44px); backdrop-filter: blur(44px);
+}
+.moment__bday-blur-step.__b-6 {
+  --bday-blur-p: 83%;
+  -webkit-backdrop-filter: blur(80px); backdrop-filter: blur(80px);
+}
+/* Лёгкое затемнение поверх блюра — добавляет контраст белому тексту,
+   повторяет фигму (bg-black/20 на блюр-слое). */
+.moment__bday-blur-tint {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 30%);
+          mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 30%);
+}
+.moment__bday-content {
+  position: relative;
+  z-index: 1;
+  /* Над CTA-кнопкой ещё 44 (bottom CTA) + 44 (высота CTA) + 16 (gap). */
+  padding: 0 var(--space-3) calc(44px + 44px + var(--space-4));
+  text-align: center;
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+.moment__bday-kicker {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  letter-spacing: 0.24px;
+  color: rgba(255, 255, 255, 0.64);
+}
+.moment__bday-heading {
+  margin: 0 0 var(--space-1-5);
+  /* OK Sans Display не подключён глобально — даём фолбэк на общий
+     системный шрифт. Размер/жирность точно как в Figma. */
+  font-family: 'OK Sans Display', var(--font-family);
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+.moment__bday-name {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0.24px;
+}
+
+/* ============================================================
+   BDAY-BALLOONS — 3 PNG-шарика, вылетающие снизу карточки при
+   открытии сториз. Слой охватывает всю карточку (sibling
+   .moment__bday) и лежит между блюром-с-текстом и хедером /
+   CTA. Анимация перезапускается при каждом открытии сториз
+   (см. moment.js — innerHTML пересоздаётся в go()).
+   Позиции/повороты сняты с макета (фрейм 360×644):
+     • poodle (зелёный) — слева, частично за кромкой;
+     • ok (оранжевый ОК) — центр-верх;
+     • round (оранжевый круглый) — справа, чуть ниже.
+   Размеры в % от ширины карточки сохраняют макетные пропорции.
+   ============================================================ */
+.moment__bday-balloons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Лотти-конфетти — растянуто на всю карточку, лежит между блюром-с-текстом
+   и шарами. SVG-рендер от lottie-web даёт svg-ребёнка <svg> без своих
+   размеров, поэтому растягиваем его явно через width/height. */
+.moment__bday-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.moment__bday-confetti > svg,
+.moment__bday-confetti > canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.moment__bday-balloon {
+  position: absolute;
+  pointer-events: none;
+  /* Стартовая поза до старта анимации (для не-Safari браузеров, где
+     animation: ... both ещё не применился). 200% — гарантированно
+     за нижним краем .moment (overflow: hidden скроет). */
+  transform: translateY(200%) rotate(var(--bday-bln-r, 0deg));
+  /* Пролёт снизу → вверх → за верхнюю границу карточки. После анимации
+     шар лежит за пределами viewport (opacity:0 + translateY(-260%)).
+     Easing ease-in-out (sigmoid) — равномерный набор скорости без
+     «вжух»-эффекта; длительность 5.4 s (×3 от исходных 1.8 s), чтобы
+     шары успели насладиться. */
+  animation: bday-balloon-rise 5.4s cubic-bezier(0.45, 0, 0.55, 1)
+             var(--bday-bln-d, 0s) both;
+}
+.moment__bday-balloon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Лёгкая тень, чтобы шары не «приклеивались» к блюру. */
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+.moment__bday-balloon.__b-poodle {
+  --bday-bln-r: -12.74deg;
+  --bday-bln-d: 0.05s;
+  left: -27%;
+  top: 47%;
+  width: 70%;
+  aspect-ratio: 1;
+}
+.moment__bday-balloon.__b-ok {
+  --bday-bln-r: 0deg;
+  --bday-bln-d: 0.18s;
+  left: 12%;
+  top: 27%;
+  width: 68%;
+  aspect-ratio: 1;
+}
+.moment__bday-balloon.__b-round {
+  --bday-bln-r: 10.68deg;
+  --bday-bln-d: 0.30s;
+  left: 37%;
+  top: 36%;
+  width: 77%;
+  aspect-ratio: 1;
+}
+
+@keyframes bday-balloon-rise {
+  0% {
+    transform: translateY(200%) rotate(var(--bday-bln-r, 0deg));
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-260%) rotate(var(--bday-bln-r, 0deg));
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   HOME INDICATOR — белая «пилюля» 108×4 внизу
+   ============================================================ */
+.moment__handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.moment__handle::before {
+  content: '';
+  width: 108px;
+  height: 4px;
+  border-radius: 12px;
+  background-color: var(--static-text-and-icons-base-inverse-primary);
+}

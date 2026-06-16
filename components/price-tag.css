@@ -1,0 +1,81 @@
+/**
+ * OK Design System — PriceTag (DS-620 / Figma: «lyuboi price ◇ price»)
+ *
+ * Прайс-«ярлычок» из каталога подарков: маленький оранжевый таг-шильд с
+ * заострённым/скруглённым левым краем (тонкий «уголок» как у бумажной
+ * этикетки) и круглой «дыркой» в нём, текст вида «10 ОК» прижат к правому
+ * скруглённому концу.
+ *
+ *   <span class="price-tag">10 ОК</span>
+ *
+ *   <!-- Светлый «выключенный»-вариант (если цена скрыта) — опц. -->
+ *   <span class="price-tag __state-disabled">— ОК</span>
+ *
+ * Размеры:
+ *   --price-tag-height          высота тега (default 24)
+ *   --price-tag-tip-width       ширина «уголка» слева (default 14)
+ *   --price-tag-bg              фон тега (default static-status-accent)
+ *
+ * Структура: сам элемент — flex-контейнер с фоном и скруглением справа.
+ * Пседоэлемент ::before — «уголок» (тонкий язычок) слева, через clip-path
+ * с квадратичной кривой (выпуклой наружу). ::after — «дырка» (тёмная
+ * точка) в центре уголка.
+ *
+ * Цвета фиксированные (static), потому что таг — UI-индикатор валюты, а не
+ * адаптивный компонент. Тема не меняет его внешний вид.
+ */
+
+.price-tag {
+  --price-tag-height: 24px;
+  --price-tag-tip-width: 14px;
+  --price-tag-bg: var(--static-surface-status-accent);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--price-tag-height);
+  /* отступы внутри прямоугольного «тела» тега (правая часть). 4-6 как в Figma. */
+  padding: 4px 6px 4px 4px;
+  /* язычок «торчит» из левого края тела; сдвигаем сам бокс вправо, чтобы
+     overall ширина включала уголок и компоновщик считал реальный размер. */
+  margin-left: var(--price-tag-tip-width);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: var(--price-tag-bg);
+  color: var(--static-text-and-icons-base-inverse-primary);
+  /* типографика — DS caption-m-accent (13/16, 600, lsp 0.24) */
+  font-family: var(--font-family);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.24px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* «Уголок» слева — отдельный пседоблок, выходит за пределы тела через
+   right: 100%. clip-path с evenodd: первая subpath — внешний контур
+   уголка, вторая subpath — круг-«дырка» (вырезается из заливки,
+   делая прозрачное отверстие, через которое видно фон страницы). */
+.price-tag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  width: var(--price-tag-tip-width);
+  background-color: var(--price-tag-bg);
+  clip-path: path(evenodd,
+    'M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z \
+     M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z');
+}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+.price-tag.__state-disabled {
+  --price-tag-bg: var(--dynamic-surface-contrast-mid);
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
