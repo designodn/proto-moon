@@ -11,7 +11,9 @@
  *
  * Источник: Figma node 2855:140933.
  * Иконки — отдельный пак assets/new-vision-icons/ (см. README там же).
- * Пути url() здесь относительны этого файла (new-vision/components/ → ../../).
+ * Путь к иконкам — как в обычном tabbar.css (`../assets/...` от components/):
+ * так url() в custom property резолвится в root/assets и от таблицы стилей,
+ * и от документа NV-страницы (обе папки на один уровень ниже корня).
  *
  * Отрисовка — как в общем таб-баре: маска + currentColor. Благодаря этому
  * активная иконка красится в акцент через .tabbar-icon.__state-on (база).
@@ -53,8 +55,8 @@
 }
 
 /* ── Набор иконок (5 слотов: feed/tribune/message/clip/menu) → пак New Vision ── */
-.tabbar .tabbar-icon.__slot-feed    { --tabbar-icon-src: url('../../assets/new-vision-icons/feed.svg'); }
-.tabbar .tabbar-icon.__slot-tribune { --tabbar-icon-src: url('../../assets/new-vision-icons/tribune.svg'); }
-.tabbar .tabbar-icon.__slot-message { --tabbar-icon-src: url('../../assets/new-vision-icons/message.svg'); }
-.tabbar .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../../assets/new-vision-icons/clip.svg'); }
-.tabbar .tabbar-icon.__slot-menu    { --tabbar-icon-src: url('../../assets/new-vision-icons/menu.svg'); }
+.tabbar .tabbar-icon.__slot-feed    { --tabbar-icon-src: url('../assets/new-vision-icons/feed.svg'); }
+.tabbar .tabbar-icon.__slot-tribune { --tabbar-icon-src: url('../assets/new-vision-icons/tribune.svg'); }
+.tabbar .tabbar-icon.__slot-message { --tabbar-icon-src: url('../assets/new-vision-icons/message.svg'); }
+.tabbar .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../assets/new-vision-icons/clip.svg'); }
+.tabbar .tabbar-icon.__slot-menu    { --tabbar-icon-src: url('../assets/new-vision-icons/menu.svg'); }
