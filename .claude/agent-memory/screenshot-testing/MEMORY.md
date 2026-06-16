@@ -76,11 +76,18 @@
 - Контейнер `#bonsaiSheet.nv-sheet`; открыт = класс `__open` на нём.
   Панель `.nv-sheet__panel` (flex column): open → transform identity (matrix 1,0,0,1,0,0).
   Overlay `.nv-sheet__overlay` bg rgba(0,0,0,0.4), на нём же `[data-sheet-close]`.
-- Открытие: тап по виджету `[data-bonsai-open]` (.nv-pr-bonsai, role=button).
-  Делегированный click: bail на `[data-bonsai-water]` (кнопка «Полить» = no-op, шторку НЕ открывает);
+- Открытие: тап по виджету `[data-bonsai-open]` (.nv-pr-bonsai/.nv-bonsai, role=button).
+  Делегированный click bail (b1841fe): `closest('[data-bonsai-water], .nv-bonsai__water')` → return.
+  ВАЖНО: в кулдауне у `[data-bonsai-water]` (кнопка) `pointer-events:none`, поэтому
+  target клика = ОБЁРТКА `.nv-bonsai__water`, не сам button. Старый guard ловил только button →
+  в кулдауне клик «протекал» и открывал шторку. Фикс — добавили `.nv-bonsai__water` в bail.
   `[data-bonsai-open]` → openSheet; `[data-sheet-close]` ИЛИ класс `nv-sheet__overlay` → closeSheet.
-  Esc тоже закрывает. Открывать удобно кликом по center bbox `.nv-pr-bonsai__title`
-  (не по кнопке Полить, та внизу справа).
+  Esc тоже закрывает. Заголовок «Бонсай» = `.nv-bonsai__title` (~x53 y378 при scrollIntoView center).
+- Полив (nv-bonsai.js): friend init «133·5ур». Клик «Полить» → label «Поливаем…» (.__watering,
+  шторка НЕ открыта) → через 1100ms → «134 полива · 6 уровень», .__cooldown, label «Через 23ч 59м»,
+  тост `#nvToast.__show` (живёт 2600ms). Ждать кулдаун ~1.4с. busy-флаг + __cooldown гасят повторный полив.
+- 2026-06-16: фикс кулдаун-клика — ВСЕ 4 кейса PASS (полив→кулдаун; реклик в кулдауне не открывает
+  шторку и не меняет подпись, даже 4× подряд; тап заголовка открывает; mid-«Поливаем…» шторка закрыта).
 - ВАЖНО про индексы плиток: в каждой группе `.nv-gift-pick` ПЕРВАЯ плитка — `.nv-pick.__none` (⊘ «Без подарка»/«Без фона»).
   Значит «вторая выбранная» из ТЗ = picks[1] (🌳 Бонсай, __selected), «3-я» = picks[2] (🏡 Парник).
   Подарок: [⊘, 🌳 Бонсай(__selected), 🏡 Парник, 🚗 Машинка]. Фон: 4 плитки, ровно 1 __selected (🌸 Сакура).
@@ -108,3 +115,32 @@
 - Навбар как у бонсая: ✕ слева (closeLeft<titleLeft), title «Фон».
 - Переключение вида: friend/stranger → `coverEl.style.background=''` + снят __bg-dark → CSS-оранжевый radial-gradient (computed bgColor rgba(0,0,0,0), bgImage radial-gradient оранж). Назад на self → applySavedBg() восстанавливает сохранённый. paintCover игнорит не-self (гард по data-view).
 - Все 6 сценариев PASS: открытие тапом по подписи, контент(12/4кол/2 кнопки), лиловый превью rgb(231,218,245)+1 selected, save→ss=#E7DAF5/dark0, тёмный превью+__bg-dark+откат к лиловому, friend оранж без инлайна + назад к лиловому.
+
+## Виджет «Бонсай» компонент (.nv-bonsai + components/nv-bonsai.js) — profile.html, проверено 2026-06-16
+- БАГ (рабочее дерево): profile.html стр.530-531 подключает скрипты как
+  `src="../components/tab-bar.js"` и `src="../components/nv-bonsai.js"`. Страница лежит
+  в /new-vision/, значит ../components → /components/ = 404. Реальный путь
+  /new-vision/components/nv-bonsai.js (curl 200). Правильный src = "components/nv-bonsai.js".
+  → nv-bonsai.js НЕ грузится → нет click-листенера на «Полить» → кнопка no-op,
+  `window.NVBonsai` undefined → инлайн `if (window.NVBonsai) setState(...)` (стр.571)
+  молча пропускается → self НЕ сбрасывается на 0/1, остаётся хардкод HTML 133/5 💐.
+  Проверка: page console показывает 404; `typeof window.NVBonsai === 'undefined'`.
+- ПОЧИНЕНО + проверено 2026-06-16: src="components/nv-bonsai.js" (200, без ../), NVBonsai==='object'.
+  Подтверждённая логика: water() → `__watering`+«Поливаем…» сразу; через setTimeout **1100ms** (НЕ 1400!)
+  → +1 уровень/+1 полив, `__cooldown`+«Через 23ч 59м», тост #nvToast.`__show`
+  («Вы помогли бонсай расцвести» / «+1 семечко в вашу коллекцию», авто-скрытие 2600ms).
+  Тост-текст хардкод в HTML (стр.522-528), `__show` — единственный триггер видимости.
+  S1/S2/S3/S6 PASS. S6 self-сброс на 0/1/«Полить» теперь работает (setState вызывается).
+- ⚠️ НОВЫЙ БАГ (S4): повторный клик «Полить» В КУЛДАУНЕ → бонсай-state НЕ меняется (water() bail
+  по __cooldown ок), НО ОТКРЫВАЕТСЯ ШТОРКА #bonsaiSheet. Причина: в `__cooldown` у кнопки
+  `pointer-events:none` (CSS), target клика = родитель `.nv-bonsai__water` (НЕ button).
+  e.stopPropagation() из nv-bonsai.js не срабатывает (его листенер на button, клик туда не доходит).
+  Делегированный document-листенер profile.html стр.628 `closest('[data-bonsai-water]')` → null
+  (button — потомок wrapper, не предок) → гард не возвращает → стр.629 ловит `[data-bonsai-open]`
+  на секции → openS(bonsaiSheet). Свежий (не-кулдаун) клик шторку НЕ открывает (pe есть, target=button).
+  Фикс-идея: в гард стр.628 добавить `.nv-bonsai__water`/wrapper, либо pe:none и на wrapper.
+- Шторка #bonsaiSheet открывается инлайн-скриптом profile.html (грузится ок) → тап по виджету
+  (не по кнопке) ВСЕГДА открывает её, даже при сломанном компоненте (S5 проходит независимо).
+- Селекторы: `.nv-bonsai`(не .nv-pr-bonsai в этой версии!), `[data-pr-bonsai-sub]`,
+  `.nv-bonsai__water-label`, `[data-bonsai-water]`(BUTTON), `.nv-bonsai__title`, #nvToast.
+  scrollIntoViewIfNeeded на .nv-bonsai работает (page-scroll).

@@ -123,21 +123,7 @@
   .nv-pr-thumb.__b { transform: rotate(9deg) translateX(3px); }
   .nv-pr-thumb.__solo { width: 36px; height: 36px; }
 
-  /* ── ПАНЕЛЬ «БОНСАЙ» ─────────────────────────────────────────────────────── */
-  .nv-pr-bonsai {
-    position: relative; display: flex; align-items: center;
-    padding: var(--space-4);
-    background: var(--dynamic-surface-base-quaternary);
-    cursor: pointer;
-  }
-  .nv-pr-bonsai__text { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; max-width: 60%; }
-  .nv-pr-bonsai__title { margin: 0; }
-  .nv-pr-bonsai__sub { margin: 0; color: var(--dynamic-text-and-icons-base-primary); }
-  .nv-pr-bonsai__art {
-    position: absolute; right: var(--space-4); top: 50%; transform: translateY(-50%);
-    font-size: 92px; line-height: 1; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
-    pointer-events: none; user-select: none;
-  }
+  /* Панель «Бонсай» → компонент new-vision/components/nv-bonsai.css */
 
   /* лёгкий разделитель-зазор между белыми блоками и лентой */
   .nv-pr-feed-gap { height: var(--space-1); background: var(--dynamic-surface-base-secondary); }
@@ -306,21 +292,21 @@
         </button>
       </section>
 
-      <!-- ПАНЕЛЬ «БОНСАЙ» — тап открывает шторку «Живой подарок» -->
-      <section class="nv-pr-bonsai" aria-label="Бонсай" data-bonsai-open role="button" tabindex="0">
-        <div class="nv-pr-bonsai__text">
-          <h2 class="ds-title-l nv-pr-bonsai__title">Бонсай</h2>
-          <p class="ds-body-m nv-pr-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
-          <div class="button-wrapper __size-44">
+      <!-- ВИДЖЕТ «БОНСАЙ» (компонент). Тап → шторка; «Полить» → анимация роста -->
+      <section class="nv-bonsai" aria-label="Бонсай" data-bonsai-open data-bonsai-level="5" data-bonsai-poured="133" role="button" tabindex="0">
+        <div class="nv-bonsai__text">
+          <h2 class="ds-title-l nv-bonsai__title">Бонсай</h2>
+          <p class="ds-body-m nv-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
+          <div class="button-wrapper __size-44 nv-bonsai__water">
             <button class="button-container __style-secondary" data-bonsai-water>
               <span class="button-content">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
-                Полить
+                <span class="icon __size-24 __src nv-bonsai__water-icon" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
+                <span class="nv-bonsai__water-label">Полить</span>
               </span>
             </button>
           </div>
         </div>
-        <div class="nv-pr-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
+        <div class="nv-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
       </section>
 
       <div class="nv-pr-feed-gap"></div>
@@ -532,7 +518,17 @@
     </div>
   </div>
 
+  <!-- Тост о росте бонсая -->
+  <div class="nv-toast" id="nvToast" role="status" aria-live="polite">
+    <span class="nv-toast__check" aria-hidden="true">✓</span>
+    <span class="nv-toast__text">
+      <span class="nv-toast__title">Вы помогли бонсай расцвести</span>
+      <span class="nv-toast__sub">+1 семечко в вашу коллекцию</span>
+    </span>
+  </div>
+
   <script src="../components/tab-bar.js"></script>
+  <script src="components/nv-bonsai.js"></script>
   <script>
     // ── Фон обложки (фича «Выбор фона», только self) ────────────────────────
     var coverEl   = document.querySelector('.nv-pr-cover');
@@ -552,9 +548,9 @@
     // Имя/подпись одинаковы во всех (демо-персона из макета — Ольга Вайнер);
     // различается «хром»: обложка, иконки навбара, CTA, уровень бонсая.
     var VIEWS = {
-      self:     { bonsai: '0 поливов · 1 уровень', art: '🌱' },
-      friend:   { bonsai: '133 полива · 5 уровень', art: '💐' },
-      stranger: { bonsai: '133 полива · 5 уровень', art: '💐' }
+      self:     { poured: 0,   level: 1 },
+      friend:   { poured: 133, level: 5 },
+      stranger: { poured: 133, level: 5 }
     };
 
     function applyView(view) {
@@ -571,12 +567,8 @@
         el.hidden = el.getAttribute('data-nav') !== view;
       });
 
-      // бонсай — уровень/арт зависят от того, чей профиль
-      var data = VIEWS[view];
-      var bSub = document.querySelector('[data-pr-bonsai-sub]');
-      var bArt = document.querySelector('[data-pr-bonsai-art]');
-      if (bSub) bSub.textContent = data.bonsai;
-      if (bArt) bArt.textContent = data.art;
+      // бонсай — уровень/поливы зависят от того, чей профиль (рендер в nv-bonsai.js)
+      if (window.NVBonsai) window.NVBonsai.setState(VIEWS[view].level, VIEWS[view].poured);
 
       // переключатель
       document.querySelectorAll('.nv-pr-switch [data-set-view]').forEach(function (b) {
@@ -631,9 +623,11 @@
       });
     }
 
-    // открыть «Живой подарок» — тап по виджету (но не по кнопке «Полить»)
+    // открыть «Живой подарок» — тап по виджету (но не по кнопке «Полить»;
+    // отбиваем всю обёртку кнопки — в кулдауне у button pointer-events:none,
+    // и target клика становится wrapper, а не сам button)
     document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-bonsai-water]')) return;
+      if (e.target.closest('[data-bonsai-water], .nv-bonsai__water')) return;
       if (e.target.closest('[data-bonsai-open]')) { openS(bonsaiSheet); return; }
     });
     var bonsaiOpen = document.querySelector('[data-bonsai-open]');
