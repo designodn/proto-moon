@@ -1,0 +1,152 @@
+/**
+ * New Vision — шторка «Живой подарок» (bottom sheet).
+ *
+ * Открывается по тапу на виджет «Бонсай» в профиле. Визуал — Figma 2719:199246.
+ *
+ * Структура:
+ *   .nv-sheet            — корень (overlay + панель), скрыт без .__open
+ *     .nv-sheet__overlay — затемнение фона (тап закрывает)
+ *     .nv-sheet__panel   — белая панель снизу, едет вверх
+ *       .nv-sheet__handle  — drag-индикатор
+ *       .nv-sheet__navbar  — заголовок + крестик
+ *       .nv-sheet__body    — скролл-контент
+ *       .nv-sheet__footer  — липкая кнопка «Закрыть»
+ *
+ * Контент-блоки: .nv-pick (селекторы Подарок/Фон), .nv-gift-status
+ * (стадии + прогресс), «Кто поливал» — на общих uni-cell + avatar.
+ *
+ * Переиспользуем DS: button, picture (squircle-плитка), uni-cell, avatar,
+ * header-типографику (ds-title-*). Новое здесь — chrome шторки, ring выбора
+ * у плитки, прогресс-бар и лента стадий.
+ */
+
+.nv-sheet {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: flex-end; justify-content: center;
+  visibility: hidden;
+  pointer-events: none;
+}
+.nv-sheet.__open { visibility: visible; pointer-events: auto; }
+
+.nv-sheet__overlay {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.nv-sheet.__open .nv-sheet__overlay { opacity: 1; }
+
+.nv-sheet__panel {
+  position: relative;
+  width: 100%; max-width: 480px;
+  max-height: 92%;
+  display: flex; flex-direction: column;
+  background: var(--dynamic-surface-base-quaternary);
+  border-radius: 16px 16px 0 0;
+  transform: translateY(100%);
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.nv-sheet.__open .nv-sheet__panel { transform: translateY(0); }
+
+.nv-sheet__handle {
+  flex-shrink: 0;
+  height: 20px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nv-sheet__handle::after {
+  content: ''; width: 36px; height: 4px; border-radius: 2px;
+  background: var(--dynamic-text-and-icons-base-tertiary, rgba(0,0,0,0.2));
+}
+
+.nv-sheet__navbar {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+}
+.nv-sheet__title { margin: 0; }
+
+.nv-sheet__body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-6);
+}
+
+.nv-sheet__footer {
+  flex-shrink: 0;
+  padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  background: var(--dynamic-surface-base-quaternary);
+  box-shadow: 0 -1px 0 var(--dynamic-surface-contrast-low);
+}
+.nv-sheet__footer .button-wrapper,
+.nv-sheet__footer .button-container { width: 100%; }
+
+/* ── Секция-селектор (Подарок / Фон) ─────────────────────────────────────── */
+.nv-gift-pick { display: flex; flex-direction: column; gap: var(--space-3); }
+.nv-gift-pick__head { margin: 0; }
+.nv-gift-pick__row {
+  display: flex; gap: var(--space-3);
+  overflow-x: auto; scrollbar-width: none;
+  padding: 4px 0; margin: -4px 0;
+}
+.nv-gift-pick__row::-webkit-scrollbar { display: none; }
+
+/* Плитка выбора — squircle 76×76 как picture, с ring при выборе. */
+.nv-pick {
+  position: relative; flex-shrink: 0;
+  width: 76px; height: 76px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; cursor: pointer;
+  border-radius: 18px;
+  background: var(--dynamic-surface-contrast-low);
+  font-size: 40px; line-height: 1;
+  overflow: hidden;
+  transition: box-shadow 160ms ease, transform 120ms ease;
+}
+.nv-pick:active { transform: scale(0.96); }
+.nv-pick > img { width: 100%; height: 100%; object-fit: cover; }
+.nv-pick.__none {
+  font-size: 26px;
+  color: var(--dynamic-text-and-icons-base-tertiary, rgba(0,0,0,0.35));
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--dynamic-surface-contrast-low);
+}
+.nv-pick.__selected {
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-quaternary),
+              0 0 0 4px #F23C00;
+}
+
+/* ── Статус «Бонсай»: стадии + прогресс ──────────────────────────────────── */
+.nv-gift-status { display: flex; flex-direction: column; gap: var(--space-3); }
+.nv-gift-status__head { margin: 0; }
+.nv-gift-status__sub { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }
+
+.nv-gift-stages {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+.nv-gift-stages__item {
+  flex: 1; text-align: center;
+  font-size: 34px; line-height: 1;
+  filter: grayscale(0.1);
+}
+.nv-gift-stages__item.__done { filter: none; }
+.nv-gift-stages__item.__todo { opacity: 0.4; }
+
+.nv-progress {
+  height: 12px; border-radius: 999px;
+  background: var(--dynamic-surface-contrast-low);
+  overflow: hidden;
+}
+.nv-progress__fill {
+  height: 100%; border-radius: 999px;
+  background: #F23C00;
+  transition: width 360ms ease;
+}
+.nv-gift-status__hint { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }
+
+/* ── «Кто поливал» ───────────────────────────────────────────────────────── */
+.nv-gift-watered { display: flex; flex-direction: column; gap: var(--space-2); }
+.nv-gift-watered__head { margin: 0 0 var(--space-1); }

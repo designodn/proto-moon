@@ -128,6 +128,7 @@
     position: relative; display: flex; align-items: center;
     padding: var(--space-4);
     background: var(--dynamic-surface-base-quaternary);
+    cursor: pointer;
   }
   .nv-pr-bonsai__text { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; max-width: 60%; }
   .nv-pr-bonsai__title { margin: 0; }
@@ -305,13 +306,13 @@
         </button>
       </section>
 
-      <!-- ПАНЕЛЬ «БОНСАЙ» -->
-      <section class="nv-pr-bonsai" aria-label="Бонсай">
+      <!-- ПАНЕЛЬ «БОНСАЙ» — тап открывает шторку «Живой подарок» -->
+      <section class="nv-pr-bonsai" aria-label="Бонсай" data-bonsai-open role="button" tabindex="0">
         <div class="nv-pr-bonsai__text">
           <h2 class="ds-title-l nv-pr-bonsai__title">Бонсай</h2>
           <p class="ds-body-m nv-pr-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
           <div class="button-wrapper __size-44">
-            <button class="button-container __style-secondary">
+            <button class="button-container __style-secondary" data-bonsai-water>
               <span class="button-content">
                 <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
                 Полить
@@ -405,6 +406,84 @@
     </div>
   </div>
 
+  <!-- ШТОРКА «Живой подарок» (Figma 2719:199246). Открывается тапом по виджету. -->
+  <div class="nv-sheet" id="bonsaiSheet">
+    <div class="nv-sheet__overlay" data-sheet-close></div>
+    <div class="nv-sheet__panel" role="dialog" aria-modal="true" aria-label="Живой подарок">
+      <div class="nv-sheet__handle"></div>
+      <header class="nv-sheet__navbar">
+        <h2 class="ds-title-l nv-sheet__title">Живой подарок</h2>
+        <span class="button-circle-wrapper __size-44 __style-secondary">
+          <button class="button-circle" data-sheet-close aria-label="Закрыть">
+            <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/close_24.svg')"></span>
+          </button>
+        </span>
+      </header>
+
+      <div class="nv-sheet__body">
+        <!-- Подарок -->
+        <section class="nv-gift-pick" data-pick-group="gift">
+          <h3 class="ds-title-s nv-gift-pick__head">Подарок</h3>
+          <div class="nv-gift-pick__row">
+            <button class="nv-pick __none" aria-label="Без подарка">⊘</button>
+            <button class="nv-pick __selected" aria-label="Бонсай" aria-pressed="true">🌳</button>
+            <button class="nv-pick" aria-label="Парник">🏡</button>
+            <button class="nv-pick" aria-label="Машинка">🚗</button>
+          </div>
+        </section>
+
+        <!-- Фон -->
+        <section class="nv-gift-pick" data-pick-group="bg">
+          <h3 class="ds-title-s nv-gift-pick__head">Фон</h3>
+          <div class="nv-gift-pick__row">
+            <button class="nv-pick __none" aria-label="Без фона">⊘</button>
+            <button class="nv-pick __selected" aria-label="Сакура" aria-pressed="true">🌸</button>
+            <button class="nv-pick" aria-label="Сакура 2">🌸</button>
+            <button class="nv-pick" aria-label="Сакура 3">🌸</button>
+          </div>
+        </section>
+
+        <!-- Статус «Бонсай» -->
+        <section class="nv-gift-status">
+          <h3 class="ds-title-s nv-gift-status__head">Бонсай</h3>
+          <p class="ds-body-m nv-gift-status__sub">133 полива · 3 уровень</p>
+          <div class="nv-gift-stages" aria-hidden="true">
+            <span class="nv-gift-stages__item __done">🌱</span>
+            <span class="nv-gift-stages__item __done">🌿</span>
+            <span class="nv-gift-stages__item __done">🌳</span>
+            <span class="nv-gift-stages__item __todo">🌸</span>
+            <span class="nv-gift-stages__item __todo">🌺</span>
+          </div>
+          <div class="nv-progress"><div class="nv-progress__fill" style="width:60%"></div></div>
+          <p class="ds-caption-m nv-gift-status__hint">Осталось 14 поливов до 4 уровня</p>
+        </section>
+
+        <!-- Кто поливал -->
+        <section class="nv-gift-watered">
+          <h3 class="ds-title-s nv-gift-watered__head">Кто поливал</h3>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-l">Ольга Вайнер</div></div>
+          </div></div></div>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-l">Алексей Отрыв</div></div>
+          </div></div></div>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-l">Алексей Отрыв</div></div>
+          </div></div></div>
+        </section>
+      </div>
+
+      <div class="nv-sheet__footer">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary" data-sheet-close><span class="button-content">Закрыть</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../components/tab-bar.js"></script>
   <script>
     // ── Состояния профиля: self | friend | stranger ────────────────────────
@@ -465,6 +544,38 @@
       if (!el) return;
       var href = el.getAttribute('data-href');
       if (href) location.href = href;
+    });
+
+    // ── Шторка «Живой подарок» ──────────────────────────────────────────────
+    var sheet = document.getElementById('bonsaiSheet');
+    function openSheet()  { sheet.classList.add('__open'); }
+    function closeSheet() { sheet.classList.remove('__open'); }
+
+    // тап по виджету бонсая открывает шторку (но не по кнопке «Полить» — это полив)
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-bonsai-water]')) return;
+      if (e.target.closest('[data-bonsai-open]')) { openSheet(); return; }
+      if (e.target.closest('[data-sheet-close]') || e.target.classList.contains('nv-sheet__overlay')) closeSheet();
+    });
+    // Enter/Space на виджете (role=button)
+    document.querySelector('[data-bonsai-open]').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSheet(); }
+    });
+    // Esc закрывает
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && sheet.classList.contains('__open')) closeSheet();
+    });
+
+    // выбор плитки внутри группы (Подарок / Фон) — radio-поведение
+    document.querySelectorAll('.nv-gift-pick').forEach(function (group) {
+      group.addEventListener('click', function (e) {
+        var pick = e.target.closest('.nv-pick');
+        if (!pick) return;
+        group.querySelectorAll('.nv-pick').forEach(function (p) {
+          p.classList.remove('__selected'); p.removeAttribute('aria-pressed');
+        });
+        pick.classList.add('__selected'); pick.setAttribute('aria-pressed', 'true');
+      });
     });
   </script>
 </body>
