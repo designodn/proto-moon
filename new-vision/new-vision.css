@@ -18,6 +18,7 @@
 
 /* 2. NV-специфичные компоненты и оверрайды (форк только расходящегося).
    Раскомментируй/добавляй по мере появления дивергентных компонентов: */
+@import url('./components/nv-breadcrumbs.css');  /* обновлённые хлебные крошки (tag line) */
 /* @import url('./components/nv-profile.css'); */
 @import url('../components/nv-tabbar.css');   /* NV-таб-бар: свой пак иконок */
 
@@ -27,6 +28,7 @@
 @import url('./feeds/nv-feed.css');           /* общие примитивы NV-фидов */
 @import url('./feeds/nv-feed-contest.css');   /* «Конкурс» */
 @import url('./feeds/nv-feed-group.css');     /* «Вступай в сообщество» */
+@import url('./feeds/nv-feed-congrats.css');  /* «Поздравления» (ДР / подарки / открытка) */
 
 /* ── Оверрайды (после всех @import) ────────────────────────────────────── */
 
