@@ -1,0 +1,109 @@
+/* ============================================================
+   System notifications — компонент для системных пушей «ОК».
+
+   Контейнер .notifs работает в одном из двух режимов:
+     .notifs.__mode-lock      — плоский список карточек одна под
+                                 другой (лок-скрин, как в Figma)
+     .notifs.__mode-heads-up  — колода: новая карточка спереди,
+                                 предыдущие уезжают вглубь (на
+                                 главном экране / в приложении)
+
+   Логика стэка и анимаций в components/system-notifications.js;
+   стрим хранится в sessionStorage, поэтому пуши не сбрасываются
+   при переходе между страницами.
+   ============================================================ */
+.notifs {
+  position: fixed;
+  top: 36px; left: 8px; right: 8px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* ── Heads-up в приложении: ниже DS-статус-бара (--status-bar-height
+   из meshok-up.css) + 4px воздуха. Источник правды о высоте — один,
+   так что если status-bar когда-нибудь сменит высоту, оверлей
+   подхватит сам. На lock-screen (start.html) сидим на собственных
+   оверрайдах (.device .notifs / .device.headsup-notifs .notifs),
+   поэтому это правило туда не достаёт. */
+.notifs.__mode-heads-up {
+  top: calc(var(--status-bar-height) + var(--space-1));
+}
+
+/* ── Режим «список» (lock-screen) ───────────────────────────── */
+.notifs.__mode-lock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notifs.__mode-lock .notif {
+  position: relative;
+}
+
+/* ── Режим «колода» (heads-up) ──────────────────────────────── */
+/* Карточки накладываются в одной точке; depth-сдвиг и opacity
+   проставляет JS (см. restackHeadsUp). */
+.notifs.__mode-heads-up .notif {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+}
+
+/* ── Карточка ──────────────────────────────────────────────── */
+.notif {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(241, 243, 247, 0.97);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 14px 16px;
+  color: #1c1c1e;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+  pointer-events: auto;
+  touch-action: none;
+  transform-origin: center top;
+  will-change: transform, opacity;
+  cursor: grab;
+  font-family: "Roboto", "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
+}
+.notif:active { cursor: grabbing; }
+.notif__main { flex: 1 1 auto; min-width: 0; }
+.notif__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #5f6368;
+  font-weight: 500;
+}
+.notif__appicon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.notif__appicon img,
+.notif__appicon svg { display: block; width: 100%; height: 100%; }
+.notif__app  { font-weight: 600; color: #3c4043; }
+.notif__sep  { opacity: 0.6; }
+.notif__time { font-weight: 400; }
+.notif__body {
+  font-size: 13px;
+  color: #3c4043;
+  margin-top: 2px;
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.notif__thumb {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e3e6ea;
+}
+.notif__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }

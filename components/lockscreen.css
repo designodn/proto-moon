@@ -1,0 +1,114 @@
+/* ============================================================
+   Lockscreen — Pixel-style экран блокировки.
+
+   Свайп-вверх или тап разблокирует. Логика анимации — на родителе:
+   как только родитель получает класс `.unlocked` (или произвольный
+   из конфигурации компонента), .lockscreen уезжает наверх через
+   transform. Снимает свайп-жесты components/lockscreen.js.
+
+   DOM:
+     <div class="device" id="device">
+       <div class="lockscreen" id="lockscreen">
+         <div class="lockscreen__clock">
+           <div class="lockscreen__time">9:41</div>
+           <div class="lockscreen__date">Среда, 10 июня</div>
+           <div class="lockscreen__weather">…</div>
+         </div>
+         <div class="lockscreen__lock">…иконка замка…</div>
+         <div class="lockscreen__hint">Свайп вверх, чтобы открыть</div>
+         <div class="lockscreen__shortcuts">
+           <div class="shortcut">…</div>
+           <div class="shortcut">…</div>
+         </div>
+       </div>
+     </div>
+
+   Стили обоев/фона лежат на родителе или внутри .lockscreen — не
+   входят в компонент (brand-specific).
+   ============================================================ */
+
+.lockscreen {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  color: #fff;
+  transition: transform 0.5s cubic-bezier(0.2, 0.0, 0, 1),
+              opacity 0.4s ease;
+  will-change: transform;
+}
+.device.unlocked .lockscreen {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+/* Когда нужно показать unlocked-состояние БЕЗ слайд-анимации
+   (например, возврат на меню через popstate) — родитель получает
+   класс `.no-anim` одновременно с `.unlocked`. */
+.device.no-anim .lockscreen { transition: none !important; }
+
+.lockscreen__clock {
+  position: absolute;
+  top: 96px; left: 0; right: 0;
+  text-align: center;
+}
+.lockscreen__time {
+  font-size: 78px;
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.25);
+}
+.lockscreen__date {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+.lockscreen__weather {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Маленькая иконка замка над нижними шорткатами */
+.lockscreen__lock {
+  position: absolute;
+  bottom: 150px; left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.9;
+}
+.lockscreen__hint {
+  position: absolute;
+  bottom: 116px; left: 0; right: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+  animation: lockscreen-hint-pulse 2.4s ease-in-out infinite;
+}
+@keyframes lockscreen-hint-pulse {
+  0%, 100% { opacity: 0.45; transform: translateY(0); }
+  50%      { opacity: 0.9;  transform: translateY(-3px); }
+}
+
+/* Нижние шорткаты (Pixel: телефон слева + камера справа) */
+.lockscreen__shortcuts {
+  position: absolute;
+  bottom: 38px; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+.lockscreen__shortcuts .shortcut {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
