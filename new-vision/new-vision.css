@@ -26,6 +26,7 @@
 @import url('./feeds/nv-feed.css');           /* общие примитивы NV-фидов */
 @import url('./feeds/nv-feed-contest.css');   /* «Конкурс» */
 @import url('./feeds/nv-feed-group.css');     /* «Вступай в сообщество» */
+@import url('./feeds/nv-feed-congrats.css');  /* «Поздравления» (ДР / подарки / открытка) */
 
 /* ── Оверрайды (после всех @import) ────────────────────────────────────── */
 
