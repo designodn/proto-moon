@@ -67,11 +67,6 @@
      (+ → ✓), лейбл («Добавить в друзья» → «У вас в друзьях») и стиль
      (secondary → tertiary, прозрачный фон). */
   .ll-add-friend { cursor: pointer; }
-
-  /* Тап по текстовому посту открывает его (post.html). Контролы внутри
-     (actions-bar, кнопки) свой клик обрабатывают сами — см. скрипт ниже. */
-  .text-feed { cursor: pointer; }
-
   .ll-add-friend .ll-add-friend__icon-done.ll-icon,
   .ll-add-friend .ll-add-friend__label-added { display: none; }
   .ll-add-friend:has(> input:checked) .ll-add-friend__icon-add.ll-icon,
@@ -372,6 +367,7 @@
             </div>
           </div>
           <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Календарь событий"><span class="button-inline__content"><span class="calendar-date" aria-hidden="true"><span class="calendar-date__tab"></span><span class="calendar-date__tab"></span><span class="calendar-date__body"><span class="calendar-date__num">3</span></span><span class="calendar-date__dot"></span></span></span></button></span>
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" id="notifsBtn" aria-label="Уведомления"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/notifications_24.svg" width="24" height="24" alt=""></span></button></span>
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/search_24.svg" width="24" height="24" alt=""></span></button></span>
           </div>
@@ -1166,6 +1162,7 @@
   </script>
   <script src="components/back-trap.js" data-target="start.html"></script>
   <script src="components/tab-bar.js"></script>
+  <script src="components/calendar-date.js"></script>
 
   <!-- Делегированный переход по data-href (кнопка «Ещё» в vvz-portlet → vvz.html) -->
   <script>
@@ -1174,23 +1171,6 @@
       if (!btn) return;
       e.preventDefault();
       location.href = btn.getAttribute('data-href');
-    });
-  </script>
-
-  <!-- Тап по текстовому посту → открыть запись (post.html).
-       Клики по контролам поста (actions-bar, кнопки/ссылки/инпуты) не
-       перехватываем — они работают как раньше. -->
-  <script>
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest) return;
-      var post = e.target.closest('.text-feed');
-      if (!post) return;
-      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more')) return;
-      e.preventDefault();
-      // Связываем открытый пост с лентой: текст, картинку и акшн-кнопки
-      // переносим как есть в post.html через sessionStorage.
-      try { sessionStorage.setItem('openPost', post.innerHTML); } catch (_) {}
-      location.href = 'post.html';
     });
   </script>
   <script src="components/dismissible.js"></script>
@@ -1341,6 +1321,22 @@
         });
       }
     })();
+  </script>
+
+  <!-- Тап по текстовому посту → открыть запись (post.html). Клики по
+       контролам поста (actions-bar, кнопки/ссылки/инпуты, toggle «ещё»)
+       не перехватываем. -->
+  <style>.text-feed { cursor: pointer; }</style>
+  <script>
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      var post = e.target.closest('.text-feed');
+      if (!post) return;
+      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more')) return;
+      e.preventDefault();
+      try { sessionStorage.setItem('openPost', post.innerHTML); } catch (_) {}
+      location.href = 'post.html';
+    });
   </script>
 
 </body>

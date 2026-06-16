@@ -83,6 +83,7 @@
 .icon.__slot-close         { --icon-src: url('../assets/icons/close_24.svg'); }
 .icon.__slot-comment       { --icon-src: url('../assets/icons/comment_24.svg'); }
 .icon.__slot-dots          { --icon-src: url('../assets/icons/dots-horizontal.svg'); }
+.icon.__slot-done          { --icon-src: url('../assets/icons/done_16_20.svg'); }
 .icon.__slot-klass-outline { --icon-src: url('../assets/icons/klass_16_20.svg'); }
 .icon.__slot-klass-filled  { --icon-src: url('../assets/icons/klass_filled_16_20.svg'); }
 .icon.__slot-more          { --icon-src: url('../assets/icons/more_24.svg'); }

@@ -3,8 +3,8 @@
  *
  * Fixed bottom bar for mobile prototypes. Holds icon items and a
  * home-indicator handle. Comes in two platform variations:
- *   .tabbar.__platform-ios       — iOS-style icon set (5 slots)
- *   .tabbar.__platform-android   — Android-style icon set (7 slots)
+ *   .tabbar.__platform-ios       — iOS-style icon set (5 slots: feed/book/message/clip/menu)
+ *   .tabbar.__platform-android   — Android-style icon set (6 slots: feed/book/message/discussion/clip/menu)
  *
  * Icon set per slot is defined here (not inline in HTML), so swapping
  * icons or platform composition is a single-file change.
@@ -80,6 +80,28 @@
 .tabbar-icon.__slot-menu       { --tabbar-icon-src: url('../assets/icons/menu_24.svg'); }
 
 .tabbar__handle {
+  position: relative;
   width: 100%;
   height: 24px;
+  touch-action: none;
+  cursor: grab;
+}
+
+/* iOS home indicator — пилюля 134×5, центрирована по нижней кромке.
+   Скрыта на Android (свайп всё равно ловится, но визуального индикатора нет). */
+.tabbar.__platform-ios .tabbar__handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  border-radius: 100px;
+  background-color: var(--dynamic-text-and-icons-base-primary);
+  pointer-events: none;
+}
+
+.tabbar__handle:active {
+  cursor: grabbing;
 }
