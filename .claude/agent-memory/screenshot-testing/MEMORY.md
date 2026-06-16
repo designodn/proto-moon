@@ -116,6 +116,23 @@
 - Переключение вида: friend/stranger → `coverEl.style.background=''` + снят __bg-dark → CSS-оранжевый radial-gradient (computed bgColor rgba(0,0,0,0), bgImage radial-gradient оранж). Назад на self → applySavedBg() восстанавливает сохранённый. paintCover игнорит не-self (гард по data-view).
 - Все 6 сценариев PASS: открытие тапом по подписи, контент(12/4кол/2 кнопки), лиловый превью rgb(231,218,245)+1 selected, save→ss=#E7DAF5/dark0, тёмный превью+__bg-dark+откат к лиловому, friend оранж без инлайна + назад к лиловому.
 
+## Рефакторинг: каркас шторок → components/nv-sheet.js (проверено 2026-06-16, все PASS)
+- nv-sheet.js (curl 200, src="components/nv-sheet.js" без ../, грузится перед nv-bonsai.js).
+  В HTML у `.nv-sheet[data-sheet-title]` остаётся ТОЛЬКО `.nv-sheet__body` + `.nv-sheet__footer`;
+  скрипт оборачивает их: добавляет `.nv-sheet__overlay` и `.nv-sheet__panel`, внутрь панели —
+  `.nv-sheet__handle`, `<header class="nv-sheet__navbar">` (`.nv-sheet__title` из data-sheet-title
+  + кнопка-крестик data-sheet-close), затем переносит авторские body/footer.
+  Порядок детей панели: [handle, navbar, body, footer]. navbar = тег HEADER, navInPanel=true.
+- ⚠️ `[data-sheet-close]` теперь матчит ТРИ элемента в каждой шторке: overlay(div),
+  крестик навбара(button.button-inline), кнопка футера. Для таргетинга крестика бери
+  `#X .nv-sheet__navbar [data-sheet-close]`, иначе Playwright strict-mode violation
+  (а bare-селектор в evaluate берёт overlay первым → closeLeft=0, ложно). closeLeft=16<titleLeft=52 → ✕ слева.
+- Заголовки из data-sheet-title: #bonsaiSheet→«Живой подарок», #bgSheet→«Фон». OK.
+- Поведение обеих шторок идентично до-refactor (открытие, overlay rgba(0,0,0,0.4) op1, panel
+  transform identity при __open; bg-превью/save/откат; water no-op). Футер bgSheet несёт доп.
+  класс `__stack` — сохранён. Тап по виджету бонсая (заголовок) и по `.nv-pr-cover__sub` открывают
+  свои шторки как раньше; крестик навбара закрывает; water→«Поливаем…»→«1 полив·2 ур»+тост, шторка НЕ открылась.
+
 ## Виджет «Бонсай» компонент (.nv-bonsai + components/nv-bonsai.js) — profile.html, проверено 2026-06-16
 - БАГ (рабочее дерево): profile.html стр.530-531 подключает скрипты как
   `src="../components/tab-bar.js"` и `src="../components/nv-bonsai.js"`. Страница лежит
