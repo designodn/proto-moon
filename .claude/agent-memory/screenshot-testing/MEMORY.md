@@ -63,3 +63,12 @@
 ## Навигация (PASS)
 - Клик `.activity-header` в lenta → okruzhenie.html, title «Вокруг вас сейчас — New Vision».
 - Клик `.nav-bar__back` в okruzhenie → lenta.html, title «Лента — New Vision».
+
+## Жалоба «шеврон не виден + тап не ведёт» — НЕ ВОСПРОИЗВЕЛАСЬ (проверено 2026-06-16)
+- lenta.html грузит ТОЛЬКО `new-vision.css`; around-you.css приходит через @import url('./around-you.css') (new-vision.css:31, все @import подряд в начале до правил — валидны). RESP 200 на around-you.css подтверждён в network. `.activity-header` computed display:flex → стили применились.
+- Шеврон РЕНДЕРИТСЯ и виден: `.activity-header__chevron` 8×13, rect x≈227 y≈183 (ненулевой), bg rgba(46,47,51,0.88) (= резолв --dynamic-text-and-icons-base-secondary), maskImage=url(.../assets/icons/chevron-right.svg) (НЕ none), maskSize contain. Зум-скрин: › чётко справа от оранжевой пульс-точки.
+- chevron-right.svg существует (assets/icons/, 215 b, path stroke=currentColor) → fetch('../assets/icons/chevron-right.svg') со страницы = 200.
+- Навигация работает: click .activity-header → okruzhenie.html; click по тексту .ds-title-l внутри → тоже okruzhenie.html. Это честный <a href="okruzhenie.html"> (нет JS-перехвата на этом элементе; screen-transition.js работает по data-href, а тут обычный href).
+- elementFromPoint(центр текста)=SPAN.ds-title-l (closest a = A.activity-header); elementFromPoint(центр шеврона)=SPAN.activity-header__chevron (closest a = A.activity-header). Оверлея поверх НЕТ.
+- Единственные console-errors = ERR_CERT_AUTHORITY_INVALID на внешних i.pravatar.cc/picsum (норма в песочнице, к багу не относится).
+- ВЫВОД: на текущем HEAD оба заявленных бага отсутствуют. Если юзер видит иное — вероятный кэш старой версии CSS/страницы, либо смотрит не на этом коммите. Гипотеза для автора: проверить hard-reload/версию.
