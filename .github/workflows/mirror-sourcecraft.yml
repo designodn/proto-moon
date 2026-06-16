@@ -44,4 +44,14 @@ jobs:
           SC_USER: ${{ secrets.SOURCECRAFT_USER }}
           SC_TOKEN: ${{ secrets.SOURCECRAFT_TOKEN }}
         run: |
-          git push --mirror "https://${SC_USER}:${SC_TOKEN}@${SC_URL}"
+          # Срезаем возможный префикс схемы и хвост ?query, чтобы секрет можно
+          # было задать как полным URL, так и в виде host/owner/repo.git
+          clean_url="${SC_URL#http://}"
+          clean_url="${clean_url#https://}"
+          clean_url="${clean_url%%\?*}"
+          clean_url="${clean_url%/}"
+          # Basic-auth через заголовок — не ломается на спецсимволах в токене
+          auth="$(printf '%s:%s' "$SC_USER" "$SC_TOKEN" | base64 -w0)"
+          echo "::add-mask::${auth}"
+          git -c http.extraheader="Authorization: Basic ${auth}" \
+            push --mirror "https://${clean_url}"
