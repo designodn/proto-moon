@@ -19,3 +19,11 @@
 .feed-stories .stories-row {
   padding-top: 0;
 }
+
+/* Фид «Нужен совет»: первая серая карточка должна вставать по линии текста
+   (16px), а не уезжать к краю экрана. scroll-snap-align:start без scroll-padding
+   притягивает карточку к началу скроллпорта и «съедает» padding-left списка —
+   добавляем scroll-padding-left, чтобы привязка учитывала отступ. */
+.feed-questions__list {
+  scroll-padding-left: var(--space-4);
+}
