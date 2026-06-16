@@ -28,15 +28,15 @@
  *   .__state-disabled  — opacity 0.36, not interactive
  *
  * SEPARATOR:
- *   Rendered as a 12px icon via CSS mask. Default glyph is
- *   `assets/icons/chevron-right.svg`. Override per-instance with the
+ *   Rendered as an 8×8 icon via CSS mask. Default glyph is
+ *   `assets/icons/arrow_right_12.svg`. Override per-instance with the
  *   `--breadcrumbs-separator-src` custom property when a brand-specific
  *   icon ships.
  */
 
 .breadcrumbs {
   --breadcrumbs-color: var(--dynamic-text-and-icons-base-primary);
-  --breadcrumbs-separator-src: url('../assets/icons/chevron-right.svg');
+  --breadcrumbs-separator-src: url('../assets/icons/arrow_right_12.svg');
 
   display: inline-flex;
   flex-wrap: wrap;
@@ -87,9 +87,9 @@ a.breadcrumbs__item:hover {
 .breadcrumbs__separator {
   flex-shrink: 0;
   display: inline-block;
-  /* box hugs the glyph (chevron svg is 8×13 → ~5px wide at 8px tall) so the
-     2px / 8px margins read as true visual gaps, not letterboxed padding */
-  width: 5px;
+  /* square arrow_right_12 glyph scaled to 8×8 — box matches the visible
+     glyph so the 2px / 8px margins read as true visual gaps */
+  width: 8px;
   height: 8px;
   margin-left: 2px;
   margin-right: 8px;
