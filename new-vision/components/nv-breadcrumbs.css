@@ -16,13 +16,14 @@
  *   </nav>
  */
 
+/* Горизонтальные отступы НЕ задаём — их кладёт контейнер фида
+   (.feed-base > *, .feed-stories > *, .feed-advice > * и т.д.),
+   иначе при вложении получится двойной паддинг. */
 .nv-breadcrumbs {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  padding-left: var(--space-4);
-  padding-right: var(--space-4);
 }
 
 .nv-breadcrumbs__tag {

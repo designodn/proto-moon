@@ -1,0 +1,68 @@
+/**
+ * New Vision — Advice (фид «Нужен совет» карточками).
+ *
+ * Из Figma «Общаг» (2850:141014). Горизонтальный скролл карточек-вопросов
+ * от соседей: аватар + имя, текст вопроса, категория.
+ * Карточный визуал даёт общий .island; здесь — раскладка и карточки.
+ */
+
+.feed-advice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.feed-advice > :not(.feed-advice__scroll) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Горизонтальный скролл карточек */
+.feed-advice__scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-left: 12px;
+  padding-right: 12px;
+  scrollbar-width: none;
+}
+.feed-advice__scroll::-webkit-scrollbar { display: none; }
+
+/* Карточка вопроса */
+.nv-advice-card {
+  flex: 0 0 185px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: var(--space-4);
+  border-radius: 12px;
+  background: var(--dynamic-surface-contrast-low, #f0ecea);
+  overflow: hidden;
+}
+.nv-advice-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.nv-advice-card__name {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.nv-advice-card__question {
+  flex: 1 0 auto;
+  margin: 0;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.nv-advice-card__category {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
