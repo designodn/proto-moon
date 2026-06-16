@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
+<script src="../components/screen-transition.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -24,7 +25,7 @@
 
   <div class="phone-frame">
 
-    <div class="phone-frame__feed">
+    <div class="phone-frame__feed __flush-islands">
 
       <!-- MeshokUp: sticky status + nav + tabs -->
       <div class="meshok-up">
@@ -48,8 +49,8 @@
         </div>
         <div class="tabs">
           <button class="tabs-tab ds-title-xl __state-on">Лента</button>
-          <button class="tabs-tab ds-title-xl">Сегодня</button>
-          <button class="tabs-tab ds-title-xl">Подарки</button>
+          <button class="tabs-tab ds-title-xl" data-href="../today.html">Сегодня</button>
+          <button class="tabs-tab ds-title-xl" data-href="../gifts.html">Подарки</button>
           <button class="tabs-tab ds-title-xl">Обсуждение</button>
           <div class="button-circle-wrapper __size-32 __style-secondary"><button class="button-circle" aria-label="Создать"><span class="icon __slot-plus"></span></button></div>
         </div>
@@ -57,10 +58,11 @@
 
       <!-- Activity widget -->
       <div class="island">
-        <div style="display:flex; align-items:center; gap:6px; padding: 0 16px 6px;">
+        <a class="activity-header" href="okruzhenie.html">
           <span class="ds-title-l">Вокруг вас сейчас</span>
           <span class="pulse-dot"></span>
-        </div>
+          <span class="activity-header__chevron" aria-hidden="true"></span>
+        </a>
         <div class="ds-activity-slot">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
@@ -135,6 +137,10 @@
       </div>
 
 
+      <!-- Лента фидов (each feed = свой остров, gap между ними).
+           Дача-сториз — первый фид в стопке, поэтому внутри feed-container. -->
+      <div class="feed-container">
+
       <!-- Сториз-карусель «Сейчас на даче» -->
       <article class="feed-stories island">
         <nav class="breadcrumbs">
@@ -142,39 +148,36 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Сейчас на даче</span>
         </nav>
-        <div class="feed-stories__list">
-          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption">
+        <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
+          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption" data-skip-viewer>
             <img src="https://i.pravatar.cc/128?img=15" alt="">
             <div class="avatar__addon __pos-br">
               <div class="button-circle-wrapper __size-20 __style-primary"><button class="button-circle" aria-label="Добавить момент"><span class="icon __slot-plus"></span></button></div>
             </div>
             <div class="avatar__caption">Ваш момент</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="3" data-name="Елена">
             <img src="https://i.pravatar.cc/128?img=49" alt="">
             <div class="avatar__caption">Елена</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="2" data-name="Евгения">
             <img src="https://i.pravatar.cc/128?img=23" alt="">
             <div class="avatar__caption">Евгения</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="4" data-name="Александр">
             <img src="https://i.pravatar.cc/128?img=52" alt="">
             <div class="avatar__caption">Александр</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="1" data-name="Ирина">
             <img src="https://i.pravatar.cc/128?img=44" alt="">
             <div class="avatar__caption">Ирина</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="2" data-name="Михаил">
             <img src="https://i.pravatar.cc/128?img=33" alt="">
             <div class="avatar__caption">Михаил</div>
           </div>
         </div>
       </article>
-
-      <!-- Feed posts (wrapped in .feed-container) — порядок по чеклисту -->
-      <div class="feed-container">
 
       <!-- 1. Текст + видео -->
       <article class="feed-base island">
@@ -754,6 +757,9 @@
 
     </div>
 
+    <!-- Слот под полноэкранный вьюер моментов — MomentViewer.create() заменит его -->
+    <div id="nv-moment-slot"></div>
+
     <div class="phone-frame__tabbar">
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
@@ -771,6 +777,34 @@
 
 <!-- навигация по таббару (feed → лента, message → сообщения) -->
 <script src="../components/tab-bar.js"></script>
+
+<!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
+<script>
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest ? e.target.closest('.tabs-tab[data-href]') : null;
+    if (tab) location.href = tab.getAttribute('data-href');
+  });
+</script>
+
+<!-- Моменты → полноэкранный вьюер (DS-компонент stories-row + moment.js) -->
+<script src="../components/moment.js"></script>
+<script>
+  (function () {
+    var row  = document.getElementById('nv-stories-row');
+    var slot = document.getElementById('nv-moment-slot');
+    if (!row || !slot || !window.MomentViewer) return;
+
+    var viewer = MomentViewer.create({ duration: '4s' });
+    // moment.js хардкодит assets/… (document-relative). NV-страницы лежат в
+    // new-vision/, поэтому префиксуем пути иконок вьюера на ../.
+    Array.prototype.forEach.call(viewer.querySelectorAll('img[src^="assets/"]'), function (img) {
+      img.setAttribute('src', '../' + img.getAttribute('src'));
+    });
+    slot.replaceWith(viewer);
+
+    MomentViewer.bindRow(row, viewer);
+  })();
+</script>
 
 <!-- Тап по человеку в ленте → его профиль.
      Флаг data-entity: user (по умолчанию) | self | group.
@@ -821,6 +855,7 @@
     location.href = (entity === 'self') ? PROFILE_SELF : PROFILE_USER;
   });
 })();
+
 </script>
 
 </body>
