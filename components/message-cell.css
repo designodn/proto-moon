@@ -1,0 +1,84 @@
+/**
+ * OK Design System (proto) — MessageCell
+ *
+ * Строка диалога в списке сообщений. Построена на DS uni-cell + content.
+ *   wrapper → container(__state-enabled) → cell.message-cell.__read|__unread
+ *
+ * Вторая строка: превью · время [иконка «прочитано»] — в одну строку.
+ * Точка-разделитель — .content-dot (компонент content).
+ * Модификатор .__read показывает галочки ✓✓, .__unread — прячет (место
+ * под иконку резервируется в обоих случаях, чтобы строка не прыгала).
+ *
+ *   <div class="uni-cell message-cell __read">
+ *     <div class="avatar __size-56 __type-image"><img …></div>
+ *     <div class="uni-cell-additional-content">
+ *       <div class="message-cell__name ds-title-s">Имя</div>
+ *       <div class="message-cell__row">
+ *         <span class="message-cell__preview ds-body-m">Текст…</span>
+ *         <span class="content-dot ds-caption-m">·</span>
+ *         <span class="message-cell__time ds-caption-m">11:45</span>
+ *         <span class="message-cell__read"><svg…✓✓…></span>
+ *       </div>
+ *     </div>
+ *   </div>
+ */
+
+.message-cell {
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.message-cell__name {
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Вторая строка — превью · время [read] в одну строку */
+.message-cell__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.message-cell__preview {
+  flex: 0 1 auto;          /* не растягивается → время липнет к тексту */
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+}
+.message-cell__preview img {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+/* Текст усекается многоточием только при достижении края контейнера */
+.message-cell__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.message-cell__time {
+  flex-shrink: 0;
+  color: var(--dynamic-text-and-icons-base-tertiary);
+}
+
+/* Слот «прочитано» — всегда резервирует место (16px), галочки по модификатору */
+.message-cell__read {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.message-cell__read svg { display: block; width: 16px; height: 16px; }
+
+.message-cell.__unread .message-cell__read { visibility: hidden; }
+.message-cell.__read   .message-cell__read { visibility: visible; }

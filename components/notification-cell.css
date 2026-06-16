@@ -1,0 +1,62 @@
+/**
+ * OK Design System (proto) — NotificationCell
+ *
+ * Строка-оповещение в списке: аватар слева + контент (заголовок, время и
+ * опционально — общие друзья и кнопки действий). Плоская строка без подложки.
+ * Аватар — DS .avatar, кнопки — DS .button (__size-28), общие друзья —
+ * .avatars-view. Типографику задаёт потребитель классами .ds-* на дочерних.
+ *
+ *   <div class="notification-cell" data-cat="friends">
+ *     <div class="avatar __size-56 __type-image"><img …></div>
+ *     <div class="notification-cell__body">
+ *       <div class="notification-cell__title ds-body-m">Новый друг: <b>Имя</b></div>
+ *       <div class="notification-cell__time ds-caption-m">сегодня в 12:34</div>
+ *
+ *       <!-- опц. общие друзья -->
+ *       <div class="notification-cell__mutuals">
+ *         <div class="avatars-view __size-24"><div class="avatars-view__stack">…</div></div>
+ *         <span class="ds-caption-m">4 общих друга</span>
+ *       </div>
+ *
+ *       <!-- опц. действия -->
+ *       <div class="notification-cell__actions">
+ *         <div class="button-wrapper __size-28"><button class="button-container __style-primary">…</button></div>
+ *       </div>
+ *     </div>
+ *   </div>
+ */
+
+.notification-cell {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.notification-cell__body {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.notification-cell__title { color: var(--dynamic-text-and-icons-base-primary); }
+.notification-cell__title b,
+.notification-cell__title strong { font-weight: 600; }
+
+.notification-cell__time {
+  margin-top: 2px;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+.notification-cell__mutuals {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);   /* время → общие друзья: 4px (по Figma) */
+}
+.notification-cell__mutuals span { color: var(--dynamic-text-and-icons-base-secondary); }
+
+.notification-cell__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);   /* → кнопки: 8px (по Figma) */
+}

@@ -1,0 +1,150 @@
+/**
+ * OK Design System (proto) — FriendshipStory
+ *
+ * Сториз «годовщина дружбы / N подарков» — контент-слайд внутри viewer'а
+ * (см. components/moment.css → .moment__body). По figma 2612-92772:
+ *  - ПОДЛОЖКА вынесена в отдельный слой .friendship-story__bg со скруглением
+ *    20px. Сейчас — полупрозрачный фиолетовый surface, но это ВРЕМЕННЫЙ фон:
+ *    в будущем подложка станет другой (видео/картинка/градиент). Меняется
+ *    ровно один слой — композиция поверх не зависит от фона.
+ *  - композиция как у фид-постера: две круглые аватарки 137px (одна вверху-
+ *    справа, вторая по центру-слева), картинка-«мишка» (pic_gift_box) 135px
+ *    внизу-справа, крупный заголовок + подпись по центру внизу.
+ *  - вертикально композиция центрируется в слоте body.
+ *
+ *   <div class="friendship-story">
+ *     <div class="friendship-story__bg"></div>            ← подложка (swappable)
+ *     <div class="friendship-story__content">
+ *       <div class="friendship-story__avas">
+ *         <div class="friendship-story__row __ava-top"> <div class="avatar __type-image friendship-story__ava"><img …></div> </div>
+ *         <div class="friendship-story__row __ava-mid"> <div class="avatar __type-image friendship-story__ava"><img …></div> </div>
+ *       </div>
+ *       <div class="friendship-story__lower">
+ *         <div class="friendship-story__row __pic"> <div class="friendship-story__pic"><img …></div> </div>
+ *         <div class="friendship-story__text">
+ *           <h2 class="friendship-story__title">478 подарков</h2>
+ *           <p class="friendship-story__sub">С 1 июня 2023 года</p>
+ *         </div>
+ *       </div>
+ *     </div>
+ *   </div>
+ */
+
+.friendship-story {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: var(--static-text-and-icons-base-inverse-primary, white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Контейнер для cqw-единиц: размеры аватарок и мишки задаются в долях
+     ширины .friendship-story (см. ниже), поэтому картинки тянутся вместе
+     с шириной экрана — как в фид-постере. */
+  container-type: inline-size;
+}
+
+/* ============================================================
+   ПОДЛОЖКА — отдельный слой под композицией. ВРЕМЕННЫЙ фон:
+   позже заменится (видео/картинка/иной градиент). Скругление 20px —
+   это «фрейм сториз» из макета. Чтобы поменять фон — правим только тут.
+   ============================================================ */
+.friendship-story__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 20px;
+  background: var(--static-surface-contrast-violet, rgba(174, 126, 206, 0.12));
+}
+
+/* Композиция поверх подложки */
+.friendship-story__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Группа аватаров. Отрицательный нижний отступ — нахлёст на блок с мишкой
+   (figma mb-[-24px]). */
+.friendship-story__avas {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: -24px;
+}
+.friendship-story__row {
+  display: flex;
+  width: 100%;
+}
+/* Верхняя ава — прижата вправо, отступ сверху 32, по бокам 48 (figma). */
+.friendship-story__row.__ava-top {
+  justify-content: flex-end;
+  padding: 32px 48px 0;
+}
+/* Нижняя ава — слева, лёгкий нахлёст на верхнюю (figma mb-[-8px]). */
+.friendship-story__row.__ava-mid {
+  align-items: center;
+  padding: 0 32px;
+  margin-top: -8px;
+}
+
+.friendship-story__lower {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+/* Мишка — прижата вправо, отступ снизу 24, по бокам 24 (figma). */
+.friendship-story__row.__pic {
+  justify-content: flex-end;
+  padding: 0 24px 24px;
+}
+
+/* Аватары — DS-компонент .avatar. Размер в cqw (доля ширины .friendship-story:
+   137/360 ≈ 38%), чтобы масштабировались с шириной, как в фид-постере. */
+.friendship-story .avatar.friendship-story__ava {
+  width: 38cqw;
+  height: 38cqw;
+  flex: none;
+}
+
+/* Картинка-«мишка» (pic_gift_box) — тоже доля ширины (135/360 ≈ 37.5%). */
+.friendship-story__pic {
+  width: 37.5cqw;
+  height: 37.5cqw;
+  flex: none;
+}
+.friendship-story__pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Текст — по центру, отступ снизу 48 (figma). */
+.friendship-story__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 48px;
+  text-align: center;
+}
+.friendship-story__title {
+  margin: 0;
+  font-family: "OK Sans Display", var(--font-family);
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--static-text-and-icons-base-inverse-primary, white);
+}
+.friendship-story__sub {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 400;
+  color: var(--static-text-and-icons-base-inverse-primary, white);
+}

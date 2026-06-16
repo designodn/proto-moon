@@ -1,0 +1,40 @@
+/**
+ * OK Design System (proto) — Dismissible row
+ *
+ * Поведение и анимация «закрываемой» строки карточек.
+ * Используется в ВВЗ-блоках (vvz-card) сообщений и ленты / друзей / гостей.
+ *
+ * РАЗМЕТКА:
+ *   <section data-dismiss-row>                        — контейнер-строка
+ *     <button data-dismiss="row">Скрыть</button>      — закрыть всю строку
+ *     <article data-dismiss-target>                   — карточка
+ *       <button data-dismiss aria-label="Скрыть">…    — закрыть эту карточку
+ *     </article>
+ *   </section>
+ *
+ *   Логика: dismissible.js
+ *     • тап по [data-dismiss]                → закрыть ближайший [data-dismiss-target]
+ *     • тап по [data-dismiss="row"]          → закрыть [data-dismiss-row]
+ *     • когда закрыта последняя карточка     → строка тоже схлопывается
+ */
+
+/* Карточка уезжает: фейд + лёгкое сжатие */
+[data-dismiss-target].__leaving {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+  transition: opacity 500ms ease-in-out,
+              transform 500ms ease-in-out;
+}
+
+/* Контейнер схлопывается: фейд + высота/паддинги/маргины в 0,
+   чтобы ячейки ниже подъезжали вверх плавно */
+[data-dismiss-row].__leaving {
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 500ms ease-in-out,
+              height 500ms ease-in-out,
+              padding 500ms ease-in-out,
+              margin 500ms ease-in-out;
+}

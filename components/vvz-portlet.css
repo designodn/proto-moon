@@ -1,0 +1,88 @@
+/**
+ * OK Design System (proto) — VvzPortlet
+ *
+ * «Возможно, вы знакомы» — портлет: заголовок + горизонтальный ряд
+ * карточек. Используется в ленте (lenta-q3.html), друзьях (friends.html),
+ * гостях (guests.html), сообщениях (messages.html — модификатор) и
+ * профиле (profile.html, дефолтные .vvz-card.__default 160).
+ *
+ *   <section class="vvz-portlet" data-dismiss-row aria-label="Возможно, вы знакомы">
+ *     <header class="vvz-portlet__header">
+ *       <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
+ *
+ *       <!-- ВАРИАНТ A — «Ещё» (лента / друзья / гости / профиль),
+ *            оранжевая ссылка-инлайн, ведёт в тиндер ВВЗ (vvz.html).
+ *            Требует на странице script с делегированным click-handler по
+ *            [data-href] (см. guests.html). -->
+ *       <span class="button-inline-wrapper __size-24 __view-primary">
+ *         <button class="button-inline __size-24" data-href="vvz.html">
+ *           <span class="button-inline__content">Ещё</span>
+ *         </button>
+ *       </span>
+ *
+ *       <!-- ВАРИАНТ B — «Скрыть» (сообщения), вторичная кнопка-инлайн,
+ *            скрывает портлет через data-dismiss="row" из dismissible.js. -->
+ *       <!-- <span class="button-inline-wrapper __size-24 __view-secondary">
+ *              <button class="button-inline __size-24" data-dismiss="row">
+ *                <span class="button-inline__content">Скрыть</span>
+ *              </button>
+ *            </span> -->
+ *     </header>
+ *     <div class="vvz-portlet__row">
+ *       <!-- .vvz-card.__default × N (лента / друзья / гости / профиль) -->
+ *       <!-- .vvz-card.__message × N (сообщения) -->
+ *     </div>
+ *   </section>
+ *
+ * MODS:
+ *   .vvz-portlet.__messages          — компактный паддинг сверху (для messages)
+ *   .vvz-portlet__row.__cards-160    — .vvz-card.__default шириной 160 (узкие,
+ *                                       для ленты / профиля). По дефолту 220.
+ */
+
+.vvz-portlet {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+
+.vvz-portlet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-3);
+}
+/* первый слот хедера (title / Header view) забирает всё пространство */
+.vvz-portlet__header > :first-child {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.vvz-portlet__title {
+  color: var(--dynamic-text-and-icons-base-primary);
+  text-decoration: none;
+  display: block;
+}
+
+.vvz-portlet__row {
+  display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.vvz-portlet__row::-webkit-scrollbar { display: none; }
+
+/* ── Модификаторы ───────────────────────────────────────────── */
+
+/* Карточки 220 по дефолту (Figma — гости / друзья). Help-карточка стека
+   следует той же ширине, что и .__default. */
+.vvz-portlet__row > .vvz-card.__default,
+.vvz-portlet__row > .vvz-card.__help { width: 220px; }
+/* Узкие 160 — для ленты / профиля */
+.vvz-portlet__row.__cards-160 > .vvz-card.__default,
+.vvz-portlet__row.__cards-160 > .vvz-card.__help { width: 160px; }
+
+/* Сообщения: меньше отступ сверху (по Figma --space-2) */
+.vvz-portlet.__messages { padding-top: var(--space-2); }

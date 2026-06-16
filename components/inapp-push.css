@@ -1,0 +1,129 @@
+/* ============================================================
+   In-app push (notificationToast 1.0) — пуш ВНУТРИ приложения.
+
+   В отличие от system-notifications (components/system-notifications.*),
+   который мимикрирует под системную шторку ОС (шрифт Roboto, серая
+   капсула), этот компонент нарисован в DS приложения: surface/quaternary,
+   тени elevate-3, типографика ds-title-s / ds-body-m, аватар 56.
+   Так выглядит, например, баннер о новом сообщении, который прилетает
+   поверх контента, пока ты сидишь в приложении.
+
+   Figma: 💠 Base Components → notificationToast 1.0 (node 20033:120739).
+
+   Контейнер .inapp-pushes — фикс. оверлей под status-bar, складывает
+   карточки колодой (новая спереди). Логика стэка/свайпа/тапа в
+   components/inapp-push.js; стрим живёт в sessionStorage, поэтому пуши
+   не сбрасываются при переходах между страницами прототипа.
+
+   Два типа карточки:
+     .inapp-push.__type-user — аватар + имя (title-s) + текст (body-m, 2 стр)
+     .inapp-push.__type-ok   — круглая иконка-аватар + заголовок (title-s)
+
+     <div class="inapp-pushes" id="inappPushes"
+          data-autostart></div>
+
+     <div class="inapp-push __type-user">
+       <div class="avatar __size-56 __type-image"><img src="…" alt=""></div>
+       <div class="inapp-push__main">
+         <div class="inapp-push__title ds-title-s">Мария Чай</div>
+         <div class="inapp-push__body ds-body-m">Петровна, а ты…</div>
+       </div>
+     </div>
+   ============================================================ */
+.inapp-pushes {
+  position: fixed;
+  left: 0; right: 0;
+  /* Под DS-статус-баром (--status-bar-height из meshok-up.css) + воздух */
+  top: calc(var(--status-bar-height, 44px) + var(--space-1, 4px));
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Карточки складываются колодой в одной точке; depth-сдвиг,
+   z-index и opacity проставляет JS (см. restack в inapp-push.js). */
+.inapp-pushes .inapp-push {
+  position: absolute;
+  left: 0; right: 0;
+  /* боковой и верхний воздух, как pt-8/px-8 во фрейме Figma */
+  padding: 0 var(--space-2, 8px);
+}
+
+/* ── Карточка ──────────────────────────────────────────────── */
+.inapp-push {
+  --inapp-push-icon-bg: var(--base-blue-saturated-56, #0099FF);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  box-sizing: border-box;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  background: var(--dynamic-surface-base-quaternary, #fff);
+  border-radius: 16px;                       /* $base-wrapper */
+  /* Drop Shadow / Dynamic / Elevate-3: 0 8 24 spread -8, rgba(0,0,0,0.12) */
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+  color: var(--dynamic-text-and-icons-base-primary, #000);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+  transform-origin: center top;
+  will-change: transform, opacity;
+  transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
+}
+
+/* Аватар не сжимается */
+.inapp-push > .avatar { flex-shrink: 0; }
+
+/* ── Текстовая колонка ─────────────────────────────────────── */
+.inapp-push__main {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;                                  /* $const-text-gap-between-15-15 */
+}
+
+.inapp-push__title {
+  color: var(--dynamic-text-and-icons-base-primary);
+  /* userPush: имя в одну строку с многоточием */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inapp-push__body {
+  color: var(--dynamic-text-and-icons-base-secondary);
+  /* до двух строк, дальше — многоточие */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ── Тип «ОК» — иконка в круге + заголовок в 2 строки ───────── */
+.inapp-push.__type-ok .inapp-push__main { gap: 0; }
+.inapp-push.__type-ok .inapp-push__title {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Круглая иконка-аватар (avaPicture: shape = circle, content = icon) */
+.inapp-push__avaicon {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--inapp-push-icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inapp-push__avaicon img,
+.inapp-push__avaicon svg {
+  display: block;
+  width: 24px; height: 24px;
+  /* asset-иконки чёрные → красим в белый поверх синего круга */
+  filter: brightness(0) invert(1);
+}

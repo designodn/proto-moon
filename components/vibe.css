@@ -1,0 +1,88 @@
+/**
+ * OK Design System — Vibe
+ *
+ * Empty-state / результат запроса: иллюстрация + заголовок + подзаголовок
+ * + опц. пара кнопок. Используется как «обложка» рубрики, экран без контента,
+ * результат поиска и т.п.
+ *
+ *   <div class="vibe-wrapper">
+ *     <div class="vibe __context-page __mobile">
+ *       <div class="vibe__illustration">…</div>
+ *       <div class="vibe__title    ds-title-xl">…</div>
+ *       <div class="vibe__subtitle ds-body-l">…</div>
+ *       <div class="vibe__buttons">…</div>
+ *     </div>
+ *   </div>
+ *
+ * Контексты (задают max-width и размеры дочерних элементов):
+ *   .__context-page    — на всю страницу (page-mob → 375, web → 440)
+ *   .__context-island  — внутри карточки/острова (375)
+ *   .__context-float   — поверх контента (375)
+ *
+ * Размеры дочерних (рекомендация по спеке, выставляются классами при сборке):
+ *                  page          island        float
+ *   illustration   112           96            96
+ *   title          27b           21b           17b
+ *   subtitle       17            17            15
+ *   buttons        56 (mob: 36)  36            36
+ */
+
+.vibe-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  padding:
+    var(--vibe-padding-top,    0)
+    var(--vibe-padding-right,  0)
+    var(--vibe-padding-bottom, 0)
+    var(--vibe-padding-left,   0);
+}
+
+.vibe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  text-align: center;
+}
+
+.vibe.__context-page {
+  max-width: var(--vibe-max-width, 440px);
+}
+
+.vibe.__context-page.__mobile {
+  max-width: var(--vibe-max-width, 375px);
+}
+
+.vibe.__context-island,
+.vibe.__context-float {
+  max-width: var(--vibe-max-width, 375px);
+}
+
+.vibe__illustration {
+  margin-bottom: var(--vibe-illustration-text-gap, 8px);
+}
+
+.vibe__title,
+.vibe__subtitle {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.vibe__subtitle {
+  color: var(--dynamic-text-and-icons-base-secondary);
+  margin-top: 4px;
+}
+
+.vibe__buttons {
+  padding-top: var(--vibe-buttons-gap, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}

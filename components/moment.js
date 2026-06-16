@@ -1,0 +1,764 @@
+/**
+ * OK Design System (proto) — Moment viewer behavior
+ *
+ * Поведение полноэкранного просмотрщика сториз.
+ *  - тап левой половины  → prev (или возврат к началу текущего)
+ *  - тап правой половины → next
+ *  - автопродвижение по CSS-таймеру (длительность из --moment-duration)
+ *  - событие 'moment:viewed' на корне после досмотра последнего сегмента
+ *
+ * USAGE:
+ *   MomentViewer.init(rootEl, {
+ *     onChange: (index) => { … },        // опц.: при смене активного сегмента
+ *     onNext:   () => true | false,      // тап вправо/таймер за последним
+ *                                        //   сегментом. true → компонент НЕ
+ *                                        //   закрывается, страница сама
+ *                                        //   подменила контент (см. setSlides).
+ *     onPrev:   () => true | false,      // тап влево на первом сегменте.
+ *                                        //   true → страница перешла к
+ *                                        //   предыдущему автору.
+ *     onClose:  () => { … },             // явное закрытие (Esc/✕) или досмотр
+ *                                        //   последней сториз последнего
+ *                                        //   автора. Тут лента ставит ✕ и
+ *                                        //   .__ring-viewed аватарке.
+ *   });
+ *
+ * Сколько палочек прогресса — столько и «сториз». Количество и список картинок
+ * задаются снаружи: при первом init либо через `slides`, либо просто разметкой
+ * .moment__progress-segment в HTML. На переходе между авторами страница
+ * вызывает instance.setSlides(newSlides) — viewer пересоберёт сегменты.
+ */
+(function () {
+  // Ленивая подгрузка lottie-web с CDN — используется именинной сториз для
+  // полноэкранной конфетти-анимации (см. блок BDAY ниже). Тот же паттерн
+  // используется в actions-bar.js для лайка; здесь свой promise-кэш на случай,
+  // если страница ещё не загрузила lottie.
+  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+  var lottieLoading = null;
+  function ensureLottie() {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoading) return lottieLoading;
+    lottieLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOTTIE_CDN;
+      s.async = true;
+      s.onload = function () { resolve(window.lottie); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return lottieLoading;
+  }
+
+  function MomentViewer(root, options) {
+    this.root = root;
+    this.options = options || {};
+    this.slides = null;
+    this.current = 0;
+
+    this._onPrev = this._onPrev.bind(this);
+    this._onNext = this._onNext.bind(this);
+    this._onAnimEnd = this._onAnimEnd.bind(this);
+    this._onKey = this._onKey.bind(this);
+
+    this._prev = root.querySelector('.moment__nav-zone.__side-prev');
+    this._next = root.querySelector('.moment__nav-zone.__side-next');
+    if (this._prev) this._prev.addEventListener('click', this._onPrev);
+    if (this._next) this._next.addEventListener('click', this._onNext);
+
+    // Long-press (Instagram-like): удержание >250ms → пауза прогресса +
+    // скрытие контролов (header/progress/statusbar). CTA остаётся видимым.
+    // Тап короче порога — обычный prev/next. Отпускание после long-press —
+    // возврат UI и продолжение анимации.
+    this._holdTimer = null;
+    this._isHolding = false;
+    this._onPressStart = this._onPressStart.bind(this);
+    this._onPressEnd = this._onPressEnd.bind(this);
+    root.addEventListener('pointerdown', this._onPressStart);
+    root.addEventListener('pointerup', this._onPressEnd);
+    root.addEventListener('pointercancel', this._onPressEnd);
+    root.addEventListener('pointerleave', this._onPressEnd);
+
+    // Завершение анимации активного сегмента → автоматический next
+    root.addEventListener('animationend', this._onAnimEnd);
+
+    document.addEventListener('keydown', this._onKey);
+
+    // Если slides переданы в опциях — сразу собираем сегменты прогресс-бара.
+    // Если нет — компонент работает с уже разложенными в HTML сегментами.
+    if (this.options.slides) {
+      this.setSlides(this.options.slides);
+    } else {
+      this.segments = Array.prototype.slice.call(
+        root.querySelectorAll('.moment__progress-segment')
+      );
+    }
+
+    this.go(0);
+  }
+
+  MomentViewer.prototype.go = function (index) {
+    if (index < 0) {
+      // Выход за левую границу — спрашиваем страницу, переходить ли к
+      // предыдущему автору. Если страница вернёт true — она сама вызовет
+      // setSlides + go(0); мы дальше ничего не делаем.
+      if (typeof this.options.onPrev === 'function' && this.options.onPrev() === true) return;
+      index = 0;
+    }
+    if (index >= this.segments.length) {
+      // Выход за правую границу — следующий автор. Если страницы нет / нечего
+      // показать — закрываемся (досмотр последнего сегмента последнего автора).
+      if (typeof this.options.onNext === 'function' && this.options.onNext() === true) return;
+      this._finish();
+      return;
+    }
+    this.current = index;
+
+    // Обновляем сегменты прогресс-бара
+    this.segments.forEach(function (seg, i) {
+      seg.classList.remove('__state-done', '__state-active');
+      // Перезапустить CSS-анимацию: убрать и навесить класс заново
+      // (см. https://css-tricks.com/restart-css-animation/)
+      void seg.offsetWidth; // force reflow
+      if (i < index) seg.classList.add('__state-done');
+      else if (i === index) seg.classList.add('__state-active');
+    });
+
+    // Опц.: подменить контент слайда, если передали массив
+    if (this.slides && this.slides[index]) {
+      var s = this.slides[index];
+      var media = this.root.querySelector('.moment__media');
+      if (media) {
+        if (s.src) {
+          media.src = s.src;
+          media.style.display = '';
+        } else if (s.color) {
+          // Сториз без картинки — просто цветная заливка карточки
+          media.removeAttribute('src');
+          media.style.display = 'none';
+        }
+      }
+      if (s.background) {
+        // Произвольный CSS-background (например radial/linear gradient).
+        this.root.style.background = s.background;
+      } else if (s.color) {
+        this.root.style.background = '';
+        this.root.style.backgroundColor = s.color;
+      }
+      // s.duration — опциональный override длительности сегмента (CSS-переменная
+      // --moment-duration). Используется, например, в bdaySlide, чтобы после
+      // улёта шариков (~5.7s) оставалось ещё 2s «передышки» на тап «Поздравить».
+      if (s.duration != null) {
+        this.root.style.setProperty('--moment-duration', s.duration);
+      }
+      var title = this.root.querySelector('.moment__header-title');
+      if (title && s.title != null) title.textContent = s.title;
+      var sub = this.root.querySelector('.moment__header-subtitle');
+      if (sub && s.subtitle != null) sub.textContent = s.subtitle;
+      var avaImg = this.root.querySelector('.moment__header .avatar img');
+      if (avaImg && s.avatar) avaImg.src = s.avatar;
+
+      // BDAY — именинный шаблон: фото-фон + блюр снизу + три строки текста +
+      // 3 PNG-шарика, вылетающие снизу при открытии (см. .moment__bday-balloons
+      // — отдельный слой поверх контента, на весь размер карточки).
+      // Слайд с `s.bday = { kicker, heading, name }` включает .__view-bday
+      // и рендерит блок .moment__bday. Header остаётся видимым.
+      var bdayHost = this.root.querySelector('.moment__bday');
+      var balloonsHost = this.root.querySelector('.moment__bday-balloons');
+      if (s.bday) {
+        if (!bdayHost) {
+          bdayHost = document.createElement('div');
+          bdayHost.className = 'moment__bday';
+          // Кладём перед .moment__cta, чтобы CTA остался поверх.
+          var cta = this.root.querySelector('.moment__cta');
+          if (cta) {
+            cta.parentNode.insertBefore(bdayHost, cta);
+          } else {
+            this.root.appendChild(bdayHost);
+          }
+        }
+        bdayHost.innerHTML =
+          // Progressive blur 0 → 80 px: стек из 6 слоёв с возрастающими
+          // backdrop-filter и масками-полосками. Верх слота — почти резко,
+          // низ — сильно размыто. Поверх лёгкий dark-tint для контраста.
+          '<div class="moment__bday-blur">' +
+            '<div class="moment__bday-blur-step __b-1"></div>' +
+            '<div class="moment__bday-blur-step __b-2"></div>' +
+            '<div class="moment__bday-blur-step __b-3"></div>' +
+            '<div class="moment__bday-blur-step __b-4"></div>' +
+            '<div class="moment__bday-blur-step __b-5"></div>' +
+            '<div class="moment__bday-blur-step __b-6"></div>' +
+            '<div class="moment__bday-blur-tint"></div>' +
+          '</div>' +
+          '<div class="moment__bday-content">' +
+            '<p class="moment__bday-kicker">' + (s.bday.kicker || 'Сегодня') + '</p>' +
+            // Заголовок и ФИ — каждое слово на свой строке (как в макете):
+            // «День / рождения», «Анастасии / Фоминой».
+            '<h2 class="moment__bday-heading">' +
+              (s.bday.heading || 'День рождения').split(' ').join('<br>') +
+            '</h2>' +
+            '<p class="moment__bday-name">' +
+              (s.bday.name || '').split(' ').join('<br>') +
+            '</p>' +
+          '</div>';
+
+        // Confetti — лотти-конфетти позади шаров, на всю карточку. Lottie-web
+        // подключается страницей (см. lenta-q3.html — он же нужен для лайка);
+        // если её нет в окне — пропускаем, шары работают и без конфетти.
+        var confettiHost = this.root.querySelector('.moment__bday-confetti');
+        if (confettiHost) {
+          // Чистим прошлый прогон (если кэшировался .lottie-instance).
+          if (confettiHost._lottieAnim) {
+            try { confettiHost._lottieAnim.destroy(); } catch (err) {}
+          }
+          confettiHost.remove();
+        }
+        confettiHost = document.createElement('div');
+        confettiHost.className = 'moment__bday-confetti';
+        bdayHost.insertAdjacentElement('afterend', confettiHost);
+        // Lottie может быть ещё не загружена (страница ленится). ensureLottie
+        // подгружает с CDN при первом вызове. Сохраняем target-узел в замыкании
+        // и в момент resolve проверяем, что он всё ещё в DOM — иначе сториз
+        // могли уже переключить, и пихать туда лотти не надо.
+        (function (host) {
+          ensureLottie().then(function (lottie) {
+            if (!host.isConnected) return;
+            host._lottieAnim = lottie.loadAnimation({
+              container: host,
+              renderer:  'svg',
+              loop:      false,
+              autoplay:  true,
+              path:      'assets/lottie/confetti.json',
+              // slice — заполняет весь контейнер по обеим осям, обрезая
+              // по более длинной. Дефолтный meet оставлял пустоты сверху/снизу,
+              // если aspect-ratio лотти-композиции не совпадал с карточкой.
+              rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
+            });
+          }).catch(function () {/* нет интернета — конфетти просто не покажем */});
+        })(confettiHost);
+
+        // Шары — отдельный слой на всю карточку (sibling .moment__bday).
+        // Пересоздаём каждый раз, чтобы CSS-анимация вылета перезапускалась
+        // при повторном открытии сториз. Кладём ПОСЛЕ конфетти — шары
+        // поверх (порядок в DOM решает stacking).
+        if (balloonsHost) balloonsHost.remove();
+        balloonsHost = document.createElement('div');
+        balloonsHost.className = 'moment__bday-balloons';
+        // Имена файлов с пробелами/кириллицей — URL-encoded, чтобы не
+        // зависеть от поведения конкретного браузера.
+        balloonsHost.innerHTML =
+          // шарик_1 2 — зелёный пудель, шарик_1 — оранжевый ОК-шар,
+          // шарик_1 8 — оранжевый круглый.
+          '<div class="moment__bday-balloon __b-poodle">' +
+            '<img src="assets/icons/%D1%88%D0%B0%D1%80%D0%B8%D0%BA_1%202.png" alt="">' +
+          '</div>' +
+          '<div class="moment__bday-balloon __b-ok">' +
+            '<img src="assets/icons/%D1%88%D0%B0%D1%80%D0%B8%D0%BA_1.png" alt="">' +
+          '</div>' +
+          '<div class="moment__bday-balloon __b-round">' +
+            '<img src="assets/icons/%D1%88%D0%B0%D1%80%D0%B8%D0%BA_1%208.png" alt="">' +
+          '</div>';
+        confettiHost.insertAdjacentElement('afterend', balloonsHost);
+
+        this.root.classList.add('__view-bday');
+      } else {
+        if (bdayHost) bdayHost.remove();
+        if (balloonsHost) balloonsHost.remove();
+        var existingConfetti = this.root.querySelector('.moment__bday-confetti');
+        if (existingConfetti) {
+          if (existingConfetti._lottieAnim) {
+            try { existingConfetti._lottieAnim.destroy(); } catch (err) {}
+          }
+          existingConfetti.remove();
+        }
+        this.root.classList.remove('__view-bday');
+      }
+
+      // BODY — произвольный контент поверх media (ВВЗ-сториз, например).
+      // slide.body — HTML-строка или DOM-узел. Если задан, заменяем содержимое
+      // .moment__body и показываем слот; иначе слот скрыт.
+      // Также включаем .moment.__view-body — в этом режиме скрываются
+      // аватарка и текст автора в header'е (остаётся только прогресс + ✕).
+      var body = this.root.querySelector('.moment__body');
+      if (body) {
+        if (s.body) {
+          body.style.display = '';
+          if (typeof s.body === 'string') {
+            body.innerHTML = s.body;
+          } else {
+            body.innerHTML = '';
+            body.appendChild(s.body);
+          }
+          this.root.classList.add('__view-body');
+        } else {
+          body.style.display = 'none';
+          body.innerHTML = '';
+          this.root.classList.remove('__view-body');
+        }
+      }
+
+      // CTA — кнопка снизу. Если slide.cta = {label, onClick} — рендерим,
+      // иначе скрываем слот. Кликовый обработчик навешиваем напрямую
+      // (один раз на сегмент).
+      var cta = this.root.querySelector('.moment__cta');
+      if (cta) {
+        if (s.cta && s.cta.label) {
+          cta.style.display = '';
+          // По умолчанию CTA-кнопка во ВВЗ-стиле «secondary-on-color»
+          // (стеклянная). Для именинной сториз и любых других кейсов можно
+          // передать s.cta.style = 'primary' (или другой DS-стиль).
+          var ctaStyle = s.cta.style || 'secondary-on-color';
+          cta.innerHTML =
+            '<div class="button-wrapper __size-44 __style-' + ctaStyle + '">' +
+              '<button class="button-container __style-' + ctaStyle + '" type="button">' +
+                '<span class="button-content"></span>' +
+              '</button>' +
+            '</div>';
+          cta.querySelector('.button-content').textContent = s.cta.label;
+          if (typeof s.cta.onClick === 'function') {
+            cta.querySelector('button').addEventListener('click', s.cta.onClick);
+          }
+        } else {
+          cta.style.display = 'none';
+          cta.innerHTML = '';
+        }
+      }
+    }
+
+    if (typeof this.options.onChange === 'function') {
+      this.options.onChange(index);
+    }
+  };
+
+  MomentViewer.prototype._onPrev = function () { this.go(this.current - 1); };
+  MomentViewer.prototype._onNext = function () { this.go(this.current + 1); };
+
+  MomentViewer.prototype._onAnimEnd = function (e) {
+    if (!e.target.classList || !e.target.classList.contains('moment__progress-segment')) return;
+    if (!e.target.classList.contains('__state-active')) return;
+    this.go(this.current + 1);
+  };
+
+  MomentViewer.prototype._onKey = function (e) {
+    if (e.key === 'ArrowLeft')  { this._onPrev(); }
+    if (e.key === 'ArrowRight') { this._onNext(); }
+    if (e.key === 'Escape')     { this._finish(); }
+  };
+
+  MomentViewer.prototype.pause  = function () { this.root.classList.add('__state-paused'); };
+  MomentViewer.prototype.resume = function () { this.root.classList.remove('__state-paused'); };
+
+  // Долгое нажатие: ставим .__state-pressed на корне. CSS-правила в moment.css
+  // прячут контролы (header / прогресс / статус-бар) и останавливают анимацию
+  // активного сегмента через .__state-paused. CTA-кнопка остаётся видимой.
+  // Игнорируем нажатия по интерактивным элементам — крестик, CTA, карточки
+  // ВВЗ — чтобы они работали обычно.
+  MomentViewer.prototype._onPressStart = function (e) {
+    if (e.target && e.target.closest && e.target.closest(
+      '.moment__cta, .moment__header [aria-label], [data-vvz-dismiss], .vvz-card__btn'
+    )) return;
+    var self = this;
+    clearTimeout(this._holdTimer);
+    this._holdTimer = setTimeout(function () {
+      self._isHolding = true;
+      self.root.classList.add('__state-pressed');
+      self.pause();
+    }, 250);
+  };
+
+  MomentViewer.prototype._onPressEnd = function () {
+    clearTimeout(this._holdTimer);
+    if (!this._isHolding) return;
+    this._isHolding = false;
+    this.root.classList.remove('__state-pressed');
+    this.resume();
+    // Подавить следующий click — он сработает после pointerup как часть
+    // тач-цепочки, и иначе nav-зона переключит сториз сразу после удержания.
+    this.root.addEventListener('click', function suppress(e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }, { capture: true, once: true });
+  };
+
+  // Подменить сториз нового автора: пересобрать сегменты прогресса и слайды.
+  // Страница вызывает это из onNext/onPrev перед тем как вернуть true.
+  MomentViewer.prototype.setSlides = function (slides) {
+    this.slides = slides || [];
+    var bar = this.root.querySelector('.moment__progress');
+    if (bar) {
+      bar.innerHTML = '';
+      for (var i = 0; i < this.slides.length; i++) {
+        var seg = document.createElement('div');
+        seg.className = 'moment__progress-segment';
+        bar.appendChild(seg);
+      }
+      this.segments = Array.prototype.slice.call(bar.children);
+    }
+    this.current = 0;
+  };
+
+  MomentViewer.prototype._finish = function () {
+    // Залить все сегменты «done», убрать активный
+    this.segments.forEach(function (seg) {
+      seg.classList.remove('__state-active');
+      seg.classList.add('__state-done');
+    });
+    this.root.dispatchEvent(new CustomEvent('moment:viewed', { bubbles: true }));
+    if (typeof this.options.onClose === 'function') this.options.onClose();
+  };
+
+  MomentViewer.prototype.destroy = function () {
+    document.removeEventListener('keydown', this._onKey);
+    this.root.removeEventListener('animationend', this._onAnimEnd);
+    this.root.removeEventListener('pointerdown', this._onPressStart);
+    this.root.removeEventListener('pointerup', this._onPressEnd);
+    this.root.removeEventListener('pointercancel', this._onPressEnd);
+    this.root.removeEventListener('pointerleave', this._onPressEnd);
+    clearTimeout(this._holdTimer);
+    if (this._prev) this._prev.removeEventListener('click', this._onPrev);
+    if (this._next) this._next.removeEventListener('click', this._onNext);
+  };
+
+  // ============================================================
+  // BIND-ROW — связка карусели аватарок (.stories-row) с viewer'ом
+  //
+  //   MomentViewer.bindRow(rowEl, viewerEl, {
+  //     slides: function (avatarEl) { return [{ color, src, cta, ... }, …]; },
+  //     // Не обязателен. Если не передан — по data-stories на аватарке
+  //     // и data-cta-label делается базовый набор пустых сегментов.
+  //   });
+  //
+  // Из data-атрибутов аватарки берётся:
+  //   data-stories     — количество сегментов прогресса (default 1)
+  //   data-name        — заголовок в шапке viewer'а
+  //   data-cta-label   — лейбл CTA-кнопки снизу (если есть)
+  //   data-skip-viewer — аватарка не открывает viewer
+  //
+  // Сам viewer должен содержать:
+  //   .moment__progress, .moment__header-title, .moment__header .avatar img,
+  //   .moment__cta (опц.), [aria-label="Закрыть"] (опц., для тапа на крестик).
+  // ============================================================
+  function bindRow(rowEl, viewerEl, options) {
+    options = options || {};
+    var currentAva = null;
+    var instance = null;
+
+    function avatars() {
+      return Array.prototype.filter.call(
+        rowEl.querySelectorAll('.avatar'),
+        function (a) { return !a.hasAttribute('data-skip-viewer'); }
+      );
+    }
+
+    function defaultSlides(ava) {
+      var count = parseInt(ava.getAttribute('data-stories'), 10) || 1;
+      var ctaLabel = ava.getAttribute('data-cta-label');
+      var palette = options.palette || DEFAULT_PALETTE;
+      var list = [];
+      for (var i = 0; i < count; i++) {
+        var s = { color: palette[i % palette.length] };
+        if (ctaLabel) s.cta = { label: ctaLabel };
+        list.push(s);
+      }
+      return list;
+    }
+
+    function slidesFor(ava) {
+      if (typeof options.slides === 'function') {
+        var custom = options.slides(ava);
+        if (custom) return custom;
+      }
+      return defaultSlides(ava);
+    }
+
+    function applyAuthor(ava) {
+      currentAva = ava;
+      var titleEl = viewerEl.querySelector('.moment__header-title');
+      if (titleEl) titleEl.textContent = ava.getAttribute('data-name') || '';
+
+      // Аватар в шапке viewer'а — копия из источника. Поддерживаем два случая:
+      //  1) источник .avatar — копируем classы __type-* и innerHTML в .avatar в шапке
+      //  2) источник содержит .avatars-view (стек из 2+ ав) — заменяем .avatar в
+      //     шапке клоном .avatars-view с принудительным __size-24
+      var headerSlot = viewerEl.querySelector('.moment__header > .avatar, .moment__header > .avatars-view');
+      if (!headerSlot) return;
+
+      var sourceView = ava.querySelector ? ava.querySelector('.avatars-view') : null;
+      if (sourceView) {
+        var clone = sourceView.cloneNode(true);
+        clone.classList.add('__size-24'); // в шапке avatars-view меньше
+        Array.prototype.slice.call(clone.classList).forEach(function (c) {
+          if (/^__size-(?!24$)/.test(c)) clone.classList.remove(c);
+        });
+        // Уменьшим аватарки внутри стека до __size-24
+        Array.prototype.slice.call(clone.querySelectorAll('.avatar')).forEach(function (a) {
+          Array.prototype.slice.call(a.classList).forEach(function (c) {
+            if (/^__size-/.test(c)) a.classList.remove(c);
+          });
+          a.classList.add('__size-24');
+        });
+        headerSlot.replaceWith(clone);
+        return;
+      }
+
+      // Одна аватарка — старая логика
+      if (!headerSlot.classList.contains('avatar')) {
+        // в шапке сейчас .avatars-view, нужно вернуть .avatar
+        var fresh = document.createElement('div');
+        fresh.className = 'avatar __size-36 __type-image';
+        fresh.innerHTML = '<img src="" alt="">';
+        headerSlot.replaceWith(fresh);
+        headerSlot = fresh;
+      }
+      // Чистим все классы кроме базового avatar и размера __size-36, добавляем
+      // все классы источника кроме его __size-* и __ring-* (свой размер
+      // сохраняем, кольцо не нужно).
+      Array.prototype.slice.call(headerSlot.classList).forEach(function (c) {
+        if (c !== 'avatar' && c !== '__size-36') headerSlot.classList.remove(c);
+      });
+      Array.prototype.slice.call(ava.classList).forEach(function (c) {
+        if (c === 'avatar' || /^__size-/.test(c) || /^__ring-/.test(c)) return;
+        headerSlot.classList.add(c);
+      });
+      headerSlot.innerHTML = ava.innerHTML;
+    }
+
+    function markViewed(ava) {
+      if (!ava) return;
+      ava.classList.remove('__ring-active');
+      ava.classList.add('__ring-viewed');
+    }
+
+    // Шаг к соседней аватарке. dir = +1 | -1. true = переход выполнен.
+    function step(dir) {
+      var list = avatars();
+      var i = list.indexOf(currentAva);
+      // Автор не в карусели (например, «виртуальный» автор сториз, открытой
+      // не из стака, а из фида) — соседей нет, переход не делаем.
+      if (i === -1) return false;
+      var nextAva = list[i + dir];
+      if (!nextAva) return false;
+      if (dir > 0) markViewed(currentAva);
+      applyAuthor(nextAva);
+      instance.setSlides(slidesFor(nextAva));
+      instance.go(0);
+      return true;
+    }
+
+    function open(ava) {
+      applyAuthor(ava);
+      viewerEl.hidden = false;
+
+      if (instance) instance.destroy();
+      instance = new MomentViewer(viewerEl, {
+        slides: slidesFor(ava),
+        onNext: function () { return step(+1); },
+        onPrev: function () { return step(-1); },
+        onClose: function () {
+          viewerEl.hidden = true;
+          markViewed(currentAva);
+        }
+      });
+    }
+
+    rowEl.addEventListener('click', function (e) {
+      var ava = e.target.closest('.avatar');
+      if (!ava || !rowEl.contains(ava)) return;
+      if (ava.hasAttribute('data-skip-viewer')) return;
+      open(ava);
+    });
+
+    var closeBtn = viewerEl.querySelector('[aria-label="Закрыть"]');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (instance) instance._finish();
+      });
+    }
+
+    // Публичный API. open(ava) позволяет открыть сториз «виртуального» автора,
+    // которого нет в карусели (например, годовщину — из тапа по постеру в фиде).
+    // ava — обычный элемент-аватарка с нужными data-* (data-name/data-friendship
+    // и т.п.) и контентом для шапки; в стак его добавлять не обязательно.
+    return { open: open };
+  }
+
+  // ============================================================
+  // CREATE — фабрика DOM-узла viewer'а с готовой разметкой.
+  // На странице: document.getElementById('slot').replaceWith(MomentViewer.create()).
+  // ============================================================
+  function createViewer(opts) {
+    opts = opts || {};
+    var duration = opts.duration || '4s';
+    var el = document.createElement('div');
+    el.className = 'moment __fullscreen';
+    el.hidden = true;
+    el.style.cssText = '--moment-duration: ' + duration + '; z-index: 1000;';
+    el.innerHTML = [
+      '<img class="moment__media" alt="" style="display:none;">',
+      '<div class="moment__scrim"></div>',
+      '<div class="moment__statusbar">',
+        '<span class="moment__statusbar-time">9:41</span>',
+      '</div>',
+      '<div class="moment__topbar">',
+        '<div class="moment__progress"></div>',
+        '<div class="moment__header">',
+          '<div class="avatar __size-36 __type-image"><img src="" alt=""></div>',
+          '<div class="moment__header-text">',
+            '<div class="moment__header-title"></div>',
+            '<div class="moment__header-subtitle">только что</div>',
+          '</div>',
+          '<span class="button-inline-wrapper __view-primary-on-color __size-24">',
+            '<button class="button-inline __size-24" aria-label="Ещё">',
+              '<span class="button-inline__content">',
+                '<img class="button-inline__icon" src="assets/icons/more_24.svg" width="24" height="24" alt="" style="filter: brightness(0) invert(1);">',
+              '</span>',
+            '</button>',
+          '</span>',
+          '<span class="button-inline-wrapper __view-primary-on-color __size-24">',
+            '<button class="button-inline __size-24" aria-label="Закрыть">',
+              '<span class="button-inline__content">',
+                '<img class="button-inline__icon" src="assets/icons/close_16_20.svg" width="24" height="24" alt="" style="filter: brightness(0) invert(1);">',
+              '</span>',
+            '</button>',
+          '</span>',
+        '</div>',
+      '</div>',
+      '<div class="moment__body" style="display: none;"></div>',
+      '<div class="moment__nav">',
+        '<button class="moment__nav-zone __side-prev" aria-label="Назад"></button>',
+        '<button class="moment__nav-zone __side-next" aria-label="Дальше"></button>',
+      '</div>',
+      '<div class="moment__cta" style="display: none;"></div>',
+      '<div class="moment__handle"></div>'
+    ].join('');
+    return el;
+  }
+
+  // Палитра по умолчанию для обычных сториз без картинки. Используется в
+  // bindRow, если slides()-колбэк не передан или вернул null.
+  var DEFAULT_PALETTE = ['#FF7700', '#5856D6', '#34C759', '#FF3B30', '#007AFF', '#AF52DE'];
+
+  // ============================================================
+  // VVZ-SLIDE — фабрика slide-объекта для viewer'а с ВВЗ-контентом.
+  //   MomentViewer.vvzSlide({
+  //     title:  'Возможно вы знакомы',
+  //     people: [{ name, sub, img, mutuals?, m? }, …],
+  //     cta:    { label: 'Показать всех', onClick? }   // опц.
+  //   });
+  // Карточки рендерятся через window.VvzCard.render — соответствующий модуль
+  // должен быть подключён.
+  // ============================================================
+  function vvzSlide(opts) {
+    opts = opts || {};
+    var people = opts.people || [];
+    var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
+    var cards = people.map(renderCard).join('');
+    var body = [
+      '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
+      '<div class="moment__body-grid">' + cards + '</div>'
+    ].join('');
+    var slide = {
+      body: body,
+      // Фон ВВЗ-сториз — мягкий оранжево-чёрный градиент сверху-вниз
+      // (по Figma 2260:68464). Радиус и blur не воспроизводим точно,
+      // визуально близко.
+      background: opts.background || 'radial-gradient(120% 80% at 50% 0%, #4c2400 0%, #1a0a02 55%, #000 100%)'
+    };
+    if (opts.cta) slide.cta = opts.cta;
+    return slide;
+  }
+
+  // ============================================================
+  // BDAY-SLIDE — фабрика slide-объекта именинного шаблона.
+  //   MomentViewer.bdaySlide({
+  //     name:     'Лизы Михайловой',   // склонение в род. падеже под "День рождения …"
+  //     photo:    'https://…',         // полноэкранный фон (фото именинника)
+  //     kicker:   'Сегодня',           // мелкий приглушённый текст сверху  (опц.)
+  //     heading:  'День рождения',     // большой заголовок                  (опц.)
+  //     cta:      'Поздравить',        // лейбл CTA-кнопки                   (опц.)
+  //     headerTitle:    'День рождения Лизы',  // переопределение title в header'е
+  //     headerSubtitle: '3 часа назад',        // и subtitle (опц.)
+  //   });
+  // ============================================================
+  function bdaySlide(opts) {
+    opts = opts || {};
+    var slide = {
+      src: opts.photo,
+      bday: {
+        kicker:  opts.kicker  || 'Сегодня',
+        heading: opts.heading || 'День рождения',
+        name:    opts.name    || ''
+      },
+      // Шары летят ~5.7s (5.4s + 0.30s стаггер); даём ещё ~2s «передышки»
+      // на тап «Поздравить». Можно переопределить через opts.duration.
+      duration: opts.duration || '8s'
+    };
+    if (opts.headerTitle    != null) slide.title    = opts.headerTitle;
+    if (opts.headerSubtitle != null) slide.subtitle = opts.headerSubtitle;
+    if (opts.cta) slide.cta = { label: opts.cta, style: 'primary' };
+    return slide;
+  }
+
+  // ============================================================
+  // FRIENDSHIP-SLIDE — фабрика слайда «годовщина дружбы».
+  //   MomentViewer.friendshipSlide({
+  //     title:   '478 подарков',
+  //     sub:     'С 1 июня 2023 года',
+  //     avatars: ['url1', 'url2'],   // [0] — верх-право, [1] — центр-лево
+  //     pic:     'assets/icons/pic.png',   // опц.: картинка-«мишка»
+  //     cta:     { label: 'Отправить другу' }   // style по умолч. primary
+  //   });
+  // Композиция повторяет фид-постер (см. components/friendship-story.css),
+  // подложка вынесена в отдельный слой и в будущем заменится.
+  // ============================================================
+  function friendshipSlide(opts) {
+    opts = opts || {};
+    var avs = opts.avatars || [];
+    var avaTop = avs[0] || '';
+    var avaMid = avs[1] || avs[0] || '';
+    var pic = opts.pic || 'assets/icons/pic.png';
+    var body = [
+      '<div class="friendship-story">',
+        // Подложка — отдельный (временный) слой, см. friendship-story.css.
+        '<div class="friendship-story__bg"></div>',
+        '<div class="friendship-story__content">',
+          '<div class="friendship-story__avas">',
+            '<div class="friendship-story__row __ava-top">',
+              '<div class="avatar __type-image friendship-story__ava"><img src="' + avaTop + '" alt=""></div>',
+            '</div>',
+            '<div class="friendship-story__row __ava-mid">',
+              '<div class="avatar __type-image friendship-story__ava"><img src="' + avaMid + '" alt=""></div>',
+            '</div>',
+          '</div>',
+          '<div class="friendship-story__lower">',
+            '<div class="friendship-story__row __pic">',
+              '<div class="friendship-story__pic"><img src="' + pic + '" alt=""></div>',
+            '</div>',
+            '<div class="friendship-story__text">',
+              '<h2 class="friendship-story__title">' + (opts.title || '') + '</h2>',
+              '<p class="friendship-story__sub">' + (opts.sub || '') + '</p>',
+            '</div>',
+          '</div>',
+        '</div>',
+      '</div>'
+    ].join('');
+    var slide = { body: body };
+    if (opts.cta) {
+      slide.cta = opts.cta;
+      // По макету кнопка годовщины — primary (оранжевая), на всю ширину.
+      if (!slide.cta.style) slide.cta.style = 'primary';
+    }
+    return slide;
+  }
+
+  // Экспорт
+  window.MomentViewer = {
+    init:            function (root, options) { return new MomentViewer(root, options); },
+    bindRow:         bindRow,
+    create:          createViewer,
+    vvzSlide:        vvzSlide,
+    bdaySlide:       bdaySlide,
+    friendshipSlide: friendshipSlide,
+    palette:         DEFAULT_PALETTE
+  };
+})();
