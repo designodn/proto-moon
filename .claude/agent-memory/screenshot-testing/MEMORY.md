@@ -34,6 +34,13 @@
 - `.__cat-social .lead-sticker` → au-heart-pop 2.6s
 - Чтобы поймать движение глазами: au-neuro-ring смена цвета кольца лучше всего видна на 2-3 кадрах с шагом 1с.
 
+## inline-ticket в ячейке okruzhenie (проверено 2026-06-16, FAIL)
+- ЛОВУШКА: `.uni-cell-additional-content` = `display:flex; flex-direction:column` (components/uni-cell.css:143). Любой inline-элемент внутри (span .inline-ticket) становится FLEX-ITEM → blockified: computed display=block, хотя в CSS `.inline-ticket{display:inline-block}`. Иконка падает на ОТДЕЛЬНУЮ строку, разрывая фразу. «inline-icon между 2 и билета» НЕ работает в этом контейнере. Фикс на стороне кода: обернуть текст в один `<span>`/`<p>` (не flex-child напрямую) или не использовать flex-column для текста с инлайнами.
+- Сам по себе .inline-ticket корректен: webkitMaskImage=url(ticket_24.svg) (НЕ none), maskSize contain, box 14×14, bg rgb(255,119,0)=#FF7700 (var --static-surface-status-accent), transform rotate~8deg (matrix 0.99/0.139). Видна крупным планом — оранжевый билет.
+- Онлайн status-dot: rgb(47,182,117) зелёный, 12×12, addon absolute __pos-bl, bottom-left 44px аватара, dotInsideContainer:true (не обрезан overflow:hidden).
+- Ячейка стоит первым .uni-cell-wrapper сразу после .promo-banner (placement верный).
+- accentVar резолвится в #FF7700 (не #EE8208 fallback из tooltip.css).
+
 ## Навигация (PASS)
 - Клик `.activity-header` в lenta → okruzhenie.html, title «Вокруг вас сейчас — New Vision».
 - Клик `.nav-bar__back` в okruzhenie → lenta.html, title «Лента — New Vision».

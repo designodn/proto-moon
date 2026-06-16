@@ -126,6 +126,22 @@
 }
 
 /* ============================================================
+   ИНЛАЙН-ИКОНКА в тексте ячейки (напр. билет: «выиграла 2 🎫 билета»)
+   Маск-иконка на акцентном цвете, слегка наклонена — как в макете.
+   ============================================================ */
+.inline-ticket {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin: 0 1px;
+  vertical-align: -2px;
+  background-color: var(--static-surface-status-accent);
+  -webkit-mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
+          mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
+  transform: rotate(8deg);
+}
+
+/* ============================================================
    ЛИД-ВИЗУАЛ #1 — ОНЛАЙН-ТОЧКА (статус-индикатор)
    Кладётся в .avatar.__has-addon как .avatar__addon.__pos-bl.
    Зелёный кружок с «вырезом» (белым кольцом фона острова).
