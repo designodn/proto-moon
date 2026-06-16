@@ -15,6 +15,11 @@
 - `.avatar img { width:100%; height:100% }` and `.avatar` is box-sizing:border-box. If any parent rule injects padding onto the avatar, the content box shrinks and the img shrinks with it.
 - Selector `.feed-congrats.__birthday .avatar img` matches MULTIPLE imgs (big 72px + stacked __size-36 friend avatars). Use `:scope > .avatar.__size-72 img` to target the hero avatar.
 
+## «Вокруг вас сейчас» widget (.ds-activity-slot, animations.css) — 2026-06-16
+- Keyframes `ds-activity-cycle` 9s loop, 3 children delays 0/3/6s (slot+slot offset 1.5/4.5/7.5s). Island at y~210; clip {x:0,y:156,w:390,h:226} frames it.
+- Trace: tag a child `[data-trace]`, sample getComputedStyle(.transform/.opacity) in rAF ~150ms for 9.5s. Parse matrix(a,b,c,d,e,f): sx=a, sy=d, ty=f.
+- Confirmed PASS: ENTER (opacity 0→1) translateY -9.8→0, scale 1 (from top). EXIT (opacity 1→0) translateY 0→+6, scale 1→0.4 (sinks down, shrinks to center). Transition windows are fast (~450ms of the 9s, keyframes 0-4% in / 29-33% out) — 150ms sampling catches ~3 frames/phase, enough to read direction.
+
 ## Findings logged (2026-06-16, congrats cards)
 - BUG: rule `.feed-congrats > :not(.media) { padding: 0 16px }` (nv-feed-congrats.css:20) also hits the direct-child `.avatar.__size-72` → 16px L/R padding on a border-box 72px avatar = 40px content box → hero photo clamped to 40px wide and offset. Removing padding restores 72x72.
 - BUG: `assets/new-vision/birthday-nikolay.png` is a 2180-byte, fully-transparent placeholder (center + quadrants alpha=0). Renders as empty grey circle even at correct size. The other 3 illustrations (gift-jam 1.4MB, gift-bonsai 855KB, postcard-dog 472KB) are real and paint fine.
