@@ -7,7 +7,7 @@
  * картинка проставлена, виден тёмный фолбэк (как контейнер в макете).
  *
  *   <div class="promo-banner __sticky" style="--promo-banner-image:url('...')">
- *     <p class="promo-banner__title">Народный день подарков!</p>
+ *     <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
  *     <div class="promo-banner__actions">
  *       <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
  *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
@@ -35,13 +35,10 @@
   color: var(--static-text-and-icons-base-inverse-primary);
 }
 
+/* Типографика — DS-класс .ds-title-xl на самом элементе (как у табов). */
 .promo-banner__title {
   max-width: 268px;
   margin: 0;
-  font-family: var(--font-family);
-  font-size: 26px;
-  line-height: 1.1;
-  font-weight: 700;
   color: var(--whitelabel, #fff);
 }
 
