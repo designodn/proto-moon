@@ -5,20 +5,16 @@
  * то, что расходится с q3 (фид-карточки, профиль). NV-оверрайды и новые
  * компоненты подключаются ПОСЛЕ общей DS, чтобы перебивать её каскадом.
  *
+ * ВАЖНО: все @import обязаны идти подряд в начале файла (после @charset).
+ * Любое обычное правило перед @import делает последующие @import невалидными —
+ * браузер их молча игнорирует. Поэтому override --font-family — в самом конце.
+ *
  * Usage:
  *   <link rel="stylesheet" href="new-vision.css">   (со страниц внутри new-vision/)
  */
 
 /* 1. Общая дизайн-система (токены, примитивы, базовые компоненты) */
 @import url('../index.css');
-
-/* OK Sans — принудительно первым в очереди на всех NV-страницах.
-   Перебивает --font-family из tokens.css (импорт выше), поэтому весь UI
-   рендерится брендовым шрифтом, а Onest/системные остаются как фолбэк. */
-:root,
-.__ui-theme_enabled {
-  --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
-}
 
 /* 2. NV-специфичные компоненты и оверрайды (форк только расходящегося).
    Раскомментируй/добавляй по мере появления дивергентных компонентов: */
@@ -29,4 +25,16 @@
    общей feed-base.css, поэтому здесь их нет). См. feeds/README.md. */
 @import url('./feeds/nv-feed.css');           /* общие примитивы NV-фидов */
 @import url('./feeds/nv-feed-contest.css');   /* «Конкурс» */
-@import url('./feeds/nv-feed-group.css');      /* «Вступай в сообщество» */
+@import url('./feeds/nv-feed-group.css');     /* «Вступай в сообщество» */
+
+/* ── Оверрайды (после всех @import) ────────────────────────────────────── */
+
+/* OK Sans — принудительно первым в очереди на всех NV-страницах.
+   Перебивает --font-family из tokens.css, поэтому весь UI рендерится
+   брендовым шрифтом, а Onest/системные остаются как фолбэк.
+   .__font-roboto тоже перекрываем — на NV-страницах OK Sans приоритетнее. */
+:root,
+.__ui-theme_enabled,
+.__font-roboto {
+  --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
