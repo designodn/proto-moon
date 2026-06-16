@@ -95,3 +95,16 @@
   - НАВБАР `.nv-sheet__navbar`: justify-content flex-start; порядок детей [0]=`.button-inline-wrapper.__size-24.__view-secondary` (крестик close, data-sheet-close), [1]=`.nv-sheet__title`. closeLeft=16 < titleLeft=52, т.е. ✕ слева. Крестик закрывает шторку (click→нет __open).
   - «Кто поливал»: 3 uni-cell, имена теперь `.ds-title-s` (было ds-body-l), avatar `.__size-44`. CSS-патч `.nv-gift-watered .uni-cell{align-items:center;gap:var(--space-3)}` → computed align-items=center, gap=12px (DS uni-cell сам не задаёт).
   - Футер «Закрыть»: `button-container __style-secondary` (НЕ primary). bg=rgba(131,102,86,0.12) серо-беж, color чёрный (был primary).
+
+## Шторка «Фон» (#bgSheet, выбор фона обложки) — profile.html, рабочее дерево (НЕ закоммичено), проверено 2026-06-16
+- Файлы: `new-vision/profile.html` (M) + `new-vision/new-vision.css` (M) + новый `new-vision/components/nv-bg-sheet.css`.
+- Открытие: ТАП по `.nv-pr-cover`, ТОЛЬКО при data-view=self. Bail-гард на `button, a, label, input, .nv-pr-switch, [data-bonsai-open]`.
+  Удобный таргет пустой области = центр `.nv-pr-cover__sub` (подпись под именем) — НЕ ловит интерактив. Открыл → класс `__open` на #bgSheet.
+- Сетка `.nv-bg-grid[data-pick-group=bg-cover]`: 12 `.nv-pick`, grid 4 колонки. picks[0]=`.nv-pick.__none.__selected` data-bg="none" ⊘.
+  Свотчи по data-bg: персик #F4C7AE, сакура(illus 🌸) linear-gradient, тёмный #3A2A24(data-dark=1), фиолет #9B72CF(dark), зелёный #3E7D44(dark), салат #DCEBCF, ЛИЛОВЫЙ #E7DAF5(light), розовый #F8D9DF, коралл #F0532A(dark), сирень #8E86F0(dark), синий #3E86F5(dark).
+- Превью: click по свотчу → `paintCover` сразу красит `coverEl.style.background`; data-dark=1 → класс `.__bg-dark` (текст белый rgb(255,255,255)), без dark → текст чёрный. Radio: ровно одна `.nv-pick.__selected`.
+- «Сохранить» `[data-bg-save]` (footer __style-primary) → пишет sessionStorage `nv-cover-bg` + `nv-cover-bg-dark` ('0'/'1'), none → removeItem; закрывает шторку, обложка остаётся.
+- «Закрыть»/✕/overlay/Esc (все `[data-sheet-close]`) → `applySavedBg()` ОТКАТ превью к сохранённому + close. (footer кнопка [1] = __style-secondary «Закрыть», вертикально под «Сохранить», stacking подтверждён.)
+- Навбар как у бонсая: ✕ слева (closeLeft<titleLeft), title «Фон».
+- Переключение вида: friend/stranger → `coverEl.style.background=''` + снят __bg-dark → CSS-оранжевый radial-gradient (computed bgColor rgba(0,0,0,0), bgImage radial-gradient оранж). Назад на self → applySavedBg() восстанавливает сохранённый. paintCover игнорит не-self (гард по data-view).
+- Все 6 сценариев PASS: открытие тапом по подписи, контент(12/4кол/2 кнопки), лиловый превью rgb(231,218,245)+1 selected, save→ss=#E7DAF5/dark0, тёмный превью+__bg-dark+откат к лиловому, friend оранж без инлайна + назад к лиловому.
