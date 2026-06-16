@@ -1,0 +1,200 @@
+/**
+ * OK Design System — StoriesRow
+ *
+ * Горизонтальный ряд аватарок-сториз под навбаром (вне ленты-острова).
+ * Кружки — DS-компонент .avatar (__size-56 + __ring-active/__ring-viewed).
+ * Первая аватарка опционально — «Ваша история» с «+»-аддоном.
+ *
+ *   <div class="stories-row">
+ *     <!-- Своя история (orange ring + «+») -->
+ *     <div class="avatar __size-56 __type-image __ring-active __has-addon"
+ *          data-skip-viewer>
+ *       <img src="…">
+ *       <div class="avatar__addon __pos-br stories-row__add">
+ *         <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
+ *       </div>
+ *     </div>
+ *
+ *     <!-- Сториз друга — открывает viewer. Количество палочек прогресса в
+ *          viewer'е = data-stories. data-cta-label (опц.) рендерит кнопку
+ *          снизу сториз. -->
+ *     <div class="avatar __size-56 __type-image __ring-active"
+ *          data-stories="3" data-name="Лиза"
+ *          data-cta-label="Поздравить">
+ *       <img src="…">
+ *     </div>
+ *
+ *     <!-- Сториз именинника: data-bday включает радужное кольцо
+ *          (один цикл вращения при открытии ленты) и 🎂-бейдж.
+ *          В viewer'е MomentViewer рендерит именинный шаблон. -->
+ *     <div class="avatar __size-56 __type-image __ring-active __has-addon"
+ *          data-bday data-stories="1" data-name="Лиза">
+ *       <img src="…">
+ *       <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
+ *     </div>
+ *     …
+ *   </div>
+ *
+ * Кольцо: зазор (orbit) 3px и штрих 3px — отличается от DS-дефолта для
+ * size-56 (offset 4 / толщина 2), даём более «инстаграмное» кольцо.
+ * Аватарка получает margin 6, чтобы orbit реально занимал место в потоке
+ * (outline сам по себе не двигает соседей).
+ */
+
+.stories-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  /* отступы блока: сверху 8, по бокам 16, снизу 16. Верт. паддинг также
+     даёт место outline-кольцу и аддону «+», чтобы их не резал скролл-
+     контейнер (overflow-x:auto → overflow-y:auto). */
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* В flex-column родителе (например .phone-frame__feed) ряд аватарок
+     не должен сжиматься: иначе аватарки 56 + orbit 6 не помещаются и
+     обрезаются. */
+  flex-shrink: 0;
+  min-height: 92px; /* padding 8+16 + avatar 56 + margin 6+6 = 92 */
+}
+.stories-row::-webkit-scrollbar { display: none; }
+
+/* Кольцо историй — orbit 3px + штрих 3px (вместо DS-дефолта 4/2 для size-56) */
+.stories-row .avatar.__size-56.__ring-active,
+.stories-row .avatar.__size-56.__ring-viewed {
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+/* outline не занимает место в потоке — выносим орбиту в layout через margin */
+.stories-row .avatar.__size-56 {
+  margin: var(--space-1-5);
+  cursor: pointer;
+}
+
+/* Open viewer — лёгкий бамп при тапе */
+.stories-row .avatar:not([data-skip-viewer]):active {
+  transform: scale(0.95);
+}
+
+/* «+»-бейдж добавления своей истории — оранжевый кружок в белой обводке */
+.stories-row__add {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--static-surface-status-accent);
+  border: 3px solid var(--dynamic-surface-base-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stories-row__add img { filter: brightness(0) invert(1); }
+
+/* Позиция бейджа — относительно кольцевой «коробки» (ава + орбита 3 + штрих 3 = 6px):
+   торчит на 3px за правую границу кольца, снизу — заподлицо с кольцом. */
+.stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__add {
+  top: auto;
+  bottom: -6px;
+  right: -9px;
+}
+
+/* ============================================================
+   BIRTHDAY — радужное кольцо + 🎂-бейдж.
+   Кольцо: conic-gradient на ::before в форме «бублика» (mask с
+   xor композитингом). При маунте (= открытии ленты) делаем один
+   оборот вращения, после чего радуга «застывает» в финальном
+   положении. Базовый orange outline у такой аватарки гасим, чтобы
+   не накладывался поверх радуги.
+   ============================================================ */
+.stories-row .avatar.__size-56[data-bday].__ring-active {
+  outline: none;
+}
+.stories-row .avatar.__size-56[data-bday]::before {
+  content: '';
+  position: absolute;
+  /* Совпадает с orbit (3px) + штрих (3px) DS-кольца */
+  inset: -6px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be,
+    #007aff, #5856d6, #af52de, #ff2d92, #ff3b30
+  );
+  /* «Бублик» через xor: маска показывает только padding-кольцо */
+  -webkit-mask: linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: stories-bday-ring 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) 1;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Картинка/иконка аватарки — над радужным кольцом */
+.stories-row .avatar.__size-56[data-bday] > img,
+.stories-row .avatar.__size-56[data-bday] > .icon {
+  position: relative;
+  z-index: 1;
+}
+.stories-row .avatar.__size-56[data-bday] .avatar__addon {
+  z-index: 2;
+}
+
+@keyframes stories-bday-ring {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* 🎂-бейдж — оранжевый кружок в белой обводке с эмодзи внутри.
+   Геометрия — как у stories-row__add, но без иконки-картинки. */
+.stories-row__bday-badge {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--static-surface-status-accent);
+  border: 3px solid var(--dynamic-surface-base-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+}
+.stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__bday-badge {
+  top: auto;
+  bottom: -6px;
+  right: -9px;
+}
+
+/* ============================================================
+   COUPLE — двойная аватарка (для сториз пары, например «годовщина дружбы»).
+   Внутри .avatar (любого размера) лежат две .stories-row__face — круги по
+   64% от размера контейнера, в верхнем-левом и нижнем-правом углах с
+   небольшим overlap. Работает и в карусели (56px), и в шапке viewer'а
+   (36/24px) — размеры считаются от родителя через %.
+   ============================================================ */
+.avatar.stories-row__couple {
+  background-color: transparent;
+  overflow: visible;
+}
+.stories-row__face {
+  position: absolute;
+  width: 64%;
+  height: 64%;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--dynamic-surface-base-secondary, #fff);
+  box-sizing: border-box;
+}
+.stories-row__face:first-of-type {
+  top: 0;
+  left: 0;
+}
+.stories-row__face:last-of-type {
+  bottom: 0;
+  right: 0;
+}
