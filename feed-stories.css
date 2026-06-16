@@ -1,0 +1,49 @@
+/**
+ * OK Design System — FeedStories (Stories-like)
+ *
+ * Горизонтальная карусель аватаров-моментов с кольцами.
+ *
+ *   <article class="feed-stories island">
+ *     <nav class="breadcrumbs ds-body-m">…Дача > Сейчас на даче…</nav>
+ *     <div class="feed-stories__list">
+ *       <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption">
+ *         <img>
+ *         <div class="avatar__addon __pos-br">…+…</div>
+ *         <div class="avatar__caption">Ваш момент</div>
+ *       </div>
+ *       <div class="avatar __size-56 __type-image __ring-active __has-caption">
+ *         <img>
+ *         <div class="avatar__caption">Елена</div>
+ *       </div>
+ *       …
+ *     </div>
+ *   </article>
+ */
+
+.feed-stories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+/* Горизонтальные паддинги — на детях, кроме скроллера (он сам кладёт 16) */
+.feed-stories > :not(.feed-stories__list) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Горизонтальный скроллер аватаров — edge-to-edge внутри острова,
+   с внутренним padding-left 16 для первой стори. */
+.feed-stories__list {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 4px var(--space-4);
+}
+.feed-stories__list::-webkit-scrollbar { display: none; }
+
+.feed-stories__list > .avatar {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 72px;
+}

@@ -1,0 +1,332 @@
+/**
+ * OK Design System — Button Component
+ * Source: design-system/components/Button/Button/Button.styl
+ *
+ * STATES:
+ *   .__state-loading   — shimmer sweep, cursor: progress
+ *   .__state-disabled  — opacity 0.36, cursor: not-allowed
+ *   .__state-highlighted — diagonal light sweep animation
+ *   .__state-timered   — radial expand animation (with --timered-animation-duration)
+ *   :hover             — overlay opacity 0.12
+ *   :active / .__clicked — overlay opacity 0.16, wrapper scale(0.95)
+ *
+ * SIZES:   .__size-56 | .__size-44 | .__size-36 | .__size-28
+ * STYLES:  .__style-primary | .__style-secondary | .__style-tertiary
+ *          .__style-primary-on-color | .__style-negative | .__style-destructive | .__style-custom
+ *
+ * MODIFIERS:
+ *   .__icon — apply when the button content contains an .icon. Forces the
+ *             icon to the size canonical for the button height:
+ *             56→20, 44→20, 36→16, 28→14.
+ */
+
+/* ============================================================
+   WRAPPER — handles scale on press
+   ============================================================ */
+.button-wrapper {
+  position: relative;
+  display: inline-block;
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+.button-wrapper.__full-width {
+  flex: 1 0 0;
+}
+
+/* Press animation on wrapper */
+.button-wrapper:not(.__state-loading):not(.__state-disabled):active,
+.button-wrapper:not(.__state-loading):not(.__state-disabled).__clicked {
+  transform: scale(0.95);
+}
+
+/* ============================================================
+   SIZE VARIANTS
+   ============================================================ */
+.button-wrapper.__size-56 { --button-border-radius: 16px; --button-icon-size: 20px; }
+.button-wrapper.__size-56 .button-container {
+  height: 56px;
+  padding: 0 16px;
+  --button-content-gap: 8px;
+}
+
+.button-wrapper.__size-44 { --button-border-radius: 15px; --button-icon-size: 20px; }
+.button-wrapper.__size-44 .button-container {
+  height: 44px;
+  padding: 0 16px;
+  --button-content-gap: 8px;
+}
+
+.button-wrapper.__size-36 { --button-border-radius: 12px; --button-icon-size: 16px; }
+.button-wrapper.__size-36 .button-container {
+  height: 36px;
+  padding: 0 12px;
+  --button-content-gap: 6px;
+}
+
+.button-wrapper.__size-28 { --button-border-radius: 10px; --button-icon-size: 16px; }
+.button-wrapper.__size-28 .button-container {
+  height: 28px;
+  padding: 0 10px;
+  --button-content-gap: 4px;
+}
+
+/* When the icon modifier is on, force the inner .icon to the size-canonical
+   value above (overrides any .icon.__size-N class on the same element). */
+.button-container.__icon .icon {
+  width: var(--button-icon-size);
+  height: var(--button-icon-size);
+}
+
+/* ============================================================
+   CONTAINER — background, colors, overlay
+   ============================================================ */
+.button-container {
+  --button-color: inherit;
+  --button-background-color: transparent;
+  --overlay-color: var(--button-color);
+  --overlay-opacity: 0;
+  --button-content-gap: 0px;
+
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  max-width: 100%;
+  line-height: 0;
+  border: 0;
+  background-color: var(--button-background-color);
+  border-radius: var(--button-border-radius, 15px);
+  color: var(--button-color);
+  text-decoration: none;
+  font-family: Onest, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   STYLE VARIANTS
+   ============================================================ */
+
+/* Primary — orange fill, white text */
+.button-container.__style-primary {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  --button-background-color: var(--static-surface-status-accent);
+}
+
+/* Secondary — translucent bg, theme text */
+.button-container.__style-secondary {
+  --button-color: var(--dynamic-text-and-icons-base-primary);
+  --button-background-color: var(--dynamic-surface-contrast-low);
+  --overlay-color: var(--dynamic-surface-special-overlay);
+}
+
+/* Tertiary — transparent, theme text */
+.button-container.__style-tertiary {
+  --button-color: var(--dynamic-text-and-icons-base-primary);
+  --button-background-color: transparent;
+  --overlay-color: var(--dynamic-surface-special-overlay);
+}
+
+/* Primary on color — dark bg, dark text */
+.button-container.__style-primary-on-color {
+  --button-color: var(--base-black-100);
+  --button-background-color: var(--static-surface-base-inverse-primary);
+}
+
+/* On image — translucent dark bg, white text. Для пилюль поверх медиа
+   (клип, фото и т.п.), где обычный secondary сливается с подложкой. */
+.button-container.__style-on-image {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  --button-background-color: var(--static-surface-special-layer-tertiary);
+}
+
+/* Negative — red tint bg, red text */
+.button-container.__style-negative {
+  --button-color: var(--dynamic-text-and-icons-status-negative);
+  --button-background-color: var(--static-surface-status-contrast-negative);
+}
+
+/* Destructive — red fill, white text */
+.button-container.__style-destructive {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  --button-background-color: var(--static-surface-status-negative);
+}
+
+/* Custom — all values from CSS vars */
+.button-container.__style-custom {
+  --button-color: var(--button-custom-text-color);
+  --button-background-color: var(--button-custom-background-color);
+  --overlay-color: var(--button-custom-overlay-color, var(--button-color));
+}
+
+/* ============================================================
+   HOVER / PRESS OVERLAY (::after pseudo)
+   ============================================================ */
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--button-border-radius, 15px);
+  background-color: var(--overlay-color);
+  opacity: var(--overlay-opacity);
+  transition: opacity 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+  pointer-events: none;
+}
+
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled):hover {
+  --overlay-opacity: 0.12;
+  color: var(--button-color);
+}
+
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled):active,
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled).__clicked {
+  --overlay-opacity: 0.16;
+}
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled):active::after,
+.button-container:not(:disabled):not(.__state-loading):not(.__state-disabled).__clicked::after {
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+/* ============================================================
+   STATE: LOADING — shimmer sweep
+   ============================================================ */
+.button-container.__state-loading {
+  cursor: progress;
+}
+.button-container.__style-secondary.__state-loading {
+  position: relative;
+  overflow: hidden;
+}
+.button-container.__style-secondary.__state-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.33%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--overlay-color) 50.5%,
+    transparent 100%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}
+
+/* ============================================================
+   STATE: DISABLED
+   ============================================================ */
+.button-container.__state-disabled,
+.button-container:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+/* ============================================================
+   STATE: TIMERED — radial expand from center
+   ============================================================ */
+.button-container.__state-timered {
+  position: relative;
+  overflow: hidden;
+}
+.button-container.__state-timered::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  box-sizing: border-box;
+  width: 200%;
+  padding-bottom: 200%;
+  border-radius: 50%;
+  background-color: var(--overlay-color);
+  opacity: 0.16;
+  transform: translateY(-50%) scale(0, 0);
+  animation: ds-timered var(--timered-animation-duration, 3s) linear;
+}
+
+/* ============================================================
+   STATE: HIGHLIGHTED — diagonal light sweep
+   ============================================================ */
+.button-container.__state-highlighted {
+  position: relative;
+  overflow: hidden;
+}
+.button-container.__state-highlighted::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    -45deg,
+    transparent 0%, transparent 25%,
+    currentColor 50%,
+    transparent 75%, transparent 100%
+  );
+  opacity: 0.3;
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  animation: ds-highlighted 1.2s linear infinite;
+}
+
+/* ============================================================
+   FOCUS
+   ============================================================ */
+.button-container:focus-visible {
+  outline: none;
+}
+.button-container:focus-visible + .button-outline {
+  position: absolute;
+  inset: 0;
+  outline: var(--static-stroke-special-focus) solid 3px;
+  outline-offset: 2px;
+  border-radius: var(--button-border-radius, 15px);
+  pointer-events: none;
+}
+
+/* ============================================================
+   INTERACT AREA (min tap target 44px)
+   ============================================================ */
+.button-interact-area {
+  position: relative;
+  background: none;
+  cursor: pointer;
+}
+.button-interact-area::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 44px;
+  min-height: 44px;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--button-border-radius, 15px);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.button-interact-area.__state-loading { cursor: progress; }
+.button-interact-area.__state-disabled { cursor: not-allowed; }
+
+/* ============================================================
+   CONTENT & LOADER
+   ============================================================ */
+.button-content {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.button-content.__loading {
+  visibility: hidden;
+}
+.button-loader-container {
+  position: absolute;
+  inset: 0;
+}

@@ -1,0 +1,82 @@
+/**
+ * OK Design System — AvatarsView
+ *
+ * Стек аватарок (с лёгким overlap'ом) + текст справа.
+ * Обычно используется для «N друзей сделали X», участники чата, и т.д.
+ *
+ *   <div class="avatars-view">
+ *     <div class="avatars-view__stack">
+ *       <div class="avatar __size-24 __type-image"><img …></div>
+ *       <div class="avatar __size-24 __type-image"><img …></div>
+ *       <div class="avatars-view__more">+3</div>
+ *     </div>
+ *     <span class="avatars-view__text">12 друзей поздравило</span>
+ *   </div>
+ *
+ * Каждый следующий ребёнок стека наезжает на предыдущий на 8px и обведён
+ * белым контуром (фон острова) — визуально читается как стопка.
+ */
+
+.avatars-view {
+  /* размеры по умолчанию — __size-24 */
+  --avatars-view-size:    24px;
+  --avatars-view-overlap: -8px;
+  --avatars-view-font:    var(--font-size-50);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Size modifiers — задают размер стека, «+N» и оверлап одновременно.
+   Размер самих аватарок задаётся отдельно на .avatar (__size-N). */
+.avatars-view.__size-16 { --avatars-view-size: 16px; --avatars-view-overlap: -4px;  --avatars-view-font: var(--font-size-50);  }
+.avatars-view.__size-20 { --avatars-view-size: 20px; --avatars-view-overlap: -6px;  --avatars-view-font: var(--font-size-50);  }
+.avatars-view.__size-24 { --avatars-view-size: 24px; --avatars-view-overlap: -8px;  --avatars-view-font: var(--font-size-50);  }
+.avatars-view.__size-36 { --avatars-view-size: 36px; --avatars-view-overlap: -10px; --avatars-view-font: var(--font-size-100); }
+.avatars-view.__size-44 { --avatars-view-size: 44px; --avatars-view-overlap: -12px; --avatars-view-font: var(--font-size-100); }
+.avatars-view.__size-56 { --avatars-view-size: 56px; --avatars-view-overlap: -16px; --avatars-view-font: var(--font-size-200); }
+.avatars-view.__size-72 { --avatars-view-size: 72px; --avatars-view-overlap: -20px; --avatars-view-font: var(--font-size-300); }
+.avatars-view.__size-96 { --avatars-view-size: 96px; --avatars-view-overlap: -28px; --avatars-view-font: var(--font-size-500); }
+
+/* Layout-vertical — стек аватарок сверху, текст под ними */
+.avatars-view.__layout-vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.avatars-view__stack {
+  display: flex;
+  flex-shrink: 0;
+}
+.avatars-view__stack > * {
+  border: 2px solid var(--dynamic-surface-base-secondary);
+  box-sizing: content-box;
+}
+.avatars-view__stack > * + * {
+  margin-left: var(--avatars-view-overlap);
+}
+
+/* «+N» — круглая плашка в стиле аватарки */
+.avatars-view__more {
+  width: var(--avatars-view-size);
+  height: var(--avatars-view-size);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dynamic-surface-contrast-mid);
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-family: var(--font-family);
+  font-size: var(--avatars-view-font);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.avatars-view__text {
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-base-primary);
+}

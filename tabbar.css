@@ -1,0 +1,85 @@
+/**
+ * OK Design System — Tabbar (bottom)
+ *
+ * Fixed bottom bar for mobile prototypes. Holds icon items and a
+ * home-indicator handle. Comes in two platform variations:
+ *   .tabbar.__platform-ios       — iOS-style icon set (5 slots)
+ *   .tabbar.__platform-android   — Android-style icon set (7 slots)
+ *
+ * Icon set per slot is defined here (not inline in HTML), so swapping
+ * icons or platform composition is a single-file change.
+ *
+ * STATES per item: .__state-on (active, accent color)
+ *                  .__state-disabled
+ *                  .__clicked (scale 0.95)
+ */
+
+.tabbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  background-color: var(--dynamic-surface-base-secondary);
+  border-top: 1px solid var(--dynamic-stroke-contrast-low);
+}
+
+.tabbar__row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.tabbar-icon {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--dynamic-text-and-icons-base-tertiary);
+  cursor: pointer;
+  transition: color var(--ds-animation-duration) var(--ds-animation-easing),
+              var(--ds-transition-transform);
+}
+
+.tabbar-icon::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: var(--tabbar-icon-src) center / contain no-repeat;
+          mask: var(--tabbar-icon-src) center / contain no-repeat;
+}
+
+.tabbar-icon.__state-on {
+  color: var(--dynamic-text-and-icons-status-accent);
+}
+
+.tabbar-icon:not(.__state-disabled):active,
+.tabbar-icon:not(.__state-disabled).__clicked {
+  transform: scale(0.95);
+}
+
+.tabbar-icon.__state-disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   SLOT → ICON MAP
+   Single place to swap icons used by the tabbar.
+   ============================================================ */
+.tabbar-icon.__slot-feed       { --tabbar-icon-src: url('../assets/icons/feed_24.svg'); }
+.tabbar-icon.__slot-book       { --tabbar-icon-src: url('../assets/icons/book_24.svg'); }
+.tabbar-icon.__slot-message    { --tabbar-icon-src: url('../assets/icons/message_24.svg'); }
+.tabbar-icon.__slot-discussion { --tabbar-icon-src: url('../assets/icons/discussions_24.svg'); }
+.tabbar-icon.__slot-clip       { --tabbar-icon-src: url('../assets/icons/clips_24.svg'); }
+.tabbar-icon.__slot-menu       { --tabbar-icon-src: url('../assets/icons/menu_24.svg'); }
+
+.tabbar__handle {
+  width: 100%;
+  height: 24px;
+}

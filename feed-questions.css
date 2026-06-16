@@ -1,0 +1,79 @@
+/**
+ * OK Design System — FeedQuestions
+ *
+ * Карточка-карусель с вопросами от соседей. Горизонтальный скролл из
+ * .question-card'ов (мини-плашки на серой подложке).
+ *
+ *   <article class="feed-questions island">
+ *     <nav class="breadcrumbs ds-body-m">…Санкт-Петербург > Нужен совет…</nav>
+ *     <h2 class="feed-questions__title">Помогите ответом…</h2>
+ *     <div class="feed-questions__list">
+ *       <div class="question-card">…</div>
+ *       <div class="question-card">…</div>
+ *     </div>
+ *   </article>
+ */
+
+.feed-questions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+/* Горизонтальные паддинги — на детях, кроме скроллера (он сам кладёт 16) */
+.feed-questions > :not(.feed-questions__list) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+/* Тайтл/сабтайтл реализованы через .header __size-xl (см. header.css). */
+
+/* Горизонтальный скроллер карточек — edge-to-edge с padding-left 16 */
+.feed-questions__list {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 4px var(--space-4);
+}
+.feed-questions__list::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   QUESTION CARD — мини-плашка с вопросом соседа
+   ============================================================ */
+.question-card {
+  flex: 0 0 196px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 220px;
+  padding: var(--space-3);
+  background-color: var(--dynamic-surface-contrast-low);
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+.question-card__title {
+  font-family: var(--font-family);
+  font-size: var(--font-size-300);
+  line-height: var(--line-height-300);
+  font-weight: 600;
+  color: var(--dynamic-text-and-icons-base-primary);
+  flex: 1;
+}
+.question-card__category {
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+/* uni-cell внутри question-card — без своих паддингов */
+.question-card .uni-cell-wrapper {
+  --uni-cell-padding-left:   0;
+  --uni-cell-padding-right:  0;
+  --uni-cell-padding-top:    0;
+  --uni-cell-padding-bottom: 0;
+}
+.question-card .uni-cell {
+  align-items: center;
+  gap: 8px;
+}

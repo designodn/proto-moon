@@ -1,0 +1,168 @@
+/**
+ * OK Design System — ButtonCircle
+ * Source: Figma buttonCircle 1.1 (LYZAXE33pUg2cSL5mmUHYq, node 7306:60106)
+ *
+ * Круглая кнопка с иконкой по центру. Содержит border-radius: 50%, квадратные
+ * пропорции по размеру.
+ *
+ *   <div class="button-circle-wrapper __size-44 __style-primary">
+ *     <button class="button-circle">
+ *       <span class="icon __size-20 __src" style="--icon-src:url(…)"></span>
+ *     </button>
+ *   </div>
+ *
+ * SIZES:  .__size-16 | 20 | 24 | 36 | 44 | 56 | 72 | 96
+ * STYLES: .__style-primary | __style-secondary
+ *         .__style-primary-on-color | __style-secondary-on-color
+ *         .__style-floating | __style-on-image | __style-custom
+ * STATES: .__state-loading | .__state-disabled
+ */
+
+.button-circle-wrapper {
+  position: relative;
+  display: inline-flex;
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.button-circle-wrapper:not(.__state-loading):not(.__state-disabled):active,
+.button-circle-wrapper:not(.__state-loading):not(.__state-disabled).__clicked {
+  transform: scale(0.95);
+}
+
+/* ============================================================
+   SIZES — квадрат + иконка пропорционально
+   ============================================================ */
+.button-circle-wrapper.__size-16 { --button-circle-size: 16px; --button-circle-icon: 12px; }
+.button-circle-wrapper.__size-20 { --button-circle-size: 20px; --button-circle-icon: 16px; }
+.button-circle-wrapper.__size-24 { --button-circle-size: 24px; --button-circle-icon: 16px; }
+.button-circle-wrapper.__size-36 { --button-circle-size: 36px; --button-circle-icon: 20px; }
+.button-circle-wrapper.__size-44 { --button-circle-size: 44px; --button-circle-icon: 24px; }
+.button-circle-wrapper.__size-56 { --button-circle-size: 56px; --button-circle-icon: 24px; }
+.button-circle-wrapper.__size-72 { --button-circle-size: 72px; --button-circle-icon: 32px; }
+.button-circle-wrapper.__size-96 { --button-circle-size: 96px; --button-circle-icon: 40px; }
+
+/* ============================================================
+   BUTTON — круглая поверхность с иконкой по центру
+   ============================================================ */
+.button-circle {
+  --button-circle-bg:    transparent;
+  --button-circle-color: currentColor;
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width:  var(--button-circle-size, 44px);
+  height: var(--button-circle-size, 44px);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--button-circle-bg);
+  color: var(--button-circle-color);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background-color var(--ds-animation-duration) var(--ds-animation-easing),
+    color var(--ds-animation-duration) var(--ds-animation-easing);
+}
+.button-circle:focus-visible {
+  outline: var(--static-stroke-special-focus) solid 3px;
+  outline-offset: 2px;
+}
+
+/* Hover/press overlay через ::after */
+.button-circle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--dynamic-surface-special-overlay, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ds-animation-duration) var(--ds-animation-easing);
+}
+.button-circle:not(:disabled):hover::after { opacity: 0.12; }
+.button-circle:not(:disabled):active::after,
+.button-circle.__clicked::after { opacity: 0.16; }
+
+/* Иконка внутри — задаётся размером --button-circle-icon */
+.button-circle .icon {
+  width:  var(--button-circle-icon);
+  height: var(--button-circle-icon);
+}
+
+/* ============================================================
+   STYLES
+   ============================================================ */
+/* Primary — оранжевый акцент, белая иконка */
+.button-circle-wrapper.__style-primary .button-circle {
+  --button-circle-bg:    var(--static-surface-status-accent);
+  --button-circle-color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+/* Secondary — translucent контраст, иконка primary */
+.button-circle-wrapper.__style-secondary .button-circle {
+  --button-circle-bg:    var(--dynamic-surface-contrast-low);
+  --button-circle-color: var(--dynamic-text-and-icons-base-primary);
+}
+
+/* PrimaryOnColor — белая кнопка на цветном фоне, чёрная иконка */
+.button-circle-wrapper.__style-primary-on-color .button-circle {
+  --button-circle-bg:    var(--static-surface-base-inverse-primary);
+  --button-circle-color: var(--static-text-and-icons-base-primary);
+}
+
+/* SecondaryOnColor — белый translucent на цветном фоне */
+.button-circle-wrapper.__style-secondary-on-color .button-circle {
+  --button-circle-bg:    var(--static-surface-contrast-inverse-low);
+  --button-circle-color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+/* Floating — белая кнопка с тенью (FAB) */
+.button-circle-wrapper.__style-floating .button-circle {
+  --button-circle-bg:    var(--dynamic-surface-base-quaternary);
+  --button-circle-color: var(--dynamic-text-and-icons-base-primary);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* OnImage — тёмный translucent поверх медиа */
+.button-circle-wrapper.__style-on-image .button-circle {
+  --button-circle-bg:    var(--static-surface-special-layer-tertiary);
+  --button-circle-color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+/* Custom — пользовательские цвета через --button-circle-* */
+.button-circle-wrapper.__style-custom .button-circle {
+  --button-circle-bg:    var(--button-circle-custom-bg);
+  --button-circle-color: var(--button-circle-custom-color);
+}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+.button-circle.__state-disabled,
+.button-circle:disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.button-circle.__state-loading {
+  cursor: progress;
+  position: relative;
+}
+.button-circle.__state-loading > * { opacity: 0; }
+.button-circle.__state-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    currentColor 50%,
+    transparent 100%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}

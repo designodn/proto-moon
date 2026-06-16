@@ -1,0 +1,54 @@
+/**
+ * OK Design System — TextInput
+ *
+ * Single-line text field on a contrast-low pill. Inherits theme tokens
+ * so it works the same inside the comment bar, a search row, or a form.
+ *
+ * SIZES:   .__size-36  — body-m (15/20)
+ *          .__size-56  — body-l (17/24)
+ *          (border-radius = height / 4)
+ *
+ * STATES:  .__state-focused   — explicit highlighted state (e.g. while the
+ *                               surrounding wrapper is focus-within)
+ *          .__state-disabled  — non-interactive, dimmed
+ *
+ * USAGE:
+ *   <input class="text-input __size-36" placeholder="…">
+ */
+
+.text-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--space-4);
+  border: 0;
+  outline: none;
+  background-color: var(--dynamic-surface-contrast-low);
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-family: var(--font-family);
+  transition: background-color var(--ds-animation-duration) var(--ds-animation-easing);
+}
+
+.text-input.__size-36 {
+  height: 36px;
+  border-radius: 9px;
+}
+
+.text-input.__size-56 {
+  height: 56px;
+  border-radius: 14px;
+}
+
+.text-input::placeholder {
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+.text-input.__state-focused,
+.text-input:focus-visible {
+  background-color: var(--dynamic-surface-contrast-mid);
+}
+
+.text-input.__state-disabled,
+.text-input:disabled {
+  pointer-events: none;
+  opacity: var(--state-element-disabled, 0.36);
+}

@@ -1,0 +1,136 @@
+/**
+ * OK Design System — UniCard Component
+ * Source: design-system/components/UniCard/UniCard.styl
+ *
+ * UniCard is a vertical card (media + content + buttons).
+ * Used for video cards, group cards, product cards, etc.
+ *
+ * STATES:
+ *   .__state-enabled  — hover: cursor pointer + image zoom 1.02; press: scale(0.98)
+ *   .__state-disabled — pointer-events none
+ *   .__state-dragged  — shadow, cursor grabbing, scale(0.98)
+ *
+ * VIEWS:
+ *   .__has-background — заливка, бордер и внутренние паддинги контента.
+ *                       Без него карточка прозрачная, content flush с краями.
+ *
+ * SIZES:   .__size-160 | .__size-220 (default) | .__size-320 | .__size-custom
+ */
+
+/* ============================================================
+   WRAPPER — size tokens
+   ============================================================ */
+.uni-card-wrapper {
+  --padding-left:   var(--uni-card-padding-left, 0px);
+  --padding-right:  var(--uni-card-padding-right, 0px);
+  --padding-top:    var(--uni-card-padding-top, 0px);
+  --padding-bottom: var(--uni-card-padding-bottom, 0px);
+
+  --uni-card-gap-media-content: 8px;
+  --uni-card-gap-content-bottom: 4px;
+  --uni-card-gap-buttons: 8px;
+}
+
+.uni-card-wrapper.__size-160  { --uni-card-size: 160px; }
+.uni-card-wrapper.__size-220  { --uni-card-size: 220px; }
+.uni-card-wrapper.__size-320  { --uni-card-size: 320px; }
+.uni-card-wrapper.__size-custom { --uni-card-size: var(--uni-card-size-custom, 220px); }
+
+/* ============================================================
+   CARD — the interactive surface
+   ============================================================ */
+.uni-card {
+  --uni-card-radius-top:     20px;
+  --uni-card-content-padding: 12px;
+  --uni-card-button-radius:   12px;
+  --uni-card-radius-bottom:   calc(var(--uni-card-button-radius) + var(--uni-card-content-padding));
+
+  display: block;
+  padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+  border-radius: var(--uni-card-radius-top) var(--uni-card-radius-top)
+                 var(--uni-card-radius-bottom) var(--uni-card-radius-bottom);
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+/* ============================================================
+   VIEW: HAS-BACKGROUND — fill + border + content padding.
+   Без модификатора карточка остаётся прозрачной без бордера,
+   а контент прижат к краям (нужно, например, для медиа во всю ширину).
+   ============================================================ */
+.uni-card.__has-background {
+  border: 0.5px solid var(--dynamic-stroke-contrast-low);
+  background-color: var(--dynamic-surface-base-secondary);
+}
+
+.uni-card:focus-visible {
+  outline: var(--static-stroke-special-focus) solid 3px;
+  outline-offset: 8px;
+  transition: none;
+}
+
+/* ============================================================
+   STATE: ENABLED — hover zoom image, press shrink card
+   ============================================================ */
+.uni-card.__state-enabled {
+  cursor: pointer;
+}
+.uni-card.__state-enabled:hover .uni-card-media img {
+  transform: scale(1.02);
+}
+.uni-card.__state-enabled:active,
+.uni-card.__state-enabled.__clicked {
+  transform: scale(0.98);
+}
+
+/* ============================================================
+   STATE: DRAGGED — floating card
+   ============================================================ */
+.uni-card.__state-dragged {
+  padding: var(--uni-card-padding-top, 16px)
+           var(--uni-card-padding-right, 16px)
+           var(--uni-card-padding-bottom, 16px)
+           var(--uni-card-padding-left, 16px);
+  border-radius: calc(var(--uni-card-radius-top) + 12px) calc(var(--uni-card-radius-top) + 12px)
+                 calc(var(--uni-card-radius-bottom) + 12px) calc(var(--uni-card-radius-bottom) + 12px);
+  box-shadow: 0px 8px 24px -8px var(--base-black-lena-translucent-12);
+  cursor: grabbing;
+  user-select: none;
+  background-color: var(--dynamic-surface-base-secondary);
+  transform: scale(0.98);
+}
+
+/* ============================================================
+   STATE: DISABLED
+   ============================================================ */
+.uni-card.__state-disabled {
+  pointer-events: none;
+}
+
+/* ============================================================
+   MEDIA — image area with hover zoom
+   ============================================================ */
+.uni-card-media {
+  width: var(--uni-card-size, 220px);
+  overflow: hidden;
+  margin-bottom: var(--uni-card-gap-media-content, 8px);
+}
+
+.uni-card-media img {
+  display: block;
+  width: 100%;
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+/* ============================================================
+   CONTENT — text + button area below media.
+   Default padding equals --uni-card-content-padding на all sides,
+   так что нижний радиус карточки (button-radius + content-padding)
+   получается концентричным к кнопке внутри.
+   ============================================================ */
+.uni-card-content {
+  width: var(--uni-card-size, 220px);
+  box-sizing: border-box;
+}
+.uni-card.__has-background .uni-card-content {
+  padding: var(--uni-card-content-padding);
+}

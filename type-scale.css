@@ -1,0 +1,115 @@
+/**
+ * OK Design System — Type Scale Override (iOS Dynamic Type "xxLarge" / 2XL)
+ *
+ * Активируется классом `.__type-scale-2xl` на <html>.
+ *
+ * Источник истины для типографики — `.ds-*` утилиты в tokens.css.
+ * Здесь мы переопределяем те же самые comma-группы, что и в tokens.css,
+ * увеличивая значения до соответствующего шага iOS Dynamic Type
+ * xxLarge (2XL):
+ *   caption-m 13 → 17,  body-m / title-s 15 → 19,
+ *   body-l / title-m 17 → 21,  title-l 21 → 25, title-xl 27 → 31,
+ *   display-xl 56 → 63.
+ *
+ * Иконки масштабируются ~×1.25 (соразмерно body 17 → 21).
+ *
+ * Override-слой, подключается ПОСЛЕ всех компонентов в index.css.
+ */
+
+/* ============================================================
+   TYPOGRAPHY TOKENS — для компонентов, читающих var(--font-size-N)
+   (tag, comment, island, avatars-view, feed-questions, media …).
+   .ds-* утилиты ниже переопределяются явно через comma-группы.
+   ============================================================ */
+.__type-scale-2xl {
+  --font-size-50:  15px;
+  --font-size-100: 17px;
+  --font-size-200: 19px;
+  --font-size-300: 21px;
+  --font-size-400: 25px;
+  --font-size-500: 28px;
+  --font-size-600: 31px;
+  --font-size-700: 35px;
+  --font-size-800: 39px;
+  --font-size-2000: 63px;
+
+  --line-height-50:  20px;
+  --line-height-100: 20px;
+  --line-height-200: 24px;
+  --line-height-300: 28px;
+  --line-height-400: 32px;
+  --line-height-500: 36px;
+  --line-height-600: 40px;
+  --line-height-700: 44px;
+  --line-height-2000: 80px;
+}
+
+/* ============================================================
+   TYPOGRAPHY — comma-группы дублируют tokens.css 1-в-1
+   ============================================================ */
+.__type-scale-2xl .ds-display-xl  { font-size: 63px; line-height: 80px; }
+.__type-scale-2xl .ds-display-m   { font-size: 28px; line-height: 32px; }
+
+.__type-scale-2xl .ds-title-xl,
+.__type-scale-2xl .header.__size-xl .header__title { font-size: 31px; line-height: 40px; }
+
+.__type-scale-2xl .ds-title-l,
+.__type-scale-2xl .header.__size-l .header__title  { font-size: 25px; line-height: 32px; }
+
+.__type-scale-2xl .ds-title-m,
+.__type-scale-2xl .header.__size-m .header__title,
+.__type-scale-2xl .button-wrapper.__size-56 .button-container,
+.__type-scale-2xl .button-wrapper.__size-44 .button-container,
+.__type-scale-2xl .nav-bar__title { font-size: 21px; line-height: 28px; }
+
+.__type-scale-2xl .ds-title-s,
+.__type-scale-2xl .header.__size-s .header__title,
+.__type-scale-2xl .button-wrapper.__size-36 .button-container,
+.__type-scale-2xl .ll-publish-btn .button-container { font-size: 19px; line-height: 24px; }
+
+.__type-scale-2xl .ds-body-l,
+.__type-scale-2xl .header.__size-xl .header__subtitle,
+.__type-scale-2xl .header.__size-l  .header__subtitle,
+.__type-scale-2xl .button-inline.__size-24,
+.__type-scale-2xl .button-inline.__size-32,
+.__type-scale-2xl .text-input.__size-56 { font-size: 21px; line-height: 28px; }
+
+.__type-scale-2xl .ds-body-m,
+.__type-scale-2xl .header.__size-m .header__subtitle,
+.__type-scale-2xl .header.__size-s .header__subtitle,
+.__type-scale-2xl .button-inline.__size-20,
+.__type-scale-2xl .text-input.__size-36 { font-size: 19px; line-height: 24px; }
+
+.__type-scale-2xl .ds-caption-m,
+.__type-scale-2xl .button-inline.__size-16 { font-size: 17px; line-height: 20px; }
+
+.__type-scale-2xl .ds-caption-m-accent,
+.__type-scale-2xl .button-wrapper.__size-28 .button-container { font-size: 17px; line-height: 20px; }
+
+.__type-scale-2xl .ds-caption-s,
+.__type-scale-2xl .ds-caption-s-accent { font-size: 15px; line-height: 20px; }
+
+/* ============================================================
+   ICON SIZE MODIFIERS — proportional ~×1.25
+   ============================================================ */
+.__type-scale-2xl .icon.__size-8   { width: 10px; height: 10px; }
+.__type-scale-2xl .icon.__size-12  { width: 15px; height: 15px; }
+.__type-scale-2xl .icon.__size-16  { width: 20px; height: 20px; }
+.__type-scale-2xl .icon.__size-20  { width: 25px; height: 25px; }
+.__type-scale-2xl .icon.__size-24  { width: 30px; height: 30px; }
+.__type-scale-2xl .icon.__size-28  { width: 35px; height: 35px; }
+.__type-scale-2xl .icon.__size-32  { width: 40px; height: 40px; }
+.__type-scale-2xl .icon.__size-36  { width: 45px; height: 45px; }
+.__type-scale-2xl .icon.__size-40  { width: 50px; height: 50px; }
+.__type-scale-2xl .icon.__size-44  { width: 55px; height: 55px; }
+.__type-scale-2xl .icon.__size-48  { width: 60px; height: 60px; }
+.__type-scale-2xl .icon.__size-56  { width: 70px; height: 70px; }
+
+/* Иконки lenta-light: <img class="ll-icon" width="N" height="N"> —
+   квадратные иконки масштабируются по атрибутам width/height.
+   Прямоугольные глифы статус-бара (16×12, 17×12, 25×12) не трогаем. */
+.__type-scale-2xl .ll-icon[width="16"][height="16"] { width: 20px; height: 20px; }
+.__type-scale-2xl .ll-icon[width="20"][height="20"] { width: 25px; height: 25px; }
+.__type-scale-2xl .ll-icon[width="24"][height="24"] { width: 30px; height: 30px; }
+.__type-scale-2xl .ll-icon[width="28"][height="28"] { width: 35px; height: 35px; }
+.__type-scale-2xl .ll-icon[width="32"][height="32"] { width: 40px; height: 40px; }

@@ -1,0 +1,61 @@
+/**
+ * OK Design System — PulseDot
+ *
+ * Animated indicator (round dot with two outward-radiating rings).
+ * Used to draw attention to live/now activity (e.g. "Вокруг вас сейчас").
+ *
+ * SIZES:  .__size-8 | .__size-12 (default) | .__size-16
+ * VIEWS:  .__view-accent (default, orange) | .__view-positive | .__view-info
+ *         .__view-negative | .__view-attention | .__view-custom
+ *
+ * STATES: .__state-paused — stops animation (useful for skeletons)
+ */
+
+@keyframes ds-pulse-dot {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.pulse-dot {
+  --pulse-dot-size: 12px;
+  --pulse-dot-color: var(--static-surface-status-accent);
+
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--pulse-dot-size);
+  height: var(--pulse-dot-size);
+  border-radius: 50%;
+  background-color: var(--pulse-dot-color);
+}
+
+.pulse-dot::before,
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: var(--pulse-dot-color);
+  animation: ds-pulse-dot 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+.pulse-dot::after { animation-delay: 0.25s; }
+
+/* Sizes */
+.pulse-dot.__size-8  { --pulse-dot-size: 8px; }
+.pulse-dot.__size-12 { --pulse-dot-size: 12px; }
+.pulse-dot.__size-16 { --pulse-dot-size: 16px; }
+
+/* Views (semantic colors) */
+.pulse-dot.__view-accent    { --pulse-dot-color: var(--static-surface-status-accent); }
+.pulse-dot.__view-positive  { --pulse-dot-color: var(--static-surface-status-positive); }
+.pulse-dot.__view-info      { --pulse-dot-color: var(--static-surface-status-info); }
+.pulse-dot.__view-negative  { --pulse-dot-color: var(--static-surface-status-negative); }
+.pulse-dot.__view-attention { --pulse-dot-color: var(--static-surface-status-attention); }
+.pulse-dot.__view-custom    { --pulse-dot-color: var(--pulse-dot-custom-color); }
+
+/* Paused */
+.pulse-dot.__state-paused::before,
+.pulse-dot.__state-paused::after {
+  animation-play-state: paused;
+  opacity: 0;
+}

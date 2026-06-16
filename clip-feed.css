@@ -1,0 +1,107 @@
+/**
+ * OK Design System — ClipFeed
+ *
+ * Карточка с full-bleed видео-клипом (9:16) и оверлеями поверх:
+ * шапка автора сверху, mute-индикатор у правого края, actions-bar
+ * с тёмными пилюлями (__style-on-image) внизу.
+ *
+ * Используется в lenta-light и других облегчённых лентах. В отличие
+ * от text-feed не оборачивается в .island — у клипа свой radius и
+ * фон, а padding обнуляется в пользу absolute-позиционирования
+ * оверлеев.
+ *
+ * Структура:
+ *
+ *   <article class="clip-feed">
+ *     <div class="clip-feed__media">
+ *       <img src="…poster…">                              <!-- или <video> -->
+ *     </div>
+ *
+ *     <div class="clip-feed__header">
+ *       <div class="avatar __size-44 __type-image"><img …></div>
+ *       <div class="clip-feed__txt">
+ *         <div class="ds-title-s">Александра Борщицкий</div>
+ *         <div class="ds-caption-s clip-feed__time">12:48</div>
+ *       </div>
+ *     </div>
+ *
+ *     <div class="clip-feed__mute" aria-hidden="true">🔇</div>
+ *
+ *     <div class="actions-bar clip-feed__actions">
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-on-image">…</button></div>
+ *       …
+ *       <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-on-image">…</button></div>
+ *     </div>
+ *   </article>
+ *
+ * Пилюли — стандартные button __size-36 __style-on-image
+ * (см. button.css): фон --static-surface-special-layer-tertiary
+ * (rgba(0,0,0,0.56)), цвет и иконки белые через currentColor.
+ */
+
+.clip-feed {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  background-color: var(--dynamic-surface-base-secondary);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Full-bleed подложка — видео-постер или само видео */
+.clip-feed__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.clip-feed__media img,
+.clip-feed__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Шапка автора — верхний оверлей, текст в инверсном (белом) цвете. */
+.clip-feed__header {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+.clip-feed__txt {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.clip-feed__time {
+  color: var(--static-text-and-icons-base-inverse-secondary);
+}
+
+/* Actions-bar поверх видео — нижний оверлей, gap как в text-feed. */
+.clip-feed__actions {
+  position: absolute;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  gap: var(--space-2);
+}
+
+/* Mute-индикатор справа у нижнего края, чуть выше actions-bar. */
+.clip-feed__mute {
+  position: absolute;
+  right: var(--space-4);
+  bottom: 68px;
+  z-index: 2;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.32));
+}

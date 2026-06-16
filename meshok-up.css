@@ -1,0 +1,112 @@
+/**
+ * OK Design System — MeshokUp
+ *
+ * Sticky top chrome: status-bar + nav-bar + tabs.
+ * Закруглён снизу на 20px, чтобы совпадать с островами в фиде.
+ *
+ *   <div class="meshok-up">
+ *     <div class="status-bar">…</div>
+ *     <div class="nav-bar">…</div>
+ *     <div class="tabs">…</div>
+ *   </div>
+ */
+
+.meshok-up {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+  background-color: var(--dynamic-surface-base-secondary);
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.status-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 var(--space-5) var(--space-2);
+  background-color: var(--dynamic-surface-base-secondary);
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-family: var(--font-family);
+}
+
+.status-bar__time {
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.status-bar__indicators {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+/* ============================================================
+   NAV BAR
+   ============================================================ */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 var(--space-4);
+  background-color: var(--dynamic-surface-base-secondary);
+}
+
+.nav-bar__leading,
+.nav-bar__trailing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-bar__title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  color: var(--dynamic-text-and-icons-base-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   TYPE: FEED — навбар главного экрана ленты.
+   Слева аватар, справа inline-иконки (button-inline __size-24),
+   центрального тайтла нет.
+   ============================================================ */
+.nav-bar.__type-feed .nav-bar__trailing {
+  gap: var(--space-4);
+}
+
+/* ============================================================
+   TYPE: PUBLISH — навбар облегчённой ленты (lenta-light).
+   Без заливки: внутри только кнопка «Опубликовать» слева и
+   2 иконки справа. Фон даёт страница.
+   ============================================================ */
+.nav-bar.__type-publish {
+  height: auto;
+  padding: var(--space-2) var(--space-4);
+  background-color: transparent;
+}
+.nav-bar.__type-publish .nav-bar__trailing {
+  gap: var(--space-4);
+}
+
+/* ============================================================
+   TABS внутри MeshokUp — отступы 16 сверху / 8 снизу
+   ============================================================ */
+.meshok-up .tabs {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-2);
+}

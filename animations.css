@@ -1,0 +1,177 @@
+/**
+ * OK Design System — Animations & Transitions
+ * Source: @ok/ds-tokens build/mixins/base.styl
+ *
+ * Key timing function: cubic-bezier(0, -0.3, 0.5, 1.3) — springy, bouncy
+ * Default duration: 500ms
+ */
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES FOR ANIMATION
+   ============================================================ */
+:root {
+  --ds-animation-duration:         500ms;
+  --ds-animation-easing:           cubic-bezier(0, -0.3, 0.5, 1.3);
+  --ds-animation-easing-linear:    linear;
+  --ds-animation-easing-shimmer:   cubic-bezier(0.36, 0, 0.66, -0.56);
+
+  /* Shorthand helpers (name + duration + easing) */
+  --ds-transition-transform:  transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+  --ds-transition-opacity:    opacity  500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+  --ds-transition-opacity-slow: opacity 0.8s cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+/* Shimmer — loading skeleton sweep */
+@keyframes ds-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); opacity: 0; }
+}
+
+/* Highlighted — diagonal light sweep */
+@keyframes ds-highlighted {
+  0%   { background-position: 100% 100%; }
+  100% { background-position: 0 0; }
+}
+
+/* Timered — radial expand (used on button with timer) */
+@keyframes ds-timered {
+  0%   { transform: translateY(-50%) scale(0, 0); }
+  100% { transform: translateY(-50%) scale(1, 1); }
+}
+
+/* Activity cycle — fade+slide enter, hold, fade+slide leave */
+@keyframes ds-activity-cycle {
+  0%, 100% { opacity: 0; transform: translateY(8px); }
+  4%       { opacity: 1; transform: translateY(0); }
+  29%      { opacity: 1; transform: translateY(0); }
+  33%      { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ============================================================
+   ACTIVITY SLOT — карусель из uni-cell'ов в одном слоте.
+   Все дочерние ячейки стекаются в одну grid-ячейку и циклически
+   сменяют друг друга. Сейчас рассчитано на 3 строки.
+   ============================================================ */
+.ds-activity-slot {
+  display: grid;
+}
+.ds-activity-slot > * {
+  grid-area: 1 / 1;
+  opacity: 0;
+  animation: ds-activity-cycle 9s infinite cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.ds-activity-slot > :nth-child(1) { animation-delay: 0s; }
+.ds-activity-slot > :nth-child(2) { animation-delay: 3s; }
+.ds-activity-slot > :nth-child(3) { animation-delay: 6s; }
+
+/* Соседние слоты сдвигаем по фазе, чтобы строки не менялись синхронно */
+.ds-activity-slot + .ds-activity-slot > :nth-child(1) { animation-delay: 1.5s; }
+.ds-activity-slot + .ds-activity-slot > :nth-child(2) { animation-delay: 4.5s; }
+.ds-activity-slot + .ds-activity-slot > :nth-child(3) { animation-delay: 7.5s; }
+
+/* ============================================================
+   UTILITY MIXINS AS CLASSES
+   ============================================================ */
+
+/* Press scale (applied via JS .__clicked or CSS :active) */
+.ds-press-scale:not([disabled]):not(.__state-loading):not(.__state-disabled):active,
+.ds-press-scale.__clicked {
+  transform: scale(0.95);
+  transition: var(--ds-transition-transform);
+}
+
+/* Card hover zoom (image inside card) */
+.ds-card-hover-zoom:hover img {
+  transform: scale(1.02);
+}
+.ds-card-hover-zoom img {
+  transition: var(--ds-transition-transform);
+}
+
+/* Shimmer loading state */
+.ds-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.ds-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.33%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    currentColor 50.5%,
+    transparent 100%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}
+
+/* Highlighted diagonal sweep */
+.ds-highlighted {
+  position: relative;
+  overflow: hidden;
+}
+.ds-highlighted::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    -45deg,
+    transparent 0%,
+    transparent 25%,
+    currentColor 50%,
+    transparent 75%,
+    transparent 100%
+  );
+  opacity: 0.3;
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  animation: ds-highlighted 1.2s linear infinite;
+}
+
+/* Overlay hover/press effect */
+.ds-overlay {
+  position: relative;
+  overflow: hidden;
+}
+.ds-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--overlay-color, var(--dynamic-surface-special-overlay));
+  opacity: var(--overlay-opacity, 0);
+  transition: var(--ds-transition-opacity);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.ds-overlay:hover::after {
+  opacity: 0.12;
+}
+.ds-overlay:active::after,
+.ds-overlay.__clicked::after {
+  opacity: 0.16;
+  transition: opacity 0.8s cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+
+/* Focus ring */
+.ds-focus:focus-visible {
+  outline: var(--static-stroke-special-focus) solid 3px;
+  outline-offset: 2px;
+}
+
+/* Box shadow (elevation 3) */
+.ds-shadow {
+  box-shadow: 0px 8px 24px -8px var(--base-black-lena-translucent-12);
+}

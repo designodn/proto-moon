@@ -1,0 +1,321 @@
+/**
+ * OK Design System — TextFeed
+ *
+ * Облегчённый формат поста ленты. По максимуму на DS-примитивах:
+ *   .island         — карточный фон, радиус, верт. паддинги
+ *   .uni-cell       — шапка (аватар + имя + время)
+ *   .ds-title-s / .ds-body-m / .ds-caption-s  — типографика
+ *   .actions-bar    — ряд action-кнопок с __pinned-end для «...»
+ *   .button __size-36 __style-secondary       — пилюли (порядок: коммент → репост → класс → ... → more)
+ *   .avatar / .icon — стандартные примитивы
+ *
+ * Сам text-feed добавляет: вертикальную стопку секций (gap 12),
+ * горизонтальные паддинги 16 у всех секций кроме .text-feed__media,
+ * и реализует две специфические штуки: clamp-текст с инлайн-«ещё»
+ * и горизонтальный ряд медиа с разной пропорцией.
+ *
+ * Три демо-варианта (см. text-feed-prototype.html):
+ *   1. text-only       — header + текст + control
+ *   2. text + media    — header + текст с инлайн «ещё» + одна картинка или ряд + control
+ *   3. reshare + media — header + плашка «переслано: ↗ Имя» + картинка + control
+ *
+ * Структура (опциональные блоки помечены):
+ *
+ *   <article class="text-feed island">
+ *
+ *     <!-- HEADER через uni-cell -->
+ *     <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+ *       <div class="avatar __size-44 __type-image"><img src="…"></div>
+ *       <div class="uni-cell-additional-content">
+ *         <div class="ds-title-s">Александра Борщицкий</div>
+ *         <div class="ds-caption-s text-feed__time">12:48</div>
+ *       </div>
+ *     </div></div></div>
+ *
+ *     <!-- RESHARE (опц.) — кастомный flex-ряд, не маппится на uni-cell (3 слота) -->
+ *     <div class="text-feed__reshare">
+ *       <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/reshare_16_20.svg')"></span>
+ *       <div class="avatar __size-24 __type-image"><img src="…"></div>
+ *       <div class="ds-body-m text-feed__reshare-name">Борис Фрол</div>
+ *     </div>
+ *
+ *     <!-- BODY (опц.) — обёртка-label позволяет тапнуть и развернуть текст -->
+ *     <label class="text-feed__body-toggle">
+ *       <input type="checkbox" hidden>
+ *       <p class="ds-body-m text-feed__body __clamped" style="--text-feed-clamp: 2;">
+ *         Длинный текст… <span class="text-feed__more">ещё</span>
+ *       </p>
+ *     </label>
+ *
+ *     <!-- MEDIA (опц.) — single или row -->
+ *     <div class="text-feed__media __single"><img src="…"></div>
+ *     <div class="text-feed__media __row">
+ *       <div class="text-feed__media-cell" style="aspect-ratio: 220/165"><img src="…"></div>
+ *       …
+ *     </div>
+ *
+ *     <!-- CONTROL через actions-bar — __pinned-end прижимает «...» вправо -->
+ *     <div class="actions-bar">
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary">…comment 14…</button></div>
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary">…reshare 73…</button></div>
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary">…klass 16…</button></div>
+ *       <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё">…more…</button></div>
+ *     </div>
+ *
+ *   </article>
+ *
+ * Параметры:
+ *   --text-feed-clamp        — кол-во строк текста до обрезки.
+ *                              Когда задан, в конец текста ставится <a class="text-feed__more">ещё</a>.
+ *   --text-feed-media-row-h  — высота ряда галереи (default 195px).
+ */
+
+/* ============================================================
+   LAYOUT — стопка секций внутри .island
+   ============================================================ */
+.text-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ============================================================
+   ACTIVITY — опциональная плашка «X поставил класс» / «X переслал»
+   Маленькая строка caption-m, имя medium-weight. Размещается
+   первым ребёнком text-feed (над основной шапкой).
+   ============================================================
+   <div class="text-feed__activity ds-caption-m"><b>Борис Фрол</b> поставил класс</div>
+*/
+.text-feed__activity {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.text-feed__activity b {
+  font-weight: 500;
+}
+
+/* Горизонтальный паддинг — всем секциям, кроме медиа (full-bleed). */
+.text-feed > :not(.text-feed__media) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* uni-cell (шапка) внутри text-feed: горизонтальный паддинг даёт .text-feed > *,
+   поэтому у самого uni-cell обнуляем собственный паддинг (по аналогии с feed-base). */
+.text-feed .uni-cell-wrapper {
+  --uni-cell-padding-left:   0;
+  --uni-cell-padding-right:  0;
+  --uni-cell-padding-top:    0;
+  --uni-cell-padding-bottom: 0;
+}
+.text-feed .uni-cell {
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Время в шапке — secondary text (ds-caption-s даёт только размер) */
+.text-feed__time {
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+/* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
+.text-feed .actions-bar {
+  gap: var(--space-2);
+}
+
+/* ============================================================
+   RESHARE — кастомный flex-ряд: ↗ icon + avatar 24 + имя
+   ============================================================ */
+.text-feed__reshare {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.text-feed__reshare-name {
+  flex: 1 1 0;
+  min-width: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   RESHARE CARD — встроенная «цитата» репоста.
+   Бордерный контейнер с аватаркой автора, текстом и фото,
+   нижние углы скруглены к самому медиа.
+   ============================================================
+   <div class="text-feed__reshare-card">
+     <div class="text-feed__reshare-card-author">
+       <div class="avatar __size-24 __type-image"><img …></div>
+       <div class="ds-body-m text-feed__reshare-card-author-name">Борис Фрол</div>
+     </div>
+     <label class="text-feed__body-toggle">…body…</label>     // опц.
+     <div class="text-feed__reshare-card-media"><img …></div> // опц.
+   </div>
+*/
+.text-feed__reshare-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-inline: var(--space-4);
+  padding: var(--space-4);
+  border: 2px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.text-feed__reshare-card-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+.text-feed__reshare-card-author-name {
+  flex: 1 1 0;
+  min-width: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* media в reshare-card: edge-to-edge — отрицательные margin'ы
+   гасят inline-паддинг карточки. Если media — первый/последний ребёнок,
+   также гасится верхний/нижний паддинг (углы клипуются overflow:hidden). */
+.text-feed__reshare-card-media {
+  position: relative;
+  margin-inline: calc(-1 * var(--space-4));
+  background-color: var(--dynamic-surface-contrast-low);
+}
+.text-feed__reshare-card-media:first-child {
+  margin-top: calc(-1 * var(--space-4));
+}
+.text-feed__reshare-card-media:last-child {
+  margin-bottom: calc(-1 * var(--space-4));
+}
+/* ============================================================
+   LINK — мета-блок превью ссылки внутри reshare-card:
+   title (title-m) / snippet (body-m) / source (caption-m),
+   gap 4 между строками. Используется в паре с media-сверху.
+   ============================================================
+   <div class="text-feed__reshare-card">
+     <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164"><img …></div>
+     <div class="text-feed__link">
+       <div class="ds-title-m">Заголовок</div>
+       <div class="ds-body-m">Сниппет описания…</div>
+       <div class="ds-caption-m">домен | OK.ru</div>
+     </div>
+   </div>
+*/
+.text-feed__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.text-feed__reshare-card-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ============================================================
+   BODY — текст с инлайн-разворотом «ещё / скрыть»
+   ============================================================
+   Структура:
+     <label class="text-feed__body-toggle">
+       <input type="checkbox" hidden>
+       <p class="ds-body-m text-feed__body">
+         Короткая часть текста, гарантированно влезает в N символов…<span
+           class="text-feed__body-full"> остальная длинная часть, появляется при разворачивании.</span>
+         <span class="text-feed__more">
+           <span class="text-feed__more-show"> ещё</span>
+           <span class="text-feed__more-hide"> скрыть</span>
+         </span>
+       </p>
+     </label>
+
+   По умолчанию виден короткий хвост + «ещё» сразу после него.
+   По тапу label — checked → разворачивается полная часть, «ещё» → «скрыть».
+
+   Лимит длины — на стороне контента (макс символов в `body-short`).
+   CSS не клампует — это даёт гарантию, что «ещё» всегда сидит сразу
+   за концом видимого текста. */
+.text-feed__body-toggle {
+  display: block;
+  cursor: pointer;
+}
+
+.text-feed__body {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.text-feed__body-full { display: none; }
+.text-feed__body-toggle:has(> input:checked) .text-feed__body-full { display: inline; }
+
+.text-feed__more {
+  color: var(--dynamic-text-and-icons-status-accent);
+  text-decoration: none;
+}
+
+/* Парные лейблы «ещё / скрыть» — переключаются по checked-чекбоксу. */
+.text-feed__more-hide { display: none; }
+.text-feed__body-toggle:has(> input:checked) .text-feed__more-show { display: none; }
+.text-feed__body-toggle:has(> input:checked) .text-feed__more-hide { display: inline; }
+
+/* ============================================================
+   MEDIA — single (одно фото) | row (горизонтальная лента)
+   ============================================================ */
+.text-feed__media {
+  position: relative;
+  width: 100%;
+}
+
+/* — single — */
+.text-feed__media.__single {
+  aspect-ratio: 4 / 3;
+  background-color: var(--dynamic-surface-contrast-low);
+  border-top: 1px solid var(--dynamic-stroke-contrast-low);
+  border-bottom: 1px solid var(--dynamic-stroke-contrast-low);
+  overflow: hidden;
+}
+.text-feed__media.__single img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* — row — горизонтальная скролл-лента из ячеек с разными пропорциями */
+.text-feed__media.__row {
+  display: flex;
+  gap: 4px;
+  height: var(--text-feed-media-row-h, 195px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.text-feed__media.__row::-webkit-scrollbar { display: none; }
+
+.text-feed__media-cell {
+  flex: 0 0 auto;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--dynamic-surface-contrast-low);
+  border: 1px solid var(--dynamic-stroke-contrast-low);
+}
+.text-feed__media-cell img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Внешние боковые границы у крайних ячеек не нужны (внешний бордер карточки). */
+.text-feed__media.__row .text-feed__media-cell:first-child { border-left: 0; }
+.text-feed__media.__row .text-feed__media-cell:last-child  { border-right: 0; }

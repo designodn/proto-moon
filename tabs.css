@@ -1,0 +1,59 @@
+/**
+ * OK Design System — Tabs
+ *
+ * Top horizontal tab strip with oversized typography (used as the primary
+ * section switcher above the feed: "Лента / Сегодня / Подарки / Обсуждение").
+ *
+ * STATES:  .__state-on        — the active tab (full opacity)
+ *          .__state-disabled  — opacity 0.36
+ *          .__clicked         — scale(0.95) press animation
+ *
+ * Container is a horizontally scrollable row. A trailing slot
+ * (.tabs__adjust) can host an icon-button (settings, etc).
+ */
+
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-2);
+  background-color: var(--dynamic-surface-base-secondary);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+/* Типографика приходит из класса .ds-title-xl на самом элементе */
+.tabs-tab {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: var(--ds-transition-opacity), var(--ds-transition-transform);
+}
+
+.tabs-tab.__state-on { opacity: 1; }
+
+.tabs-tab:not(.__state-disabled):active,
+.tabs-tab:not(.__state-disabled).__clicked {
+  transform: scale(0.95);
+  opacity: 0.55;
+}
+
+.tabs-tab.__state-disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  cursor: not-allowed;
+}
+
+.tabs__adjust {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.55;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

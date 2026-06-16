@@ -1,0 +1,63 @@
+/**
+ * OK Sans — brand font for OK design system.
+ *
+ * Two families:
+ *  - "OK Sans Text"     — optimised for body / small UI text.
+ *  - "OK Sans Display"  — optimised for headings / large type.
+ *
+ * Weight mapping:
+ *   300 Light | 400 Regular | 500 Medium | 600 DemiBold | 700 Bold
+ */
+
+/* OK Sans Text — for body, captions, controls */
+@font-face {
+  font-family: "OK Sans Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Text-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "OK Sans Text";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Text-DemiBold.ttf") format("truetype");
+}
+
+/* OK Sans Display — for titles, display copy */
+@font-face {
+  font-family: "OK Sans Display";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Display-Light.otf") format("opentype");
+}
+@font-face {
+  font-family: "OK Sans Display";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Display-Regular.otf") format("opentype");
+}
+@font-face {
+  font-family: "OK Sans Display";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Display-Medium.otf") format("opentype");
+}
+@font-face {
+  font-family: "OK Sans Display";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Display-DemiBold.otf") format("opentype");
+}
+@font-face {
+  font-family: "OK Sans Display";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/OK-Sans-Display-Bold.otf") format("opentype");
+}

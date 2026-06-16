@@ -1,0 +1,96 @@
+/**
+ * OK Design System — Picture (squircle, avaPicture 1.3)
+ *
+ * «Мягкий квадрат» — как avatar, но не круглый.
+ *
+ * SIZES:   .__size-16 | 20 | 24 | 36 | 44 | 56 | 72 | 80 | 96 | 120 | 144
+ *
+ * TYPES:   .__type-image       — <img> child (default look)
+ *          .__type-placeholder — пустой блок (loading/empty)
+ *          .__type-icon        — иконка по центру (.icon как ребёнок)
+ *          .__type-initials    — 1–2 буквы на акценте
+ *          .__type-counter     — число (бейдж) в indigo-тинте
+ *          .__type-emoji       — emoji-символ по центру
+ */
+
+.picture {
+  --picture-size:      80px;
+  --picture-radius:    16px;
+  --picture-bg:        var(--dynamic-surface-contrast-low);
+  --picture-color:     var(--dynamic-text-and-icons-base-primary);
+  --picture-font-size: 26px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--picture-size);
+  height: var(--picture-size);
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--picture-radius);
+  background-color: var(--picture-bg);
+  color: var(--picture-color);
+  font-family: var(--font-family);
+  font-size: var(--picture-font-size);
+  font-weight: 600;
+  line-height: 1;
+  user-select: none;
+}
+
+.picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sizes — pair (side, radius ~20%, font-size) */
+.picture.__size-16  { --picture-size: 16px;  --picture-radius: 4px;  --picture-font-size: 7px;  }
+.picture.__size-20  { --picture-size: 20px;  --picture-radius: 5px;  --picture-font-size: 9px;  }
+.picture.__size-24  { --picture-size: 24px;  --picture-radius: 6px;  --picture-font-size: 11px; }
+.picture.__size-36  { --picture-size: 36px;  --picture-radius: 8px;  --picture-font-size: 14px; }
+.picture.__size-44  { --picture-size: 44px;  --picture-radius: 10px; --picture-font-size: 15px; }
+.picture.__size-56  { --picture-size: 56px;  --picture-radius: 12px; --picture-font-size: 19px; }
+.picture.__size-72  { --picture-size: 72px;  --picture-radius: 14px; --picture-font-size: 24px; }
+.picture.__size-80  { --picture-size: 80px;  --picture-radius: 16px; --picture-font-size: 26px; }
+.picture.__size-96  { --picture-size: 96px;  --picture-radius: 20px; --picture-font-size: 32px; }
+.picture.__size-120 { --picture-size: 120px; --picture-radius: 24px; --picture-font-size: 40px; }
+.picture.__size-144 { --picture-size: 144px; --picture-radius: 28px; --picture-font-size: 48px; }
+
+/* Type variants — same palette as avatar */
+.picture.__type-image       { --picture-bg: var(--dynamic-surface-contrast-low); }
+.picture.__type-placeholder { --picture-bg: var(--dynamic-surface-contrast-mid); }
+.picture.__type-icon        { --picture-bg: var(--dynamic-surface-contrast-low); }
+.picture.__type-icon > .icon { width: 50%; height: 50%; }
+.picture.__type-initials {
+  --picture-bg:    var(--static-surface-status-accent);
+  --picture-color: var(--static-text-and-icons-base-inverse-primary);
+}
+.picture.__type-counter {
+  --picture-bg:    var(--dynamic-surface-tint-indigo);
+  --picture-color: var(--dynamic-text-and-icons-indigo);
+}
+.picture.__type-emoji       { --picture-bg: var(--dynamic-surface-contrast-low); }
+
+/* ============================================================
+   PICTURE STACK — ряд из нескольких .picture с лёгкими углами,
+   как небрежно разложенные карточки.
+   ============================================================ */
+.picture-stack {
+  display: flex;
+  gap: var(--space-1);
+}
+.picture-stack > .picture {
+  transform: rotate(-3deg);
+  transition: transform 300ms ease;
+}
+.picture-stack > .picture:nth-child(even) {
+  transform: rotate(3deg);
+}
+.picture-stack > .picture:nth-child(3n) {
+  transform: rotate(-1deg);
+}
+.picture-stack > .picture:nth-child(3n+1):not(:first-child) {
+  transform: rotate(2deg);
+}

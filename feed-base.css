@@ -1,0 +1,95 @@
+/**
+ * OK Design System — FeedBase (molecule, layout only)
+ *
+ * Простая вертикальная флекс-стопка с фиксированным gap.
+ * Внутри используются обычные примитивы:
+ *
+ *   <article class="feed-base">
+ *     <div class="uni-cell-wrapper">…author header…</div>
+ *     <nav class="breadcrumbs">…category…</nav>
+ *     <p class="ds-body-m">…text…</p>
+ *     <div class="media">… <img> + .media__play / .media__time …</div>
+ *     <div class="actions-bar">…buttons…</div>
+ *   </article>
+ *
+ * Группа постов оборачивается в .feed-container — flex-стек с gap.
+ */
+
+/* ============================================================
+   FEED CONTAINER — простой вертикальный стек.
+   Никаких фонов / радиусов / паддингов — карточный визуал даёт
+   класс .island (см. island.css), вешается на ребёнка по желанию.
+   ============================================================ */
+.feed-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.feed-base,
+.feed-memory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Каждая дочерняя секция получает горизонтальный паддинг 16,
+   кроме .media — она тянется на всю ширину поста.
+   Вертикальные паддинги обнулены — расстояния задаются только flex-gap. */
+.feed-base > *,
+.feed-memory > * {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.feed-base > :not(.media),
+.feed-memory > :not(.media) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Inner uni-cells (header) — без своих горизонтальных паддингов,
+   их кладёт обёртка .feed-base > * */
+.feed-base .uni-cell-wrapper,
+.feed-memory .uni-cell-wrapper {
+  --uni-cell-padding-left:   0;
+  --uni-cell-padding-right:  0;
+  --uni-cell-padding-top:    0;
+  --uni-cell-padding-bottom: 0;
+}
+.feed-base .uni-cell,
+.feed-memory .uni-cell {
+  align-items: center;
+  gap: 10px;
+}
+
+/* Body paragraphs (текст поста) — без браузерных margin'ов */
+.feed-base p,
+.feed-memory p {
+  margin: 0;
+}
+
+/* ============================================================
+   SUBSCRIBE BUTTON — toggle между "Подписаться" (secondary)
+   и "Подписан" (tertiary).
+   Структура:
+     <label class="button-wrapper button-subscribe">
+       <input type="checkbox" hidden>
+       <span class="button-container __style-secondary">
+         <span class="button-content">
+           <span class="button-subscribe__label-default">Подписаться</span>
+           <span class="button-subscribe__label-subscribed">Подписан</span>
+         </span>
+       </span>
+     </label>
+   ============================================================ */
+.button-subscribe { cursor: pointer; }
+.button-subscribe__label-subscribed { display: none; }
+
+.button-subscribe:has(> input:checked) .button-subscribe__label-default { display: none; }
+.button-subscribe:has(> input:checked) .button-subscribe__label-subscribed { display: inline; }
+
+/* Subscribed state: look as if __style-tertiary */
+.button-subscribe:has(> input:checked) > .button-container {
+  --button-color: var(--dynamic-text-and-icons-base-secondary);
+  --button-background-color: transparent;
+}

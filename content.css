@@ -1,0 +1,40 @@
+/**
+ * OK Design System — Content Component
+ * Source: design-system/components/Content/Content/Content.styl
+ *
+ * Content is a generic flexible row/block layout primitive.
+ * Used to arrange items with optional dot separator.
+ *
+ * ALIGNMENT:
+ *   X: .__alignment-x-start | .__alignment-x-center | .__alignment-x-end
+ *   Y: .__alignment-y-start | .__alignment-y-center | .__alignment-y-end | .__alignment-y-baseline
+ *
+ * No interactive states — purely layout.
+ */
+
+.content-wrapper {
+  --row-gap: 4px;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* Horizontal alignment */
+.content.__alignment-x-start  { justify-content: flex-start; }
+.content.__alignment-x-center { justify-content: center; }
+.content.__alignment-x-end    { justify-content: flex-end; }
+
+/* Vertical alignment */
+.content.__alignment-y-start    { align-items: flex-start; }
+.content.__alignment-y-center   { align-items: center; }
+.content.__alignment-y-end      { align-items: flex-end; }
+.content.__alignment-y-baseline { align-items: baseline; }
+
+/* Dot separator */
+.content-dot {
+  flex-shrink: 0;
+}

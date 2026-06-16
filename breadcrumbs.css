@@ -1,0 +1,73 @@
+/**
+ * OK Design System — Breadcrumbs
+ *
+ * Inline trail of clickable category links separated by a chevron icon.
+ * Typography is locked to body M (15/20). No size or weight modifiers.
+ *
+ * STRUCTURE (max 3 levels):
+ *   <nav class="breadcrumbs">
+ *     <a class="breadcrumbs__item" href="…">Еда</a>
+ *     <span class="breadcrumbs__separator" aria-hidden="true"></span>
+ *     <a class="breadcrumbs__item" href="…">Рецепты</a>
+ *     <span class="breadcrumbs__separator" aria-hidden="true"></span>
+ *     <span class="breadcrumbs__item __state-on">Тесто</span>
+ *   </nav>
+ *
+ * ITEM STATES:
+ *   .__state-on        — current level, non-link (rendered as <span>)
+ *   :hover             — full-opacity, accent color
+ *   .__state-disabled  — opacity 0.36, not interactive
+ *
+ * SEPARATOR:
+ *   Rendered as a 12px icon via CSS mask. Default glyph is
+ *   `assets/icons/chevron-right.svg`. Override per-instance with the
+ *   `--breadcrumbs-separator-src` custom property when a brand-specific
+ *   icon ships.
+ */
+
+.breadcrumbs {
+  --breadcrumbs-color: var(--dynamic-text-and-icons-base-primary);
+  --breadcrumbs-separator-src: url('../assets/icons/chevron-right.svg');
+
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--breadcrumbs-color);
+}
+
+.breadcrumbs__item {
+  white-space: nowrap;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color var(--ds-animation-duration) var(--ds-animation-easing);
+}
+
+a.breadcrumbs__item:hover {
+  background-color: color-mix(in srgb, var(--dynamic-text-and-icons-base-inverse-primary) 10%, transparent);
+}
+
+.breadcrumbs__item.__state-on {
+  color: var(--dynamic-text-and-icons-base-primary);
+  cursor: default;
+}
+
+.breadcrumbs__item.__state-disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  pointer-events: none;
+}
+
+.breadcrumbs__separator {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 2px;
+  margin-right: 8px;
+  background-color: currentColor;
+  opacity: 0.5;
+  user-select: none;
+  -webkit-mask: var(--breadcrumbs-separator-src) center / contain no-repeat;
+          mask: var(--breadcrumbs-separator-src) center / contain no-repeat;
+}

@@ -1,0 +1,27 @@
+/**
+ * OK Design System — ContentsView Component
+ * Source: design-system/components/Content/ContentsView/ContentsView.styl
+ *
+ * ContentsView is a vertical column container with optional padding.
+ * Used as a wrapper for grouping content sections.
+ *
+ * Custom padding via CSS vars:
+ *   --contents-view-padding-top | --contents-view-padding-right
+ *   --contents-view-padding-bottom | --contents-view-padding-left
+ *
+ * No interactive states — purely layout.
+ */
+
+.contents-view-container {
+  --padding-top:    var(--contents-view-padding-top, 0px);
+  --padding-right:  var(--contents-view-padding-right, 0px);
+  --padding-bottom: var(--contents-view-padding-bottom, 0px);
+  --padding-left:   var(--contents-view-padding-left, 0px);
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--padding-top) var(--padding-right)
+           var(--padding-bottom) var(--padding-left);
+}

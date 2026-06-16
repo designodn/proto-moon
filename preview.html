@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OK DS — Preview</title>
+<link rel="stylesheet" href="index.css">
+<style>
+  /*  Local preview-page styles — not part of the design system  */
+  body { padding: 24px; }
+  .preview-grid { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .preview-section {
+    background: var(--dynamic-surface-base-secondary);
+    border-radius: 16px;
+    padding: 20px;
+    min-width: 280px;
+  }
+  .preview-section h2 { margin: 0 0 16px; font-size: 17px; font-weight: 600; }
+  .preview-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .preview-label { font-size: 12px; color: var(--dynamic-text-and-icons-base-secondary); margin-bottom: 6px; }
+  .preview-stage { background: var(--dynamic-surface-base-primary); padding: 16px; border-radius: 12px; }
+
+  .button-block { margin-top: 16px; }
+  .button-block__title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .button-block__title code { font-weight: 500; font-size: 13px; color: var(--dynamic-text-and-icons-base-secondary); }
+  .button-block__desc { font-size: 12px; color: var(--dynamic-text-and-icons-base-secondary); margin-bottom: 10px; max-width: 640px; }
+  .button-block__group-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dynamic-text-and-icons-base-tertiary); margin-top: 16px; }
+  .button-block__divider { border: 0; border-top: 1px solid var(--dynamic-stroke-contrast-low); margin: 20px 0 0; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--dynamic-surface-contrast-low); padding: 1px 6px; border-radius: 4px; }
+
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .spec-table th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dynamic-text-and-icons-base-tertiary); padding: 0 0 8px; border-bottom: 1px solid var(--dynamic-stroke-contrast-low); }
+  .spec-table td { padding: 8px 12px 8px 0; vertical-align: top; border-bottom: 1px solid var(--dynamic-stroke-contrast-low); }
+  .spec-table td:first-child { width: 220px; white-space: nowrap; color: var(--dynamic-text-and-icons-base-secondary); }
+  .spec-table tr:last-child td { border-bottom: 0; }
+
+  /*  Reusable inline svg sprite for the demos  */
+  .demo-icon { color: currentColor; }
+</style>
+</head>
+<body>
+
+<h1 class="ds-title-l" style="margin: 0 0 24px;">OK DS — Preview</h1>
+
+<div class="preview-grid">
+
+  <!-- ===================== PRIMITIVES ===================== -->
+
+  <section class="preview-section">
+    <h2>Avatar — circle</h2>
+    <div class="preview-label">Размеры (на примере initials): 16/20/24/36/44/56/72/96/120/144</div>
+    <div class="preview-row">
+      <div class="avatar __size-16 __type-initials">А</div>
+      <div class="avatar __size-20 __type-initials">А</div>
+      <div class="avatar __size-24 __type-initials">А</div>
+      <div class="avatar __size-36 __type-initials">АК</div>
+      <div class="avatar __size-44 __type-initials">АК</div>
+      <div class="avatar __size-56 __type-initials">АК</div>
+      <div class="avatar __size-72 __type-initials">АК</div>
+      <div class="avatar __size-96 __type-initials">АК</div>
+      <div class="avatar __size-120 __type-initials">АК</div>
+      <div class="avatar __size-144 __type-initials">АК</div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">Типы (size=56)</div>
+    <div class="preview-row">
+      <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/256?img=12" alt=""></div>
+      <div class="avatar __size-56 __type-placeholder"></div>
+      <div class="avatar __size-56 __type-icon"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></div>
+      <div class="avatar __size-56 __type-initials">АК</div>
+      <div class="avatar __size-56 __type-counter">12</div>
+      <div class="avatar __size-56 __type-emoji">🎈</div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">__state-loading</div>
+    <div class="preview-row">
+      <div class="avatar __size-36 __state-loading"></div>
+    </div>
+
+    <table class="spec-table">
+      <thead><tr><th colspan="2">Что умеет</th></tr></thead>
+      <tbody>
+        <tr><td>sizes</td><td>16 / 20 / 24 / 36 (default) / 44 / 56 / 72 / 96 / 120 / 144</td></tr>
+        <tr><td><code>.__type-image</code></td><td>дочерний <code>&lt;img&gt;</code>, object-fit: cover</td></tr>
+        <tr><td><code>.__type-placeholder</code></td><td>пустой круг — loading / empty state</td></tr>
+        <tr><td><code>.__type-icon</code></td><td>иконка-ребёнок занимает 50% от размера</td></tr>
+        <tr><td><code>.__type-initials</code></td><td>1–2 буквы на акцентном (orange) фоне</td></tr>
+        <tr><td><code>.__type-counter</code></td><td>число в indigo-тинте</td></tr>
+        <tr><td><code>.__type-emoji</code></td><td>emoji-символ по центру</td></tr>
+        <tr><td><code>.__state-loading</code></td><td>shimmer-анимация поверх</td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, клики отключены</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section">
+    <h2>Picture — squircle</h2>
+    <div class="preview-label">«Мягкий квадрат» — как avatar, но не круглый. Размеры/типы те же.</div>
+    <div class="preview-row">
+      <div class="picture __size-16 __type-initials">А</div>
+      <div class="picture __size-20 __type-initials">А</div>
+      <div class="picture __size-24 __type-initials">А</div>
+      <div class="picture __size-36 __type-initials">АК</div>
+      <div class="picture __size-44 __type-initials">АК</div>
+      <div class="picture __size-56 __type-initials">АК</div>
+      <div class="picture __size-72 __type-initials">АК</div>
+      <div class="picture __size-96 __type-initials">АК</div>
+      <div class="picture __size-120 __type-initials">АК</div>
+      <div class="picture __size-144 __type-initials">АК</div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">Типы (size=56)</div>
+    <div class="preview-row">
+      <div class="picture __size-56 __type-image"><img src="https://picsum.photos/seed/p1/200/200" alt=""></div>
+      <div class="picture __size-56 __type-placeholder"></div>
+      <div class="picture __size-56 __type-icon"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></div>
+      <div class="picture __size-56 __type-initials">АК</div>
+      <div class="picture __size-56 __type-counter">12</div>
+      <div class="picture __size-56 __type-emoji">🎈</div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">picture-stack — лёгкие альтернирующие повороты</div>
+    <div class="preview-row">
+      <div class="picture-stack">
+        <div class="picture __size-72 __type-image"><img src="https://picsum.photos/seed/h1/200/200" alt=""></div>
+        <div class="picture __size-72 __type-image"><img src="https://picsum.photos/seed/h2/200/200" alt=""></div>
+        <div class="picture __size-72 __type-image"><img src="https://picsum.photos/seed/h3/200/200" alt=""></div>
+        <div class="picture __size-72 __type-image"><img src="https://picsum.photos/seed/h4/200/200" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-section">
+    <h2>Button</h2>
+    <div class="preview-label">Базовая кнопка действия. Композиция: <code>.button-wrapper.__size-N</code> задаёт размер, <code>.button-container.__style-*</code> — визуальный стиль.</div>
+
+    <div class="button-block">
+      <div class="button-block__title">Основная</div>
+      <div class="button-block__desc">Дефолтный размер 44, стиль <code>__style-primary</code>. Используется для главного действия экрана.</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-44">
+          <button class="button-container __style-primary"><span class="button-content">Опубликовать</span></button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="button-block__divider">
+    <div class="button-block__group-title">Модификаторы</div>
+
+    <div class="button-block">
+      <div class="button-block__title">Размер — <code>.__size-28 / 36 / 44 / 56</code></div>
+      <div class="button-block__desc">Задаётся на <code>.button-wrapper</code>. Высота, паддинги, типографика и канонический размер иконки внутри (28→16, 36→16, 44→20, 56→20) подбираются автоматически.</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Primary 28</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-primary"><span class="button-content">Primary 36</span></button></div>
+        <div class="button-wrapper __size-44"><button class="button-container __style-primary"><span class="button-content">Primary 44</span></button></div>
+        <div class="button-wrapper __size-56"><button class="button-container __style-primary"><span class="button-content">Primary 56</span></button></div>
+      </div>
+    </div>
+
+    <div class="button-block">
+      <div class="button-block__title">Стиль — <code>.__style-*</code></div>
+      <div class="button-block__desc"><code>primary</code> — главное действие, <code>secondary</code> — второстепенное, <code>tertiary</code> — на цветном фоне, <code>negative</code> и <code>destructive</code> — для опасных действий.</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-36"><button class="button-container __style-primary"><span class="button-content">Primary</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Secondary</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-tertiary"><span class="button-content">Tertiary</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-negative"><span class="button-content">Negative</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-destructive"><span class="button-content">Destructive</span></button></div>
+      </div>
+    </div>
+
+    <div class="button-block">
+      <div class="button-block__title">Состояние — <code>.__state-*</code></div>
+      <div class="button-block__desc"><code>loading</code> прячет контент и показывает спиннер, <code>disabled</code> снижает непрозрачность и блокирует клики, <code>highlighted</code> — постоянно зажатый вид.</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary __state-loading"><span class="button-content">Loading</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary __state-disabled"><span class="button-content">Disabled</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary __state-highlighted"><span class="button-content">Highlighted</span></button></div>
+      </div>
+    </div>
+
+    <div class="button-block">
+      <div class="button-block__title">С иконкой — <code>.__icon</code></div>
+      <div class="button-block__desc">Модификатор <code>.button-container.__icon</code> принудительно ставит размер вложенной <code>.icon</code> по высоте кнопки. Не нужно вручную писать <code>.icon.__size-N</code>.</div>
+      <div class="preview-label" style="margin-top:8px;">icon-only</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-56"><button class="button-container __style-secondary __icon" style="width:56px;" aria-label="Star"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span></span></button></div>
+        <div class="button-wrapper __size-44"><button class="button-container __style-secondary __icon" style="width:44px;" aria-label="Star"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span></span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary __icon" style="width:36px;" aria-label="Star"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span></span></button></div>
+        <div class="button-wrapper __size-28"><button class="button-container __style-secondary __icon" style="width:28px;" aria-label="Star"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span></span></button></div>
+      </div>
+      <div class="preview-label" style="margin-top:8px;">icon + label</div>
+      <div class="preview-row">
+        <div class="button-wrapper __size-56"><button class="button-container __style-secondary __icon"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span>&nbsp;Старз</span></button></div>
+        <div class="button-wrapper __size-44"><button class="button-container __style-secondary __icon"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span>&nbsp;Старз</span></button></div>
+        <div class="button-wrapper __size-36"><button class="button-container __style-secondary __icon"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span>&nbsp;Старз</span></button></div>
+        <div class="button-wrapper __size-28"><button class="button-container __style-secondary __icon"><span class="button-content"><span class="icon __src" style="--icon-src:url('assets/icons/star.svg')"></span>&nbsp;Старз</span></button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-section">
+    <h2>ButtonInline</h2>
+    <div class="preview-label">Текстовая кнопка без фона. Цвет задаёт <code>.__view-*</code> на <code>.button-inline-wrapper</code>, типографику — <code>.__size-*</code> на <code>.button-inline</code>.</div>
+
+    <div class="preview-row" style="margin-bottom: 16px;">
+      <div class="button-inline-wrapper __view-primary __size-16">
+        <button class="button-inline __size-16">Primary 16</button>
+      </div>
+      <div class="button-inline-wrapper __view-secondary __size-20">
+        <button class="button-inline __size-20">Secondary 20</button>
+      </div>
+      <div class="button-inline-wrapper __view-tertiary __size-24">
+        <button class="button-inline __size-24">Tertiary 24</button>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>.__size-16</code></td>
+          <td>13/16, height 16px — для подписей и метаданных</td>
+        </tr>
+        <tr>
+          <td><code>.__size-20</code></td>
+          <td>15/20, height 20px — body-m, дефолт в теле текста</td>
+        </tr>
+        <tr>
+          <td><code>.__size-24</code></td>
+          <td>17/24, height 24px — body-l, рядом с крупным контентом</td>
+        </tr>
+        <tr>
+          <td><code>.__size-32</code></td>
+          <td>17/24, height 32px — та же типографика, увеличенная зона тапа</td>
+        </tr>
+        <tr>
+          <td><code>.__view-primary</code></td>
+          <td>акцентный цвет (оранжевый)</td>
+        </tr>
+        <tr>
+          <td><code>.__view-secondary</code></td>
+          <td>основной цвет текста</td>
+        </tr>
+        <tr>
+          <td><code>.__view-tertiary</code></td>
+          <td>приглушённый второстепенный</td>
+        </tr>
+        <tr>
+          <td><code>.__view-primary-on-color</code></td>
+          <td>белый, для тёмных/цветных фонов</td>
+        </tr>
+        <tr>
+          <td><code>.__view-secondary-on-color</code></td>
+          <td>белый c прозрачностью 64%, на цветных фонах</td>
+        </tr>
+        <tr>
+          <td><code>.__view-custom</code></td>
+          <td>цвет берётся из <code>--button-inline-custom-color</code></td>
+        </tr>
+        <tr>
+          <td><code>:hover</code></td>
+          <td>opacity 0.84</td>
+        </tr>
+        <tr>
+          <td><code>:active</code> / <code>.__clicked</code></td>
+          <td>opacity 0.76 + scale(0.95)</td>
+        </tr>
+        <tr>
+          <td><code>.__state-loading</code></td>
+          <td>курсор progress, слот под лоадер</td>
+        </tr>
+        <tr>
+          <td><code>.__state-disabled</code></td>
+          <td>opacity 0.36, курсор not-allowed</td>
+        </tr>
+        <tr>
+          <td>увеличенная tap-зона</td>
+          <td>невидимый <code>::before</code> расширяет область клика на 6–8px вокруг</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 320px;">
+    <h2>TextInput</h2>
+    <div class="preview-label"><code>.__size-36</code> — body-m</div>
+    <div class="preview-row">
+      <input class="text-input __size-36" placeholder="Написать комментарий…" style="flex:1;">
+    </div>
+    <div class="preview-label"><code>.__size-56</code> — body-l</div>
+    <div class="preview-row">
+      <input class="text-input __size-56" placeholder="Написать комментарий…" style="flex:1;">
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.__size-36</code></td><td>height 36px, типографика 15/20 (body-m)</td></tr>
+        <tr><td><code>.__size-56</code></td><td>height 56px, типографика 17/24 (body-l)</td></tr>
+        <tr><td>скругление</td><td>border-radius = height / 4 (9px для 36, 14px для 56)</td></tr>
+        <tr><td><code>:focus-visible</code> / <code>.__state-focused</code></td><td>фон переключается на contrast-mid</td></tr>
+        <tr><td><code>.__state-disabled</code> / <code>:disabled</code></td><td>opacity 0.36, ввод заблокирован</td></tr>
+        <tr><td><code>::placeholder</code></td><td>цвет text-and-icons-base-secondary</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section">
+    <h2>PulseDot</h2>
+    <div class="preview-row">
+      <span class="pulse-dot __size-8"></span>
+      <span class="pulse-dot __size-12"></span>
+      <span class="pulse-dot __size-16"></span>
+      <span class="pulse-dot __view-positive"></span>
+      <span class="pulse-dot __view-info"></span>
+      <span class="pulse-dot __view-negative"></span>
+      <span class="pulse-dot __view-attention"></span>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.__size-8</code></td><td>точка 8px</td></tr>
+        <tr><td><code>.__size-12</code></td><td>точка 12px — дефолт</td></tr>
+        <tr><td><code>.__size-16</code></td><td>точка 16px</td></tr>
+        <tr><td><code>.__view-accent</code></td><td>оранжевый (дефолт)</td></tr>
+        <tr><td><code>.__view-positive</code></td><td>зелёный — успех/онлайн</td></tr>
+        <tr><td><code>.__view-info</code></td><td>синий — нейтральная информация</td></tr>
+        <tr><td><code>.__view-negative</code></td><td>красный — ошибка</td></tr>
+        <tr><td><code>.__view-attention</code></td><td>жёлтый — внимание</td></tr>
+        <tr><td><code>.__view-custom</code></td><td>цвет из <code>--pulse-dot-custom-color</code></td></tr>
+        <tr><td><code>.__state-paused</code></td><td>останавливает пульсацию (скелетоны)</td></tr>
+        <tr><td>анимация</td><td>два кольца расходятся scale(1→2.6), 2s loop</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 360px;">
+    <h2>Icons (assets/icons/*.svg)</h2>
+    <div class="preview-label">Loaded as external SVG via <code>.icon.__src</code> + <code>--icon-src</code>. Inherit currentColor.</div>
+    <div class="preview-row" style="font-size: 11px; color: var(--dynamic-text-and-icons-base-secondary);">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/star.svg')"></span>star
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/comment_24.svg')"></span>comment
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/thumb-up.svg')"></span>thumb-up
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/dots-horizontal.svg')"></span>dots
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/plus.svg')"></span>plus
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/bell.svg')"></span>bell
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/search.svg')"></span>search
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/arrow-left.svg')"></span>arrow-left
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/send.svg')"></span>send
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/play.svg')"></span>play
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/info-circle.svg')"></span>info
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-12 __src" style="--icon-src:url('assets/icons/chevron-right.svg')"></span>chevron
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-32 __src" style="--icon-src:url('assets/icons/settings.svg')"></span>settings
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/feed_24.svg')"></span>feed
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/book_24.svg')"></span>book
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/message_24.svg')"></span>message
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/clips_24.svg')"></span>clips
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/discussions_24.svg')"></span>discussions
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/menu_24.svg')"></span>menu
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __src" style="width:16px;height:12px;--icon-src:url('assets/icons/status-wifi.svg')"></span>wifi
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __src" style="width:17px;height:12px;--icon-src:url('assets/icons/status-signal.svg')"></span>signal
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;">
+        <span class="icon __src" style="width:25px;height:12px;--icon-src:url('assets/icons/status-battery.svg')"></span>battery
+      </div>
+    </div>
+    <div class="preview-label" style="margin-top:12px;">В OK.ru like-кнопка — это <code>thumb-up</code>, а избранное / Класс! — <code>star</code>.</div>
+  </section>
+
+  <section class="preview-section">
+    <h2>Breadcrumbs</h2>
+    <div class="preview-label">2 levels — last item is current (__state-on)</div>
+    <div class="preview-row">
+      <nav class="breadcrumbs ds-body-m">
+        <a class="breadcrumbs__item" href="#">Еда</a>
+        <span class="breadcrumbs__separator" aria-hidden="true"></span>
+        <span class="breadcrumbs__item __state-on">Рецепты</span>
+      </nav>
+    </div>
+    <div class="preview-label">3 levels (max)</div>
+    <div class="preview-row">
+      <nav class="breadcrumbs ds-body-m">
+        <a class="breadcrumbs__item" href="#">Дача</a>
+        <span class="breadcrumbs__separator" aria-hidden="true"></span>
+        <a class="breadcrumbs__item" href="#">Огород</a>
+        <span class="breadcrumbs__separator" aria-hidden="true"></span>
+        <span class="breadcrumbs__item __state-on">Помидоры</span>
+      </nav>
+    </div>
+    <div class="preview-label">__state-disabled</div>
+    <div class="preview-row">
+      <nav class="breadcrumbs ds-body-m">
+        <a class="breadcrumbs__item __state-disabled" href="#">Еда</a>
+        <span class="breadcrumbs__separator" aria-hidden="true"></span>
+        <span class="breadcrumbs__item __state-on">Рецепты</span>
+      </nav>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.breadcrumbs</code></td><td>обёртка-навигация, до 3 уровней, типографика 15/20</td></tr>
+        <tr><td><code>.breadcrumbs__item</code></td><td>звено пути — ссылка или <code>&lt;span&gt;</code></td></tr>
+        <tr><td><code>.breadcrumbs__separator</code></td><td>chevron 12px между звеньями, через CSS mask</td></tr>
+        <tr><td><code>.__state-on</code></td><td>текущий уровень — primary-цвет, не кликается</td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, клики отключены</td></tr>
+        <tr><td><code>:hover</code> (только ссылка)</td><td>лёгкая подложка под звеном</td></tr>
+        <tr><td><code>--breadcrumbs-separator-src</code></td><td>замена дефолтного chevron на свой svg</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===================== MOLECULES ===================== -->
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>ActivityCell — UniCell <code>__type-activity</code></h2>
+    <div class="preview-label">Avatar + 1 строка текста + действие справа. Все слоты центрируются по вертикали автоматически, gap 12px ставит сама ячейка.</div>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <div class="uni-cell-wrapper __type-activity">
+        <div class="uni-cell-container __state-enabled">
+          <div class="uni-cell">
+            <div class="avatar __size-56 __type-initials">ТБ</div>
+            <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> опубликовала фото — набрало 247 классов</div>
+            <div class="button-wrapper __size-36">
+              <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>контекст</td><td>используется в ленте (виджет «Вокруг вас сейчас»)</td></tr>
+        <tr><td>левый слот</td><td><code>.avatar.__size-56</code></td></tr>
+        <tr><td>центр</td><td>1 строка <code>.ds-body-m</code>, имя обычно жирным</td></tr>
+        <tr><td>правый слот</td><td><code>.button-wrapper.__size-36</code> с <code>.button-container.__style-secondary</code></td></tr>
+        <tr><td>паддинги</td><td>верт. 8px (компактнее обычной <code>.uni-cell</code>), горизонт. 16px</td></tr>
+        <tr><td>выравнивание</td><td><code>align-items: center</code> на <code>.uni-cell</code> — слоты сами центрируются</td></tr>
+        <tr><td>gap</td><td>12px между слотами (не нужны inline margins)</td></tr>
+        <tr><td><code>:active</code> / <code>.__clicked</code></td><td>scale(0.95) от центра (требует <code>__state-enabled</code> на контейнере)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section">
+    <h2>Tag — primary</h2>
+    <div class="preview-label">Pill-плашка для категорий, статусов, времени. Источник — Figma <code>primary ◇ tag 1.2</code>.</div>
+
+    <div class="preview-label" style="margin-top: 12px;">Размеры</div>
+    <div class="preview-row" style="background: var(--dynamic-surface-base-tertiary); padding: 12px; border-radius: 12px;">
+      <span class="tag __style-primary __size-20">size 20</span>
+      <span class="tag __style-primary __size-24">size 24</span>
+      <span class="tag __style-primary __size-32">size 32</span>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">С иконкой</div>
+    <div class="preview-row" style="background: var(--dynamic-surface-base-tertiary); padding: 12px; border-radius: 12px;">
+      <span class="tag __style-primary __size-24"><span class="icon __size-16 __src" style="--icon-src:url('assets/icons/play.svg')"></span>Видео</span>
+    </div>
+
+    <table class="spec-table">
+      <thead><tr><th colspan="2">Что умеет</th></tr></thead>
+      <tbody>
+        <tr><td><code>.__style-primary</code></td><td>фон <code>--static-surface-special-layer-tertiary</code> (тёмный translucent), белый текст</td></tr>
+        <tr><td><code>.__size-20</code></td><td>padding 2/6, caption-s (11/14/400)</td></tr>
+        <tr><td><code>.__size-24</code></td><td>padding 4/8, caption-m (13/16/400)</td></tr>
+        <tr><td><code>.__size-32</code></td><td>padding 6/10, body-m (15/20/400)</td></tr>
+        <tr><td>радиус</td><td>999px (полностью pill)</td></tr>
+        <tr><td>слоты</td><td>left-icon, label, right-content — через children</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section">
+    <h2>ButtonCircle</h2>
+    <div class="preview-label">Круглая кнопка с иконкой по центру. Источник — Figma <code>buttonCircle 1.1</code>.</div>
+
+    <div class="preview-label" style="margin-top: 12px;">Размеры (style=primary)</div>
+    <div class="preview-row">
+      <div class="button-circle-wrapper __size-16 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-20 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-24 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-36 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-56 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-72 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-96 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">Стили (size=44)</div>
+    <div class="preview-row">
+      <div class="button-circle-wrapper __size-44 __style-primary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-secondary"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-floating"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">…on-color / on-image (на тёмном фоне)</div>
+    <div class="preview-row" style="background: var(--static-surface-status-accent); padding: 12px; border-radius: 12px;">
+      <div class="button-circle-wrapper __size-44 __style-primary-on-color"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-secondary-on-color"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-on-image"><button class="button-circle"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">Состояния</div>
+    <div class="preview-row">
+      <div class="button-circle-wrapper __size-44 __style-primary"><button class="button-circle" disabled><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+      <div class="button-circle-wrapper __size-44 __style-primary"><button class="button-circle __state-loading"><span class="icon __src" style="--icon-src:url('assets/icons/plus.svg')"></span></button></div>
+    </div>
+
+    <table class="spec-table">
+      <thead><tr><th colspan="2">Что умеет</th></tr></thead>
+      <tbody>
+        <tr><td><code>.__size-16 / 20 / 24 / 36 / 44 / 56 / 72 / 96</code></td><td>квадрат + пропорциональная иконка (12/16/16/20/24/24/32/40)</td></tr>
+        <tr><td><code>.__style-primary</code></td><td>orange fill, белая иконка — главное действие</td></tr>
+        <tr><td><code>.__style-secondary</code></td><td>translucent contrast bg, иконка по теме</td></tr>
+        <tr><td><code>.__style-primary-on-color</code></td><td>белая на акценте, иконка чёрная</td></tr>
+        <tr><td><code>.__style-secondary-on-color</code></td><td>translucent белый, иконка белая</td></tr>
+        <tr><td><code>.__style-floating</code></td><td>FAB: surface-base-quaternary + drop shadow</td></tr>
+        <tr><td><code>.__style-on-image</code></td><td>тёмный translucent оверлей для media</td></tr>
+        <tr><td><code>.__style-custom</code></td><td>цвета через <code>--button-circle-custom-bg</code> и <code>-color</code></td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, pointer-events none</td></tr>
+        <tr><td><code>.__state-loading</code></td><td>shimmer, иконка скрыта</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>AvatarsView — стек + текст</h2>
+    <div class="preview-label">Аватарки внахлёст с белой обводкой + «+N» плашка + опциональный body-m текст справа. Три размера: 20 / 24 / 36.</div>
+
+    <div class="preview-label" style="margin-top: 12px;">__size-20</div>
+    <div class="preview-row">
+      <div class="avatars-view __size-20">
+        <div class="avatars-view__stack">
+          <div class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
+          <div class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
+          <div class="avatars-view__more">+5</div>
+        </div>
+        <span class="avatars-view__text">7 участников</span>
+      </div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">__size-24 (default)</div>
+    <div class="preview-row">
+      <div class="avatars-view __size-24">
+        <div class="avatars-view__stack">
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=23" alt=""></div>
+          <div class="avatars-view__more">+12</div>
+        </div>
+        <span class="avatars-view__text">15 друзей оценили</span>
+      </div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">__size-36</div>
+    <div class="preview-row">
+      <div class="avatars-view __size-36">
+        <div class="avatars-view__stack">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=12" alt=""></div>
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
+          <div class="avatars-view__more">+3</div>
+        </div>
+        <span class="avatars-view__text">12 друзей поздравило</span>
+      </div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;">Без текста</div>
+    <div class="preview-row">
+      <div class="avatars-view __size-24">
+        <div class="avatars-view__stack">
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=23" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead><tr><th colspan="2">Что умеет</th></tr></thead>
+      <tbody>
+        <tr><td><code>.avatars-view</code></td><td>flex-row, gap 8px, default __size-24</td></tr>
+        <tr><td><code>.__size-20 / __size-24 / __size-36</code></td><td>задают размер «+N» плашки, оверлап и font-size счётчика</td></tr>
+        <tr><td><code>.avatars-view__stack</code></td><td>стопка аватарок с 2px белым контуром и отрицательным margin-left</td></tr>
+        <tr><td><code>.avatars-view__more</code></td><td>круглая плашка с «+N»; bg <code>--dynamic-surface-contrast-mid</code></td></tr>
+        <tr><td><code>.avatars-view__text</code></td><td>body-m справа от стека — опционально, можно не класть</td></tr>
+        <tr><td>аватарки внутри</td><td>обычные <code>.avatar.__size-N</code> с подходящим размером</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>FeedMemory</h2>
+    <div class="preview-label">Воспоминание «в этот день». Использует layout <code>feed-base</code>.</div>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <article class="feed-memory island">
+        <nav class="breadcrumbs ds-body-m">
+          <a class="breadcrumbs__item" href="#">Воспоминания</a>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">В этот день</span>
+        </nav>
+        <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Дополните фотографию роз спустя 5 лет</h2>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Вы</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 лет назад</div>
+          </div>
+        </div></div></div>
+        <p class="ds-body-m">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут.</p>
+        <div class="media" style="background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64)); aspect-ratio: 4/3;"></div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Поделиться снова</span></button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>FeedClip — 9:16</h2>
+    <div class="preview-label">Видео-клип с aspect-ratio 9:16 и кнопкой mute в углу.</div>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <article class="feed-base island" style="max-width: 320px;">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Рыбец 543</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <nav class="breadcrumbs ds-body-m">
+          <a class="breadcrumbs__item" href="#">Рыбалка</a>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Клипы</span>
+        </nav>
+        <div class="media __type-clip" style="background: linear-gradient(180deg, var(--base-blue-48), var(--base-ocean-64));">
+          <button class="media__mute" aria-label="Mute">🔇</button>
+        </div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span><span class="button-klass__icon-filled icon __size-20 __src" style="--icon-src:url('assets/icons/klass_filled_16_20.svg')"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/comment_24.svg')"></span>&nbsp;14</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/reshare_24.svg')"></span>&nbsp;5</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/dots-horizontal.svg')"></span></span></button></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>FeedDiscussion + Comment compact</h2>
+    <div class="preview-label">Q&amp;A карточка с топ-комментом, кнопкой «Посмотреть N ответов» и полем ввода.</div>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <article class="feed-discussion island">
+        <nav class="breadcrumbs ds-body-m">
+          <a class="breadcrumbs__item" href="#">Здоровье</a>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Обсуждают</span>
+        </nav>
+        <header class="header __size-xl">
+          <h2 class="header__title">Болит колено при приседании. Что это может быть?</h2>
+        </header>
+        <hr class="ds-divider">
+        <div class="comment __type-compact">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=52" alt=""></div>
+          <div class="comment__body">
+            <div class="comment__header"><b>Борис Фрол</b>· 3 часа назад</div>
+            <p class="comment__text">У меня такое было после пробежки, помогло растирание медвежьим жиром</p>
+            <div class="comment__actions">
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/arrow-left.svg')"></span>Ответить</span></button></span>
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span>2</span></button></span>
+            </div>
+          </div>
+        </div>
+        <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 35 ответов</span></button></span>
+        <div class="comment-input">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
+          <input class="text-input __size-36" placeholder="Написать ответ…">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>FeedQuestions</h2>
+    <div class="preview-label">Карусель вопросов от соседей. Карточки <code>.question-card</code> на сером фоне, горизонтальный скролл.</div>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <article class="feed-questions island">
+        <nav class="breadcrumbs ds-body-m">
+          <a class="breadcrumbs__item" href="#">Санкт-Петербург</a>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Нужен совет</span>
+        </nav>
+        <header class="header __size-xl">
+          <h2 class="header__title">Помогите ответом в Санкт-Петербурге</h2>
+          <p class="header__subtitle">Соседи задают вопросы по ремонту, медицине и доставке</p>
+        </header>
+        <div class="feed-questions__list">
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Ирина Кузнецова</div></div>
+            </div></div></div>
+            <div class="question-card__title">Соседи, подскажите мастера по окнам</div>
+            <div class="question-card__category">Ремонт</div>
+          </div>
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Валентина Петрова</div></div>
+            </div></div></div>
+            <div class="question-card__title">Подскажите хорошего стоматолога в нашем районе</div>
+            <div class="question-card__category">Стоматолог</div>
+          </div>
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=11" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Олег Иванов</div></div>
+            </div></div></div>
+            <div class="question-card__title">Ищу собутыльника на выходные</div>
+            <div class="question-card__category">Знакомства</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>Comment — UniCell + Avatar</h2>
+    <div class="preview-stage" style="padding: 0; background: transparent;">
+      <div class="uni-cell-wrapper">
+        <div class="uni-cell-container">
+          <div class="uni-cell" style="gap: 12px;">
+            <div class="avatar __size-36 __type-initials">МК</div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-caption-m-accent">Михаил К.</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 мин. назад</div>
+              <div class="ds-body-m" style="margin-top: 4px;">Отличный рецепт, спасибо! Сделал на ужин — вся семья в восторге.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>GroupCard — UniCard composition</h2>
+    <div class="preview-stage">
+      <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary); margin-bottom: 8px;">Вступите в сообщество</div>
+      <div class="uni-card-wrapper __size-custom" style="--uni-card-size-custom: 100%;">
+        <div class="uni-card __state-enabled __has-background" style="overflow: hidden;">
+          <div class="uni-card-media" style="width: 100%; height: 100px; background: linear-gradient(135deg, var(--base-blue-48), var(--base-blue-64)); margin: 0;"></div>
+          <div class="uni-card-content" style="width: 100%;">
+            <div class="contents-view-container">
+              <div class="ds-title-s">Любители рыбалки — Петербург</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary); margin-top: 3px;">48 320 участников · Закрытая группа</div>
+            </div>
+            <div class="button-wrapper __size-36 __full-width" style="display: block; margin-top: 10px;">
+              <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Вступить</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-label" style="margin-top: 16px;">Без <code>__has-background</code> — прозрачно, без бордера, content flush с краями.</div>
+      <div class="uni-card-wrapper __size-custom" style="--uni-card-size-custom: 100%;">
+        <div class="uni-card __state-enabled" style="overflow: hidden;">
+          <div class="uni-card-media" style="width: 100%; height: 100px; background: linear-gradient(135deg, var(--base-blue-48), var(--base-blue-64)); margin: 0;"></div>
+          <div class="uni-card-content" style="width: 100%;">
+            <div class="contents-view-container">
+              <div class="ds-title-s">Любители рыбалки — Петербург</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary); margin-top: 3px;">48 320 участников · Закрытая группа</div>
+            </div>
+            <div class="button-wrapper __size-36 __full-width" style="display: block; margin-top: 10px;">
+              <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Вступить</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>FeedBase — primitives composition</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <article class="feed-base">
+        <!-- Header: uni-cell with avatar + meta + subscribe (non-interactive) -->
+        <div class="uni-cell-wrapper">
+          <div class="uni-cell-container">
+            <div class="uni-cell">
+              <div class="avatar __size-36 __type-initials">ИЧ</div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s">Игорь Черняков</div>
+                <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+              </div>
+              <div class="button-wrapper __size-28">
+                <button class="button-container __style-secondary"><span class="button-content">Подписаться</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="breadcrumbs ds-body-m">
+          <a class="breadcrumbs__item" href="#">Еда</a>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Рецепты</span>
+        </nav>
+
+        <p class="ds-body-m">Бургеры больше не покупаю, смотрите мой новый рецепт.</p>
+
+        <div class="media __type-video" style="height: 220px; background: linear-gradient(135deg, var(--base-orange-saturated-48), var(--base-orange-saturated-64));">
+          <span class="media__tag tag __style-primary __size-24">Рецепт</span>
+          <div class="media__play button-circle-wrapper __size-56">
+            <button class="button-circle" aria-label="Play"><span class="icon __src" style="--icon-src:url('assets/icons/play.svg')"></span></button>
+          </div>
+          <span class="media__time">12:34</span>
+        </div>
+
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 247;">
+            <input type="checkbox" hidden>
+            <span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span><span class="button-klass__icon-filled icon __size-20 __src" style="--icon-src:url('assets/icons/klass_filled_16_20.svg')"></span>&nbsp;<span class="button-klass__count"></span></span></span>
+          </label>
+          <div class="button-wrapper __size-36">
+            <button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/comment_24.svg')"></span>&nbsp;89</span></button>
+          </div>
+          <div class="button-wrapper __size-36">
+            <button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/reshare_24.svg')"></span>&nbsp;1.2k</span></button>
+          </div>
+          <div class="button-wrapper __size-36 __pinned-end">
+            <button class="button-container __style-secondary" aria-label="More" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/dots-horizontal.svg')"></span></span></button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.feed-base</code></td><td>вертикальный flex-стек на surface-base-secondary с <code>gap: 12px</code>; внутри только обычные примитивы</td></tr>
+        <tr><td>хедер</td><td><code>.uni-cell-wrapper</code> с аватаром, именем/временем и кнопкой</td></tr>
+        <tr><td>категория</td><td><code>.breadcrumbs</code> напрямую — без обёртки</td></tr>
+        <tr><td>текст</td><td><code>&lt;p class="ds-body-m"&gt;</code> — без обёртки</td></tr>
+        <tr><td>медиа</td><td><code>.media</code> + опционально <code>.media__play</code> / <code>.media__time</code></td></tr>
+        <tr><td>actions</td><td><code>.actions-bar</code> с <code>.button-wrapper</code>'ами; <code>.__pinned-end</code> прижимает кнопку (меню) вправо</td></tr>
+        <tr><td><code>.__state-loading</code></td><td>shimmer-анимация — теперь на <code>.media</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>Tabs</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <div class="tabs">
+        <button class="tabs-tab ds-title-xl __state-on">Лента</button>
+        <button class="tabs-tab ds-title-xl">Сегодня</button>
+        <button class="tabs-tab ds-title-xl">Подарки</button>
+        <button class="tabs-tab ds-title-xl">Обсуждение</button>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.tabs</code></td><td>горизонтальный ряд табов, скроллится без видимого скроллбара</td></tr>
+        <tr><td><code>.tabs-tab</code></td><td>текст-таб, 29px / weight 700, по дефолту opacity 0.3</td></tr>
+        <tr><td><code>.__state-on</code></td><td>активный таб — полная opacity</td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, курсор not-allowed</td></tr>
+        <tr><td><code>:active</code> / <code>.__clicked</code></td><td>scale(0.95) + opacity 0.55</td></tr>
+        <tr><td><code>.tabs__adjust</code></td><td>трейлинг-слот справа (например, кнопка настроек)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>Tabbar — iOS</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <div class="tabbar __platform-ios">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed __state-on" aria-label="Feed"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Book"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Message"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Clip"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Menu"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>Tabbar — Android</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed __state-on" aria-label="Feed"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Book"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Message"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Discussion"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Clip"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Menu"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.__platform-ios</code></td><td>iOS-композиция: 5 слотов</td></tr>
+        <tr><td><code>.__platform-android</code></td><td>Android-композиция: 7 слотов (добавлен discussion)</td></tr>
+        <tr><td><code>.tabbar__row</code></td><td>flex-ряд с равными ячейками (<code>flex: 1 1 0</code>)</td></tr>
+        <tr><td><code>.tabbar__handle</code></td><td>нижняя зона под home-indicator (24px)</td></tr>
+        <tr><td><code>.tabbar-icon</code></td><td>иконка-кнопка 24px (mask) в ячейке высотой 48px</td></tr>
+        <tr><td><code>.__slot-feed</code></td><td>иконка ленты</td></tr>
+        <tr><td><code>.__slot-book</code></td><td>иконка «Книга»</td></tr>
+        <tr><td><code>.__slot-message</code></td><td>иконка сообщений</td></tr>
+        <tr><td><code>.__slot-discussion</code></td><td>иконка обсуждений (только Android)</td></tr>
+        <tr><td><code>.__slot-clip</code></td><td>иконка клипов</td></tr>
+        <tr><td><code>.__slot-menu</code></td><td>иконка меню</td></tr>
+        <tr><td><code>.__state-on</code></td><td>активная вкладка — акцентный цвет</td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, клики отключены</td></tr>
+        <tr><td><code>:active</code> / <code>.__clicked</code></td><td>scale(0.95)</td></tr>
+        <tr><td>замена иконки</td><td>через переменную <code>--tabbar-icon-src</code> в slot-классе — один файл на всё приложение</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>MeshokUp (Status + Nav + Tabs)</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <div class="status-bar">
+        <span class="status-bar__time">9:41</span>
+        <span class="status-bar__indicators">
+          <span class="icon __src" style="width:16px;height:12px;--icon-src:url('assets/icons/status-wifi.svg')"></span>
+          <span class="icon __src" style="width:17px;height:12px;--icon-src:url('assets/icons/status-signal.svg')"></span>
+          <span class="icon __src" style="width:25px;height:12px;--icon-src:url('assets/icons/status-battery.svg')"></span>
+        </span>
+      </div>
+      <div class="nav-bar __type-feed">
+        <div class="nav-bar__leading">
+          <div class="avatar __size-36 __type-initials">АК</div>
+        </div>
+        <div class="nav-bar__trailing">
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Создать"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('assets/icons/plus.svg')"></span></span></button></span>
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Уведомления"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('assets/icons/bell.svg')"></span></span></button></span>
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('assets/icons/search.svg')"></span></span></button></span>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tabs-tab ds-title-xl __state-on">Лента</button>
+        <button class="tabs-tab ds-title-xl">Сегодня</button>
+        <button class="tabs-tab ds-title-xl">Подарки</button>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.status-bar</code></td><td>мок iOS status bar высотой 44px, время + индикаторы</td></tr>
+        <tr><td><code>.status-bar__time</code></td><td>слот для времени, 15px / weight 600</td></tr>
+        <tr><td><code>.status-bar__indicators</code></td><td>слот справа: wifi / signal / battery (12px иконки)</td></tr>
+        <tr><td><code>.nav-bar</code></td><td>навигационная строка высотой 56px, фон base-secondary</td></tr>
+        <tr><td><code>.nav-bar__leading</code></td><td>левый слот — обычно аватар или back-кнопка</td></tr>
+        <tr><td><code>.nav-bar__title</code></td><td>центральный слот, 17/24 / weight 600, обрезается ellipsis</td></tr>
+        <tr><td><code>.nav-bar__trailing</code></td><td>правый слот — icon-кнопки действий, gap space-2</td></tr>
+        <tr><td><code>.nav-bar.__type-feed</code></td><td>вариация для главного экрана ленты: аватар слева, иконки справа на <code>button-inline __size-24</code>, тайтла нет, gap в trailing = space-4</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section" style="min-width: 375px;">
+    <h2>CommentInput</h2>
+    <div class="preview-stage" style="padding: 0;">
+      <div class="comment-input">
+        <div class="avatar __size-36 __type-initials">А</div>
+        <input class="text-input __size-36" placeholder="Написать комментарий…">
+        <div class="button-wrapper __size-36">
+          <button class="button-container __style-primary" style="width: 36px; border-radius: 50%;" aria-label="Send">
+            <span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/send.svg')"></span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>.comment-input</code></td><td>flex-ряд: аватар + текст-инпут + send-кнопка; на surface-base-secondary, сверху линия</td></tr>
+        <tr><td>состав</td><td>композиция из <code>.avatar __size-36</code>, <code>.text-input __size-36</code> и <code>.button-wrapper __size-36 __style-primary</code></td></tr>
+        <tr><td>safe-area</td><td>нижний паддинг учитывает <code>env(safe-area-inset-bottom)</code></td></tr>
+        <tr><td><code>.__state-focused</code></td><td>прокидывает фокус в <code>.text-input</code> (фон → contrast-mid)</td></tr>
+        <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, весь блок неинтерактивен</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+
+</div>
+
+</body>
+</html>

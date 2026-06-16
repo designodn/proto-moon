@@ -1,0 +1,45 @@
+/**
+ * OK Design System — FeedDiscussion (Q&A)
+ *
+ *   <article class="feed-discussion island">
+ *     <nav class="breadcrumbs ds-body-m">…Здоровье > Обсуждают…</nav>
+ *     <header class="header __size-xl">
+ *       <h2 class="header__title">…вопрос…</h2>
+ *     </header>
+ *     <hr class="ds-divider">
+ *     <div class="comment __type-compact">…top-comment…</div>
+ *     <div class="comment-input">…</div>
+ *   </article>
+ *
+ * Typography приходит из компонента header (см. header.css).
+ */
+
+.feed-discussion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* «Посмотреть N ответов» — авто-ширина, прижата к левому краю */
+.feed-discussion > .button-inline-wrapper {
+  align-self: flex-start;
+}
+
+/* Comment-input внутри обсуждения — без своих паддингов */
+.feed-discussion .comment-input {
+  padding: 0;
+}
+
+/* Header — без нижнего gap до следующего элемента (divider/comment) */
+.feed-discussion > .header {
+  margin-bottom: calc(-1 * var(--space-3));
+}
+
+/* Тонкая линия-сепаратор */
+.ds-divider {
+  border: 0;
+  border-top: 1px solid var(--dynamic-stroke-contrast-low);
+  margin: 0;
+}

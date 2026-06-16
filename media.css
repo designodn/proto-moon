@@ -1,0 +1,180 @@
+/**
+ * OK Design System — Media
+ *
+ * Универсальный слот под визуальный контент.
+ *
+ * Базовый — одно фото:
+ *   <div class="media"><img src="…"></div>
+ *
+ * Видео:
+ *   <div class="media __type-video">
+ *     <img src="…poster…">
+ *     <button class="media__play">▶</button>
+ *     <span class="media__time">12:34</span>
+ *   </div>
+ *
+ * Галерея (2-колоночный грид с «Ещё N» на последней ячейке):
+ *   <div class="media __type-gallery">
+ *     <div class="media__cell"><img …></div>
+ *     <div class="media__cell"><img …></div>
+ *     <div class="media__cell"><img …></div>
+ *     <div class="media__cell __more" data-more="5"><img …></div>
+ *   </div>
+ *
+ * Клип (9:16 + mute):
+ *   <div class="media __type-clip">
+ *     <video|img src="…">
+ *     <button class="media__mute">🔇</button>
+ *   </div>
+ *
+ * STATES:
+ *   .__state-loading — shimmer
+ */
+
+.media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--dynamic-surface-contrast-low);
+}
+
+/* Aspect ratio modifiers */
+.media.__aspect-9-16 { aspect-ratio: 9 / 16; }
+.media.__aspect-1-1  { aspect-ratio: 1 / 1; }
+.media.__aspect-4-3  { aspect-ratio: 4 / 3; }
+.media.__aspect-16-9 { aspect-ratio: 16 / 9; }
+
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================
+   TYPE: VIDEO — фото + play + time
+   ============================================================ */
+/* Visual marker; play/time/mute elements ниже */
+
+/* ============================================================
+   TYPE: GALLERY — 2-колоночный грид фото
+   ============================================================ */
+.media.__type-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background-color: var(--dynamic-surface-base-secondary);
+}
+.media__cell {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background-color: var(--dynamic-surface-contrast-low);
+}
+.media__cell img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.media__cell.__more::after {
+  content: 'Ещё ' attr(data-more);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--base-black-lena-translucent-48);
+  color: var(--static-text-and-icons-base-inverse-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-300);
+  line-height: var(--line-height-300);
+  font-weight: 600;
+}
+
+/* ============================================================
+   TYPE: CLIP — 9:16 вертикальный
+   ============================================================ */
+.media.__type-clip {
+  aspect-ratio: 9 / 16;
+}
+
+/* ============================================================
+   OVERLAYS (для любых типов)
+   ============================================================ */
+
+/* Play overlay — позиционирует .button-circle по центру медиа
+   и форсит ему стиль __style-on-image (тёмный translucent). */
+.media__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.media__play .button-circle {
+  --button-circle-bg:    var(--static-surface-special-layer-tertiary);
+  --button-circle-color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+/* Duration pill — для video */
+.media__time {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  height: 24px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  background-color: var(--base-black-lena-translucent-56);
+  color: var(--static-text-and-icons-base-inverse-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-100);
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Тег в углу медиа — позиционирует .tag в top-left по умолчанию */
+.media__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+/* Mute pill (bottom-right) — для clip */
+.media__mute {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--base-black-lena-translucent-48);
+  color: var(--static-text-and-icons-base-inverse-primary);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ============================================================
+   STATE: LOADING — shimmer
+   ============================================================ */
+.media.__state-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--dynamic-surface-special-overlay) 50%,
+    transparent 100%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}

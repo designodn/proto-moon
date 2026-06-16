@@ -1,0 +1,162 @@
+{
+  "_readme": {
+    "что_это": "Контент для прототипа ленты (lenta-prototype.html). Заполняйте поля — Claude разложит по карточкам.",
+    "картинки": "Кладите файлы в assets/feed-content/. В JSON указывайте путь относительно корня репо, например assets/feed-content/fishing-1.jpg.",
+    "аватары": "Туда же. Можно одной папкой assets/feed-content/avatars/.",
+    "пустые_поля": "Если поле не нужно (например, breadcrumbs у дня рождения) — удаляйте его или ставьте null.",
+    "типы_карточек": ["stories", "contest", "memory", "discussion", "questions", "clip", "text", "gallery", "photo", "group", "birthday", "ad"]
+  },
+
+  "stories": {
+    "_comment": "Карусель сториз в самом верху ленты. Первая аватарка — «Ваш момент», её менять не нужно.",
+    "breadcrumbs": ["Дача", "Сейчас на даче"],
+    "items": [
+      { "name": "Елена",     "avatar": "assets/feed-content/avatars/elena.jpg",     "viewed": false },
+      { "name": "Евгения",   "avatar": "assets/feed-content/avatars/evgenia.jpg",   "viewed": false },
+      { "name": "Александр", "avatar": "assets/feed-content/avatars/alexander.jpg", "viewed": true  },
+      { "name": "Ирина",     "avatar": "assets/feed-content/avatars/irina.jpg",     "viewed": false },
+      { "name": "Михаил",    "avatar": "assets/feed-content/avatars/mikhail.jpg",   "viewed": true  }
+    ]
+  },
+
+  "feed": [
+    {
+      "type": "contest",
+      "_comment": "Конкурс: заголовок + 4 миниатюры + 2 кнопки.",
+      "breadcrumbs": ["Конкурс", "Урожай"],
+      "title": "Покажите свой урожай! Лучшие фото попадут в подборку района",
+      "images": [
+        "assets/feed-content/harvest-1.jpg",
+        "assets/feed-content/harvest-2.jpg",
+        "assets/feed-content/harvest-3.jpg",
+        "assets/feed-content/harvest-4.jpg"
+      ],
+      "buttons": ["📷 Загрузить фото", "🖼 Смотреть работы"]
+    },
+
+    {
+      "type": "memory",
+      "_comment": "Воспоминание «В этот день». 1 фото, автор всегда «Вы».",
+      "breadcrumbs": ["Воспоминания", "В этот день"],
+      "title": "Дополните фотографию роз спустя 5 лет",
+      "author": { "name": "Вы", "avatar": "assets/feed-content/avatars/me.jpg", "subtitle": "5 лет назад" },
+      "text": "Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут.",
+      "image": "assets/feed-content/roses.jpg",
+      "button": "Поделиться снова"
+    },
+
+    {
+      "type": "discussion",
+      "_comment": "Q&A: заголовок + топ-комментарий + ссылка на остальные ответы.",
+      "breadcrumbs": ["Здоровье", "Обсуждают"],
+      "title": "Болит колено при приседании. Что это может быть?",
+      "top_comment": {
+        "author": "Борис Фрол",
+        "avatar": "assets/feed-content/avatars/boris.jpg",
+        "time": "3 часа назад",
+        "text": "У меня такое было после пробежки, помогло растирание медвежьим жиром",
+        "likes": 2
+      },
+      "more_replies_label": "Посмотреть 35 ответов"
+    },
+
+    {
+      "type": "questions",
+      "_comment": "Карусель карточек-вопросов от соседей.",
+      "breadcrumbs": ["Санкт-Петербург", "Нужен совет"],
+      "title": "Помогите ответом в Санкт-Петербурге",
+      "subtitle": "Соседи задают вопросы по ремонту, медицине и доставке",
+      "questions": [
+        { "author": "Ирина Кузнецова",   "avatar": "assets/feed-content/avatars/irina.jpg",     "title": "Соседи, подскажите мастера по окнам",          "category": "Ремонт" },
+        { "author": "Валентина Петрова", "avatar": "assets/feed-content/avatars/valentina.jpg", "title": "Подскажите хорошего стоматолога в нашем районе", "category": "Стоматолог" },
+        { "author": "Олег Иванов",       "avatar": "assets/feed-content/avatars/oleg.jpg",      "title": "Ищу собутыльника на выходные",                   "category": "Знакомства" }
+      ]
+    },
+
+    {
+      "type": "clip",
+      "_comment": "Видео-клип 9:16. Вместо видео можно положить постер-картинку.",
+      "author": { "name": "Рыбец 543", "avatar": "assets/feed-content/avatars/fisher.jpg", "time": "12:48" },
+      "breadcrumbs": ["Рыбалка", "Клипы"],
+      "poster": "assets/feed-content/clip-fishing-poster.jpg",
+      "stats": { "likes": 34, "comments": 14, "reshares": 5 }
+    },
+
+    {
+      "type": "text",
+      "_comment": "Текстовый пост без медиа. clamp — сколько строк показывать до «Раскрыть».",
+      "author": { "name": "Елена Фёдорова", "avatar": "assets/feed-content/avatars/elena.jpg", "time": "12:48" },
+      "breadcrumbs": ["Санкт-Петербург", "Рядом живут"],
+      "text": "Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день — яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже больно. Подскажите, что не так?",
+      "clamp": 5,
+      "stats": { "likes": 34, "comments": 14, "reshares": 5 }
+    },
+
+    {
+      "type": "gallery",
+      "_comment": "Пост с галереей. До 4 фото; если больше — на 4-й клетке покажется «+N».",
+      "author": { "name": "Альберт Фёдоров", "avatar": "assets/feed-content/avatars/albert.jpg", "time": "12:48" },
+      "text": "6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи! Поделюсь всеми снастями и точкой в комментариях.",
+      "images": [
+        "assets/feed-content/fish-1.jpg",
+        "assets/feed-content/fish-2.jpg",
+        "assets/feed-content/fish-3.jpg",
+        "assets/feed-content/fish-4.jpg"
+      ],
+      "more_count": 5,
+      "stats": { "likes": 312, "comments": 48, "reshares": 15 }
+    },
+
+    {
+      "type": "photo",
+      "_comment": "Пост с одной фоткой (как text + media).",
+      "author": { "name": "Светлана Иванова", "avatar": null, "initials": "СИ", "time": "09:35" },
+      "breadcrumbs": ["Семья", "Дети"],
+      "text": "Сегодня сыну исполнилось 18. Помню, как привозила его из роддома — кажется, было вчера. А он уже выше меня на голову и собирается в институт.",
+      "image": "assets/feed-content/son-birthday.jpg",
+      "stats": { "likes": 1842, "comments": 234, "reshares": 156 }
+    },
+
+    {
+      "type": "group",
+      "_comment": "Карточка-приглашение в сообщество.",
+      "avatar": "assets/feed-content/groups/fishermen.jpg",
+      "title": "Вступай в сообщество рыбаков",
+      "friends": {
+        "avatars": [
+          "assets/feed-content/avatars/valentina.jpg",
+          "assets/feed-content/avatars/oleg.jpg"
+        ],
+        "more": 3,
+        "text": "5 друзей подписаны"
+      },
+      "button": "Подписаться"
+    },
+
+    {
+      "type": "birthday",
+      "_comment": "Открытка с днём рождения.",
+      "avatar": "assets/feed-content/avatars/nikolay.jpg",
+      "title": "Николай празднует свой День рождения!",
+      "friends": {
+        "avatars": [
+          "assets/feed-content/avatars/irina.jpg",
+          "assets/feed-content/avatars/mikhail.jpg"
+        ],
+        "more": 3,
+        "text": "12 друзей поздравило"
+      },
+      "button": "🎁 Поздравить"
+    },
+
+    {
+      "type": "ad",
+      "_comment": "Реклама. У рекламодателя обычно инициалы вместо аватарки.",
+      "advertiser": { "name": "Квартал бизнес-класса «Б15»", "initials": "Б15", "label": "Реклама 0+" },
+      "text": "От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до делового центра — каждый день в спокойствии и комфорте.",
+      "clamp": 2,
+      "image": "assets/feed-content/ad-b15.jpg",
+      "cta": "Перейти"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+/**
+ * OK Design System — Header
+ *
+ * Тайтл секции + опциональный сабтайтл. Размер задаётся на родителе,
+ * пара типографики применяется автоматически — правила прокинуты к
+ * .ds-title-* / .ds-body-* в tokens.css через группировку селекторов.
+ *
+ *   <header class="header __size-xl">
+ *     <div class="header__title">Заголовок</div>
+ *     <div class="header__subtitle">Подзаголовок</div>
+ *   </header>
+ *
+ * SIZE PAIRS (title / subtitle, см. tokens.css):
+ *   xl → ds-title-xl + ds-body-l
+ *   l  → ds-title-l  + ds-body-l
+ *   m  → ds-title-m  + ds-body-m
+ *   s  → ds-title-s  + ds-body-m
+ *
+ * Между title и subtitle всегда 2px.
+ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header__title {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.header__subtitle {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}

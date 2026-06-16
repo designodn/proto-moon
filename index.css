@@ -1,0 +1,79 @@
+/**
+ * OK Design System — Main Entry Point
+ *
+ * Import order matters:
+ *   1. tokens.css       — all CSS custom properties (colors, spacing, typography)
+ *   2. fonts.css        — OK Sans @font-face declarations (optional brand font)
+ *   3. animations.css   — keyframes + transition helpers
+ *   4. components/      — individual component styles
+ *
+ * Usage in HTML:
+ *   <link rel="stylesheet" href="index.css">
+ *   <html class="__ui-theme_enabled __ui-theme_light">  ← light theme
+ *   <html class="__ui-theme_enabled __ui-theme_dark">   ← dark theme
+ *
+ * To use OK Sans instead of Onest, override --font-family on :root:
+ *   :root { --font-family: "OK Sans Text", "OK Sans Display", Onest, sans-serif; }
+ */
+
+@import url('./tokens.css');
+@import url('./fonts.css');
+@import url('./animations.css');
+
+/* Canonical primitives */
+@import url('./components/icon.css');
+@import url('./components/icon-glyph.css');
+@import url('./components/button.css');
+@import url('./components/button-inline.css');
+@import url('./components/button-circle.css');
+@import url('./components/uni-cell.css');
+@import url('./components/uni-card.css');
+@import url('./components/content.css');
+@import url('./components/contents-view.css');
+
+/* Lenta-derived components (built on top of the primitives above) */
+@import url('./components/header.css');
+@import url('./components/avatar.css');
+@import url('./components/picture.css');
+@import url('./components/pulse-dot.css');
+@import url('./components/breadcrumbs.css');
+@import url('./components/tag.css');
+@import url('./components/media.css');
+@import url('./components/actions-bar.css');
+@import url('./components/island.css');
+@import url('./components/avatars-view.css');
+@import url('./components/feed-text.css');
+@import url('./components/comment.css');
+@import url('./components/feed-base.css');
+@import url('./components/feed-ad.css');
+@import url('./components/feed-birthday.css');
+@import url('./components/feed-discussion.css');
+@import url('./components/feed-questions.css');
+@import url('./components/feed-stories.css');
+@import url('./components/text-feed.css');
+@import url('./components/clip-feed.css');
+@import url('./components/tabs.css');
+@import url('./components/tabbar.css');
+@import url('./components/meshok-up.css');
+@import url('./components/text-input.css');
+@import url('./components/comment-input.css');
+@import url('./components/phone-frame.css');
+
+/* Override: iOS Dynamic Type "xxLarge" (2XL) — активируется .__type-scale-2xl на <html> */
+@import url('./components/type-scale.css');
+
+/* ============================================================
+   GLOBAL RESET (minimal)
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--dynamic-surface-base-primary);
+  color: var(--dynamic-text-and-icons-base-primary);
+}

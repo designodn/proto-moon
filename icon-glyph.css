@@ -1,0 +1,60 @@
+/**
+ * OK Design System — IconGlyph styles
+ * Pairs with components/icon-glyph.js (custom element <icon-glyph>).
+ *
+ * The element renders an SVG mask filled with currentColor, stretched to
+ * 100% / 100% of the host box. Size is set by:
+ *   - the `size` attribute (inline w/h, set by the JS), OR
+ *   - a `.__size-N` modifier class (CSS, listed below), OR
+ *   - any parent that gives the host an explicit width/height.
+ *
+ * STATES:
+ *   .__state-disabled — opacity 0.36, no pointer events
+ *   .__state-loading  — shimmer sweep over the mask silhouette
+ */
+
+:root {
+  --icon-glyph-base-path: 'assets/icons/';
+}
+
+icon-glyph {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-glyph-src) center / 100% 100% no-repeat;
+          mask: var(--icon-glyph-src) center / 100% 100% no-repeat;
+}
+
+/* Size modifiers — same scale as .icon */
+icon-glyph.__size-12 { width: 12px; height: 12px; }
+icon-glyph.__size-16 { width: 16px; height: 16px; }
+icon-glyph.__size-20 { width: 20px; height: 20px; }
+icon-glyph.__size-24 { width: 24px; height: 24px; }
+icon-glyph.__size-32 { width: 32px; height: 32px; }
+icon-glyph.__size-48 { width: 48px; height: 48px; }
+
+/* Disabled */
+icon-glyph.__state-disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  pointer-events: none;
+}
+
+/* Loading shimmer — overlay above the mask */
+icon-glyph.__state-loading {
+  position: relative;
+  overflow: hidden;
+}
+icon-glyph.__state-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    currentColor 50%,
+    transparent 100%
+  );
+  opacity: 0.4;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}

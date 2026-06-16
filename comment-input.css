@@ -1,0 +1,30 @@
+/**
+ * OK Design System — CommentInput
+ *
+ * Bottom-anchored bar with an avatar slot, a .text-input field and a
+ * round send button. Used inside the comments bottom-sheet.
+ *
+ * Composes: .avatar + .text-input + .button-wrapper (size 36, primary).
+ *
+ * STATES on the wrapper:
+ *   .__state-disabled  — input + send become non-interactive
+ *   .__state-focused   — surfaces focus to the contained .text-input
+ */
+
+.comment-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2-5) var(--space-3);
+  padding-bottom: max(var(--space-2-5), env(safe-area-inset-bottom));
+  background-color: var(--dynamic-surface-base-secondary);
+}
+
+.comment-input.__state-focused .text-input {
+  background-color: var(--dynamic-surface-contrast-mid);
+}
+
+.comment-input.__state-disabled {
+  pointer-events: none;
+  opacity: var(--state-element-disabled, 0.36);
+}

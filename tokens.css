@@ -1,0 +1,646 @@
+/**
+ * OK Design System — Tokens
+ * Source: @ok/ds-tokens + odnoklassniki-frontend-common
+ * Auto-converted from Stylus. Do not edit manually.
+ */
+
+/* ============================================================
+   SPACING SCALE (4px grid)
+   ============================================================ */
+:root {
+  --space-0:    0px;
+  --space-0-5:  2px;
+  --space-1:    4px;
+  --space-1-5:  6px;
+  --space-2:    8px;
+  --space-2-5:  10px;
+  --space-3:    12px;
+  --space-4:    16px;
+  --space-5:    20px;
+  --space-6:    24px;
+  --space-7:    28px;
+  --space-8:    32px;
+  --space-9:    36px;
+  --space-10:   40px;
+  --space-11:   44px;
+  --space-12:   48px;
+  --space-14:   56px;
+  --space-16:   64px;
+  --space-18:   72px;
+  --space-24:   96px;
+}
+
+/* ============================================================
+   TYPOGRAPHY SCALE
+   Font: Onest, fallback: Arial, Helvetica Neue, Helvetica, sans-serif
+   ============================================================ */
+:root {
+  --font-family: "OK Sans Display", Onest, sans-serif;
+}
+
+/* Шрифтовой модификатор: в прототипах lenta-light Roboto идёт первым.
+   Вешается на html/body, переопределяет --font-family для всего поддерева. */
+.__font-roboto {
+  --font-family: "Roboto", "OK Sans Display", Onest, Arial, sans-serif;
+}
+
+:root {
+
+  /* Font sizes */
+  --font-size-50:  11px;
+  --font-size-100: 13px;
+  --font-size-200: 15px;
+  --font-size-300: 17px;
+  --font-size-400: 21px;
+  --font-size-500: 24px;
+  --font-size-600: 27px;
+  --font-size-700: 30px;
+  --font-size-800: 34px;
+  --font-size-2000: 56px;
+
+  /* Line heights */
+  --line-height-50:  12px;
+  --line-height-100: 16px;
+  --line-height-200: 20px;
+  --line-height-300: 24px;
+  --line-height-400: 28px;
+  --line-height-500: 32px;
+  --line-height-600: 36px;
+  --line-height-700: 40px;
+  --line-height-2000: 72px;
+}
+
+/* Typography helper classes — навешиваются на любой текст напрямую.
+   Также подключены к header __size-N через группировку (одна декларация). */
+.ds-display-xl  { font-family: var(--font-family); font-size: 56px; line-height: 72px; font-weight: 500; letter-spacing: 0; }
+.ds-display-m   { font-family: var(--font-family); font-size: 24px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
+
+.ds-title-xl,
+.header.__size-xl .header__title { font-family: var(--font-family); font-size: 27px; line-height: 36px; font-weight: 600; letter-spacing: 0; }
+
+.ds-title-l,
+.header.__size-l .header__title  { font-family: var(--font-family); font-size: 21px; line-height: 28px; font-weight: 600; letter-spacing: 0; }
+
+/* ds-title-m — также используется кнопками 56/44 и заголовком nav-bar */
+.ds-title-m,
+.header.__size-m .header__title,
+.button-wrapper.__size-56 .button-container,
+.button-wrapper.__size-44 .button-container,
+.nav-bar__title { font-family: var(--font-family); font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: 0; }
+
+/* ds-title-s — также используется кнопкой 36 и локальной ll-publish-btn */
+.ds-title-s,
+.header.__size-s .header__title,
+.button-wrapper.__size-36 .button-container,
+.ll-publish-btn .button-container { font-family: var(--font-family); font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: 0; }
+
+/* ds-body-l — также используется button-inline 24/32 и text-input 56 */
+.ds-body-l,
+.header.__size-xl .header__subtitle,
+.header.__size-l  .header__subtitle,
+.button-inline.__size-24,
+.button-inline.__size-32,
+.text-input.__size-56 { font-family: var(--font-family); font-size: 17px; line-height: 24px; font-weight: 400; letter-spacing: 0; }
+
+/* ds-body-m — также используется button-inline 20 и text-input 36 */
+.ds-body-m,
+.header.__size-m .header__subtitle,
+.header.__size-s .header__subtitle,
+.button-inline.__size-20,
+.text-input.__size-36 { font-family: var(--font-family); font-size: 15px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
+
+/* ds-caption-m — также используется button-inline 16 */
+.ds-caption-m,
+.button-inline.__size-16 { font-family: var(--font-family); font-size: 13px; line-height: 16px; font-weight: 400; letter-spacing: 0; }
+
+/* ds-caption-m-accent — также используется кнопкой 28 */
+.ds-caption-m-accent,
+.button-wrapper.__size-28 .button-container { font-family: var(--font-family); font-size: 13px; line-height: 16px; font-weight: 600; letter-spacing: 0; }
+
+.ds-caption-s   { font-family: var(--font-family); font-size: 11px; line-height: 16px; font-weight: 400; letter-spacing: 0; }
+.ds-caption-s-accent { font-family: var(--font-family); font-size: 11px; line-height: 16px; font-weight: 600; letter-spacing: 0; }
+
+/* ============================================================
+   STATE OVERLAYS
+   ============================================================ */
+:root {
+  --state-element-disabled: 0.36;
+  --state-element-hovered:  0.84;
+  --state-element-pressed:  0.76;
+  --state-overlay-hovered:  0.12;
+  --state-overlay-pressed:  0.16;
+  --state-overlay-selected: 0.08;
+  --state-overlay-timered:  0.16;
+}
+
+/* ============================================================
+   COLOR PRIMITIVES
+   Source: Base Color Primitives collection
+   ============================================================ */
+:root {
+  --base-asphalt-12: #E0E3EA;
+  --base-asphalt-48: #A1A8B8;
+  --base-asphalt-56: #8E95A5;
+  --base-asphalt-64: #798090;
+  --base-asphalt-92: #43464F;
+  --base-asphalt-translucent-12: rgba(142, 149, 165, 0.12);
+  --base-black-100: #2E2F33;
+  --base-black-lena-100: #000000;
+  --base-black-lena-translucent-12: rgba(0, 0, 0, 0.12);
+  --base-black-lena-translucent-16: rgba(0, 0, 0, 0.16);
+  --base-black-lena-translucent-20: rgba(0, 0, 0, 0.20);
+  --base-black-lena-translucent-24: rgba(0, 0, 0, 0.24);
+  --base-black-lena-translucent-32: rgba(0, 0, 0, 0.32);
+  --base-black-lena-translucent-36: rgba(0, 0, 0, 0.36);
+  --base-black-lena-translucent-4: rgba(0, 0, 0, 0.04);
+  --base-black-lena-translucent-40: rgba(0, 0, 0, 0.40);
+  --base-black-lena-translucent-48: rgba(0, 0, 0, 0.48);
+  --base-black-lena-translucent-56: rgba(0, 0, 0, 0.56);
+  --base-black-lena-translucent-64: rgba(0, 0, 0, 0.64);
+  --base-black-lena-translucent-76: rgba(0, 0, 0, 0.76);
+  --base-black-lena-translucent-8: rgba(0, 0, 0, 0.08);
+  --base-black-lena-translucent-88: rgba(0, 0, 0, 0.88);
+  --base-black-translucent-12: rgba(46, 47, 51, 0.12);
+  --base-black-translucent-16: rgba(46, 47, 51, 0.16);
+  --base-black-translucent-20: rgba(46, 47, 51, 0.20);
+  --base-black-translucent-24: rgba(46, 47, 51, 0.24);
+  --base-black-translucent-32: rgba(46, 47, 51, 0.32);
+  --base-black-translucent-36: rgba(46, 47, 51, 0.36);
+  --base-black-translucent-4: rgba(46, 47, 51, 0.04);
+  --base-black-translucent-40: rgba(46, 47, 51, 0.40);
+  --base-black-translucent-48: rgba(46, 47, 51, 0.48);
+  --base-black-translucent-56: rgba(46, 47, 51, 0.56);
+  --base-black-translucent-64: rgba(46, 47, 51, 0.64);
+  --base-black-translucent-76: rgba(46, 47, 51, 0.76);
+  --base-black-translucent-8: rgba(46, 47, 51, 0.08);
+  --base-black-translucent-88: rgba(46, 47, 51, 0.88);
+  --base-blue-12: #CEE8F2;
+  --base-blue-48: #67B4CF;
+  --base-blue-56: #54A1BB;
+  --base-blue-64: #3D8BA5;
+  --base-blue-92: #384A50;
+  --base-blue-saturated-48: #6BB7FF;
+  --base-blue-saturated-56: #0099FF;
+  --base-blue-saturated-64: #018DEB;
+  --base-blue-saturated-translucent-12: rgba(0, 153, 255, 0.12);
+  --base-blue-saturated-translucent-16: rgba(0, 153, 255, 0.16);
+  --base-blue-saturated-translucent-20: rgba(0, 153, 255, 0.20);
+  --base-blue-translucent-12: rgba(84, 161, 187, 0.12);
+  --base-brown-12: #E9E1DD;
+  --base-brown-48: #BDA191;
+  --base-brown-56: #AA8F7F;
+  --base-brown-64: #947A6B;
+  --base-brown-92: #4D443F;
+  --base-brown-translucent-12: rgba(170, 143, 127, 0.12);
+  --base-chikunya-12: #DEE7D2;
+  --base-chikunya-48: #9DB080;
+  --base-chikunya-56: #8A9D6E;
+  --base-chikunya-64: #768859;
+  --base-chikunya-92: #44483D;
+  --base-chikunya-translucent-12: rgba(138, 157, 110, 0.12);
+  --base-graphite-12: #E1E1F0;
+  --base-graphite-48: #A5A5C0;
+  --base-graphite-56: #9392AD;
+  --base-graphite-64: #7E7D97;
+  --base-graphite-92: #454551;
+  --base-graphite-translucent-12: rgba(147, 146, 173, 0.12);
+  --base-green-12: #D6E9D8;
+  --base-green-48: #8CB491;
+  --base-green-56: #7AA17F;
+  --base-green-64: #658B6A;
+  --base-green-92: #3D4A3F;
+  --base-green-saturated-48: #00CB7D;
+  --base-green-saturated-56: #2FB675;
+  --base-green-saturated-64: #009A5E;
+  --base-green-saturated-translucent-12: rgba(47, 182, 117, 0.12);
+  --base-green-saturated-translucent-16: rgba(47, 182, 117, 0.16);
+  --base-green-saturated-translucent-20: rgba(47, 182, 117, 0.20);
+  --base-green-translucent-12: rgba(122, 161, 127, 0.12);
+  --base-grey-100: #38383B;
+  --base-grey-102: #2B2B2E;
+  --base-grey-104: #1A1A1C;
+  --base-grey-106: #0E0E0F;
+  --base-grey-saturated-100: #7C7C8A;
+  --base-grey-saturated-translucent-12: rgba(124, 124, 138, 0.12);
+  --base-grey-saturated-translucent-16: rgba(124, 124, 138, 0.16);
+  --base-grey-saturated-translucent-20: rgba(124, 124, 138, 0.20);
+  --base-grey-saturated-translucent-24: rgba(124, 124, 138, 0.24);
+  --base-grey-saturated-translucent-32: rgba(124, 124, 138, 0.32);
+  --base-grey-saturated-translucent-36: rgba(124, 124, 138, 0.36);
+  --base-grey-saturated-translucent-4: rgba(124, 124, 138, 0.04);
+  --base-grey-saturated-translucent-40: rgba(124, 124, 138, 0.40);
+  --base-grey-saturated-translucent-48: rgba(124, 124, 138, 0.48);
+  --base-grey-saturated-translucent-56: rgba(124, 124, 138, 0.56);
+  --base-grey-saturated-translucent-8: rgba(124, 124, 138, 0.08);
+  --base-grey-translucent-64: rgba(54, 54, 58, 0.64);
+  --base-grey-translucent-76: rgba(28, 28, 30, 0.76);
+  --base-indigo-12: #DFE1F7;
+  --base-indigo-48: #9DA0E9;
+  --base-indigo-56: #8B8DD4;
+  --base-indigo-64: #7678BE;
+  --base-indigo-92: #434556;
+  --base-indigo-translucent-12: rgba(139, 141, 212, 0.12);
+  --base-jungle-12: #D0EAE3;
+  --base-jungle-48: #76B7A7;
+  --base-jungle-56: #64A495;
+  --base-jungle-64: #4E8E80;
+  --base-jungle-92: #384B46;
+  --base-jungle-translucent-12: rgba(100, 164, 149, 0.12);
+  --base-ocean-12: #D8E5F4;
+  --base-ocean-48: #7DACDF;
+  --base-ocean-56: #6C99CB;
+  --base-ocean-64: #5783B5;
+  --base-ocean-92: #3B4856;
+  --base-ocean-translucent-12: rgba(108, 153, 203, 0.12);
+  --base-orange-12: #EFE0D7;
+  --base-orange-48: #D7976F;
+  --base-orange-56: #C3855C;
+  --base-orange-64: #AC7048;
+  --base-orange-92: #4F443C;
+  --base-orange-saturated-48: #FF9558;
+  --base-orange-saturated-56: #FF7700;
+  --base-orange-saturated-64: #D76200;
+  --base-orange-saturated-translucent-12: rgba(255, 119, 0, 0.12);
+  --base-orange-saturated-translucent-16: rgba(255, 119, 0, 0.16);
+  --base-orange-saturated-translucent-20: rgba(255, 119, 0, 0.20);
+  --base-orange-translucent-12: rgba(195, 133, 92, 0.12);
+  --base-pink-12: #F2DCE1;
+  --base-pink-48: #F57AA0;
+  --base-pink-56: #E0678E;
+  --base-pink-64: #C75179;
+  --base-pink-92: #554045;
+  --base-pink-translucent-12: rgba(224, 103, 142, 0.12);
+  --base-purple-12: #F1DBEF;
+  --base-purple-48: #DC81D7;
+  --base-purple-56: #C86FC4;
+  --base-purple-64: #B159AD;
+  --base-purple-92: #50414E;
+  --base-purple-translucent-12: rgba(200, 111, 196, 0.12);
+  --base-red-12: #EDDFDC;
+  --base-red-48: #FA7D71;
+  --base-red-56: #E56A5F;
+  --base-red-64: #CC544B;
+  --base-red-92: #53423F;
+  --base-red-saturated-48: #FF9089;
+  --base-red-saturated-56: #FF5555;
+  --base-red-saturated-64: #EA4648;
+  --base-red-saturated-translucent-12: rgba(255, 85, 85, 0.12);
+  --base-red-saturated-translucent-16: rgba(255, 85, 85, 0.16);
+  --base-red-saturated-translucent-20: rgba(255, 85, 85, 0.20);
+  --base-red-translucent-12: rgba(229, 106, 95, 0.12);
+  --base-sand-12: #F7F4F2;
+  --base-sand-saturated-100: #836656;
+  --base-sand-saturated-translucent-12: rgba(131, 102, 86, 0.12);
+  --base-sand-saturated-translucent-16: rgba(131, 102, 86, 0.16);
+  --base-sand-saturated-translucent-20: rgba(131, 102, 86, 0.20);
+  --base-sand-saturated-translucent-24: rgba(131, 102, 86, 0.24);
+  --base-sand-saturated-translucent-32: rgba(131, 102, 86, 0.32);
+  --base-sand-saturated-translucent-36: rgba(131, 102, 86, 0.36);
+  --base-sand-saturated-translucent-4: rgba(131, 102, 86, 0.04);
+  --base-sand-saturated-translucent-40: rgba(131, 102, 86, 0.40);
+  --base-sand-saturated-translucent-48: rgba(131, 102, 86, 0.48);
+  --base-sand-saturated-translucent-56: rgba(131, 102, 86, 0.56);
+  --base-sand-saturated-translucent-64: rgba(131, 102, 86, 0.64);
+  --base-sand-saturated-translucent-8: rgba(131, 102, 86, 0.08);
+  --base-sand-translucent-64: rgba(98, 92, 88, 0.64);
+  --base-toxic-saturated-56: #67E55C;
+  --base-turquoise-12: #CDEAEA;
+  --base-turquoise-48: #6BB7B8;
+  --base-turquoise-56: #58A4A5;
+  --base-turquoise-64: #428E8F;
+  --base-turquoise-92: #374B4B;
+  --base-turquoise-translucent-12: rgba(88, 164, 165, 0.12);
+  --base-violet-12: #EADEF3;
+  --base-violet-48: #C190E1;
+  --base-violet-56: #AE7ECE;
+  --base-violet-64: #9869B7;
+  --base-violet-92: #4C4252;
+  --base-violet-translucent-12: rgba(174, 126, 206, 0.12);
+  --base-white-100: #FFFFFF;
+  --base-white-translucent-12: rgba(255, 255, 255, 0.12);
+  --base-white-translucent-16: rgba(255, 255, 255, 0.16);
+  --base-white-translucent-20: rgba(255, 255, 255, 0.20);
+  --base-white-translucent-24: rgba(255, 255, 255, 0.24);
+  --base-white-translucent-32: rgba(255, 255, 255, 0.32);
+  --base-white-translucent-36: rgba(255, 255, 255, 0.36);
+  --base-white-translucent-4: rgba(255, 255, 255, 0.04);
+  --base-white-translucent-40: rgba(255, 255, 255, 0.40);
+  --base-white-translucent-48: rgba(255, 255, 255, 0.48);
+  --base-white-translucent-56: rgba(255, 255, 255, 0.56);
+  --base-white-translucent-64: rgba(255, 255, 255, 0.64);
+  --base-white-translucent-76: rgba(255, 255, 255, 0.76);
+  --base-white-translucent-8: rgba(255, 255, 255, 0.08);
+  --base-white-translucent-88: rgba(255, 255, 255, 0.88);
+  --base-yellow-12: #EEE1CD;
+  --base-yellow-48: #C2A271;
+  --base-yellow-56: #AE905F;
+  --base-yellow-64: #997B4A;
+  --base-yellow-92: #594F42;
+  --base-yellow-saturated-48: #FFBD4D;
+  --base-yellow-saturated-56: #FFB313;
+  --base-yellow-saturated-64: #B7800A;
+  --base-yellow-saturated-translucent-12: rgba(219, 153, 12, 0.12);
+  --base-yellow-saturated-translucent-16: rgba(219, 153, 12, 0.16);
+  --base-yellow-saturated-translucent-20: rgba(219, 153, 12, 0.20);
+  --base-yellow-translucent-12: rgba(174, 144, 95, 0.12);
+}
+
+/* ============================================================
+   SEMANTIC COLOR TOKENS — LIGHT THEME (default)
+   Source: Regular Dynamic Colors / Light
+   ============================================================ */
+:root,
+:root.__ui-theme_enabled.__ui-theme_light {
+  --dynamic-stroke-contrast-high: rgba(131, 102, 86, 0.36);
+  --dynamic-stroke-contrast-low: rgba(131, 102, 86, 0.08);
+  --dynamic-stroke-contrast-mid: rgba(131, 102, 86, 0.16);
+  --dynamic-stroke-status-accent: #D76200;
+  --dynamic-stroke-status-attention: #B7800A;
+  --dynamic-stroke-status-info: #018DEB;
+  --dynamic-stroke-status-negative: #EA4648;
+  --dynamic-stroke-status-positive: #009A5E;
+  --dynamic-surface-base-inverse-primary: #1A1A1C;
+  --dynamic-surface-base-inverse-secondary: rgba(46, 47, 51, 0.64);
+  --dynamic-surface-base-inverse-tertiary: rgba(46, 47, 51, 0.48);
+  --dynamic-surface-base-primary: #F7F4F2;
+  --dynamic-surface-base-quaternary: #FFFFFF;
+  --dynamic-surface-base-secondary: #FFFFFF;
+  --dynamic-surface-base-tertiary: #F7F4F2;
+  --dynamic-surface-contrast-high: rgba(131, 102, 86, 0.36);
+  --dynamic-surface-contrast-inverse-high: rgba(124, 124, 138, 0.36);
+  --dynamic-surface-contrast-inverse-low: rgba(124, 124, 138, 0.12);
+  --dynamic-surface-contrast-inverse-mid: rgba(124, 124, 138, 0.24);
+  --dynamic-surface-contrast-low: rgba(131, 102, 86, 0.12);
+  --dynamic-surface-contrast-mid: rgba(131, 102, 86, 0.24);
+  --dynamic-surface-contrast-on-color-high: rgba(46, 47, 51, 0.32);
+  --dynamic-surface-contrast-on-color-inverse-high: rgba(255, 255, 255, 0.32);
+  --dynamic-surface-contrast-on-color-inverse-low: rgba(255, 255, 255, 0.08);
+  --dynamic-surface-contrast-on-color-inverse-mid: rgba(255, 255, 255, 0.20);
+  --dynamic-surface-contrast-on-color-low: rgba(46, 47, 51, 0.08);
+  --dynamic-surface-contrast-on-color-mid: rgba(46, 47, 51, 0.20);
+  --dynamic-surface-special-layer: rgba(98, 92, 88, 0.64);
+  --dynamic-surface-special-nude: rgba(255, 255, 255, 0.76);
+  --dynamic-surface-special-overlay: #836656;
+  --dynamic-text-and-icons-base-inverse-primary: #FFFFFF;
+  --dynamic-text-and-icons-base-inverse-secondary: rgba(255, 255, 255, 0.88);
+  --dynamic-text-and-icons-base-inverse-tertiary: rgba(255, 255, 255, 0.64);
+  --dynamic-text-and-icons-base-primary: #000000;
+  --dynamic-text-and-icons-base-secondary: rgba(46, 47, 51, 0.88);
+  --dynamic-text-and-icons-base-tertiary: rgba(46, 47, 51, 0.64);
+  --dynamic-text-and-icons-status-accent: #D76200;
+  --dynamic-text-and-icons-status-attention: #B7800A;
+  --dynamic-text-and-icons-status-info: #018DEB;
+  --dynamic-text-and-icons-status-inverse-accent: #FF9558;
+  --dynamic-text-and-icons-status-inverse-attention: #FFBD4D;
+  --dynamic-text-and-icons-status-inverse-info: #6BB7FF;
+  --dynamic-text-and-icons-status-inverse-negative: #FF9089;
+  --dynamic-text-and-icons-status-inverse-positive: #00CB7D;
+  --dynamic-text-and-icons-status-negative: #EA4648;
+  --dynamic-text-and-icons-status-positive: #009A5E;
+}
+
+/* ============================================================
+   SEMANTIC COLOR TOKENS — DARK THEME
+   Source: Regular Dynamic Colors / Dark
+   ============================================================ */
+:root.__ui-theme_enabled.__ui-theme_dark {
+  --dynamic-stroke-contrast-high: rgba(124, 124, 138, 0.36);
+  --dynamic-stroke-contrast-low: rgba(124, 124, 138, 0.08);
+  --dynamic-stroke-contrast-mid: rgba(124, 124, 138, 0.16);
+  --dynamic-stroke-status-accent: #FF9558;
+  --dynamic-stroke-status-attention: #FFBD4D;
+  --dynamic-stroke-status-info: #6BB7FF;
+  --dynamic-stroke-status-negative: #FF9089;
+  --dynamic-stroke-status-positive: #00CB7D;
+  --dynamic-surface-base-inverse-primary: #FFFFFF;
+  --dynamic-surface-base-inverse-secondary: rgba(255, 255, 255, 0.64);
+  --dynamic-surface-base-inverse-tertiary: rgba(255, 255, 255, 0.48);
+  --dynamic-surface-base-primary: #0E0E0F;
+  --dynamic-surface-base-quaternary: #38383B;
+  --dynamic-surface-base-secondary: #1A1A1C;
+  --dynamic-surface-base-tertiary: #2B2B2E;
+  --dynamic-surface-contrast-high: rgba(124, 124, 138, 0.36);
+  --dynamic-surface-contrast-inverse-high: rgba(131, 102, 86, 0.36);
+  --dynamic-surface-contrast-inverse-low: rgba(131, 102, 86, 0.12);
+  --dynamic-surface-contrast-inverse-mid: rgba(131, 102, 86, 0.24);
+  --dynamic-surface-contrast-low: rgba(124, 124, 138, 0.12);
+  --dynamic-surface-contrast-mid: rgba(124, 124, 138, 0.24);
+  --dynamic-surface-contrast-on-color-high: rgba(255, 255, 255, 0.32);
+  --dynamic-surface-contrast-on-color-inverse-high: rgba(46, 47, 51, 0.32);
+  --dynamic-surface-contrast-on-color-inverse-low: rgba(46, 47, 51, 0.08);
+  --dynamic-surface-contrast-on-color-inverse-mid: rgba(46, 47, 51, 0.20);
+  --dynamic-surface-contrast-on-color-low: rgba(255, 255, 255, 0.08);
+  --dynamic-surface-contrast-on-color-mid: rgba(255, 255, 255, 0.20);
+  --dynamic-surface-special-layer: rgba(54, 54, 58, 0.64);
+  --dynamic-surface-special-nude: rgba(28, 28, 30, 0.76);
+  --dynamic-surface-special-overlay: #7C7C8A;
+  --dynamic-text-and-icons-base-inverse-primary: #000000;
+  --dynamic-text-and-icons-base-inverse-secondary: rgba(46, 47, 51, 0.88);
+  --dynamic-text-and-icons-base-inverse-tertiary: rgba(46, 47, 51, 0.64);
+  --dynamic-text-and-icons-base-primary: #FFFFFF;
+  --dynamic-text-and-icons-base-secondary: rgba(255, 255, 255, 0.88);
+  --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
+  --dynamic-text-and-icons-status-accent: #FF9558;
+  --dynamic-text-and-icons-status-attention: #FFBD4D;
+  --dynamic-text-and-icons-status-info: #6BB7FF;
+  --dynamic-text-and-icons-status-inverse-accent: #D76200;
+  --dynamic-text-and-icons-status-inverse-attention: #B7800A;
+  --dynamic-text-and-icons-status-inverse-info: #018DEB;
+  --dynamic-text-and-icons-status-inverse-negative: #EA4648;
+  --dynamic-text-and-icons-status-inverse-positive: #009A5E;
+  --dynamic-text-and-icons-status-negative: #FF9089;
+  --dynamic-text-and-icons-status-positive: #00CB7D;
+}
+
+/* ============================================================
+   STATIC COLOR TOKENS (do not change with theme)
+   Source: Regular Static Colors
+   ============================================================ */
+:root {
+  --static-stroke-base-inverse-primary: #FFFFFF;
+  --static-stroke-base-inverse-quaternary: rgba(255, 255, 255, 0.48);
+  --static-stroke-base-inverse-secondary: rgba(255, 255, 255, 0.88);
+  --static-stroke-base-inverse-tertiary: rgba(255, 255, 255, 0.64);
+  --static-stroke-contrast-high: rgba(46, 47, 51, 0.36);
+  --static-stroke-contrast-inverse-high: rgba(255, 255, 255, 0.36);
+  --static-stroke-contrast-inverse-low: rgba(255, 255, 255, 0.08);
+  --static-stroke-contrast-inverse-mid: rgba(255, 255, 255, 0.16);
+  --static-stroke-contrast-low: rgba(46, 47, 51, 0.08);
+  --static-stroke-contrast-mid: rgba(46, 47, 51, 0.16);
+  --static-stroke-special-accent: #FF7700;
+  --static-stroke-special-focus: #0099FF;
+  --static-stroke-special-highlight: #67E55C;
+  --static-surface-base-inverse-primary: #FFFFFF;
+  --static-surface-base-inverse-quaternary: rgba(255, 255, 255, 0.48);
+  --static-surface-base-inverse-secondary: rgba(255, 255, 255, 0.88);
+  --static-surface-base-inverse-tertiary: rgba(255, 255, 255, 0.64);
+  --static-surface-base-primary: #2E2F33;
+  --static-surface-base-quaternary: rgba(46, 47, 51, 0.48);
+  --static-surface-base-secondary: rgba(46, 47, 51, 0.88);
+  --static-surface-base-tertiary: rgba(46, 47, 51, 0.64);
+  --static-surface-contrast-high: rgba(46, 47, 51, 0.36);
+  --static-surface-contrast-inverse-high: rgba(255, 255, 255, 0.36);
+  --static-surface-contrast-inverse-low: rgba(255, 255, 255, 0.12);
+  --static-surface-contrast-inverse-mid: rgba(255, 255, 255, 0.24);
+  --static-surface-contrast-low: rgba(46, 47, 51, 0.12);
+  --static-surface-contrast-mid: rgba(46, 47, 51, 0.24);
+  --static-surface-special-layer-primary: #000000;
+  --static-surface-special-layer-quaternary: rgba(0, 0, 0, 0.36);
+  --static-surface-special-layer-secondary: rgba(0, 0, 0, 0.76);
+  --static-surface-special-layer-tertiary: rgba(0, 0, 0, 0.56);
+  --static-surface-status-accent: #FF7700;
+  --static-surface-status-attention: #FFB313;
+  --static-surface-status-contrast-accent: rgba(255, 119, 0, 0.12);
+  --static-surface-status-contrast-attention: rgba(219, 153, 12, 0.12);
+  --static-surface-status-contrast-info: rgba(0, 153, 255, 0.12);
+  --static-surface-status-contrast-negative: rgba(255, 85, 85, 0.12);
+  --static-surface-status-contrast-positive: rgba(47, 182, 117, 0.12);
+  --static-surface-status-info: #0099FF;
+  --static-surface-status-negative: #FF5555;
+  --static-surface-status-positive: #2FB675;
+  --static-text-and-icons-base-inverse-primary: #FFFFFF;
+  --static-text-and-icons-base-inverse-secondary: rgba(255, 255, 255, 0.88);
+  --static-text-and-icons-base-inverse-tertiary: rgba(255, 255, 255, 0.64);
+  --static-text-and-icons-base-primary: #000000;
+  --static-text-and-icons-base-secondary: rgba(46, 47, 51, 0.88);
+  --static-text-and-icons-base-tertiary: rgba(46, 47, 51, 0.64);
+}
+
+/* ============================================================
+   COCKTAIL THEME — DYNAMIC OVERRIDES
+   Activate by adding .theme-cocktail to <html> alongside light/dark.
+   Source: Cocktail Dynamic Colors
+   ============================================================ */
+:root.theme-cocktail.__ui-theme_enabled.__ui-theme_light,
+:root.theme-cocktail:not(.__ui-theme_dark) {
+  --dynamic-surface-tint-asphalt: #E0E3EA;
+  --dynamic-surface-tint-blue: #CEE8F2;
+  --dynamic-surface-tint-brown: #E9E1DD;
+  --dynamic-surface-tint-chikunya: #DEE7D2;
+  --dynamic-surface-tint-graphite: #E1E1F0;
+  --dynamic-surface-tint-green: #D6E9D8;
+  --dynamic-surface-tint-indigo: #DFE1F7;
+  --dynamic-surface-tint-jungle: #D0EAE3;
+  --dynamic-surface-tint-ocean: #D8E5F4;
+  --dynamic-surface-tint-orange: #EFE0D7;
+  --dynamic-surface-tint-pink: #F2DCE1;
+  --dynamic-surface-tint-purple: #F1DBEF;
+  --dynamic-surface-tint-red: #EDDFDC;
+  --dynamic-surface-tint-turquoise: #CDEAEA;
+  --dynamic-surface-tint-violet: #EADEF3;
+  --dynamic-surface-tint-yellow: #EEE1CD;
+  --dynamic-text-and-icons-asphalt: #798090;
+  --dynamic-text-and-icons-blue: #3D8BA5;
+  --dynamic-text-and-icons-brown: #947A6B;
+  --dynamic-text-and-icons-chikunya: #768859;
+  --dynamic-text-and-icons-graphite: #7E7D97;
+  --dynamic-text-and-icons-green: #658B6A;
+  --dynamic-text-and-icons-indigo: #7678BE;
+  --dynamic-text-and-icons-jungle: #4E8E80;
+  --dynamic-text-and-icons-ocean: #5783B5;
+  --dynamic-text-and-icons-orange: #AC7048;
+  --dynamic-text-and-icons-pink: #C75179;
+  --dynamic-text-and-icons-purple: #B159AD;
+  --dynamic-text-and-icons-red: #CC544B;
+  --dynamic-text-and-icons-turquoise: #428E8F;
+  --dynamic-text-and-icons-violet: #9869B7;
+  --dynamic-text-and-icons-yellow: #997B4A;
+}
+
+:root.theme-cocktail.__ui-theme_enabled.__ui-theme_dark {
+  --dynamic-surface-tint-asphalt: #43464F;
+  --dynamic-surface-tint-blue: #384A50;
+  --dynamic-surface-tint-brown: #4D443F;
+  --dynamic-surface-tint-chikunya: #44483D;
+  --dynamic-surface-tint-graphite: #454551;
+  --dynamic-surface-tint-green: #3D4A3F;
+  --dynamic-surface-tint-indigo: #434556;
+  --dynamic-surface-tint-jungle: #384B46;
+  --dynamic-surface-tint-ocean: #3B4856;
+  --dynamic-surface-tint-orange: #4F443C;
+  --dynamic-surface-tint-pink: #554045;
+  --dynamic-surface-tint-purple: #50414E;
+  --dynamic-surface-tint-red: #53423F;
+  --dynamic-surface-tint-turquoise: #374B4B;
+  --dynamic-surface-tint-violet: #4C4252;
+  --dynamic-surface-tint-yellow: #594F42;
+  --dynamic-text-and-icons-asphalt: #A1A8B8;
+  --dynamic-text-and-icons-blue: #67B4CF;
+  --dynamic-text-and-icons-brown: #BDA191;
+  --dynamic-text-and-icons-chikunya: #9DB080;
+  --dynamic-text-and-icons-graphite: #A5A5C0;
+  --dynamic-text-and-icons-green: #8CB491;
+  --dynamic-text-and-icons-indigo: #9DA0E9;
+  --dynamic-text-and-icons-jungle: #76B7A7;
+  --dynamic-text-and-icons-ocean: #7DACDF;
+  --dynamic-text-and-icons-orange: #D7976F;
+  --dynamic-text-and-icons-pink: #F57AA0;
+  --dynamic-text-and-icons-purple: #DC81D7;
+  --dynamic-text-and-icons-red: #FA7D71;
+  --dynamic-text-and-icons-turquoise: #6BB7B8;
+  --dynamic-text-and-icons-violet: #C190E1;
+  --dynamic-text-and-icons-yellow: #C2A271;
+}
+
+/* ============================================================
+   COCKTAIL THEME — STATIC
+   Source: Cocktail Static Colors
+   ============================================================ */
+:root.theme-cocktail {
+  --static-surface-asphalt: #8E95A5;
+  --static-surface-blue: #54A1BB;
+  --static-surface-brown: #AA8F7F;
+  --static-surface-chikunya: #8A9D6E;
+  --static-surface-contrast-asphalt: rgba(142, 149, 165, 0.12);
+  --static-surface-contrast-blue: rgba(84, 161, 187, 0.12);
+  --static-surface-contrast-brown: rgba(170, 143, 127, 0.12);
+  --static-surface-contrast-chikunya: rgba(138, 157, 110, 0.12);
+  --static-surface-contrast-graphite: rgba(147, 146, 173, 0.12);
+  --static-surface-contrast-green: rgba(122, 161, 127, 0.12);
+  --static-surface-contrast-indigo: rgba(139, 141, 212, 0.12);
+  --static-surface-contrast-jungle: rgba(100, 164, 149, 0.12);
+  --static-surface-contrast-ocean: rgba(108, 153, 203, 0.12);
+  --static-surface-contrast-orange: rgba(195, 133, 92, 0.12);
+  --static-surface-contrast-pink: rgba(224, 103, 142, 0.12);
+  --static-surface-contrast-purple: rgba(200, 111, 196, 0.12);
+  --static-surface-contrast-red: rgba(229, 106, 95, 0.12);
+  --static-surface-contrast-turquoise: rgba(88, 164, 165, 0.12);
+  --static-surface-contrast-violet: rgba(174, 126, 206, 0.12);
+  --static-surface-contrast-yellow: rgba(174, 144, 95, 0.12);
+  --static-surface-graphite: #9392AD;
+  --static-surface-green: #7AA17F;
+  --static-surface-indigo: #8B8DD4;
+  --static-surface-jungle: #64A495;
+  --static-surface-ocean: #6C99CB;
+  --static-surface-orange: #C3855C;
+  --static-surface-pink: #E0678E;
+  --static-surface-purple: #C86FC4;
+  --static-surface-red: #E56A5F;
+  --static-surface-tint-asphalt: #E0E3EA;
+  --static-surface-tint-blue: #CEE8F2;
+  --static-surface-tint-brown: #E9E1DD;
+  --static-surface-tint-chikunya: #DEE7D2;
+  --static-surface-tint-graphite: #E1E1F0;
+  --static-surface-tint-green: #D6E9D8;
+  --static-surface-tint-indigo: #DFE1F7;
+  --static-surface-tint-jungle: #D0EAE3;
+  --static-surface-tint-ocean: #D8E5F4;
+  --static-surface-tint-orange: #EFE0D7;
+  --static-surface-tint-pink: #F2DCE1;
+  --static-surface-tint-purple: #F1DBEF;
+  --static-surface-tint-red: #EDDFDC;
+  --static-surface-tint-turquoise: #CDEAEA;
+  --static-surface-tint-violet: #EADEF3;
+  --static-surface-tint-yellow: #EEE1CD;
+  --static-surface-turquoise: #58A4A5;
+  --static-surface-violet: #AE7ECE;
+  --static-surface-yellow: #AE905F;
+}
+
+/* ============================================================
+   CELL VIEW LAYOUT TOKENS
+   ============================================================ */
+:root {
+  --dynamic-cell-view-horizontal-default: 16px;
+  --dynamic-cell-view-vertical-default:   12px;
+}

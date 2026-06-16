@@ -1,0 +1,107 @@
+/**
+ * OK Design System — Icon Component
+ * Source: design-system/components/Icon/Icon.styl + Icon.tsx
+ *
+ * Icons are SVG files loaded dynamically by size and name.
+ * Available sizes: 12, 16, 20, 24, 48
+ * Icon sets:
+ *   - glyphs/12/
+ *   - glyphs/16-20/   (dual-size glyphs, used at both 16 and 20px)
+ *   - glyphs/20/
+ *   - glyphs/24-48/   (dual-size, used at both 24 and 48px)
+ *   - glyphs/24/
+ *   - badges/
+ *   - icos/16-20/
+ *
+ * Naming pattern: glyph_{name}_{size}.svg
+ *   e.g. glyph_heart_16_20.svg, glyph_search_16_20.svg
+ *
+ * USAGE IN HTML:
+ *   <span class="icon" style="width:20px;height:20px">
+ *     <svg>...</svg>
+ *   </span>
+ *
+ *   Or with size modifier class:
+ *   <span class="icon __size-20">...</span>
+ */
+
+/* ============================================================
+   BASE ICON STYLES
+   ============================================================ */
+.icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  line-height: 0;
+}
+
+.icon svg {
+  display: block;
+  fill: currentColor;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   EXTERNAL SVG VIA MASK
+   Use this when the SVG lives in /assets/icons and you still want it
+   to inherit currentColor for theme switching:
+
+   <span class="icon __size-20 __src" style="--icon-src: url('assets/icons/star.svg')"></span>
+
+   Caveat: mask uses only the silhouette, so multi-fill knockouts
+   (e.g. white "holes" inside settings.svg) collapse to a solid shape.
+   ============================================================ */
+.icon.__src::before,
+.icon[class*="__slot-"]::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: currentColor;
+  -webkit-mask-image: var(--icon-src);
+          mask-image: var(--icon-src);
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+}
+
+/* ============================================================
+   SLOT → ICON MAP
+   Используй вместо inline style="--icon-src:url(...)".
+   В HTML: <span class="icon __size-20 __slot-reshare"></span>
+   ============================================================ */
+.icon.__slot-arrow-left    { --icon-src: url('../assets/icons/arrow-left.svg'); }
+.icon.__slot-bell          { --icon-src: url('../assets/icons/bell.svg'); }
+.icon.__slot-comment       { --icon-src: url('../assets/icons/comment_24.svg'); }
+.icon.__slot-dots          { --icon-src: url('../assets/icons/dots-horizontal.svg'); }
+.icon.__slot-klass-outline { --icon-src: url('../assets/icons/klass_16_20.svg'); }
+.icon.__slot-klass-filled  { --icon-src: url('../assets/icons/klass_filled_16_20.svg'); }
+.icon.__slot-play          { --icon-src: url('../assets/icons/play.svg'); }
+.icon.__slot-plus          { --icon-src: url('../assets/icons/plus.svg'); }
+.icon.__slot-reshare       { --icon-src: url('../assets/icons/reshare_24.svg'); }
+.icon.__slot-search        { --icon-src: url('../assets/icons/search.svg'); }
+.icon.__slot-status-wifi    { --icon-src: url('../assets/icons/status-wifi.svg'); }
+.icon.__slot-status-signal  { --icon-src: url('../assets/icons/status-signal.svg'); }
+.icon.__slot-status-battery { --icon-src: url('../assets/icons/status-battery.svg'); }
+
+/* ============================================================
+   SIZE MODIFIERS
+   ============================================================ */
+.icon.__size-8   { width: 8px;   height: 8px; }
+.icon.__size-12  { width: 12px;  height: 12px; }
+.icon.__size-16  { width: 16px;  height: 16px; }
+.icon.__size-20  { width: 20px;  height: 20px; }
+.icon.__size-24  { width: 24px;  height: 24px; }
+.icon.__size-28  { width: 28px;  height: 28px; }
+.icon.__size-32  { width: 32px;  height: 32px; }
+.icon.__size-36  { width: 36px;  height: 36px; }
+.icon.__size-40  { width: 40px;  height: 40px; }
+.icon.__size-44  { width: 44px;  height: 44px; }
+.icon.__size-48  { width: 48px;  height: 48px; }
+.icon.__size-56  { width: 56px;  height: 56px; }

@@ -1,0 +1,59 @@
+/**
+ * OK Design System — ActionsBar
+ *
+ * Горизонтальный ряд кнопок/иконок. Вертикальные паддинги задаёт родитель.
+ * Кнопка с <code>.__pinned-end</code> прижимается к правому краю
+ * (через <code>margin-left: auto</code>) — удобно для меню/share.
+ *
+ *   <div class="actions-bar">
+ *     <div class="button-wrapper __size-36">…like…</div>
+ *     <div class="button-wrapper __size-36">…comment…</div>
+ *     <div class="button-wrapper __size-36 __pinned-end">…menu…</div>
+ *   </div>
+ */
+
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.actions-bar > .__pinned-end {
+  margin-left: auto;
+}
+
+/* ============================================================
+   KLASS BUTTON — toggleable like-action.
+   Структура:
+     <label class="button-wrapper button-klass">
+       <input type="checkbox" hidden>
+       <span class="button-container __style-secondary">
+         <span class="button-content">
+           <span class="button-klass__icon-outline icon __size-20 __src"
+                 style="--icon-src:url('…/klass_16_20.svg')"></span>
+           <span class="button-klass__icon-filled icon __size-20 __src"
+                 style="--icon-src:url('…/klass_filled_16_20.svg')"></span>
+           247
+         </span>
+       </span>
+     </label>
+   Чекбокс переключает видимость двух иконок.
+   ============================================================ */
+.button-klass {
+  cursor: pointer;
+
+  /* Base count приходит через --button-klass-count в inline-стиле */
+  counter-reset: klass-count var(--button-klass-count, 0);
+}
+.button-klass:has(> input:checked) {
+  counter-increment: klass-count 1;
+}
+
+/* Иконка: outline по умолчанию, filled при :checked */
+.button-klass__icon-filled { display: none; }
+.button-klass:has(> input:checked) .button-klass__icon-outline { display: none; }
+.button-klass:has(> input:checked) .button-klass__icon-filled  { display: inline-flex; }
+
+/* Счётчик рендерится из CSS-counter — автоматически +1 при :checked */
+.button-klass__count::before {
+  content: counter(klass-count);
+}

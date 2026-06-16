@@ -1,0 +1,55 @@
+/**
+ * OK Design System — FeedAd (molecule, layout only)
+ *
+ * Рекламный пост: header + текст (обрезан 2 строки) + кнопка-разворота +
+ * медиа + CTA-кнопка во всю ширину.
+ *
+ *   <article class="feed-ad island">
+ *     <div class="uni-cell-wrapper">…header: avatar 44 + title + "Реклама"…</div>
+ *     <p class="ds-body-m">…обрезанный текст…</p>
+ *     <span class="button-inline-wrapper __view-primary"><button>Раскрыть текст</button></span>
+ *     <div class="media">…картинка…</div>
+ *     <div class="button-wrapper __size-44 __full-width">
+ *       <button class="button-container __style-primary">Перейти</button>
+ *     </div>
+ *   </article>
+ *
+ * Горизонтальные паддинги задаёт обёртка снаружи (.island), но дочерние
+ * секции получают 16px индекта — кроме .media (edge-to-edge).
+ */
+
+.feed-ad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.feed-ad > * {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.feed-ad > :not(.media) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* Inner uni-cell (рекламодатель) — без своих паддингов, gap 10 */
+.feed-ad .uni-cell-wrapper {
+  --uni-cell-padding-left:   0;
+  --uni-cell-padding-right:  0;
+  --uni-cell-padding-top:    0;
+  --uni-cell-padding-bottom: 0;
+}
+.feed-ad .uni-cell {
+  align-items: center;
+  gap: 10px;
+}
+
+/* Тело — 2 строки максимум, обрезается ellipsis'ом */
+.feed-ad p {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

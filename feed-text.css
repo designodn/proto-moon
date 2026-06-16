@@ -1,0 +1,44 @@
+/**
+ * OK Design System — FeedText
+ *
+ * Текст с line-clamp'ом и CSS-toggle'ом «Раскрыть текст» / «Свернуть».
+ *
+ *   <div class="feed-text" style="--feed-text-clamp: 3;">
+ *     <p class="feed-text__body">Длинный текст…</p>
+ *     <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary">
+ *       <input type="checkbox" hidden>
+ *       <span class="button-inline __size-20">
+ *         <span class="button-inline__content">
+ *           <span class="feed-text__label-collapsed">Раскрыть текст</span>
+ *           <span class="feed-text__label-expanded">Свернуть</span>
+ *         </span>
+ *       </span>
+ *     </label>
+ *   </div>
+ *
+ * Сколько строк — задаётся переменной --feed-text-clamp (default 3).
+ *
+ * Ограничение: компонент не умеет понимать, реально ли текст оборвался.
+ * Кнопка «Раскрыть» отрисовывается всегда. Если знаете, что текст короткий,
+ * не оборачивайте его в .feed-text.
+ */
+
+.feed-text__body {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--feed-text-clamp, 3);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* expanded — снимаем clamp */
+.feed-text:has(.feed-text__expand input:checked) .feed-text__body {
+  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+}
+
+/* labels toggle */
+.feed-text__label-expanded { display: none; }
+.feed-text:has(.feed-text__expand input:checked) .feed-text__label-collapsed { display: none; }
+.feed-text:has(.feed-text__expand input:checked) .feed-text__label-expanded  { display: inline; }

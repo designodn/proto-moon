@@ -1,0 +1,41 @@
+/**
+ * OK Design System — Island
+ *
+ * «Остров» — карточный визуальный блок: белый фон, радиусы, вертикальные
+ * паддинги. Кладёт в себя любой контент (пост, карточка группы, список).
+ *
+ *   <div class="island">
+ *     <div class="island__header">Вступите в сообщество</div>   <!-- опц. -->
+ *     <!-- любой контент -->
+ *   </div>
+ *
+ * Можно навешивать класс на сам компонент:
+ *   <article class="feed-base island">…</article>
+ *
+ * Ширина: всегда fillContainer (width: 100%). Горизонтальные отступы
+ * задаёт обёртка снаружи, не сам остров.
+ *
+ * Стекуются несколько островов через .feed-container.
+ */
+
+.island {
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  background-color: var(--dynamic-surface-base-secondary);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Необязательный заголовок поверх контента — caption-стиль */
+.island__header {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  font-family: var(--font-family);
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  font-weight: 400;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  margin-bottom: var(--space-2);
+}

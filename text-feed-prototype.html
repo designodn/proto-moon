@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TextFeed — прототип</title>
+<link rel="stylesheet" href="index.css">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--dynamic-surface-base-primary);
+    font-family: var(--font-family);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+
+  .stage {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Панель тогглов — «переслано» и «галерея» */
+  .toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--dynamic-surface-base-secondary);
+    border-radius: 16px;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+  .toggles__title {
+    color: var(--dynamic-text-and-icons-base-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .toggles label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dynamic-text-and-icons-base-primary);
+    cursor: pointer;
+  }
+
+  /* Демо-обёртка: по умолчанию reshare и media скрыты, показываются
+     по checked-чекбоксу с соответствующим id. */
+  .text-feed-demo .text-feed__reshare,
+  .text-feed-demo .text-feed__media { display: none; }
+
+  .text-feed-demo:has(#tf-toggle-reshare:checked) .text-feed__reshare { display: flex; }
+  .text-feed-demo:has(#tf-toggle-gallery:checked) .text-feed__media   { display: flex; }
+</style>
+</head>
+<body>
+
+  <main class="stage">
+
+    <div class="toggles">
+      <div class="toggles__title ds-caption-s">Вьюшки</div>
+      <label class="ds-body-m"><input type="checkbox" id="tf-toggle-reshare"> Показать «переслано от»</label>
+      <label class="ds-body-m"><input type="checkbox" id="tf-toggle-gallery" checked> Показать галерею</label>
+    </div>
+
+    <div class="text-feed-demo">
+      <article class="text-feed island">
+
+        <!-- HEADER ----------------------------------------------------- -->
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image">
+            <img src="https://i.pravatar.cc/128?img=49" alt="">
+          </div>
+          <div class="uni-cell-additional-content">
+            <div class="ds-title-s">Александра Борщицкий</div>
+            <div class="ds-caption-s text-feed__time">12:48</div>
+          </div>
+        </div></div></div>
+
+        <!-- RESHARE (вкл/выкл) ---------------------------------------- -->
+        <div class="text-feed__reshare">
+          <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/reshare_16_20.svg')"></span>
+          <div class="avatar __size-24 __type-image">
+            <img src="https://i.pravatar.cc/128?img=52" alt="">
+          </div>
+          <div class="ds-body-m text-feed__reshare-name">Борис Фрол</div>
+        </div>
+
+        <!-- BODY ------------------------------------------------------- -->
+        <p class="ds-body-m text-feed__body" style="--text-feed-clamp: 2;">
+          Они редко скучают друг с другом: умеют вдохновлять и подталкивать к развитию. Ни один из них не будет «привязывать» партнёра или ограничивать свободу — <a class="text-feed__more" href="#">ещё</a>
+        </p>
+
+        <!-- MEDIA (вкл/выкл) ------------------------------------------ -->
+        <div class="text-feed__media __row">
+          <div class="text-feed__media-cell" style="aspect-ratio: 220/165">
+            <img src="https://picsum.photos/seed/tf1/440/330" alt="">
+          </div>
+          <div class="text-feed__media-cell" style="aspect-ratio: 1">
+            <img src="https://picsum.photos/seed/tf2/400/400" alt="">
+          </div>
+          <div class="text-feed__media-cell" style="aspect-ratio: 168/195">
+            <img src="https://picsum.photos/seed/tf3/336/390" alt="">
+          </div>
+          <div class="text-feed__media-cell" style="aspect-ratio: 110/195">
+            <img src="https://picsum.photos/seed/tf4/220/390" alt="">
+          </div>
+        </div>
+
+        <!-- CONTROL — actions-bar; порядок: comment → reshare → klass → __pinned-end more -->
+        <div class="actions-bar">
+          <div class="button-wrapper __size-36">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/comment_16_20.svg')"></span>
+                &nbsp;14
+              </span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-36">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/reshare_16_20.svg')"></span>
+                &nbsp;73
+              </span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-36">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span>
+                &nbsp;16
+              </span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-36 __pinned-end">
+            <button class="button-container __style-secondary" aria-label="Ещё">
+              <span class="button-content">
+                <span class="icon __size-20 __src" style="--icon-src:url('assets/icons/more_16_20.svg')"></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+  </main>
+
+</body>
+</html>

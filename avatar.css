@@ -1,0 +1,225 @@
+/**
+ * OK Design System — Avatar (circle, avaPicture 1.3)
+ *
+ * SIZES:   .__size-16 | 20 | 24 | 36 (default) | 44 | 56 | 72 | 96 | 120 | 144
+ *
+ * TYPES:   .__type-image       — <img> child
+ *          .__type-placeholder — пустой круг (loading/empty)
+ *          .__type-icon        — иконка по центру (.icon как ребёнок)
+ *          .__type-initials    — 1–2 буквы на акценте
+ *          .__type-counter     — число (бейдж) в indigo-тинте
+ *          .__type-emoji       — emoji-символ по центру
+ *
+ * RING:    .__ring-active      — orange кольцо вокруг (Stories-like, не просмотрено)
+ *          .__ring-viewed      — серое кольцо (уже посмотрели)
+ *
+ * EXTRAS:  .__has-addon        — overflow:visible, чтобы аддоны не клипались.
+ *                                Дочерний <div class="avatar__addon __pos-br|tr|bl|tl">.
+ *          .__has-caption      — добавляет подпись под аватаркой.
+ *                                Дочерний <div class="avatar__caption">…</div>.
+ *
+ * STATES:  .__state-loading | .__state-disabled
+ */
+
+.avatar {
+  --avatar-size: 36px;
+  --avatar-bg: var(--dynamic-surface-contrast-low);
+  --avatar-color: var(--dynamic-text-and-icons-base-primary);
+  --avatar-font-size: 14px;
+  --overlay-color: var(--dynamic-surface-special-overlay);
+
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--avatar-bg);
+  color: var(--avatar-color);
+  font-family: var(--font-family);
+  font-size: var(--avatar-font-size);
+  font-weight: 600;
+  line-height: 1;
+  user-select: none;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Size variants — keep visual rhythm with the 4px grid */
+.avatar.__size-16  { --avatar-size: 16px;  --avatar-font-size: 7px;  }
+.avatar.__size-20  { --avatar-size: 20px;  --avatar-font-size: 9px;  }
+.avatar.__size-24  { --avatar-size: 24px;  --avatar-font-size: 11px; }
+.avatar.__size-36  { --avatar-size: 36px;  --avatar-font-size: 14px; }
+.avatar.__size-44  { --avatar-size: 44px;  --avatar-font-size: 15px; }
+.avatar.__size-56  { --avatar-size: 56px;  --avatar-font-size: 19px; }
+.avatar.__size-72  { --avatar-size: 72px;  --avatar-font-size: 24px; }
+.avatar.__size-96  { --avatar-size: 96px;  --avatar-font-size: 32px; }
+.avatar.__size-120 { --avatar-size: 120px; --avatar-font-size: 40px; }
+.avatar.__size-126 { --avatar-size: 126px; --avatar-font-size: 42px; } /* legacy */
+.avatar.__size-144 { --avatar-size: 144px; --avatar-font-size: 48px; }
+
+/* Type variants */
+.avatar.__type-image {
+  --avatar-bg: var(--dynamic-surface-contrast-low);
+}
+.avatar.__type-placeholder {
+  --avatar-bg: var(--dynamic-surface-contrast-mid);
+}
+.avatar.__type-icon {
+  --avatar-bg: var(--dynamic-surface-contrast-low);
+  --avatar-color: var(--dynamic-text-and-icons-base-primary);
+}
+.avatar.__type-icon > .icon {
+  width: 50%;
+  height: 50%;
+}
+.avatar.__type-initials {
+  --avatar-bg: var(--static-surface-status-accent);
+  --avatar-color: var(--static-text-and-icons-base-inverse-primary);
+}
+.avatar.__type-counter {
+  --avatar-bg: var(--dynamic-surface-tint-indigo);
+  --avatar-color: var(--dynamic-text-and-icons-indigo);
+}
+.avatar.__type-emoji {
+  --avatar-bg: var(--dynamic-surface-contrast-low);
+}
+
+/* Loading state — shimmer */
+.avatar.__state-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.33%;
+  height: 100%;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--overlay-color) 50.5%,
+    transparent 100%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  animation: ds-shimmer 2.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards infinite;
+}
+
+/* Disabled */
+.avatar.__state-disabled {
+  opacity: var(--state-element-disabled, 0.36);
+  pointer-events: none;
+}
+
+/* ============================================================
+   RING — внешнее кольцо (Stories-like) через outline + offset.
+   2px зазор (offset) + 2px толщина ring'а.
+   Кольцо рисуется только вокруг круга-фото, а не вокруг всего avatar
+   с caption'ом — при __has-caption outline переносится на сам shape.
+   ============================================================ */
+.avatar.__ring-active {
+  outline: 2px solid var(--static-stroke-special-accent);
+  outline-offset: 2px;
+}
+.avatar.__ring-viewed {
+  outline: 2px solid var(--dynamic-stroke-contrast-mid);
+  outline-offset: 2px;
+}
+/* Для крупного 56 — увеличенный orbit-offset 4px */
+.avatar.__size-56.__ring-active,
+.avatar.__size-56.__ring-viewed {
+  outline-offset: 4px;
+}
+
+/* При наличии caption — outline уходит на img/icon, а сам avatar чист */
+.avatar.__has-caption.__ring-active,
+.avatar.__has-caption.__ring-viewed {
+  outline: none;
+}
+.avatar.__has-caption.__ring-active > img,
+.avatar.__has-caption.__ring-active > .icon {
+  outline: 2px solid var(--static-stroke-special-accent);
+  outline-offset: 2px;
+}
+.avatar.__has-caption.__ring-viewed > img,
+.avatar.__has-caption.__ring-viewed > .icon {
+  outline: 2px solid var(--dynamic-stroke-contrast-mid);
+  outline-offset: 2px;
+}
+.avatar.__size-56.__has-caption.__ring-active > img,
+.avatar.__size-56.__has-caption.__ring-active > .icon,
+.avatar.__size-56.__has-caption.__ring-viewed > img,
+.avatar.__size-56.__has-caption.__ring-viewed > .icon {
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   ADDONS — иконки/бейджи в углах. Требует __has-addon чтобы
+   снять overflow:hidden, иначе аддон клипается.
+   ============================================================ */
+.avatar.__has-addon {
+  overflow: visible;
+}
+.avatar.__has-addon > img,
+.avatar.__has-addon > .icon {
+  border-radius: 50%;
+}
+
+.avatar__addon {
+  position: absolute;
+  z-index: 1;
+}
+.avatar__addon.__pos-tr { top: -2px; right: -2px; }
+.avatar__addon.__pos-tl { top: -2px; left: -2px;  }
+.avatar__addon.__pos-br { top: calc(var(--avatar-size) - 12px); right: -2px; }
+.avatar__addon.__pos-bl { top: calc(var(--avatar-size) - 12px); left: -2px;  }
+
+/* Для size-56 — аддон 20px торчит на 2px справа/снизу из круга */
+.avatar.__size-56 .avatar__addon.__pos-br { top: calc(var(--avatar-size) - 18px); right: -2px; }
+.avatar.__size-56 .avatar__addon.__pos-bl { top: calc(var(--avatar-size) - 18px); left: -2px;  }
+
+/* ============================================================
+   CAPTION — подпись снизу. Требует __has-caption чтобы
+   avatar стал column-flex и каптион поместился под кругом.
+   ============================================================ */
+.avatar.__has-caption {
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  height: auto;
+  background-color: transparent;
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  overflow: visible;
+}
+/* Внутренний "shape" — img/text/icon — занимает фикс размер */
+.avatar.__has-caption > img,
+.avatar.__has-caption > .icon {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.avatar__caption {
+  margin-top: 6px;
+  text-align: center;
+  font-family: var(--font-family);
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  font-weight: 400;
+  color: var(--dynamic-text-and-icons-base-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
