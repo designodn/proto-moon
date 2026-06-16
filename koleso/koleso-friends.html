@@ -30,7 +30,13 @@
     padding: var(--space-4);
     color: var(--dynamic-text-and-icons-base-primary);
   }
-  .rf-list { display: flex; flex-direction: column; }
+  .rf-list { display: flex; flex-direction: column; gap: var(--space-4); }
+  /* каждая ячейка друга — карточка с фоном */
+  .rf-list .user-cell {
+    background: var(--dynamic-surface-base-primary);
+    border-radius: 16px;
+    padding: var(--space-3) var(--space-4);
+  }
 
   /* кнопка-инвайт / статус «Отправлено» */
   .rf-sent {
@@ -95,13 +101,13 @@
 
   <script>
     var FRIENDS = [
-      { n: 'Марина Миронова',    img: 47, sent: true },
-      { n: 'Алексей Отрыв',      img: 12 },
-      { n: 'Николай Валерьевич', img: 13 },
-      { n: 'Виктория Шульская',  img: 45 },
-      { n: 'Артем Андреев',      img: 33 },
-      { n: 'Семёныч',            img: 52 },
-      { n: 'Аня Фёдорова',       img: 49 }
+      { n: 'Марина Миронова',    img: 47, sub: '12 общих друзей', sent: true },
+      { n: 'Алексей Отрыв',      img: 12, sub: '8 общих друзей' },
+      { n: 'Николай Валерьевич', img: 13, sub: '5 общих друзей' },
+      { n: 'Виктория Шульская',  img: 45, sub: '21 общий друг' },
+      { n: 'Артем Андреев',      img: 33, sub: '3 общих друга' },
+      { n: 'Семёныч',            img: 52, sub: '17 общих друзей' },
+      { n: 'Аня Фёдорова',       img: 49, sub: '9 общих друзей' }
     ];
 
     var list = document.getElementById('list');
@@ -110,7 +116,8 @@
       cell.className = 'user-cell';
       cell.innerHTML =
         '<div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=' + f.img + '" alt=""></div>' +
-        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + f.n + '</div></div>' +
+        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + f.n + '</div>' +
+        '<div class="ds-caption-m user-cell__time">' + f.sub + '</div></div>' +
         '<div class="user-cell__actions"></div>';
       var actions = cell.querySelector('.user-cell__actions');
       if (f.sent) {

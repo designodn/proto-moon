@@ -123,20 +123,7 @@
   .nv-pr-thumb.__b { transform: rotate(9deg) translateX(3px); }
   .nv-pr-thumb.__solo { width: 36px; height: 36px; }
 
-  /* ── ПАНЕЛЬ «БОНСАЙ» ─────────────────────────────────────────────────────── */
-  .nv-pr-bonsai {
-    position: relative; display: flex; align-items: center;
-    padding: var(--space-4);
-    background: var(--dynamic-surface-base-quaternary);
-  }
-  .nv-pr-bonsai__text { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; max-width: 60%; }
-  .nv-pr-bonsai__title { margin: 0; }
-  .nv-pr-bonsai__sub { margin: 0; color: var(--dynamic-text-and-icons-base-primary); }
-  .nv-pr-bonsai__art {
-    position: absolute; right: var(--space-4); top: 50%; transform: translateY(-50%);
-    font-size: 92px; line-height: 1; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
-    pointer-events: none; user-select: none;
-  }
+  /* Панель «Бонсай» → компонент new-vision/components/nv-bonsai.css */
 
   /* лёгкий разделитель-зазор между белыми блоками и лентой */
   .nv-pr-feed-gap { height: var(--space-1); background: var(--dynamic-surface-base-secondary); }
@@ -305,21 +292,21 @@
         </button>
       </section>
 
-      <!-- ПАНЕЛЬ «БОНСАЙ» -->
-      <section class="nv-pr-bonsai" aria-label="Бонсай">
-        <div class="nv-pr-bonsai__text">
-          <h2 class="ds-title-l nv-pr-bonsai__title">Бонсай</h2>
-          <p class="ds-body-m nv-pr-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
-          <div class="button-wrapper __size-44">
-            <button class="button-container __style-secondary">
+      <!-- ВИДЖЕТ «БОНСАЙ» (компонент). Тап → шторка; «Полить» → анимация роста -->
+      <section class="nv-bonsai" aria-label="Бонсай" data-bonsai-open data-bonsai-level="5" data-bonsai-poured="133" role="button" tabindex="0">
+        <div class="nv-bonsai__text">
+          <h2 class="ds-title-l nv-bonsai__title">Бонсай</h2>
+          <p class="ds-body-m nv-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
+          <div class="button-wrapper __size-44 nv-bonsai__water">
+            <button class="button-container __style-secondary" data-bonsai-water>
               <span class="button-content">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
-                Полить
+                <span class="icon __size-24 __src nv-bonsai__water-icon" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
+                <span class="nv-bonsai__water-label">Полить</span>
               </span>
             </button>
           </div>
         </div>
-        <div class="nv-pr-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
+        <div class="nv-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
       </section>
 
       <div class="nv-pr-feed-gap"></div>
@@ -404,16 +391,138 @@
     </div>
   </div>
 
+  <!-- ШТОРКА «Живой подарок» (Figma 2719:199246). Открывается тапом по виджету.
+       Каркас (overlay/handle/navbar) генерит nv-sheet.js — тут только контент. -->
+  <div class="nv-sheet" id="bonsaiSheet" data-sheet-title="Живой подарок">
+      <div class="nv-sheet__body">
+        <!-- Подарок -->
+        <section class="nv-gift-pick" data-pick-group="gift">
+          <h3 class="ds-title-s nv-gift-pick__head">Подарок</h3>
+          <div class="nv-gift-pick__row">
+            <button class="nv-pick __none" aria-label="Без подарка">⊘</button>
+            <button class="nv-pick __selected" aria-label="Бонсай" aria-pressed="true">🌳</button>
+            <button class="nv-pick" aria-label="Парник">🏡</button>
+            <button class="nv-pick" aria-label="Машинка">🚗</button>
+          </div>
+        </section>
+
+        <!-- Фон -->
+        <section class="nv-gift-pick" data-pick-group="bg">
+          <h3 class="ds-title-s nv-gift-pick__head">Фон</h3>
+          <div class="nv-gift-pick__row">
+            <button class="nv-pick __none" aria-label="Без фона">⊘</button>
+            <button class="nv-pick __selected" aria-label="Сакура" aria-pressed="true">🌸</button>
+            <button class="nv-pick" aria-label="Сакура 2">🌸</button>
+            <button class="nv-pick" aria-label="Сакура 3">🌸</button>
+          </div>
+        </section>
+
+        <!-- Статус «Бонсай» -->
+        <section class="nv-gift-status">
+          <h3 class="ds-title-s nv-gift-status__head">Бонсай</h3>
+          <p class="ds-body-m nv-gift-status__sub">133 полива · 3 уровень</p>
+          <div class="nv-gift-stages" aria-hidden="true">
+            <span class="nv-gift-stages__item __done">🌱</span>
+            <span class="nv-gift-stages__item __done">🌿</span>
+            <span class="nv-gift-stages__item __done">🌳</span>
+            <span class="nv-gift-stages__item __todo">🌸</span>
+            <span class="nv-gift-stages__item __todo">🌺</span>
+          </div>
+          <div class="nv-progress"><div class="nv-progress__fill" style="width:60%"></div></div>
+          <p class="ds-caption-m nv-gift-status__hint">Осталось 14 поливов до 4 уровня</p>
+        </section>
+
+        <!-- Кто поливал -->
+        <section class="nv-gift-watered">
+          <h3 class="ds-title-s nv-gift-watered__head">Кто поливал</h3>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-title-s">Ольга Вайнер</div></div>
+          </div></div></div>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-title-s">Алексей Отрыв</div></div>
+          </div></div></div>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
+            <div class="uni-cell-additional-content"><div class="ds-title-s">Алексей Отрыв</div></div>
+          </div></div></div>
+        </section>
+      </div>
+
+      <div class="nv-sheet__footer">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-secondary" data-sheet-close><span class="button-content">Закрыть</span></button>
+        </div>
+      </div>
+  </div>
+
+  <!-- ШТОРКА «Фон» (Figma 2719:192682). Открывается тапом по обложке self.
+       Каркас генерит nv-sheet.js — тут только контент. -->
+  <div class="nv-sheet" id="bgSheet" data-sheet-title="Фон">
+      <div class="nv-sheet__body">
+        <div class="nv-bg-grid" data-pick-group="bg-cover">
+          <button class="nv-pick __none __selected" data-bg="none" aria-label="Без фона" aria-pressed="true">⊘</button>
+          <button class="nv-pick" data-bg="#F4C7AE" style="background:#F4C7AE" aria-label="Персиковый"></button>
+          <button class="nv-pick __illus" data-bg="linear-gradient(135deg,#FBE3E8,#F4C7AE)" aria-label="Сакура">🌸</button>
+          <button class="nv-pick" data-bg="#3A2A24" data-dark="1" style="background:#3A2A24" aria-label="Тёмный"></button>
+
+          <button class="nv-pick" data-bg="#9B72CF" data-dark="1" style="background:#9B72CF" aria-label="Фиолетовый"></button>
+          <button class="nv-pick" data-bg="#3E7D44" data-dark="1" style="background:#3E7D44" aria-label="Зелёный"></button>
+          <button class="nv-pick" data-bg="#DCEBCF" style="background:#DCEBCF" aria-label="Салатовый"></button>
+          <button class="nv-pick" data-bg="#E7DAF5" style="background:#E7DAF5" aria-label="Лиловый"></button>
+
+          <button class="nv-pick" data-bg="#F8D9DF" style="background:#F8D9DF" aria-label="Розовый"></button>
+          <button class="nv-pick" data-bg="#F0532A" data-dark="1" style="background:#F0532A" aria-label="Коралловый"></button>
+          <button class="nv-pick" data-bg="#8E86F0" data-dark="1" style="background:#8E86F0" aria-label="Сиреневый"></button>
+          <button class="nv-pick" data-bg="#3E86F5" data-dark="1" style="background:#3E86F5" aria-label="Синий"></button>
+        </div>
+      </div>
+
+      <div class="nv-sheet__footer __stack">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary" data-bg-save><span class="button-content">Сохранить</span></button>
+        </div>
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-secondary" data-sheet-close><span class="button-content">Закрыть</span></button>
+        </div>
+      </div>
+  </div>
+
+  <!-- Тост о росте бонсая -->
+  <div class="nv-toast" id="nvToast" role="status" aria-live="polite">
+    <span class="nv-toast__check" aria-hidden="true">✓</span>
+    <span class="nv-toast__text">
+      <span class="nv-toast__title">Вы помогли бонсай расцвести</span>
+      <span class="nv-toast__sub">+1 семечко в вашу коллекцию</span>
+    </span>
+  </div>
+
   <script src="../components/tab-bar.js"></script>
+  <script src="components/nv-sheet.js"></script>
+  <script src="components/nv-bonsai.js"></script>
   <script>
+    // ── Фон обложки (фича «Выбор фона», только self) ────────────────────────
+    var coverEl   = document.querySelector('.nv-pr-cover');
+    var savedBg   = sessionStorage.getItem('nv-cover-bg');
+    var savedDark = sessionStorage.getItem('nv-cover-bg-dark') === '1';
+
+    // Красим обложку только в self-виде; иначе фон задаёт CSS (оранжевый/белый).
+    function paintCover(bg, dark) {
+      if (document.body.getAttribute('data-view') !== 'self') return;
+      coverEl.style.background = (!bg || bg === 'none') ? '' : bg;
+      coverEl.classList.toggle('__bg-dark', !!dark && !!bg && bg !== 'none');
+    }
+    function applySavedBg() { paintCover(savedBg, savedDark); }
+
     // ── Состояния профиля: self | friend | stranger ────────────────────────
     // Источник истины — ?view= в URL; переключатель его же и меняет.
     // Имя/подпись одинаковы во всех (демо-персона из макета — Ольга Вайнер);
     // различается «хром»: обложка, иконки навбара, CTA, уровень бонсая.
     var VIEWS = {
-      self:     { bonsai: '0 поливов · 1 уровень', art: '🌱' },
-      friend:   { bonsai: '133 полива · 5 уровень', art: '💐' },
-      stranger: { bonsai: '133 полива · 5 уровень', art: '💐' }
+      self:     { poured: 0,   level: 1 },
+      friend:   { poured: 133, level: 5 },
+      stranger: { poured: 133, level: 5 }
     };
 
     function applyView(view) {
@@ -430,17 +539,21 @@
         el.hidden = el.getAttribute('data-nav') !== view;
       });
 
-      // бонсай — уровень/арт зависят от того, чей профиль
-      var data = VIEWS[view];
-      var bSub = document.querySelector('[data-pr-bonsai-sub]');
-      var bArt = document.querySelector('[data-pr-bonsai-art]');
-      if (bSub) bSub.textContent = data.bonsai;
-      if (bArt) bArt.textContent = data.art;
+      // бонсай — уровень/поливы зависят от того, чей профиль (рендер в nv-bonsai.js)
+      if (window.NVBonsai) window.NVBonsai.setState(VIEWS[view].level, VIEWS[view].poured);
 
       // переключатель
       document.querySelectorAll('.nv-pr-switch [data-set-view]').forEach(function (b) {
         b.classList.toggle('__active', b.getAttribute('data-set-view') === view);
       });
+
+      // фон обложки: в self — сохранённый, иначе отдаём управление CSS
+      if (view === 'self') {
+        applySavedBg();
+      } else {
+        coverEl.style.background = '';
+        coverEl.classList.remove('__bg-dark');
+      }
     }
 
     // init из URL
@@ -464,6 +577,95 @@
       if (!el) return;
       var href = el.getAttribute('data-href');
       if (href) location.href = href;
+    });
+
+    // ── Шторки (bottom sheets) ──────────────────────────────────────────────
+    var bonsaiSheet = document.getElementById('bonsaiSheet');
+    var bgSheet     = document.getElementById('bgSheet');
+    function openS(s)  { if (s) s.classList.add('__open'); }
+    function closeS(s) { if (s) s.classList.remove('__open'); }
+
+    var pendingBg = null, pendingDark = false;
+
+    function syncBgSelection(bg) {
+      bgSheet.querySelectorAll('.nv-pick').forEach(function (p) {
+        var on = p.getAttribute('data-bg') === (bg || 'none');
+        p.classList.toggle('__selected', on);
+        if (on) p.setAttribute('aria-pressed', 'true'); else p.removeAttribute('aria-pressed');
+      });
+    }
+
+    // открыть «Живой подарок» — тап по виджету (но не по кнопке «Полить»;
+    // отбиваем всю обёртку кнопки — в кулдауне у button pointer-events:none,
+    // и target клика становится wrapper, а не сам button)
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-bonsai-water], .nv-bonsai__water')) return;
+      if (e.target.closest('[data-bonsai-open]')) { openS(bonsaiSheet); return; }
+    });
+    var bonsaiOpen = document.querySelector('[data-bonsai-open]');
+    if (bonsaiOpen) bonsaiOpen.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openS(bonsaiSheet); }
+    });
+
+    // открыть «Фон» — тап по обложке (только self), кроме интерактива
+    document.addEventListener('click', function (e) {
+      if (document.body.getAttribute('data-view') !== 'self') return;
+      if (!e.target.closest('.nv-pr-cover')) return;
+      if (e.target.closest('button, a, label, input, .nv-pr-switch, [data-bonsai-open]')) return;
+      pendingBg = savedBg; pendingDark = savedDark;
+      syncBgSelection(savedBg);
+      openS(bgSheet);
+    });
+
+    // выбор свотча → живое превью обложки
+    bgSheet.addEventListener('click', function (e) {
+      var sw = e.target.closest('.nv-pick');
+      if (!sw) return;
+      pendingBg = sw.getAttribute('data-bg');
+      pendingDark = sw.getAttribute('data-dark') === '1';
+      syncBgSelection(pendingBg);
+      paintCover(pendingBg, pendingDark);
+    });
+
+    // «Сохранить» — применить + запомнить
+    bgSheet.querySelector('[data-bg-save]').addEventListener('click', function () {
+      savedBg = pendingBg; savedDark = pendingDark;
+      if (savedBg && savedBg !== 'none') {
+        sessionStorage.setItem('nv-cover-bg', savedBg);
+        sessionStorage.setItem('nv-cover-bg-dark', savedDark ? '1' : '0');
+      } else {
+        sessionStorage.removeItem('nv-cover-bg');
+        sessionStorage.removeItem('nv-cover-bg-dark');
+      }
+      closeS(bgSheet);
+    });
+
+    // закрытие любой шторки (✕ / Закрыть / overlay). Для «Фон» — откат превью.
+    document.addEventListener('click', function (e) {
+      var closer = e.target.closest('[data-sheet-close]');
+      var overlayHit = e.target.classList && e.target.classList.contains('nv-sheet__overlay');
+      if (!closer && !overlayHit) return;
+      var s = (closer || e.target).closest('.nv-sheet');
+      if (!s) return;
+      if (s === bgSheet) applySavedBg();   // отмена выбора фона
+      closeS(s);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (bgSheet.classList.contains('__open')) { applySavedBg(); closeS(bgSheet); }
+      if (bonsaiSheet.classList.contains('__open')) closeS(bonsaiSheet);
+    });
+
+    // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
+    document.querySelectorAll('#bonsaiSheet .nv-gift-pick').forEach(function (group) {
+      group.addEventListener('click', function (e) {
+        var pick = e.target.closest('.nv-pick');
+        if (!pick) return;
+        group.querySelectorAll('.nv-pick').forEach(function (p) {
+          p.classList.remove('__selected'); p.removeAttribute('aria-pressed');
+        });
+        pick.classList.add('__selected'); pick.setAttribute('aria-pressed', 'true');
+      });
     });
   </script>
 </body>
