@@ -69,3 +69,11 @@
 - Gap badge→текст: Range по текстовой ноде ссылки, `range.rect.left - badge.right`.
 - ДСФ-ловушка: секция глубоко (y badge ~4696). При deviceScaleFactor 3 abs-clip за
   пределами скриншота → "Clipped area empty". Скриншоть через locator.screenshot()/scrollIntoView.
+- ИСПРАВЛЕНО (commit 1d8c602, проверено 2026-06-16): badge переписан с `<icon-glyph mask>`
+  на обычный `<img class="breadcrumbs__badge" src="assets/icons/ok_star_16_20.svg">`.
+  Теперь резолв относительно ДОКУМЕНТА → currentSrc=`/assets/icons/ok_star_16_20.svg`,
+  HTTP 200, naturalW/H=16, imgW/H=16, display:block, gap до текста=4px. Звезда видна.
+  Текст всё ещё font-weight 600 / 15px/20px. PASS. Проверять img так:
+  `img.currentSrc` + `img.naturalWidth>0` (mask-ловушка больше неактуальна для этого примера).
+- Для проверки 404-битых img использовать requestfailed listener + img.naturalWidth===0;
+  здесь оба чисты, requestfailed по star/icon пуст.
