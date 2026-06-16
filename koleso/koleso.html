@@ -93,12 +93,14 @@
   .rl-prize__pod {
     width: 168px; height: 168px;
     border-radius: 32px;
-    background: rgba(255,255,255,0.16);
+    background: #fff;
     box-shadow: 0 18px 40px rgba(120,40,0,0.28), inset 0 1px 0 rgba(255,255,255,0.28);
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(2px);
+    overflow: hidden;
   }
   .rl-prize__emoji { font-size: 96px; line-height: 1; filter: drop-shadow(0 10px 14px rgba(120,40,0,0.35)); }
+  /* картинка приза в подиуме (README: 140×140, object-fit:contain) */
+  .rl-prize__img { width: 140px; height: 140px; object-fit: contain; display: block; }
   .rl-prize__cap { font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(120,40,0,0.4); }
 
   /* анимация прокрутки: -1 копия из двух (см. JS дублирование) */
@@ -136,6 +138,12 @@
     font-size: 64px; line-height: 1;
     filter: drop-shadow(0 8px 10px rgba(120,40,0,0.28));
   }
+  /* иконка-картинка кнопки (README: ~84px, «вылет» над карточкой) */
+  .rl-action__img {
+    position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
+    width: 84px; height: 84px; object-fit: contain;
+    filter: drop-shadow(0 8px 10px rgba(120,40,0,0.28));
+  }
   .rl-action__label {
     position: absolute; left: 6px; right: 6px; bottom: 22px;
     text-align: center; font-size: 15px; font-weight: 600; color: #000;
@@ -157,6 +165,7 @@
     font-size: 17px; font-weight: 700; color: #000;
   }
   .rl-coin__emoji { font-size: 22px; line-height: 1; }
+  .rl-coin__img { width: 26px; height: 26px; object-fit: contain; }
 
   /* ── Нижняя плашка (meshok ↓): CTA + дисклеймер ─────────────────── */
   .rl-bottom {
@@ -167,6 +176,7 @@
   /* CTA — каноничная DS-кнопка __size-56 __style-primary-on-color (белый фон) */
   .rl-cta .button-content { gap: 8px; }
   .rl-cta__emoji { font-size: 20px; line-height: 1; }
+  .rl-cta__img { width: 24px; height: 24px; object-fit: contain; vertical-align: middle; }
   .rl-disclaimer {
     margin: 12px 0 0;
     text-align: center; font-size: 13px; line-height: 16px; color: #fff;
@@ -206,18 +216,18 @@
     <!-- Кнопки-карточки -->
     <div class="rl-actions">
       <div class="rl-action" role="button" tabindex="0" aria-label="Мои призы">
-        <span class="rl-action__emoji">🎁</span>
+        <img class="rl-action__img" src="../assets/koleso/moi-prizy.png" alt="">
         <span class="rl-action__label">Мои призы</span>
         <span class="rl-action__badge">2</span>
       </div>
       <div class="rl-action" role="button" tabindex="0" aria-label="Задания" data-href="koleso-tasks.html">
-        <span class="rl-action__emoji">📋</span>
+        <img class="rl-action__img" src="../assets/koleso/zadaniia.png" alt="">
         <span class="rl-action__label">Задания</span>
         <span class="rl-action__badge">2</span>
       </div>
       <div class="rl-coin" aria-label="Билеты">
         <span id="coin-count">1</span>
-        <span class="rl-coin__emoji">🎟️</span>
+        <img class="rl-coin__img" src="../assets/koleso/biletik.png" alt="">
       </div>
     </div>
 
@@ -225,7 +235,7 @@
     <div class="rl-bottom">
       <div class="button-wrapper __size-56 __full-width rl-cta" id="cta">
         <button class="button-container __style-primary-on-color">
-          <span class="button-content"><span id="cta-text">Крутить колесо за 1</span><span class="rl-cta__emoji">🎟️</span></span>
+          <span class="button-content"><span id="cta-text">Крутить колесо за 1</span><img class="rl-cta__img" src="../assets/koleso/biletik.png" alt=""></span>
         </button>
       </div>
       <p class="rl-disclaimer">
@@ -237,23 +247,28 @@
   </div>
 
   <script>
-    // ── Призы барабана (эмодзи-плейсхолдеры) ──────────────────────
+    // ── Призы барабана (картинки из ../assets/koleso) ─────────────
     var PRIZES = [
-      { e: '📱', c: 'iPhone 15' },
-      { e: '🎟️', c: 'Промокод 500₽' },
-      { e: '🎧', c: 'Наушники' },
-      { e: '⌚', c: 'Смарт-часы' },
-      { e: '💰', c: '1000 ОК' },
-      { e: '🎮', c: 'Геймпад' },
-      { e: '🛍️', c: 'Сертификат' },
-      { e: '🏆', c: 'Суперприз' }
+      { img: 'aifon.png',            c: 'iPhone' },
+      { img: 'ozon-promokod.png',    c: 'Промокод Ozon' },
+      { img: 'telefon.png',          c: 'Смартфон' },
+      { img: 'pylesos.png',          c: 'Пылесос' },
+      { img: 'fen.png',              c: 'Фен' },
+      { img: 'chainik.png',          c: 'Чайник' },
+      { img: 'chainik-igrushka.png', c: 'Игрушка' },
+      { img: 'gril.png',             c: 'Гриль' },
+      { img: 'barbekiu.png',         c: 'Барбекю' },
+      { img: 'shveinaia.png',        c: 'Швейная машина' },
+      { img: 'mebel.png',            c: 'Мебель' },
+      { img: 'podarok.png',          c: 'Подарок' },
+      { img: 'oki.png',              c: 'ОКи' }
     ];
 
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
-      el.innerHTML = '<div class="rl-prize__pod"><span class="rl-prize__emoji">' + p.e +
-                     '</span></div><div class="rl-prize__cap">' + p.c + '</div>';
+      el.innerHTML = '<div class="rl-prize__pod"><img class="rl-prize__img" src="../assets/koleso/' +
+                     p.img + '" alt=""></div><div class="rl-prize__cap">' + p.c + '</div>';
       return el;
     }
 
