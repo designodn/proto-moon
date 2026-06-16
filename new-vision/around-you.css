@@ -1,0 +1,348 @@
+/**
+ * New Vision — «Вокруг вас сейчас» (Around You)
+ *
+ * Лента коротких activity-ячеек: лид-визуал + 1–2 строки текста + кнопка.
+ * Базовый ряд — общий .uni-cell-wrapper.__type-activity (см. components/uni-cell.css).
+ * Здесь только то, чего нет в общей DS:
+ *   1. ЛИД-ВИЗУАЛЫ — варианты «картинки» слева (кластер, эмодзи-стикер, фото-пара, онлайн).
+ *   2. СПИСОК-СТРАНИЦА — полноэкранный список всех типов (открывается по тапу на заголовок).
+ *   3. АНИМАЦИИ КАТЕГОРИЙ — у «редких» поводов своя живая анимация лид-визуала.
+ *
+ * Подключается из new-vision.css ПОСЛЕ общей DS.
+ */
+
+/* ============================================================
+   ЗАГОЛОВОК-ССЫЛКА острова — тап ведёт на отдельную страницу
+   ============================================================ */
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px 6px;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.activity-header__chevron {
+  width: 8px;
+  height: 13px;
+  margin-left: 2px;
+  flex-shrink: 0;
+  background-color: var(--dynamic-text-and-icons-base-secondary);
+  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  transition: transform 200ms ease;
+}
+.activity-header:active .activity-header__chevron { transform: translateX(2px); }
+
+/* ============================================================
+   ПРОМО-БАННЕР — «Копите народные билеты →»
+   Персиковая плашка во всю ширину наверху списка: жирный заголовок
+   со стрелкой + декоративная картинка (машина + коробка с бантом),
+   которая выходит за нижний/верхний край и обрезается скруглением.
+   ============================================================ */
+.promo-banner {
+  padding: 12px 16px;
+}
+.promo-banner__card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 64px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #ffd6c4;
+  color: var(--static-text-and-icons-base-primary);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.promo-banner__card:active { transform: scale(0.99); }
+.promo-banner__title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-family);
+  font-size: 19px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+.promo-banner__arrow {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform 200ms ease;
+}
+.promo-banner__card:active .promo-banner__arrow { transform: translateX(3px); }
+
+/* Декоративная композиция справа — обе картинки бликуют за край плашки */
+.promo-banner__art {
+  position: relative;
+  width: 124px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.promo-banner__car {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 96px;
+  width: auto;
+  pointer-events: none;
+}
+.promo-banner__bow {
+  position: absolute;
+  left: -4px;
+  bottom: -8px;
+  height: 70px;
+  width: auto;
+  transform: rotate(-9deg);
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.20));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   СПИСОК-СТРАНИЦА — вертикальный список с хайрлайн-разделителями
+   ============================================================ */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+/* Разделитель под текстом ряда — от лид-визуала до правого края,
+   как в системных списках (под аватаркой линии нет). */
+.activity-list > .uni-cell-wrapper {
+  --uni-cell-padding-top:    10px;
+  --uni-cell-padding-bottom: 10px;
+}
+.activity-list > .uni-cell-wrapper:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--uni-cell-padding-left) + 44px + 12px);
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--dynamic-stroke-contrast-low);
+}
+
+/* ============================================================
+   ИНЛАЙН-ИКОНКА в тексте ячейки (напр. билет: «выиграла 2 🎫 билета»)
+   Маск-иконка на акцентном цвете, слегка наклонена — как в макете.
+   ============================================================ */
+.inline-ticket {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin: 0 1px;
+  vertical-align: -2px;
+  background-color: var(--static-surface-status-accent);
+  -webkit-mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
+          mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
+  transform: rotate(8deg);
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #1 — ОНЛАЙН-ТОЧКА (статус-индикатор)
+   Кладётся в .avatar.__has-addon как .avatar__addon.__pos-bl.
+   Зелёный кружок с «вырезом» (белым кольцом фона острова).
+   ============================================================ */
+.status-dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--static-surface-status-positive);
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #2 — ЭМОДЗИ/СТИКЕР поверх картинки
+   Большой декоративный значок (рыба, медаль, спаркл…), выходит
+   за визуал снизу-справа. Кладётся в обёртку .activity-lead рядом
+   с .avatar/.picture — обёртка не клипает, а сам визуал может (для блика).
+   ============================================================ */
+.activity-lead {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+}
+.lead-sticker {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  font-size: 22px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
+   Свободная «кучка» (для «Рядом», «Знакомые», соц-события).
+   Каждая обведена белым кольцом фона острова.
+   ============================================================ */
+.ava-cluster {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.ava-cluster > .avatar {
+  position: absolute;
+  border: 2px solid var(--dynamic-surface-base-secondary);
+  box-sizing: content-box;
+}
+.ava-cluster > .avatar:nth-child(1) { top: 0;    left: 0;   z-index: 1; }
+.ava-cluster > .avatar:nth-child(2) { top: -2px; left: 20px; z-index: 2; }
+.ava-cluster > .avatar:nth-child(3) { top: 20px; left: 10px; z-index: 3; }
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #4 — ПАРА НАКЛОНЁННЫХ ФОТО в боксе 44×44
+   Компактная «стопка снимков» (для UGC, конкурсов-потока).
+   ============================================================ */
+.photo-pair {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.photo-pair > .picture {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1.2px solid var(--dynamic-surface-base-secondary);
+  border-radius: 7px;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12); /* elevate-3 */
+  overflow: hidden;
+}
+/* Значения поворота/размеров — точно из макета (avaPicture 1.3, «несколько») */
+.photo-pair > .picture:nth-child(1) { /* задняя  */ width: 30.7px; height: 28.9px; top: 3px;  left: 1px;  transform: rotate(-7.21deg);  z-index: 1; }
+.photo-pair > .picture:nth-child(2) { /* передняя */ width: 29.4px; height: 27.7px; top: 12px; left: 12px; transform: rotate(11.57deg);  z-index: 2; }
+
+/* ============================================================
+   АНИМАЦИИ ПОЯВЛЕНИЯ ячеек (по макету «Появление → Default»).
+   При входе ячейка вспыхивает подложкой цвета своей категории и
+   оседает в обычную белую. Запускается, когда на списке есть .play
+   (ставится JS на загрузке и по кнопке «↻ Проиграть»).
+
+   Категории (класс на .uni-cell-wrapper):
+     базовая (без класса) — «Обычные»: тёплая персиковая подложка
+     .__cat-win    — «1 место»: золотая подложка
+     .__cat-neuro  — «Нейро»: яркий градиент + белый текст на входе
+     .__cat-holiday— «Праздник»: лавандовая подложка + конфетти
+   Стаггер: --enter-delay (custom property наследуется в контейнер/::before).
+   ============================================================ */
+
+/* Сам «въезд» ряда — лёгкий подъём + проявление */
+@keyframes au-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Затухание категорийной подложки */
+@keyframes au-fade { from { opacity: 1; } to { opacity: 0; } }
+/* Нейро: текст белый на входе → обычный */
+@keyframes au-neuro-text {
+  0%, 45% { color: var(--static-text-and-icons-base-inverse-primary); }
+  100%    { color: var(--static-text-and-icons-base-primary); }
+}
+/* Конфетти-частица: вылет из центра наружу с затуханием */
+@keyframes au-confetti {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx, 0), var(--ty, 0)) scale(1); }
+}
+
+/* Въезд каждого ряда */
+.activity-list.play > .uni-cell-wrapper {
+  isolation: isolate; /* свой стек-контекст: подложка ::before (z-index:-1) ляжет под текст */
+  animation: au-enter 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Категорийная подложка — слой ::before на кликабельной поверхности */
+.activity-list.play .uni-cell-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
+  animation: au-fade 1.3s ease-out both;
+  animation-delay: var(--enter-delay, 0s);
+  pointer-events: none;
+  z-index: -1; /* за контентом ряда, но над прозрачным фоном контейнера */
+}
+/* «1 место» — золото */
+.activity-list.play .__cat-win .uni-cell-container::before {
+  background-color: rgba(255, 196, 61, 0.30);
+}
+/* «Праздник» — лаванда */
+.activity-list.play .__cat-holiday .uni-cell-container::before {
+  background-color: rgba(150, 120, 255, 0.20);
+}
+/* «Нейро» — яркий градиент + белый текст на входе */
+.activity-list.play .__cat-neuro .uni-cell-container::before {
+  background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%);
+}
+.activity-list.play .__cat-neuro .uni-cell-additional-content {
+  animation: au-neuro-text 1.3s ease-out both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Конфетти (только «Праздник») — отдельный слой в .uni-cell-wrapper,
+   вне overflow:hidden контейнера, чтобы частицы летели за пределы ряда. */
+.confetti {
+  position: absolute;
+  left: calc(var(--uni-cell-padding-left) + 22px); /* центр лид-визуала 44px */
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.confetti > i {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 1.5px;
+  opacity: 0;
+}
+.activity-list.play .__cat-holiday .confetti > i {
+  animation: au-confetti 1s ease-out both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Доступность: уважаем системную просьбу убрать анимации */
+@media (prefers-reduced-motion: reduce) {
+  .activity-list.play > .uni-cell-wrapper,
+  .activity-list.play .uni-cell-container::before,
+  .activity-list.play .__cat-neuro .uni-cell-additional-content,
+  .activity-list.play .__cat-holiday .confetti > i {
+    animation: none !important;
+  }
+  .activity-list.play .uni-cell-container::before { display: none; }
+}
+
+/* ============================================================
+   КНОПКА «↻ Проиграть» — пере-запуск появления без перезагрузки
+   ============================================================ */
+.activity-replay {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  align-self: flex-end;
+  margin: 8px 16px -8px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--dynamic-surface-contrast-mid);
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-100);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.activity-replay:active { transform: scale(0.96); }

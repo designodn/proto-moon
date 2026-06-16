@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
+<script src="../components/screen-transition.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -24,7 +25,7 @@
 
   <div class="phone-frame">
 
-    <div class="phone-frame__feed">
+    <div class="phone-frame__feed __flush-islands">
 
       <!-- MeshokUp: sticky status + nav + tabs -->
       <div class="meshok-up">
@@ -57,10 +58,11 @@
 
       <!-- Activity widget -->
       <div class="island">
-        <div style="display:flex; align-items:center; gap:6px; padding: 0 16px 6px;">
+        <a class="activity-header" href="okruzhenie.html">
           <span class="ds-title-l">Вокруг вас сейчас</span>
           <span class="pulse-dot"></span>
-        </div>
+          <span class="activity-header__chevron" aria-hidden="true"></span>
+        </a>
         <div class="ds-activity-slot">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
@@ -135,6 +137,10 @@
       </div>
 
 
+      <!-- Лента фидов (each feed = свой остров, gap между ними).
+           Дача-сториз — первый фид в стопке, поэтому внутри feed-container. -->
+      <div class="feed-container">
+
       <!-- Сториз-карусель «Сейчас на даче» -->
       <article class="feed-stories island">
         <nav class="breadcrumbs ds-body-m">
@@ -172,9 +178,6 @@
           </div>
         </div>
       </article>
-
-      <!-- Feed posts (wrapped in .feed-container) — порядок по чеклисту -->
-      <div class="feed-container">
 
       <!-- 1. Текст + видео -->
       <article class="feed-base island">

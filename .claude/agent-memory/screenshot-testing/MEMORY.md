@@ -107,3 +107,89 @@
 - ЛОВУШКА скриншота: на ленте висит ФИКС оранжевый промо-баннер «Народный день подарков!»
   поверх таб-бара снизу — это часть дизайна, НЕ артефакт слияния. Перекрывает низ карточек на скринах, не пугаться.
 - menu.html / profile.html (из main): открываются 200, markers=none, 0 JS-ошибок, textLen 146/274 — не пустые, не сломаны.
+
+## Окружение / запуск
+- Сервер из корня репы: `python3 -m http.server 8765 --bind 127.0.0.1`. Страницы new-vision: `/new-vision/okruzhenie.html`, `/new-vision/lenta.html`, `/new-vision/profile.html`.
+- Вьюпорт прототипа мобильный 390×844, deviceScaleFactor 2, isMobile+hasTouch.
+- Внешние картинки (i.pravatar.cc / picsum) в песочнице НЕ грузятся — плейсхолдеры (серый прямоугольник с иконкой). Это норма, проверять вёрстку/анимации, не фото.
+
+## Структура страниц
+- Скролл-контейнер = `.phone-frame__feed` (app-shell.css: 100dvh, overflow:hidden на shell, overflow-y:auto на feed). НО в headless body/feed не клампятся по высоте → `scrollHeight == clientHeight`, `window.scrollTo` и `feed.scrollTop` не двигают. Чтобы снять нижние ячейки: `element.scrollIntoView({block:'start'})` + clip screenshot по getBoundingClientRect. fullPage:true тоже работает.
+- Навигация по `data-href` обрабатывается `components/screen-transition.js` (back-кнопка `.nav-bar__back data-href="lenta.html"` — это <button>, не <a>). Клик + `waitForURL` отрабатывает штатно, петель нет.
+- Заголовок острова в lenta.html: `<a class="activity-header" href="okruzhenie.html">` с `.pulse-dot` и `.activity-header__chevron` (8×13, mask из ../assets/icons/chevron-right.svg).
+
+## okruzhenie.html «Вокруг вас сейчас» (проверено 2026-06-16, PASS)
+- 16 ячеек `.activity-list > .uni-cell-wrapper.__type-activity`. Последние 5 — редкие категории: `.__cat-win/.__cat-neuro/.__cat-memory/.__cat-holiday/.__cat-social`.
+- Лид-визуалы (все присутствуют): status-dot×2, lead-sticker×6, ava-cluster×4, photo-pair×1, picture __size-44 ×3 + одиночные аватары.
+- Разделитель: `.uni-cell-wrapper:not(:last-child)::after`, left=72px (= padding-left + 44 + 12), height 1px, цвет rgba(131,102,86,0.08). Корректно начинается после лид-визуала.
+- КЛИП: стикеры/точки лежат внутри `.uni-cell-container` (overflow:hidden!), НО геометрически ни один не выходит за края контейнера (стикеры на 4-14px внутри низа). Проверять не классом, а сравнением getBoundingClientRect стикера vs контейнера-клиппера. Сейчас clipped:false у всех.
+
+## promo-banner (первый блок okruzhenie.html, проверено 2026-06-16, PASS)
+- `.promo-banner` (padding 12/16) > `.promo-banner__card` (h=64, border-radius 20px, overflow:hidden, bg #ffd6c4 = rgb(255,214,196)), width карты 358 (390 - 2×16).
+- Декор: bow z-index:1 ПОВЕРХ car (z:auto). car height 96px, bow height 70px — оба ВЫШЕ карты 64px и геометрически выходят за низ (carExceedsBottom 16, bowExceedsBottom ~12.6) — это by design, клиппится overflow:hidden карты (визуально срез чистый по скруглению). НЕ путать с багом.
+- Картинки локальные ../assets/around/banner-{bow,car}.png — грузятся: bow naturalW 1201, car naturalW 1100, complete:true.
+- Гэп до первой ячейки 12px (next .uni-cell-wrapper top=188, cardBottom=176) — наезда нет, разделители ниже не съехали.
+- Заголовок `.promo-banner__title` (fw 700, 2 строки) + inline `.promo-banner__arrow` «→».
+
+## АНИМАЦИИ ПОЯВЛЕНИЯ ячеек (новый код, проверено 2026-06-16, PASS) — заменил старые лупы лид-визуалов
+- Файлы: `new-vision/around-you.css` (keyframes au-enter/au-fade/au-neuro-text/au-confetti) + inline-скрипт в конце okruzhenie.html (ставит `--enter-delay`=i*0.06s на каждый `.uni-cell-wrapper`, добавляет `.play` на `#activityList`, перезапуск по `#replayBtn`).
+- ВАЖНО: класс на список — это `.activity-list.play` (id=activityList). `#replayBtn` — ПЕРВЫЙ child списка, но `.uni-cell-wrapper` его не цепляет, индексы стаггера корректные.
+- replay-кнопка делает `remove('play'); offsetWidth; add('play')` СИНХРОННО → если проверять classList до/после click, оба раза true (класс не «слетает» наблюдаемо). Чтобы доказать перезапуск — трейсить computed (color/opacity) через rAF после клика, не classList.
+- Замеры (settled): `.uni-cell-container::before` animName=au-fade у ВСЕХ. bg: обычная rgba(255,138,76,.18); win rgba(255,196,61,.30); holiday rgba(150,120,255,.20); neuro = linear-gradient(90deg, #ff7a18, #ff4d8d 50%, #9b5cff) (bgColor прозрачный, gradient в background — НЕ none). z-index ::before = -1, container isolation:isolate → подложка ЗА текстом, текст читается (overlap нет).
+- neuro-текст: `.uni-cell-additional-content` animName=au-neuro-text. Стартует белым (255,255,255) и держит до ~45% от 1.3s, затем градиент в чёрный; settled color=rgb(0,0,0). Кроссовер белый→серый→чёрный наблюдается ~delay+0.7..1.3s (neuroIdx=13 → delay 0.78s → переход ~1.5–2.1s от replay).
+- Конфетти: holiday-ячейка, 8×`.confetti > i`, animName=au-confetti 1s. `.confetti` лежит в `.uni-cell-wrapper`, НЕ внутри `.uni-cell-container` (тот overflow:hidden) → confInsideContainer=false, частицы свободно летят за края ряда. Ловится визуально на ~delay+150ms.
+- ТАЙМИНГИ ловли: подложки fade 1.3s от своего --enter-delay. Чтобы поймать нижние спец-ячейки (neuroIdx13 delay .78s, holidayIdx15 delay .90s) — scrollIntoView, replay, ждать ~950–1050ms, снимать. Ранний общий кадр (верх списка) — снимать на 200ms сразу после goto(waitUntil:commit).
+- Регрессия чистая: cells 17 (16 + промо-баннер как wrapper? нет — 17 wrappers вкл. промо? фактич. querySelectorAll('.uni-cell-wrapper')=17, buttons 17, ava-cluster 4, photo-pair 1, lead-sticker 6). Разделители/кнопки/лид-визуалы на месте, settled = чистые белые ячейки.
+
+## Computed animation-name (УСТАРЕЛО — лупы лид-визуалов au-shine/au-neuro-ring/au-medal-bob и т.д. УДАЛЕНЫ, заменены анимацией появления выше)
+- `.__cat-win .picture/.avatar ::after` → au-shine 3.2s
+- `.__cat-win .lead-sticker` → au-medal-bob 2.4s (transform-матрица меняется по кадрам — живой bob)
+- `.__cat-neuro .avatar/.picture` → au-neuro-ring 4s (визуально кольцо циклит magenta→blue, ловится кадрами ~1с)
+- `.__cat-neuro .lead-sticker` → au-twinkle 1.8s
+- `.__cat-memory .picture>img / .avatar>img` → au-memory 7s
+- `.__cat-holiday .avatar/.picture` → au-holiday-glow 2.8s
+- `.__cat-social .ava-cluster>.avatar:nth-child(2)` → au-gather 3s
+- `.__cat-social .lead-sticker` → au-heart-pop 2.6s
+- Чтобы поймать движение глазами: au-neuro-ring смена цвета кольца лучше всего видна на 2-3 кадрах с шагом 1с.
+
+## inline-ticket в ячейке okruzhenie — ИТОГ: PASS (commit «inline-span nowrap», проверено 2026-06-16)
+- ФИКС, который сработал: связку обернули в `<span style="white-space:nowrap">2 <span class="inline-ticket"></span> билета</span>` внутри внешнего span. Трио теперь на ОДНОЙ строке.
+- Замеры (390×844, дефолт): «2» top=218 left=72..80; ticket top=220.09 left=84..100 (16×16, центр по 20px line-height → top на ~2px ниже глифов = норма); «билета» top=218 left=104..112. two.top==bil.top (218) → одна строка. iconBetween=true. Текст = 3 визуальные строки (contentHeight 60 / lh 20).
+- Адверсариально: форс maxWidth:120px на .uni-cell-additional-content — трио ВСЁ РАВНО одна строка (two.top=bil.top=238, iconBetween=true). nowrap реально держит, не случайность.
+- status-dot зелёный виден, кнопка «Смотреть» на месте.
+- Точные глифы мерить через Range.setStart/setEnd (TreeWalker SHOW_TEXT) + getBoundingClientRect; иконку — getBoundingClientRect самого .inline-ticket.
+
+## inline-ticket — история провалов (для контекста, FAIL ×2)
+- ЛОВУШКА: `.uni-cell-additional-content` = `display:flex; flex-direction:column` (components/uni-cell.css:143). Любой inline-элемент НАПРЯМУЮ внутри (span .inline-ticket) становится FLEX-ITEM → blockified: computed display=block, хотя в CSS `.inline-ticket{display:inline-block}`. Иконка падает на ОТДЕЛЬНУЮ строку.
+- ПОПЫТКА ФИКСА (commit 5c145d5): обернули всю фразу в один `<span>` внутри acc. Теперь span = flex-item display:block (ок), а .inline-ticket снова честно inline-block (ок, computed=inline-block, 16×16). НО ФРАЗА ВСЁ РАВНО РВЁТСЯ: естественный перенос строки падает ровно между «2» и иконкой → «выиграла 2» в конце строки 1, иконка+«билета» в начале строки 2. Замеры: last-char «2» top=198 left=265 (конец стр.1); ticket top=220 left=72 (начало стр.2); «билета» top=218. Текст ~3 визуальных строки. wrap-обёртки самой по себе НЕДОСТАТОЧНО.
+- ПРАВИЛЬНЫЙ ФИКС: обернуть только связку «2 [ticket] билета» в inline-span с `white-space:nowrap`, чтобы число+иконка+слово не разрывались. Display:block у внешнего span проблему переноса не решает.
+- Сам по себе .inline-ticket корректен: webkitMaskImage=url(ticket_24.svg) (НЕ none), maskSize contain, box 14×14, bg rgb(255,119,0)=#FF7700 (var --static-surface-status-accent), transform rotate~8deg (matrix 0.99/0.139). Видна крупным планом — оранжевый билет.
+- Онлайн status-dot: rgb(47,182,117) зелёный, 12×12, addon absolute __pos-bl, bottom-left 44px аватара, dotInsideContainer:true (не обрезан overflow:hidden).
+- Ячейка стоит первым .uni-cell-wrapper сразу после .promo-banner (placement верный).
+- accentVar резолвится в #FF7700 (не #EE8208 fallback из tooltip.css).
+
+## Гэпы между островами в ленте (commit 0dc79c0, проверено 2026-06-16, PASS)
+- ЛОВУШКА: `.meshok-up` имеет `display:contents` → её собственный getBoundingClientRect = 0×0 (top0/bottom0). НЕ мерить gap к виджету по rect самого .meshok-up — он соберёт мусор (получал «160»). Мерить по max bottom её детей: status-bar(0-44) + nav-bar.__type-feed(44-100) + tabs(100-160) → эффективный bottom=160.
+- Виджет «Вокруг вас сейчас» (.phone-frame__feed .island[0]) стартует ровно на y=160 → пара 1 (мешок↔виджет) = 0px, СЛИТНО (by design).
+- Фикс перенёс открытие `.feed-container` ПЕРЕД `article.feed-stories.island` (дача), контейнер получил `margin-top: var(--space-1)` = 4px. storiesInsideContainer=true, contestInsideContainer=true.
+- Замеры пар (390×844): gap2 виджет↔дача(feed-stories) = 4px (382-378); gap3 дача↔урожай(feed-contest) = 4px (552-548, БЫЛ 0 — баг пофикшен); gap4 урожай↔след(feed-memory) = 4px (930-926). Все три гэпа = --space-1, равномерно.
+- border-radius=0 у всех (meshok-детей нет, но widget/stories/contest/next = 0px) — `.__flush-islands` по-прежнему держит.
+
+## .__flush-islands (commit f2cfa39, проверено 2026-06-16, PASS)
+- Модификатор на `.phone-frame__feed` (lenta.html). Правило `components/island.css`: `.__flush-islands .island, .island.__flush { border-radius: 0 }` (spec 0,2,0) перебивает базовый `.island{border-radius:20px}` (line 27, spec 0,1,0). Работает.
+- В ленте 18 `.island`: [0] активити-виджет, [1] feed-stories, [2] feed-contest, [3] feed-memory, [4] feed-discussion, [5] feed-questions, [6-8/12-16] feed-base, [9] feed-group, [10] feed-birthday, [11] feed-ad, [17] финальный CTA. У ВСЕХ computed border-radius=0px (было 20px).
+- Чтобы перечислить острова с лейблами: querySelectorAll('.phone-frame__feed .island'), label = текст .activity-header .ds-title-l / .island__header или класс feed-*.
+- Шеврон/навигация ещё раз подтверждены на этом коммите (см. блок ниже).
+
+## Навигация (PASS)
+- Клик `.activity-header` в lenta → okruzhenie.html, title «Вокруг вас сейчас — New Vision».
+- Клик `.nav-bar__back` в okruzhenie → lenta.html, title «Лента — New Vision».
+
+## Жалоба «шеврон не виден + тап не ведёт» — НЕ ВОСПРОИЗВЕЛАСЬ (проверено 2026-06-16)
+- lenta.html грузит ТОЛЬКО `new-vision.css`; around-you.css приходит через @import url('./around-you.css') (new-vision.css:31, все @import подряд в начале до правил — валидны). RESP 200 на around-you.css подтверждён в network. `.activity-header` computed display:flex → стили применились.
+- Шеврон РЕНДЕРИТСЯ и виден: `.activity-header__chevron` 8×13, rect x≈227 y≈183 (ненулевой), bg rgba(46,47,51,0.88) (= резолв --dynamic-text-and-icons-base-secondary), maskImage=url(.../assets/icons/chevron-right.svg) (НЕ none), maskSize contain. Зум-скрин: › чётко справа от оранжевой пульс-точки.
+- chevron-right.svg существует (assets/icons/, 215 b, path stroke=currentColor) → fetch('../assets/icons/chevron-right.svg') со страницы = 200.
+- Навигация работает: click .activity-header → okruzhenie.html; click по тексту .ds-title-l внутри → тоже okruzhenie.html. Это честный <a href="okruzhenie.html"> (нет JS-перехвата на этом элементе; screen-transition.js работает по data-href, а тут обычный href).
+- elementFromPoint(центр текста)=SPAN.ds-title-l (closest a = A.activity-header); elementFromPoint(центр шеврона)=SPAN.activity-header__chevron (closest a = A.activity-header). Оверлея поверх НЕТ.
+- Единственные console-errors = ERR_CERT_AUTHORITY_INVALID на внешних i.pravatar.cc/picsum (норма в песочнице, к багу не относится).
+- ВЫВОД: на текущем HEAD оба заявленных бага отсутствуют. Если юзер видит иное — вероятный кэш старой версии CSS/страницы, либо смотрит не на этом коммите. Гипотеза для автора: проверить hard-reload/версию.
