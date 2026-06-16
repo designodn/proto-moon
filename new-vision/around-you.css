@@ -1,0 +1,244 @@
+/**
+ * New Vision — «Вокруг вас сейчас» (Around You)
+ *
+ * Лента коротких activity-ячеек: лид-визуал + 1–2 строки текста + кнопка.
+ * Базовый ряд — общий .uni-cell-wrapper.__type-activity (см. components/uni-cell.css).
+ * Здесь только то, чего нет в общей DS:
+ *   1. ЛИД-ВИЗУАЛЫ — варианты «картинки» слева (кластер, эмодзи-стикер, фото-пара, онлайн).
+ *   2. СПИСОК-СТРАНИЦА — полноэкранный список всех типов (открывается по тапу на заголовок).
+ *   3. АНИМАЦИИ КАТЕГОРИЙ — у «редких» поводов своя живая анимация лид-визуала.
+ *
+ * Подключается из new-vision.css ПОСЛЕ общей DS.
+ */
+
+/* ============================================================
+   ЗАГОЛОВОК-ССЫЛКА острова — тап ведёт на отдельную страницу
+   ============================================================ */
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px 6px;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.activity-header__chevron {
+  width: 8px;
+  height: 13px;
+  margin-left: 2px;
+  flex-shrink: 0;
+  background-color: var(--dynamic-text-and-icons-base-secondary);
+  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  transition: transform 200ms ease;
+}
+.activity-header:active .activity-header__chevron { transform: translateX(2px); }
+
+/* ============================================================
+   СПИСОК-СТРАНИЦА — вертикальный список с хайрлайн-разделителями
+   ============================================================ */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+/* Разделитель под текстом ряда — от лид-визуала до правого края,
+   как в системных списках (под аватаркой линии нет). */
+.activity-list > .uni-cell-wrapper {
+  --uni-cell-padding-top:    10px;
+  --uni-cell-padding-bottom: 10px;
+}
+.activity-list > .uni-cell-wrapper:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--uni-cell-padding-left) + 44px + 12px);
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--dynamic-stroke-contrast-low);
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #1 — ОНЛАЙН-ТОЧКА (статус-индикатор)
+   Кладётся в .avatar.__has-addon как .avatar__addon.__pos-bl.
+   Зелёный кружок с «вырезом» (белым кольцом фона острова).
+   ============================================================ */
+.status-dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--static-surface-status-positive);
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #2 — ЭМОДЗИ/СТИКЕР поверх картинки
+   Большой декоративный значок (рыба, медаль, спаркл…), выходит
+   за визуал снизу-справа. Кладётся в обёртку .activity-lead рядом
+   с .avatar/.picture — обёртка не клипает, а сам визуал может (для блика).
+   ============================================================ */
+.activity-lead {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+}
+.lead-sticker {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  font-size: 22px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
+   Свободная «кучка» (для «Рядом», «Знакомые», соц-события).
+   Каждая обведена белым кольцом фона острова.
+   ============================================================ */
+.ava-cluster {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.ava-cluster > .avatar {
+  position: absolute;
+  border: 2px solid var(--dynamic-surface-base-secondary);
+  box-sizing: content-box;
+}
+.ava-cluster > .avatar:nth-child(1) { top: 0;    left: 0;   z-index: 1; }
+.ava-cluster > .avatar:nth-child(2) { top: -2px; left: 20px; z-index: 2; }
+.ava-cluster > .avatar:nth-child(3) { top: 20px; left: 10px; z-index: 3; }
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #4 — ПАРА НАКЛОНЁННЫХ ФОТО в боксе 44×44
+   Компактная «стопка снимков» (для UGC, конкурсов-потока).
+   ============================================================ */
+.photo-pair {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.photo-pair > .picture {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--dynamic-surface-base-secondary);
+  box-sizing: content-box;
+  border-radius: 9px;
+  box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.22);
+}
+.photo-pair > .picture:nth-child(1) { top: 2px;  left: -2px; transform: rotate(-7deg);  z-index: 1; }
+.photo-pair > .picture:nth-child(2) { top: 6px;  left: 12px; transform: rotate(11deg);  z-index: 2; }
+
+/* ============================================================
+   АНИМАЦИИ КАТЕГОРИЙ — «редкие» поводы.
+   Класс ставится на .uni-cell-wrapper (.__cat-*), анимируется лид-визуал.
+   Живут лупом на низкой частоте, чтобы страница «дышала», но не мельтешила.
+   ============================================================ */
+
+/* Общий контейнер лид-визуала (чтобы свечение не клипалось аватаркой) */
+.uni-cell-wrapper.__type-activity [class*="__cat-"] { will-change: transform; }
+
+/* --- Победа / достижение: блик-проблеск по фото + «подпрыг» медали --- */
+@keyframes au-shine {
+  0%, 60%  { transform: translateX(-120%) rotate(8deg); }
+  100%     { transform: translateX(220%)  rotate(8deg); }
+}
+@keyframes au-medal-bob {
+  0%, 100% { transform: translateY(0)    rotate(-6deg); }
+  50%      { transform: translateY(-3px) rotate(6deg);  }
+}
+.__cat-win .picture,
+.__cat-win .avatar { position: relative; overflow: hidden; }
+.__cat-win .picture::after,
+.__cat-win .avatar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+  animation: au-shine 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+.__cat-win .lead-sticker {
+  overflow: visible;
+  transform-origin: 60% 60%;
+  animation: au-medal-bob 2.4s ease-in-out infinite;
+}
+
+/* --- Нейро-событие: мягкое радужное кольцо + мерцающий спаркл --- */
+@keyframes au-neuro-ring {
+  0%   { box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.55), 0 0 10px 2px rgba(124, 92, 255, 0.35); }
+  50%  { box-shadow: 0 0 0 2px rgba(255, 92, 188, 0.55), 0 0 14px 4px rgba(255, 92, 188, 0.30); }
+  100% { box-shadow: 0 0 0 2px rgba(92, 188, 255, 0.55), 0 0 10px 2px rgba(92, 188, 255, 0.35); }
+}
+@keyframes au-twinkle {
+  0%, 100% { transform: scale(0.85) rotate(-8deg); opacity: 0.7; }
+  50%      { transform: scale(1.15) rotate(8deg);  opacity: 1;   }
+}
+.__cat-neuro .avatar,
+.__cat-neuro .picture {
+  animation: au-neuro-ring 4s linear infinite;
+}
+.__cat-neuro .lead-sticker {
+  animation: au-twinkle 1.8s ease-in-out infinite;
+}
+
+/* --- Память: тёплый «Ken Burns» зум + лёгкий сепия-цикл --- */
+@keyframes au-memory {
+  0%, 100% { transform: scale(1);     filter: sepia(0.35) saturate(0.9); }
+  50%      { transform: scale(1.12);  filter: sepia(0);    }
+}
+.__cat-memory .picture > img,
+.__cat-memory .avatar > img {
+  animation: au-memory 7s ease-in-out infinite;
+}
+
+/* --- Крупный праздник: тёплое пульсирующее свечение --- */
+@keyframes au-holiday-glow {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255, 119, 0, 0.0); }
+  50%      { box-shadow: 0 0 0 5px rgba(255, 119, 0, 0.22), 0 0 16px 4px rgba(255, 119, 0, 0.30); }
+}
+.__cat-holiday .avatar,
+.__cat-holiday .picture {
+  animation: au-holiday-glow 2.8s ease-in-out infinite;
+}
+
+/* --- Сильное соц-событие: «сбор» кластера + всплывающее сердце --- */
+@keyframes au-gather {
+  0%, 100% { transform: translate(0, 0)     scale(1);    }
+  50%      { transform: translate(-1px, -2px) scale(1.06); }
+}
+@keyframes au-heart-pop {
+  0%, 70%, 100% { transform: scale(0.9) translateY(0);   opacity: 0.85; }
+  80%           { transform: scale(1.25) translateY(-2px); opacity: 1;   }
+}
+.__cat-social .ava-cluster > .avatar:nth-child(2) { animation: au-gather 3s ease-in-out infinite; }
+.__cat-social .ava-cluster > .avatar:nth-child(3) { animation: au-gather 3s ease-in-out infinite 0.4s; }
+.__cat-social .lead-sticker { animation: au-heart-pop 2.6s ease-in-out infinite; }
+
+/* Доступность: уважаем системную просьбу убрать анимации */
+@media (prefers-reduced-motion: reduce) {
+  .__cat-win .picture::after,
+  .__cat-win .avatar::after,
+  .__cat-win .lead-sticker,
+  .__cat-neuro .avatar,
+  .__cat-neuro .picture,
+  .__cat-neuro .lead-sticker,
+  .__cat-memory .picture > img,
+  .__cat-memory .avatar > img,
+  .__cat-holiday .avatar,
+  .__cat-holiday .picture,
+  .__cat-social .ava-cluster > .avatar,
+  .__cat-social .lead-sticker {
+    animation: none !important;
+  }
+}

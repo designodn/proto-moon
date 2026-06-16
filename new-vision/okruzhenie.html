@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вокруг вас сейчас — New Vision</title>
+<link rel="stylesheet" href="new-vision.css">
+<!-- синхронно в <head>: пометить направление перехода до первой отрисовки -->
+<script src="../components/screen-transition.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
+  .phone-frame {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame">
+
+    <div class="phone-frame__feed">
+
+      <!-- MeshokUp: sticky status + nav -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <span class="icon __slot-status-wifi" style="width:16px;height:12px"></span>
+            <span class="icon __slot-status-signal" style="width:17px;height:12px"></span>
+            <span class="icon __slot-status-battery" style="width:25px;height:12px"></span>
+          </span>
+        </div>
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-href="lenta.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Вокруг вас сейчас</span>
+            <span class="pulse-dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Все типы ячеек «Вокруг вас сейчас» -->
+      <div class="activity-list">
+
+        <!-- ── РЕГУЛЯРНЫЕ ─────────────────────────────────────── -->
+
+        <!-- События — аватар + онлайн-индикатор -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image __has-addon">
+                <img src="https://i.pravatar.cc/128?img=47" alt="">
+                <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Марина Мингарова</b> ответила на ваш вопрос</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Ответить</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- События — аватар + стикер-подарок -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=12" alt=""></div>
+                <span class="lead-sticker">🎁</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Борис Фролов</b> отправил вам подарок</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Открыть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Рядом — кластер из 3 аватарок -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="ava-cluster">
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=51" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=8" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">В Санкт-Петербурге обсуждают новую остановку</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Открыть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Рядом — простой аватар -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=68" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Юрий Макиненко</b> спрашивает про счётчики воды</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Помочь</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Интересы — аватар + стикер-рыба -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">🎣</div>
+                <span class="lead-sticker">🐟</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">В Рыбалке добавили 12 новых уловов</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Интересы — простой аватар -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">В Готовке делятся рецептами солений</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Популярное UGC — фото-превью (squircle) -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/uchastok/128/128" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">Фото участка <b>Тамары</b> набрало 120 классов</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Популярное UGC — кластер -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="ava-cluster">
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=14" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=27" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=60" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">Улов с Ладоги обсуждают в Рыбалке</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Знакомые — аватар + онлайн -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image __has-addon">
+                <img src="https://i.pravatar.cc/128?img=45" alt="">
+                <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Ирина Кузнецова</b> тоже участвует в «Урожае осени»</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Конкурсы как поток — пара наклонённых фото -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="photo-pair">
+                <div class="picture __type-image"><img src="https://picsum.photos/seed/harvestA/96/96" alt=""></div>
+                <div class="picture __type-image"><img src="https://picsum.photos/seed/harvestB/96/96" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">Ещё 8 человек добавили урожай</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Конкурсы как поток — кластер -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="ava-cluster">
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=5" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=23" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=39" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">24 соседа участвуют в подборке осени</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Добавить</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── РЕДКИЕ (с анимацией категории) ─────────────────── -->
+
+        <!-- Победа / достижение — фото + медаль, блик-проблеск -->
+        <div class="uni-cell-wrapper __type-activity __cat-win">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/winuchastok/128/128" alt=""></div>
+                <span class="lead-sticker">🥇</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Пётр Иванов</b> занял 1 место в конкурсе «Лучший участок»</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Нейро-событие — аватар + спаркл, радужное кольцо -->
+        <div class="uni-cell-wrapper __type-activity __cat-neuro">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=32" alt=""></div>
+                <span class="lead-sticker">✨</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Ирина Кузнецова</b> превратила фото в подарок</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Память — старое фото, Ken Burns + сепия -->
+        <div class="uni-cell-wrapper __type-activity __cat-memory">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/memory5/128/128" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">5 лет назад вы были на даче с <b>Ольгой Смирновой</b></div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Поделиться</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Крупный праздник — аватар, тёплое свечение -->
+        <div class="uni-cell-wrapper __type-activity __cat-holiday">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--static-surface-status-accent);">🎖️</div>
+                <span class="lead-sticker">🌷</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">К 9 Мая друзья делятся семейными фото</div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Сильное соц-событие — кластер + сердце, «сбор» -->
+        <div class="uni-cell-wrapper __type-activity __cat-social">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="activity-lead">
+                <div class="ava-cluster">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=1" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=16" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=25" alt=""></div>
+                </div>
+                <span class="lead-sticker">❤️</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">12 ваших друзей поздравляют <b>Викторию Алексеевну</b></div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="phone-frame__tabbar">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Feed"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Book"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Message"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Clip"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Menu"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="../components/tab-bar.js"></script>
+
+</body>
+</html>
