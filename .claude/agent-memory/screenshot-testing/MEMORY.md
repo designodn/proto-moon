@@ -7,6 +7,28 @@
   Проверять «грузятся ли картинки» по факту нельзя; проверяй лейаут плейсхолдеров.
 - Сервер часто уже поднят на :8123 (Address already in use → это ок, просто curl 200).
 
+## new-vision/lenta.html — person-link навигация (инлайн-скрипт внизу, ~стр.609)
+- Скролл В `.phone-frame` (НЕ window). Но проще: в page.evaluate делать
+  `el.scrollIntoView({block:'center'})` по найденному элементу, потом клик по его
+  bounding-center через `page.mouse.click` — работает надёжно.
+- Делегированный click на document. Сначала bail-гард:
+  `e.target.closest('button,label,input,a,.actions-bar,.media__play,.media__mute')`
+  → любой интерактив (вкл. label «Подписаться», лайк-кнопки) НЕ ведёт в профиль.
+- Затем `closest('.nv-person-link')`; entity = data-entity (self/own → атрибут на самом el,
+  иначе inner `[data-entity]`, иначе предок, иначе default 'user').
+  - group → return (никуда). self → profile.html?view=self. иначе → profile.html (друг, без ?view).
+- Маркируются (.nv-person-link): шапки постов `.uni-cell` с `.contents-view-container .ds-title-s`;
+  `.uni-cell-wrapper.__type-activity` (виджет «Вокруг вас»); `.question-card .uni-cell`;
+  авторы комментов; именинник.
+- Селекторы для таргетинга по тексту:
+  - имя в шапке: `.uni-cell .ds-title-s` (Елена Фёдорова / ОК Новости / Б15…) → `.closest('.uni-cell')`
+  - активность: `.uni-cell-wrapper.__type-activity b` (Тамара Белова) → closest wrapper
+  - вопрос: `.question-card .ds-body-m` (Ирина Кузнецова) → closest `.uni-cell`
+  - self-пост: `.uni-cell .contents-view-container[data-entity=self]`
+  - кнопка лайк/коммент = `.actions-bar label.button-wrapper.button-klass` (LABEL → bail)
+- Факт 2026-06: ВСЕ 8 кейсов PASS. user→profile.html(без view), self→?view=self,
+  group(ОК Новости / Б15 реклама)→без перехода, label Подписаться + лайк → без перехода.
+
 ## new-vision/profile.html
 - Скролл в `.phone-frame` (НЕ window). `document.querySelector('.phone-frame').scrollTop=N`.
   Контент компактный: при scrollTop=0 на 390x844 видно почти всё до Бонсая.
