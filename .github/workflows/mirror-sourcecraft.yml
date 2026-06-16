@@ -1,0 +1,47 @@
+name: Mirror to SourceCraft
+
+# Зеркалирует репозиторий в SourceCraft (sourcecraft.dev) на каждый push.
+# Цель — держать актуальную резервную копию на случай недоступности GitHub.
+#
+# Требуются три секрета (Settings → Secrets and variables → Actions):
+#   SOURCECRAFT_REPO_URL — адрес репо без схемы и токена,
+#                          например: sourcecraft.dev/<owner>/<repo>.git
+#   SOURCECRAFT_USER     — логин в SourceCraft
+#   SOURCECRAFT_TOKEN    — Personal Access Token (scope: repo)
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  workflow_dispatch:
+
+concurrency:
+  group: mirror-sourcecraft
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Проверить, что секреты заданы
+        env:
+          SC_URL: ${{ secrets.SOURCECRAFT_REPO_URL }}
+          SC_USER: ${{ secrets.SOURCECRAFT_USER }}
+          SC_TOKEN: ${{ secrets.SOURCECRAFT_TOKEN }}
+        run: |
+          if [ -z "$SC_URL" ] || [ -z "$SC_USER" ] || [ -z "$SC_TOKEN" ]; then
+            echo "::error::Не заданы секреты SOURCECRAFT_REPO_URL / SOURCECRAFT_USER / SOURCECRAFT_TOKEN. См. комментарий в начале workflow."
+            exit 1
+          fi
+
+      - name: Сделать bare-зеркало с GitHub
+        run: git clone --mirror "https://github.com/${{ github.repository }}.git" repo.git
+
+      - name: Запушить зеркало в SourceCraft
+        working-directory: repo.git
+        env:
+          SC_URL: ${{ secrets.SOURCECRAFT_REPO_URL }}
+          SC_USER: ${{ secrets.SOURCECRAFT_USER }}
+          SC_TOKEN: ${{ secrets.SOURCECRAFT_TOKEN }}
+        run: |
+          git push --mirror "https://${SC_USER}:${SC_TOKEN}@${SC_URL}"
