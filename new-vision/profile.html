@@ -41,20 +41,43 @@
     gap: var(--space-2);
   }
 
-  /* dev-переключатель состояний — компактный сегмент в правой части навбара */
+  /* реальные действия навбара (свой профиль): создать + редактировать обложку */
+  .nv-pr-cover__nav-actions { display: flex; align-items: center; gap: var(--space-2); }
+  .nv-pr-cover__nav-actions[hidden] { display: none; }
+
+  /* dev-переключатель состояний — плавающая пилюля над таб-баром.
+     Это прото-контрол (в макете его нет), поэтому нейтральный тёмный фон,
+     читается и на оранжевой, и на белой обложке/ленте. */
   .nv-pr-switch {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: 96px; z-index: 60;
     display: inline-flex; align-items: center; gap: 2px;
-    padding: 2px; border-radius: 12px;
-    background: var(--dynamic-surface-contrast-on-color-inverse-high);
+    padding: 3px; border-radius: 14px;
+    background: rgba(20, 20, 22, 0.72);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    box-shadow: 0 6px 20px -6px rgba(0,0,0,0.35);
+    color: #fff;
   }
   .nv-pr-switch button {
     appearance: none; border: 0; cursor: pointer;
     background: transparent; color: inherit;
     font: 600 12px/1 var(--font-family);
-    padding: 6px 8px; border-radius: 10px;
-    transition: background-color 160ms ease;
+    padding: 7px 10px; border-radius: 11px;
+    transition: background-color 160ms ease, color 160ms ease;
   }
-  .nv-pr-switch button.__active { background: rgba(255,255,255,0.92); color: var(--base-black-100, #000); }
+  .nv-pr-switch button.__active { background: #fff; color: #141416; }
+
+  /* ── SELF (свой профиль): светлая обложка, тёмный контент ────────────────── */
+  body[data-view="self"] .nv-pr-cover {
+    background: var(--dynamic-surface-base-quaternary);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  /* back-кружок на светлой обложке — обычный secondary вместо on-color */
+  body[data-view="self"] .nv-pr-cover .button-circle-wrapper.__style-secondary-on-color .button-circle {
+    --button-circle-bg: var(--dynamic-surface-contrast-low);
+    --button-circle-color: var(--dynamic-text-and-icons-base-primary);
+  }
+  body[data-view="self"] .nv-pr-cover__avatar { box-shadow: 0 8px 24px -10px rgba(0,0,0,0.16); }
 
   .nv-pr-cover__body {
     display: flex; flex-direction: column; align-items: center;
@@ -143,11 +166,18 @@
               <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/back_24.svg')"></span>
             </button>
           </span>
-          <!-- dev-переключатель состояний профиля -->
-          <div class="nv-pr-switch" role="tablist" aria-label="Состояние профиля">
-            <button type="button" data-set-view="self">Я</button>
-            <button type="button" data-set-view="friend">Друг</button>
-            <button type="button" data-set-view="stranger">Гость</button>
+          <!-- свой профиль: создать запись + редактировать обложку -->
+          <div class="nv-pr-cover__nav-actions" data-nav="self" hidden>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Создать">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/add_square_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Редактировать обложку">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/photo_cover_install_24.svg')"></span>
+              </button>
+            </span>
           </div>
         </div>
 
@@ -206,24 +236,24 @@
             </span>
           </div>
 
-          <!-- CTA: свой профиль -->
+          <!-- CTA: свой профиль (светлая обложка → обычный secondary) -->
           <div class="nv-pr-cta" data-cta="self" hidden>
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-secondary-on-color">
+              <button class="button-container __style-secondary">
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/edit_16_20.svg')"></span>
-                  Редактировать
+                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/bell_24.svg')"></span>
+                  Уведомления
                 </span>
               </button>
             </div>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-circle" aria-label="Поделиться профилем">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/share_24.svg')"></span>
-              </button>
-            </span>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+            <span class="button-circle-wrapper __size-44 __style-secondary">
               <button class="button-circle" aria-label="Настройки">
                 <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/settings_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary">
+              <button class="button-circle" aria-label="Ещё">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
               </button>
             </span>
           </div>
@@ -279,7 +309,7 @@
       <section class="nv-pr-bonsai" aria-label="Бонсай">
         <div class="nv-pr-bonsai__text">
           <h2 class="ds-title-l nv-pr-bonsai__title">Бонсай</h2>
-          <p class="ds-body-m nv-pr-bonsai__sub">133 полива · 5 уровень</p>
+          <p class="ds-body-m nv-pr-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
           <div class="button-wrapper __size-44">
             <button class="button-container __style-secondary">
               <span class="button-content">
@@ -289,7 +319,7 @@
             </button>
           </div>
         </div>
-        <div class="nv-pr-bonsai__art" aria-hidden="true">💐</div>
+        <div class="nv-pr-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
       </section>
 
       <div class="nv-pr-feed-gap"></div>
@@ -352,6 +382,13 @@
 
     </div>
 
+    <!-- dev-переключатель состояний профиля (в макете отсутствует) -->
+    <div class="nv-pr-switch" role="tablist" aria-label="Состояние профиля">
+      <button type="button" data-set-view="self">Я</button>
+      <button type="button" data-set-view="friend">Друг</button>
+      <button type="button" data-set-view="stranger">Гость</button>
+    </div>
+
     <!-- TABBAR — профиль открывается из «Меню» -->
     <div class="phone-frame__tabbar">
       <div class="tabbar __platform-android">
@@ -371,11 +408,13 @@
   <script src="../components/tab-bar.js"></script>
   <script>
     // ── Состояния профиля: self | friend | stranger ────────────────────────
-    // Источник истины — ?view= в URL; переключатель в шапке его же и меняет.
+    // Источник истины — ?view= в URL; переключатель его же и меняет.
+    // Имя/подпись одинаковы во всех (демо-персона из макета — Ольга Вайнер);
+    // различается «хром»: обложка, иконки навбара, CTA, уровень бонсая.
     var VIEWS = {
-      self:     { name: 'Анастасия Кащеева', sub: 'Это ваш профиль' },
-      friend:   { name: 'Ольга Вайнер',      sub: 'Родилась 2 сентября (26 лет)' },
-      stranger: { name: 'Ольга Вайнер',      sub: 'Родилась 2 сентября (26 лет)' }
+      self:     { bonsai: '0 поливов · 1 уровень', art: '🌱' },
+      friend:   { bonsai: '133 полива · 5 уровень', art: '💐' },
+      stranger: { bonsai: '133 полива · 5 уровень', art: '💐' }
     };
 
     function applyView(view) {
@@ -387,10 +426,17 @@
         el.hidden = el.getAttribute('data-cta') !== view;
       });
 
-      // Имя / подпись / аватар (self — другой человек: вы)
+      // реальные действия навбара (только свой профиль)
+      document.querySelectorAll('.nv-pr-cover__nav-actions').forEach(function (el) {
+        el.hidden = el.getAttribute('data-nav') !== view;
+      });
+
+      // бонсай — уровень/арт зависят от того, чей профиль
       var data = VIEWS[view];
-      document.querySelectorAll('[data-pr-name]').forEach(function (el) { el.textContent = data.name; });
-      document.querySelectorAll('[data-pr-sub]').forEach(function (el)  { el.textContent = data.sub;  });
+      var bSub = document.querySelector('[data-pr-bonsai-sub]');
+      var bArt = document.querySelector('[data-pr-bonsai-art]');
+      if (bSub) bSub.textContent = data.bonsai;
+      if (bArt) bArt.textContent = data.art;
 
       // переключатель
       document.querySelectorAll('.nv-pr-switch [data-set-view]').forEach(function (b) {
