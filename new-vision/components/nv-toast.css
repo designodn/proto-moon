@@ -1,0 +1,44 @@
+/**
+ * New Vision — Toast (positive).
+ *
+ * Тёмная пилюля снизу: круглая иконка-статус + заголовок + подпись.
+ * Figma: positive ◇ toast (2719:199389). Показ — добавить класс `.__show`
+ * (логику показа держит вызывающий, напр. nv-bonsai.js на 2.6с).
+ *
+ *   <div class="nv-toast" role="status" aria-live="polite">
+ *     <span class="nv-toast__check" aria-hidden="true">✓</span>
+ *     <span class="nv-toast__text">
+ *       <span class="nv-toast__title">Заголовок</span>
+ *       <span class="nv-toast__sub">Подпись</span>
+ *     </span>
+ *   </div>
+ */
+
+.nv-toast {
+  position: fixed; left: 50%; bottom: 96px; z-index: 120;
+  transform: translateX(-50%) translateY(16px);
+  display: flex; align-items: center; gap: var(--space-3);
+  width: calc(100% - 32px); max-width: 448px; box-sizing: border-box;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 14px;
+  background: #1F1F22; color: #fff;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+.nv-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.nv-toast__check {
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--static-surface-status-positive, #4bb34b);
+  color: #fff; font-size: 14px; line-height: 1;
+}
+.nv-toast__text  { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nv-toast__title { font: 600 15px/20px var(--font-family); }
+.nv-toast__sub   { font: 400 13px/16px var(--font-family); color: rgba(255, 255, 255, 0.7); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-toast { transition: opacity 240ms ease; }
+  .nv-toast.__show { transform: translateX(-50%); }
+}
