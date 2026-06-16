@@ -60,6 +60,13 @@
 - Ячейка стоит первым .uni-cell-wrapper сразу после .promo-banner (placement верный).
 - accentVar резолвится в #FF7700 (не #EE8208 fallback из tooltip.css).
 
+## Гэпы между островами в ленте (commit 0dc79c0, проверено 2026-06-16, PASS)
+- ЛОВУШКА: `.meshok-up` имеет `display:contents` → её собственный getBoundingClientRect = 0×0 (top0/bottom0). НЕ мерить gap к виджету по rect самого .meshok-up — он соберёт мусор (получал «160»). Мерить по max bottom её детей: status-bar(0-44) + nav-bar.__type-feed(44-100) + tabs(100-160) → эффективный bottom=160.
+- Виджет «Вокруг вас сейчас» (.phone-frame__feed .island[0]) стартует ровно на y=160 → пара 1 (мешок↔виджет) = 0px, СЛИТНО (by design).
+- Фикс перенёс открытие `.feed-container` ПЕРЕД `article.feed-stories.island` (дача), контейнер получил `margin-top: var(--space-1)` = 4px. storiesInsideContainer=true, contestInsideContainer=true.
+- Замеры пар (390×844): gap2 виджет↔дача(feed-stories) = 4px (382-378); gap3 дача↔урожай(feed-contest) = 4px (552-548, БЫЛ 0 — баг пофикшен); gap4 урожай↔след(feed-memory) = 4px (930-926). Все три гэпа = --space-1, равномерно.
+- border-radius=0 у всех (meshok-детей нет, но widget/stories/contest/next = 0px) — `.__flush-islands` по-прежнему держит.
+
 ## .__flush-islands (commit f2cfa39, проверено 2026-06-16, PASS)
 - Модификатор на `.phone-frame__feed` (lenta.html). Правило `components/island.css`: `.__flush-islands .island, .island.__flush { border-radius: 0 }` (spec 0,2,0) перебивает базовый `.island{border-radius:20px}` (line 27, spec 0,1,0). Работает.
 - В ленте 18 `.island`: [0] активити-виджет, [1] feed-stories, [2] feed-contest, [3] feed-memory, [4] feed-discussion, [5] feed-questions, [6-8/12-16] feed-base, [9] feed-group, [10] feed-birthday, [11] feed-ad, [17] финальный CTA. У ВСЕХ computed border-radius=0px (было 20px).
