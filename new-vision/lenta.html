@@ -15,6 +15,9 @@
     height: 100dvh;
     min-height: 100dvh;
   }
+  /* Кликабельный автор/человек в ленте → переход в профиль (см. скрипт внизу). */
+  .nv-person-link { cursor: pointer; }
+  .nv-person-link:active { opacity: 0.6; }
 </style>
 </head>
 <body>
@@ -203,7 +206,7 @@
         <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Дополните фотографию роз спустя 5 лет</h2>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
+          <div class="contents-view-container uni-cell-additional-content" data-entity="self">
             <div class="ds-title-s">Вы</div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 лет назад</div>
           </div>
@@ -402,7 +405,7 @@
       <article class="feed-ad island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-initials">Б15</div>
-          <div class="contents-view-container uni-cell-additional-content">
+          <div class="contents-view-container uni-cell-additional-content" data-entity="group">
             <div class="ds-title-s">Квартал бизнес-класса «Б15»</div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Реклама 0+</div>
           </div>
@@ -483,7 +486,7 @@
       <article class="feed-base island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-initials">ОК</div>
-          <div class="contents-view-container uni-cell-additional-content">
+          <div class="contents-view-container uni-cell-additional-content" data-entity="group">
             <div class="ds-title-s">ОК Новости</div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">14:22</div>
           </div>
@@ -599,6 +602,57 @@
 
 <!-- навигация по таббару (feed → лента, message → сообщения) -->
 <script src="../components/tab-bar.js"></script>
+
+<!-- Тап по человеку в ленте → его профиль.
+     Флаг data-entity: user (по умолчанию) | self | group.
+     Группы/реклама профиль не открывают (страница сообщества — позже). -->
+<script>
+(function () {
+  var PROFILE_USER = 'profile.html';            // другой человек → вид «друг»
+  var PROFILE_SELF = 'profile.html?view=self';  // я
+
+  // entity берём с самого элемента, его потомка-имени или предка.
+  function entityOf(el) {
+    if (el.matches('[data-entity]')) return el.getAttribute('data-entity');
+    var inner = el.querySelector('[data-entity]');
+    if (inner) return inner.getAttribute('data-entity');
+    var up = el.closest('[data-entity]');
+    return up ? up.getAttribute('data-entity') : 'user';
+  }
+
+  function mark(el, forced) {
+    if (!el || el.dataset.personLink) return;
+    el.dataset.personLink = '1';
+    el.classList.add('nv-person-link');
+    if (forced) el.setAttribute('data-entity', forced);
+  }
+
+  // 1) Шапки постов (аватар + имя + время)
+  document.querySelectorAll('.uni-cell').forEach(function (cell) {
+    if (cell.querySelector('.contents-view-container .ds-title-s')) mark(cell);
+  });
+  // 2) Активности виджета «Вокруг вас сейчас»
+  document.querySelectorAll('.uni-cell-wrapper.__type-activity').forEach(function (w) { mark(w); });
+  // 3) Карточки «Нужен совет»
+  document.querySelectorAll('.question-card .uni-cell').forEach(function (c) { mark(c); });
+  // 4) Автор комментария в обсуждении
+  document.querySelectorAll('.comment > .avatar, .comment__header b').forEach(function (c) { mark(c); });
+  // 5) Именинник в карточке дня рождения
+  document.querySelectorAll('.feed-birthday > .avatar').forEach(function (a) { mark(a, 'user'); });
+
+  document.addEventListener('click', function (e) {
+    // не перехватываем интерактив внутри карточки
+    if (e.target.closest('button, label, input, a, .actions-bar, .media__play, .media__mute')) return;
+    var hit = e.target.closest('.nv-person-link');
+    if (!hit) return;
+    var entity = entityOf(hit);
+    if (entity === 'group') return;             // сообщество/реклама — профиль не открываем
+    e.preventDefault();
+    sessionStorage.setItem('nav-tab', '1');
+    location.href = (entity === 'self') ? PROFILE_SELF : PROFILE_USER;
+  });
+})();
+</script>
 
 </body>
 </html>
