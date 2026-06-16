@@ -1,0 +1,200 @@
+/**
+ * OK Design System (proto) — FriendBigCard
+ *
+ * Большая карточка-знакомство из шторы «У вас N новых друзей».
+ * Используется в friends.html в стейтах 3-5 (ряд + свайп).
+ * Структура: фото на 60% высоты + инфо-блок (имя, возраст/город,
+ * общие друзья) + primary-кнопка «Дружить» внизу.
+ *
+ * Эталон — стейт 3 (300×460): белая карточка, border 1px, padding 0
+ * (фото впритык к краям), border-radius 36px. Геометрия позиционирования
+ * (cy = 220) симметрична центру карточки.
+ *
+ *   <article class="friend-big-card" data-i="3">
+ *     <div class="friend-big-card__photo">
+ *       <img src="…" alt="">
+ *     </div>
+ *     <div class="friend-big-card__info">
+ *       <div class="friend-big-card__name ds-title-m">Ольга Вайнер</div>
+ *       <div class="friend-big-card__caption ds-caption-l">58 лет, Москва</div>
+ *       <div class="friend-big-card__mutual">
+ *         <div class="avatars-view">…</div>
+ *         <span class="ds-caption-l">18 общих друзей</span>
+ *       </div>
+ *     </div>
+ *     <div class="friend-big-card__accept">
+ *       <div class="button-wrapper __size-56">
+ *         <button class="button-container __style-primary">
+ *           <span class="button-content">Дружить</span>
+ *         </button>
+ *       </div>
+ *     </div>
+ *   </article>
+ *
+ * Borders держим визуально 1px при любом scale через CSS-переменную
+ * --friend-big-card-scale (как в .gift-card).
+ */
+
+.friend-big-card {
+  --friend-big-card-scale: 1;
+
+  position: relative;
+  width: 300px;
+  height: 460px;
+  box-sizing: border-box;
+  background: #fff;
+  border: solid #e7e7e7;
+  border-width: calc(1px / var(--friend-big-card-scale));
+  border-radius: 36px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-origin: 50% 50%;
+  /* Лёгкая тень для разделения в стопке/веере (стейты 1-2). */
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08),
+              0 2px 6px  rgba(0, 0, 0, 0.06);
+  /* Морф кружок→карточка: фон/обводка/тень проявляются при раскрытии. */
+  transition: background-color 600ms ease,
+              border-color 600ms ease,
+              box-shadow 600ms ease;
+}
+
+/* ============================================================
+   PHOTO — верхняя часть карточки: квадрат 300×300 (как в Figma).
+   ============================================================ */
+.friend-big-card__photo {
+  flex: 0 0 300px;
+  position: relative;
+  background: #f0f0f0;
+  overflow: hidden;
+  border-radius: 36px 36px 0 0;
+  /* margin-top + border-radius анимируются при морфе кружок→карточка. */
+  transition: margin-top 600ms ease, border-radius 600ms ease;
+}
+.friend-big-card__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ============================================================
+   INFO — имя, подзаголовок, общие друзья. Контент по центру (Figma).
+   opacity анимируется: в кружковых стейтах инфо скрыта.
+   ============================================================ */
+.friend-big-card__info {
+  flex: 1 1 auto;
+  min-height: 0;
+  /* Нижний паддинг нужен: в ряду карточка height:auto, инфо может быть нижним
+     элементом (когда кнопка скрыта) — без него текст прилипает к краю. */
+  padding: 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  transition: opacity 450ms ease;
+}
+.friend-big-card__name {
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.friend-big-card__caption {
+  color: var(--dynamic-text-and-icons-base-secondary);
+  font-size: 15px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* «.friend-big-card__mutual» — модификатор-спейсер на .avatars-view,
+   отступ сверху + центрирование строки (стек аватарок + текст). */
+.friend-big-card__mutual {
+  margin-top: 16px;
+  justify-content: center;
+}
+
+/* ============================================================
+   ACCEPT — «Дружить» внизу. В отличие от gift-card.__active,
+   у friend-big-card кнопка ВСЕГДА на месте (нет хидинга).
+   ============================================================ */
+.friend-big-card__accept {
+  flex: 0 0 auto;
+  padding: 12px 16px 16px;
+}
+.friend-big-card__accept .button-wrapper,
+.friend-big-card__accept .button-container { width: 100%; }
+
+/* ============================================================
+   .__accepting — нажали «Дружить»: ПОДЛОЖКА КНОПКИ расширяется и заливает
+   карточку. Оранжевый слой стартует формой/местом кнопки (низ карточки,
+   пилюля) и через clip-path разворачивается во всю карточку + галочка.
+   После заливки наружный JS добавляет .__flying-up.
+   ============================================================ */
+.friend-big-card__accept-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 36px;
+  background:
+    radial-gradient(circle 405px at 50% 92%,
+      #ffb44a 0%,
+      #ff8224 16%,
+      #f55418 32%,
+      #de3a08 58%,
+      #cd2800 100%);
+  /* старт — footprint кнопки «Дружить» (accept: низ 16, бока 16, высота 56). */
+  clip-path: inset(calc(100% - 72px) 16px 16px 16px round 28px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+  transition: clip-path 600ms cubic-bezier(.2, .8, .2, 1),
+              opacity 140ms ease-out;
+}
+.friend-big-card__accept-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 240ms ease-out 300ms,
+              transform 380ms cubic-bezier(0, -0.3, 0.5, 1.3) 300ms;
+}
+.friend-big-card__accept-check img,
+.friend-big-card__accept-check svg {
+  width: 96px;
+  height: auto;
+  display: block;
+}
+.friend-big-card.__accepting .friend-big-card__accept-overlay {
+  clip-path: inset(0px 0px 0px 0px round 36px);
+  opacity: 1;
+}
+.friend-big-card.__accepting .friend-big-card__accept-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   .__flying-up / .__flying-down — улёт после accept/dismiss.
+   ============================================================ */
+.friend-big-card.__flying-up,
+.friend-big-card.__flying-down {
+  pointer-events: none;
+  transition: transform 600ms cubic-bezier(.5, 0, .75, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .friend-big-card { transition: none !important; animation: none !important; }
+}
