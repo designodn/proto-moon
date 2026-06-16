@@ -13,3 +13,9 @@
   line-height: 30px;
   font-weight: 600;
 }
+
+/* Моменты в NV-ленте: ряд сториз внутри feed-stories без верхнего паддинга —
+   верхний отступ уже дают остров и хлебные крошки над рядом. */
+.feed-stories .stories-row {
+  padding-top: 0;
+}
