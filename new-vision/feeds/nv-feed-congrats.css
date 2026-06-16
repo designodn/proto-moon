@@ -1,0 +1,102 @@
+/**
+ * New Vision — Congrats (поздравительные фиды).
+ *
+ * Уникальны для вижн-ленты (нет в q3 и в общей DS). Из Figma
+ * «Общаг» node 2849:139940 (Congrats 64–67). Четыре варианта:
+ *   .feed-congrats.__birthday — «День рождения» (крупный аватар + статистика)
+ *   .feed-congrats.__gift     — «Создал / получил подарок» (карточка с медиа)
+ *   .feed-congrats.__postcard — «Получил открытку» (горизонтальный скролл)
+ *
+ * Карточный визуал даёт общий .island; здесь — раскладка и фирменная
+ * градиентная CTA-кнопка подарка.
+ */
+
+/* ── Общая раскладка (как feed-base: колонка с gap, паддинг 16) ─────────── */
+.feed-congrats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.feed-congrats > :not(.media):not(.avatar) {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+/* Крупный аватар ДР — прямой ребёнок: даём левый отступ маржином,
+   чтобы паддинг не съедал ширину (box-sizing: border-box → фото сжимается). */
+.feed-congrats > .avatar { margin-left: var(--space-4); }
+.feed-congrats .uni-cell-wrapper {
+  --uni-cell-padding-left: 0;
+  --uni-cell-padding-right: 0;
+  --uni-cell-padding-top: 0;
+  --uni-cell-padding-bottom: 0;
+}
+.feed-congrats .uni-cell { align-items: center; gap: 10px; }
+
+/* ── Градиентная CTA «подарок» ──────────────────────────────────────────
+   Фиолетовый → розовый → оранжевый из Figma (button style=primary, кастомный
+   градиент). Вешается на .button-container внутри .button-wrapper.__full-width. */
+.nv-gift-btn.button-container,
+.nv-gift-btn .button-container {
+  background-image: linear-gradient(175deg, #8d41ff 15%, #f987a2 91%, #f79369 132%);
+  color: #fff;
+  border: none;
+}
+.nv-gift-btn .button-content { color: #fff; }
+
+/* Вариант «Создать подарок» — тёплый оранжевый градиент */
+.nv-gift-btn.__create.button-container,
+.nv-gift-btn.__create .button-container {
+  background-image: linear-gradient(95deg, #ff9a3d 0%, #ff6a2b 55%, #ff4d1f 100%);
+}
+
+/* ── Внутренняя карточка подарка (border + radius 20) ───────────────────── */
+.nv-gift-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 0;
+  border: 2px solid var(--dynamic-stroke-contrast-low, rgba(131, 102, 86, 0.08));
+  border-radius: 20px;
+  overflow: hidden;
+}
+.nv-gift-card__caption {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+/* строка reshare: маленький аватар + имя автора подарка */
+.nv-gift-card__reshare {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.nv-gift-card__reshare .ds-title-s { font-weight: 700; }
+
+/* Медиа-иллюстрация внутри карточки подарка — на всю ширину, квадрат */
+.nv-gift-card .media {
+  width: calc(100% + 2 * var(--space-4));
+  margin: 0 calc(-1 * var(--space-4));
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+.nv-gift-card .media img { object-fit: cover; }
+
+/* ── Постовая открытка: горизонтальный скролл мини-карточек ──────────────── */
+.feed-congrats__scroll {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  scrollbar-width: none;
+}
+.feed-congrats__scroll::-webkit-scrollbar { display: none; }
+.feed-congrats__scroll > .nv-gift-card {
+  flex: 0 0 272px;
+  padding-bottom: var(--space-4);
+}
+.feed-congrats__scroll > .nv-gift-card .media {
+  width: calc(100% + 2 * var(--space-4));
+}
