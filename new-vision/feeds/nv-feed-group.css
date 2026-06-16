@@ -1,0 +1,28 @@
+/**
+ * New Vision — FeedGroup (фид «Вступай в сообщество»)
+ *
+ * Уникален для вижн-ленты (нет в q3, нет в общей DS).
+ * Карточный визуал даёт общий .island; здесь — центрированная раскладка:
+ * крупный аватар сообщества, заголовок, стопка друзей, CTA «Подписаться».
+ *
+ *   <article class="feed-group island">
+ *     <div class="avatar __size-72">…</div>
+ *     <h2 class="nv-feed__title">…</h2>
+ *     <div class="avatars-view">…</div>
+ *     <div class="button-wrapper __full-width">…</div>
+ *   </article>
+ */
+
+.feed-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+.feed-group > * { padding-left: 0; padding-right: 0; }
+
+/* CTA на всю ширину карточки */
+.feed-group .button-wrapper.__full-width { align-self: stretch; }

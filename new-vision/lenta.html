@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Лента — прототип</title>
-<link rel="stylesheet" href="index.css">
+<title>Лента — New Vision</title>
+<link rel="stylesheet" href="new-vision.css">
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -178,7 +178,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Урожай</span>
         </nav>
-        <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
+        <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
         <div class="picture-stack">
           <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest1/200/200" alt=""></div>
           <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest2/200/200" alt=""></div>
@@ -367,7 +367,7 @@
       <!-- Сообщество — подписка -->
       <article class="feed-group island">
         <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/256?img=33" alt=""></div>
-        <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Вступай в сообщество рыбаков</h2>
+        <h2 class="nv-feed__title">Вступай в сообщество рыбаков</h2>
         <div class="avatars-view __size-36">
           <div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
@@ -584,7 +584,7 @@
     <div class="phone-frame__tabbar">
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" aria-label="Feed"></button>
+          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Feed"></button>
           <button class="tabbar-icon __slot-book" aria-label="Book"></button>
           <button class="tabbar-icon __slot-message" aria-label="Message"></button>
           <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
@@ -598,7 +598,7 @@
   </div>
 
 <!-- навигация по таббару (feed → лента, message → сообщения) -->
-<script src="components/tab-bar.js"></script>
+<script src="../components/tab-bar.js"></script>
 
 </body>
 </html>
