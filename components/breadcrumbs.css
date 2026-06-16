@@ -15,11 +15,11 @@
  *   </nav>
  *
  * LEADING BADGE (optional):
- *   A 16px icon may precede the text inside the first item. Drop any
- *   16px glyph (icon-glyph / .icon / <img>) as the first child and tag
- *   it `.breadcrumbs__badge` — it sits 4px before the text.
+ *   A 16px icon may precede the text inside the first item. Drop an
+ *   <img> (or any 16px glyph) as the first child and tag it
+ *   `.breadcrumbs__badge` — it sits 4px before the text.
  *     <a class="breadcrumbs__item" href="…">
- *       <icon-glyph class="breadcrumbs__badge" ...></icon-glyph>Еда
+ *       <img class="breadcrumbs__badge" src="…" alt="">Еда
  *     </a>
  *
  * ITEM STATES:
