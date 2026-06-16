@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Выберите друзей — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="../components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; background: var(--dynamic-surface-base-secondary); }
+  .phone-frame { width:100%; max-width:none; height:100dvh; min-height:100dvh; overflow:hidden;
+                 background: var(--dynamic-surface-base-secondary); }
+  .phone-frame__feed { min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .phone-frame__feed::-webkit-scrollbar { display:none; }
+  .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
+
+  .rf {
+    display: flex; flex-direction: column; gap: var(--space-4);
+    padding: var(--space-2) var(--space-4) 96px;
+  }
+  /* инфо-баннер */
+  .rf-banner {
+    background: var(--dynamic-surface-base-primary);
+    border-radius: 16px;
+    padding: var(--space-4);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .rf-list { display: flex; flex-direction: column; }
+
+  /* кнопка-инвайт / статус «Отправлено» */
+  .rf-sent {
+    display: inline-flex; align-items: center;
+    height: 28px; padding: 0 10px; border-radius: 10px;
+    background: var(--static-surface-status-contrast-positive);
+    color: var(--dynamic-text-and-icons-status-positive);
+    font-size: 13px; font-weight: 600; white-space: nowrap;
+  }
+
+  /* sticky-кнопка снизу */
+  .rf-bottom {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    padding: var(--space-3) var(--space-4) calc(var(--space-4) + 8px);
+    background: linear-gradient(180deg, rgba(247,244,242,0) 0%, var(--dynamic-surface-base-secondary) 28%);
+  }
+  .rf-bottom .button-wrapper, .rf-bottom .button-container { width: 100%; }
+</style>
+</head>
+<body>
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="../assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="../assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="../assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Выберите друзей</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/search_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- КОНТЕНТ -->
+      <div class="rf">
+        <div class="rf-banner ds-body-m">Приглашение отправим вашему другу сообщением в чат</div>
+
+        <div class="rf-list" id="list">
+          <!-- строки друзей вставляются из JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky CTA -->
+    <div class="rf-bottom">
+      <div class="button-wrapper __size-56 __full-width">
+        <button class="button-container __style-primary" id="invite-all"><span class="button-content">Пригласить всех сразу</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var FRIENDS = [
+      { n: 'Марина Миронова',    img: 47, sent: true },
+      { n: 'Алексей Отрыв',      img: 12 },
+      { n: 'Николай Валерьевич', img: 13 },
+      { n: 'Виктория Шульская',  img: 45 },
+      { n: 'Артем Андреев',      img: 33 },
+      { n: 'Семёныч',            img: 52 },
+      { n: 'Аня Фёдорова',       img: 49 }
+    ];
+
+    var list = document.getElementById('list');
+    FRIENDS.forEach(function (f) {
+      var cell = document.createElement('div');
+      cell.className = 'user-cell';
+      cell.innerHTML =
+        '<div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=' + f.img + '" alt=""></div>' +
+        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + f.n + '</div></div>' +
+        '<div class="user-cell__actions"></div>';
+      var actions = cell.querySelector('.user-cell__actions');
+      if (f.sent) {
+        actions.innerHTML = '<span class="rf-sent">Отправлено</span>';
+      } else {
+        actions.innerHTML =
+          '<div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
+      }
+      list.appendChild(cell);
+    });
+
+    // тап «Пригласить» → «Отправлено»
+    list.addEventListener('click', function (e) {
+      var btn = e.target.closest('.button-wrapper.__size-28');
+      if (!btn) return;
+      var sent = document.createElement('span');
+      sent.className = 'rf-sent';
+      sent.textContent = 'Отправлено';
+      btn.replaceWith(sent);
+    });
+
+    // «Пригласить всех сразу» → назад на колесо с заработанным билетом
+    document.getElementById('invite-all').addEventListener('click', function () {
+      location.href = 'koleso.html?tickets=1';
+    });
+  </script>
+</body>
+</html>
