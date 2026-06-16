@@ -34,8 +34,17 @@
 - `.__cat-social .lead-sticker` → au-heart-pop 2.6s
 - Чтобы поймать движение глазами: au-neuro-ring смена цвета кольца лучше всего видна на 2-3 кадрах с шагом 1с.
 
-## inline-ticket в ячейке okruzhenie (проверено 2026-06-16, FAIL)
-- ЛОВУШКА: `.uni-cell-additional-content` = `display:flex; flex-direction:column` (components/uni-cell.css:143). Любой inline-элемент внутри (span .inline-ticket) становится FLEX-ITEM → blockified: computed display=block, хотя в CSS `.inline-ticket{display:inline-block}`. Иконка падает на ОТДЕЛЬНУЮ строку, разрывая фразу. «inline-icon между 2 и билета» НЕ работает в этом контейнере. Фикс на стороне кода: обернуть текст в один `<span>`/`<p>` (не flex-child напрямую) или не использовать flex-column для текста с инлайнами.
+## inline-ticket в ячейке okruzhenie — ИТОГ: PASS (commit «inline-span nowrap», проверено 2026-06-16)
+- ФИКС, который сработал: связку обернули в `<span style="white-space:nowrap">2 <span class="inline-ticket"></span> билета</span>` внутри внешнего span. Трио теперь на ОДНОЙ строке.
+- Замеры (390×844, дефолт): «2» top=218 left=72..80; ticket top=220.09 left=84..100 (16×16, центр по 20px line-height → top на ~2px ниже глифов = норма); «билета» top=218 left=104..112. two.top==bil.top (218) → одна строка. iconBetween=true. Текст = 3 визуальные строки (contentHeight 60 / lh 20).
+- Адверсариально: форс maxWidth:120px на .uni-cell-additional-content — трио ВСЁ РАВНО одна строка (two.top=bil.top=238, iconBetween=true). nowrap реально держит, не случайность.
+- status-dot зелёный виден, кнопка «Смотреть» на месте.
+- Точные глифы мерить через Range.setStart/setEnd (TreeWalker SHOW_TEXT) + getBoundingClientRect; иконку — getBoundingClientRect самого .inline-ticket.
+
+## inline-ticket — история провалов (для контекста, FAIL ×2)
+- ЛОВУШКА: `.uni-cell-additional-content` = `display:flex; flex-direction:column` (components/uni-cell.css:143). Любой inline-элемент НАПРЯМУЮ внутри (span .inline-ticket) становится FLEX-ITEM → blockified: computed display=block, хотя в CSS `.inline-ticket{display:inline-block}`. Иконка падает на ОТДЕЛЬНУЮ строку.
+- ПОПЫТКА ФИКСА (commit 5c145d5): обернули всю фразу в один `<span>` внутри acc. Теперь span = flex-item display:block (ок), а .inline-ticket снова честно inline-block (ок, computed=inline-block, 16×16). НО ФРАЗА ВСЁ РАВНО РВЁТСЯ: естественный перенос строки падает ровно между «2» и иконкой → «выиграла 2» в конце строки 1, иконка+«билета» в начале строки 2. Замеры: last-char «2» top=198 left=265 (конец стр.1); ticket top=220 left=72 (начало стр.2); «билета» top=218. Текст ~3 визуальных строки. wrap-обёртки самой по себе НЕДОСТАТОЧНО.
+- ПРАВИЛЬНЫЙ ФИКС: обернуть только связку «2 [ticket] билета» в inline-span с `white-space:nowrap`, чтобы число+иконка+слово не разрывались. Display:block у внешнего span проблему переноса не решает.
 - Сам по себе .inline-ticket корректен: webkitMaskImage=url(ticket_24.svg) (НЕ none), maskSize contain, box 14×14, bg rgb(255,119,0)=#FF7700 (var --static-surface-status-accent), transform rotate~8deg (matrix 0.99/0.139). Видна крупным планом — оранжевый билет.
 - Онлайн status-dot: rgb(47,182,117) зелёный, 12×12, addon absolute __pos-bl, bottom-left 44px аватара, dotInsideContainer:true (не обрезан overflow:hidden).
 - Ячейка стоит первым .uni-cell-wrapper сразу после .promo-banner (placement верный).
