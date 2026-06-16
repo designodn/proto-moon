@@ -20,6 +20,7 @@
    Раскомментируй/добавляй по мере появления дивергентных компонентов: */
 @import url('./components/nv-breadcrumbs.css');  /* обновлённые хлебные крошки (tag line) */
 /* @import url('./components/nv-profile.css'); */
+@import url('./components/nv-tabbar.css');   /* .tabbar.__vision — свой пак иконок */
 
 /* 3. Уникальные для вижн-ленты фид-карточки — папка new-vision/feeds/.
    Только то, чего НЕТ в q3 и в общей DS (feed-ad общий, feed-memory — в

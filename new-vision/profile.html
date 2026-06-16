@@ -1,327 +1,396 @@
 <!DOCTYPE html>
-<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профиль — New Vision</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="new-vision.css">
-<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
-<script src="../components/screen-transition.js"></script>
 <style>
-  * { -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
-  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+  * { -webkit-tap-highlight-color: transparent; }
 
-  /* «Белая карточка» — секция профиля поверх secondary-фона страницы */
-  .ll-pr-card { background: var(--dynamic-surface-base-quaternary); }
+  /* fill-container: phone-frame на всю ширину/высоту окна (как в lenta.html),
+     чтобы tabbar приклеивался к нижнему краю. */
+  .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; }
 
-  /* Шапка профиля: имя/статус слева, аватар справа */
-  .ll-pr-head {
-    display: flex; align-items: center; gap: var(--space-3);
-    padding: var(--space-4) var(--space-4) var(--space-3);
+  /* ── ОБЛОЖКА — самодостаточная шапка поверх оранжевого градиента ──────────
+     meshok-up здесь не годится: его status-bar жёстко светлый. Поэтому статус
+     и навбар встроены в обложку и скроллятся вместе с ней (как в макете).
+     Весь контент белый. */
+  .nv-pr-cover {
+    position: relative;
+    color: var(--static-text-and-icons-base-inverse-primary);
+    /* радиальный оранжевый из макета (FA8D69 → F23C00) */
+    background:
+      radial-gradient(116% 78% at 50% 24%,
+        #FA8D69 0%, #F86F4F 28%, #F55020 62%, #F2480D 84%, #F23C00 100%);
+    padding-bottom: var(--space-4);
+    overflow: hidden;
   }
-  .ll-pr-head__body { flex: 1; min-width: 0; }
-  .ll-pr-head__name { color: var(--dynamic-text-and-icons-base-primary); }
-  .ll-pr-head__status {
-    color: var(--dynamic-text-and-icons-base-secondary);
-    margin-top: var(--space-1);
+  /* статус-бар: переиспользуем разметку .status-bar, но без светлого фона */
+  .nv-pr-cover .status-bar {
+    position: static;
+    background: transparent !important;
+    color: inherit;
   }
+  .nv-pr-cover .status-bar__indicators { color: inherit; }
 
-  /* Ряд кнопок (primary CTA + 2 circle-action) */
-  .ll-pr-cta {
-    display: flex; align-items: center; gap: var(--space-2);
-    padding: 0 var(--space-4) var(--space-4);
-  }
-
-  /* «Меню»: 4 ярлыка с иконкой и подписью (Друзья 5 / Заметки / Фото / Ещё) */
-  .ll-pr-menu {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+  .nv-pr-cover__nav {
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 48px; padding: var(--space-2) var(--space-3);
     gap: var(--space-2);
-    padding: 0 var(--space-4) var(--space-4);
-  }
-  .ll-pr-menu__item {
-    appearance: none; background: transparent; border: 0; padding: var(--space-2) 0;
-    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
-    color: var(--dynamic-text-and-icons-base-primary);
-    cursor: pointer; border-radius: 12px;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
-  }
-  .ll-pr-menu__item:hover { opacity: 0.84; }
-  .ll-pr-menu__item:active { transform: scale(0.95); }
-  .ll-pr-menu__label { line-height: 1.2; text-align: center; }
-  .ll-pr-menu__count {
-    color: var(--dynamic-text-and-icons-base-secondary);
-    margin-top: 2px;
   }
 
-  /* Разделитель между «меню» и инфо-блоком */
-  .ll-pr-divider {
-    height: 1px; background: var(--dynamic-surface-contrast-low);
-    margin: 0 var(--space-3);
-  }
+  /* реальные действия навбара (свой профиль): создать + редактировать обложку */
+  .nv-pr-cover__nav-actions { display: flex; align-items: center; gap: var(--space-2); }
+  .nv-pr-cover__nav-actions[hidden] { display: none; }
 
-  /* Инфо-блок: 4 строки с иконкой 16 + текстом */
-  .ll-pr-info {
-    display: flex; flex-direction: column; gap: var(--space-3);
-    padding: var(--space-4);
+  /* dev-переключатель состояний — плавающая пилюля над таб-баром.
+     Это прото-контрол (в макете его нет), поэтому нейтральный тёмный фон,
+     читается и на оранжевой, и на белой обложке/ленте. */
+  .nv-pr-switch {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: 96px; z-index: 60;
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 3px; border-radius: 14px;
+    background: rgba(20, 20, 22, 0.72);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    box-shadow: 0 6px 20px -6px rgba(0,0,0,0.35);
+    color: #fff;
   }
-  .ll-pr-info__row {
-    display: flex; align-items: center; gap: var(--space-3);
-    color: var(--dynamic-text-and-icons-base-primary);
+  .nv-pr-switch button {
+    appearance: none; border: 0; cursor: pointer;
+    background: transparent; color: inherit;
+    font: 600 12px/1 var(--font-family);
+    padding: 7px 10px; border-radius: 11px;
+    transition: background-color 160ms ease, color 160ms ease;
   }
-  .ll-pr-info__row.__accent { color: var(--dynamic-text-and-icons-status-accent); }
-  .ll-pr-info__icon { width: 16px; height: 16px; display: inline-block; flex-shrink: 0; }
-  .ll-pr-info__row.__link { cursor: pointer; }
-  .ll-pr-info__row.__link:active { opacity: 0.6; }
+  .nv-pr-switch button.__active { background: #fff; color: #141416; }
 
-  /* Полоса табов «Все события / Увлечения / События Алек…» */
-  .ll-pr-tabs {
-    --tabs-view-padding-left: var(--space-4);
-    --tabs-view-padding-right: var(--space-4);
-    --tabs-view-padding-top: var(--space-3);
-    --tabs-view-padding-bottom: var(--space-3);
+  /* ── SELF (свой профиль): светлая обложка, тёмный контент ────────────────── */
+  body[data-view="self"] .nv-pr-cover {
     background: var(--dynamic-surface-base-quaternary);
-    margin-top: var(--space-2);
+    color: var(--dynamic-text-and-icons-base-primary);
   }
-  /* «селект-пилюля» — белый фон на secondary-подложке. Достигается через __view-primary,
-     но визуально мы кладём её на secondary-сетку — поэтому подменим bg на secondary. */
-  .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-base-secondary); }
-  .ll-pr-tabs .tab-wrapper.__view-primary.__selected { background: var(--dynamic-surface-base-quaternary); }
+  /* back-кружок на светлой обложке — обычный secondary вместо on-color */
+  body[data-view="self"] .nv-pr-cover .button-circle-wrapper.__style-secondary-on-color .button-circle {
+    --button-circle-bg: var(--dynamic-surface-contrast-low);
+    --button-circle-color: var(--dynamic-text-and-icons-base-primary);
+  }
+  body[data-view="self"] .nv-pr-cover__avatar { box-shadow: 0 8px 24px -10px rgba(0,0,0,0.16); }
 
-  /* Пустое состояние с картинкой по центру */
-  .ll-pr-empty {
-    background: var(--dynamic-surface-base-quaternary);
+  .nv-pr-cover__body {
     display: flex; flex-direction: column; align-items: center;
-    padding: var(--space-6) var(--space-4) var(--space-8);
-    text-align: center;
-    color: var(--dynamic-text-and-icons-base-secondary);
+    gap: var(--space-4); padding: var(--space-2) var(--space-4) 0;
   }
-  .ll-pr-empty__art {
-    width: 96px; height: 96px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 80px; line-height: 1;
+  .nv-pr-cover__head { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); width: 100%; }
+  .nv-pr-cover__avatar { box-shadow: 0 8px 24px -8px rgba(0,0,0,0.24); }
+  .nv-pr-cover__texts { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; width: 100%; }
+  .nv-pr-cover__name { margin: 0; }
+  .nv-pr-cover__sub  { margin: 0; opacity: 0.92; }
+
+  /* CTA-ряд: лейбловая кнопка растягивается, две круглые — фикс */
+  .nv-pr-cta { display: flex; align-items: stretch; gap: var(--space-2); width: 100%; }
+  .nv-pr-cta[hidden] { display: none; }
+  .nv-pr-cta .button-content { gap: var(--space-2); }
+
+  /* ── СТАТИСТИКА — горизонтальный скролл-ряд (друзья/фото/группы/…) ───────── */
+  .nv-pr-stats {
+    display: flex; gap: var(--space-5); align-items: flex-start;
+    padding: var(--space-4); overflow-x: auto;
+    background: var(--dynamic-surface-base-quaternary);
+    scrollbar-width: none;
   }
-  .ll-pr-empty__title { margin-top: var(--space-3); color: var(--dynamic-text-and-icons-base-primary); }
-  .ll-pr-empty__hint { margin-top: var(--space-1); }
+  .nv-pr-stats::-webkit-scrollbar { display: none; }
+  .nv-pr-stat {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+    flex: 0 0 auto; padding: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    transition: transform 400ms cubic-bezier(0, -0.3, 0.5, 1.3);
+  }
+  .nv-pr-stat:active { transform: scale(0.95); }
+  .nv-pr-stat__num { white-space: nowrap; }
+  /* квадратные превью (фото/заметка) — скруглённые, лёгкий наклон-стек */
+  .nv-pr-thumbs { position: relative; width: 44px; height: 44px; }
+  .nv-pr-thumb {
+    position: absolute; inset: 0; margin: auto; width: 30px; height: 30px;
+    border-radius: 8px; object-fit: cover; border: 1.5px solid var(--dynamic-surface-base-quaternary);
+    box-shadow: 0 6px 18px -8px rgba(0,0,0,0.18);
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .nv-pr-thumb.__a { transform: rotate(-8deg) translateX(-3px); }
+  .nv-pr-thumb.__b { transform: rotate(9deg) translateX(3px); }
+  .nv-pr-thumb.__solo { width: 36px; height: 36px; }
+
+  /* ── ПАНЕЛЬ «БОНСАЙ» ─────────────────────────────────────────────────────── */
+  .nv-pr-bonsai {
+    position: relative; display: flex; align-items: center;
+    padding: var(--space-4);
+    background: var(--dynamic-surface-base-quaternary);
+  }
+  .nv-pr-bonsai__text { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; max-width: 60%; }
+  .nv-pr-bonsai__title { margin: 0; }
+  .nv-pr-bonsai__sub { margin: 0; color: var(--dynamic-text-and-icons-base-primary); }
+  .nv-pr-bonsai__art {
+    position: absolute; right: var(--space-4); top: 50%; transform: translateY(-50%);
+    font-size: 92px; line-height: 1; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
+    pointer-events: none; user-select: none;
+  }
+
+  /* лёгкий разделитель-зазор между белыми блоками и лентой */
+  .nv-pr-feed-gap { height: var(--space-1); background: var(--dynamic-surface-base-secondary); }
+
+  .feed-base.island > .uni-cell-wrapper { padding-top: var(--space-3); }
 </style>
 </head>
-<body>
+<body data-view="friend">
 
-  <div class="phone-frame __fullscreen" data-screen>
+  <div class="phone-frame">
     <div class="phone-frame__feed">
 
-      <!-- STATUS + NAVBAR — DS meshok-up -->
-      <div class="meshok-up">
+      <!-- ОБЛОЖКА: статус + навбар + аватар + имя + CTA -->
+      <header class="nv-pr-cover">
         <div class="status-bar">
           <span class="status-bar__time">9:41</span>
           <span class="status-bar__indicators">
-            <img class="ll-icon" src="../assets/icons/status-wifi.svg"    width="16" height="12" alt="">
-            <img class="ll-icon" src="../assets/icons/status-signal.svg"  width="17" height="12" alt="">
-            <img class="ll-icon" src="../assets/icons/status-battery.svg" width="25" height="12" alt="">
+            <span class="icon __slot-status-wifi" style="width:16px;height:12px"></span>
+            <span class="icon __slot-status-signal" style="width:17px;height:12px"></span>
+            <span class="icon __slot-status-battery" style="width:25px;height:12px"></span>
           </span>
         </div>
 
-        <div class="nav-bar __type-feed">
-          <div class="nav-bar__leading">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
-          </div>
-          <div class="nav-bar__trailing">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ПРОФИЛЬНАЯ КАРТОЧКА: имя, аватар, CTA, меню, инфо-строки -->
-      <section class="ll-pr-card">
-
-        <div class="ll-pr-head">
-          <div class="ll-pr-head__body">
-            <div class="ds-title-l ll-pr-head__name" data-user-name>Эмиль Дружинин</div>
-            <div class="ds-caption-m ll-pr-head__status">Сейчас на сайте</div>
-          </div>
-          <div class="avatar __size-72 __type-image">
-            <img src="https://i.pravatar.cc/144?img=68" data-user-avatar alt="">
-          </div>
-        </div>
-
-        <div class="ll-pr-cta">
-          <div class="button-wrapper __size-44 __full-width">
-            <button class="button-container __style-primary" style="width:100%;">
-              <span class="button-content">Дружить</span>
+        <div class="nv-pr-cover__nav">
+          <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+            <button class="button-circle" data-href="lenta.html" aria-label="Назад">
+              <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/back_24.svg')"></span>
             </button>
-          </div>
-          <div class="button-circle-wrapper __size-44 __style-secondary">
-            <button class="button-circle" aria-label="Подарок">
-              <img class="ll-icon" src="../assets/icons/gift_24.svg" width="24" height="24" alt="">
-            </button>
-          </div>
-          <div class="button-circle-wrapper __size-44 __style-secondary">
-            <button class="button-circle" aria-label="Подписаться">
-              <img class="ll-icon" src="../assets/icons/follow_24.svg" width="24" height="24" alt="">
-            </button>
-          </div>
-        </div>
-
-        <!-- Возможно, вы знакомы — DS-портлет .vvz-portlet с модификатором __cards-160 (узкие) -->
-        <section class="vvz-portlet" data-dismiss-row aria-label="Возможно, вы знакомы">
-          <header class="vvz-portlet__header">
-            <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
-            <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="../vvz.html"><span class="button-inline__content">Ещё</span></button></span>
-          </header>
-          <div class="vvz-portlet__row __cards-160">
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=47')"></div>
-                <img src="https://i.pravatar.cc/240?img=47" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s">Алёна Ящук</div>
-                <div class="vvz-card__subtitle ds-caption-m">20 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=44')"></div>
-                <img src="https://i.pravatar.cc/240?img=44" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s">Анна Смирнова</div>
-                <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
-                <img src="https://i.pravatar.cc/240?img=52" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>
-                <div class="vvz-card__subtitle ds-caption-m">8 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
-                <img src="https://i.pravatar.cc/240?img=33" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
-                <div class="vvz-card__subtitle ds-caption-m">5 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Финальная карточка стека: «Найдите ещё больше друзей» -->
-            <div class="vvz-card __help">
-              <div class="vvz-card__help-top">
-                <div class="vvz-card__help-icon"><img class="ll-icon" src="../assets/icons/smile_24.svg" width="24" height="24" alt=""></div>
-                <div class="vvz-card__help-text">
-                  <div class="vvz-card__help-title ds-title-s">Найдите ещё больше друзей</div>
-                  <div class="vvz-card__help-subtitle ds-caption-m">Вы можете найти ещё больше друзей или одноклассников</div>
-                </div>
-              </div>
-              <div class="vvz-card__help-links">
-                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по контактам</button>
-                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по школам</button>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <div class="ll-pr-menu">
-          <button class="ll-pr-menu__item" aria-label="Друзья: 5">
-            <img class="ll-icon" src="../assets/icons/users_24.svg" width="24" height="24" alt="">
-            <span class="ll-pr-menu__label ds-caption-m">Друзья</span>
-            <span class="ll-pr-menu__count ds-caption-m">5</span>
-          </button>
-          <button class="ll-pr-menu__item" aria-label="Заметки">
-            <img class="ll-icon" src="../assets/icons/edit_24.svg" width="24" height="24" alt="">
-            <span class="ll-pr-menu__label ds-caption-m">Заметки</span>
-          </button>
-          <button class="ll-pr-menu__item" aria-label="Фото">
-            <img class="ll-icon" src="../assets/icons/photo_24.svg" width="24" height="24" alt="">
-            <span class="ll-pr-menu__label ds-caption-m">Фото</span>
-          </button>
-          <button class="ll-pr-menu__item" aria-label="Ещё">
-            <img class="ll-icon" src="../assets/icons/menu_24.svg" width="24" height="24" alt="">
-            <span class="ll-pr-menu__label ds-caption-m">Ещё</span>
-          </button>
-        </div>
-
-        <div class="ll-pr-divider"></div>
-
-        <div class="ll-pr-info">
-          <div class="ll-pr-info__row">
-            <img class="ll-pr-info__icon" src="../assets/icons/calendar_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Родился 12 июня</span>
-          </div>
-          <div class="ll-pr-info__row">
-            <img class="ll-pr-info__icon" src="../assets/icons/home_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Живет в Москва</span>
-          </div>
-          <div class="ll-pr-info__row">
-            <img class="ll-pr-info__icon" src="../assets/icons/follow_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Подписчики: 18 человек</span>
-          </div>
-          <div class="ll-pr-info__row __accent __link" role="button" tabindex="0">
-            <span class="icon __size-16 __src ll-pr-info__icon" style="--icon-src:url('../assets/icons/info_circle_16_20.svg')"></span>
-            <span class="ds-body-m">Вся информация</span>
+          </span>
+          <!-- свой профиль: создать запись + редактировать обложку -->
+          <div class="nv-pr-cover__nav-actions" data-nav="self" hidden>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Создать">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/add_square_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Редактировать обложку">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/photo_cover_install_24.svg')"></span>
+              </button>
+            </span>
           </div>
         </div>
 
+        <div class="nv-pr-cover__body">
+          <div class="nv-pr-cover__head">
+            <div class="avatar __size-144 __type-image nv-pr-cover__avatar">
+              <img src="https://i.pravatar.cc/288?img=45" data-pr-avatar alt="">
+            </div>
+            <div class="nv-pr-cover__texts">
+              <h1 class="ds-title-xl nv-pr-cover__name" data-pr-name>Ольга Вайнер</h1>
+              <p class="ds-body-m nv-pr-cover__sub" data-pr-sub>Родилась 2 сентября (26 лет)</p>
+            </div>
+          </div>
+
+          <!-- CTA: чужой профиль друга (вариант из макета) -->
+          <div class="nv-pr-cta" data-cta="friend">
+            <div class="button-wrapper __size-44 __full-width">
+              <button class="button-container __style-secondary-on-color">
+                <span class="button-content">
+                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_added_16_20.svg')"></span>
+                  У вас в друзьях
+                </span>
+              </button>
+            </div>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Позвонить">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/phone_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Ещё">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
+              </button>
+            </span>
+          </div>
+
+          <!-- CTA: чужой профиль (не в друзьях) -->
+          <div class="nv-pr-cta" data-cta="stranger" hidden>
+            <div class="button-wrapper __size-44 __full-width">
+              <button class="button-container __style-primary-on-color">
+                <span class="button-content">
+                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
+                  Дружить
+                </span>
+              </button>
+            </div>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Подписаться">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/follow_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
+              <button class="button-circle" aria-label="Ещё">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
+              </button>
+            </span>
+          </div>
+
+          <!-- CTA: свой профиль (светлая обложка → обычный secondary) -->
+          <div class="nv-pr-cta" data-cta="self" hidden>
+            <div class="button-wrapper __size-44 __full-width">
+              <button class="button-container __style-secondary">
+                <span class="button-content">
+                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/bell_24.svg')"></span>
+                  Уведомления
+                </span>
+              </button>
+            </div>
+            <span class="button-circle-wrapper __size-44 __style-secondary">
+              <button class="button-circle" aria-label="Настройки">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/settings_24.svg')"></span>
+              </button>
+            </span>
+            <span class="button-circle-wrapper __size-44 __style-secondary">
+              <button class="button-circle" aria-label="Ещё">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <!-- СТАТИСТИКА -->
+      <section class="nv-pr-stats" aria-label="Статистика профиля">
+        <button class="nv-pr-stat">
+          <span class="nv-pr-stat__num ds-title-s">244 друга</span>
+          <div class="avatars-view __size-24"><div class="avatars-view__stack">
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
+          </div></div>
+        </button>
+
+        <button class="nv-pr-stat">
+          <span class="nv-pr-stat__num ds-title-s">1000 фото</span>
+          <div class="nv-pr-thumbs">
+            <img class="nv-pr-thumb __a" src="https://picsum.photos/seed/olgaphoto1/80/80" alt="">
+            <img class="nv-pr-thumb __b" src="https://picsum.photos/seed/olgaphoto2/80/80" alt="">
+          </div>
+        </button>
+
+        <button class="nv-pr-stat">
+          <span class="nv-pr-stat__num ds-title-s">15 групп</span>
+          <div class="avatars-view __size-24"><div class="avatars-view__stack">
+            <div class="avatar __size-24 __type-image"><img src="https://picsum.photos/seed/grp1/64/64" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://picsum.photos/seed/grp2/64/64" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://picsum.photos/seed/grp3/64/64" alt=""></div>
+          </div></div>
+        </button>
+
+        <button class="nv-pr-stat">
+          <span class="nv-pr-stat__num ds-title-s">1 заметка</span>
+          <div class="nv-pr-thumbs">
+            <img class="nv-pr-thumb __solo" src="https://picsum.photos/seed/olganote/80/80" alt="">
+          </div>
+        </button>
+
+        <button class="nv-pr-stat">
+          <span class="nv-pr-stat__num ds-title-s">Ещё</span>
+          <span class="button-circle-wrapper __size-44 __style-secondary">
+            <span class="button-circle">
+              <span class="icon __size-24 __slot-dots"></span>
+            </span>
+          </span>
+        </button>
       </section>
 
-      <!-- Полоса табов поверх secondary-полосы -->
-      <div class="tabs-view ll-pr-tabs">
-        <div class="tabs-row __scroll">
-          <button class="tab-wrapper __view-primary __selected" role="tab" aria-selected="true">
-            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Все события</span></span></span></span>
-          </button>
-          <button class="tab-wrapper __view-primary" role="tab" aria-selected="false">
-            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Увлечения</span></span></span></span>
-          </button>
-          <button class="tab-wrapper __view-primary" role="tab" aria-selected="false">
-            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">События Александра</span></span></span></span>
-          </button>
+      <!-- ПАНЕЛЬ «БОНСАЙ» -->
+      <section class="nv-pr-bonsai" aria-label="Бонсай">
+        <div class="nv-pr-bonsai__text">
+          <h2 class="ds-title-l nv-pr-bonsai__title">Бонсай</h2>
+          <p class="ds-body-m nv-pr-bonsai__sub" data-pr-bonsai-sub>133 полива · 5 уровень</p>
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
+                Полить
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
-
-      <!-- Пустое состояние ленты профиля -->
-      <section class="ll-pr-empty">
-        <div class="ll-pr-empty__art" aria-hidden="true">🗂️</div>
-        <div class="ds-title-s ll-pr-empty__title">Пока ничего нет</div>
-        <div class="ds-caption-m ll-pr-empty__hint">Здесь появятся события Эмиля</div>
+        <div class="nv-pr-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
       </section>
+
+      <div class="nv-pr-feed-gap"></div>
+
+      <!-- ЛЕНТА АВТОРА -->
+      <div class="feed-container">
+
+        <!-- Пост 1 — одно фото -->
+        <article class="feed-base island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=45" data-pr-avatar alt=""></div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Ольга Вайнер</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+            </div>
+          </div></div></div>
+          <div class="feed-text">
+            <p class="feed-text__body ds-body-m">Нижегородская область</p>
+          </div>
+          <div class="media __aspect-4-3">
+            <img src="https://picsum.photos/seed/olga-forest/800/600" alt="">
+          </div>
+          <div class="actions-bar">
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          </div>
+        </article>
+
+        <!-- Пост 2 — галерея 2×2 -->
+        <article class="feed-base island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=45" data-pr-avatar alt=""></div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Ольга Вайнер</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+            </div>
+          </div></div></div>
+          <div class="feed-text">
+            <p class="feed-text__body ds-body-m">Суздаль, Владимирская область</p>
+          </div>
+          <div class="media __type-gallery">
+            <div class="media__cell"><img src="https://picsum.photos/seed/suzdal1/400/400" alt=""></div>
+            <div class="media__cell"><img src="https://picsum.photos/seed/suzdal2/400/400" alt=""></div>
+            <div class="media__cell"><img src="https://picsum.photos/seed/suzdal3/400/400" alt=""></div>
+            <div class="media__cell __more" data-more="6"><img src="https://picsum.photos/seed/suzdal4/400/400" alt=""></div>
+          </div>
+          <div class="actions-bar">
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          </div>
+        </article>
+
+      </div>
 
       <div style="height: 96px"></div>
 
     </div>
 
-    <!-- TABBAR (профиль открывается из «Меню», поэтому активна вкладка menu) -->
-    <div class="ll-tabbar">
+    <!-- dev-переключатель состояний профиля (в макете отсутствует) -->
+    <div class="nv-pr-switch" role="tablist" aria-label="Состояние профиля">
+      <button type="button" data-set-view="self">Я</button>
+      <button type="button" data-set-view="friend">Друг</button>
+      <button type="button" data-set-view="stranger">Гость</button>
+    </div>
+
+    <!-- TABBAR — профиль открывается из «Меню» -->
+    <div class="phone-frame__tabbar">
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed" data-href="lenta.html" aria-label="Лента"></button>
@@ -336,17 +405,66 @@
     </div>
   </div>
 
-  <script src="../components/tab.js"></script>
-  <script src="../components/user-data.js"></script>
   <script src="../components/tab-bar.js"></script>
-
-  <!-- Делегированный переход по data-href (кнопка «Ещё» в vvz-portlet → vvz.html) -->
   <script>
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest && e.target.closest('button[data-href]');
+    // ── Состояния профиля: self | friend | stranger ────────────────────────
+    // Источник истины — ?view= в URL; переключатель его же и меняет.
+    // Имя/подпись одинаковы во всех (демо-персона из макета — Ольга Вайнер);
+    // различается «хром»: обложка, иконки навбара, CTA, уровень бонсая.
+    var VIEWS = {
+      self:     { bonsai: '0 поливов · 1 уровень', art: '🌱' },
+      friend:   { bonsai: '133 полива · 5 уровень', art: '💐' },
+      stranger: { bonsai: '133 полива · 5 уровень', art: '💐' }
+    };
+
+    function applyView(view) {
+      if (!VIEWS[view]) view = 'friend';
+      document.body.setAttribute('data-view', view);
+
+      // CTA-ряды
+      document.querySelectorAll('.nv-pr-cta').forEach(function (el) {
+        el.hidden = el.getAttribute('data-cta') !== view;
+      });
+
+      // реальные действия навбара (только свой профиль)
+      document.querySelectorAll('.nv-pr-cover__nav-actions').forEach(function (el) {
+        el.hidden = el.getAttribute('data-nav') !== view;
+      });
+
+      // бонсай — уровень/арт зависят от того, чей профиль
+      var data = VIEWS[view];
+      var bSub = document.querySelector('[data-pr-bonsai-sub]');
+      var bArt = document.querySelector('[data-pr-bonsai-art]');
+      if (bSub) bSub.textContent = data.bonsai;
+      if (bArt) bArt.textContent = data.art;
+
+      // переключатель
+      document.querySelectorAll('.nv-pr-switch [data-set-view]').forEach(function (b) {
+        b.classList.toggle('__active', b.getAttribute('data-set-view') === view);
+      });
+    }
+
+    // init из URL
+    var initial = new URLSearchParams(location.search).get('view') || 'friend';
+    applyView(initial);
+
+    // клики по переключателю — меняем состояние + ?view= без перезагрузки
+    document.querySelector('.nv-pr-switch').addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-set-view]');
       if (!btn) return;
-      e.preventDefault();
-      location.href = btn.getAttribute('data-href');
+      var view = btn.getAttribute('data-set-view');
+      var url = new URL(location.href);
+      url.searchParams.set('view', view);
+      history.replaceState(null, '', url);
+      applyView(view);
+    });
+
+    // делегированный переход по data-href (back → лента)
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest('[data-href]');
+      if (!el) return;
+      var href = el.getAttribute('data-href');
+      if (href) location.href = href;
     });
   </script>
 </body>
