@@ -93,3 +93,17 @@
 
 ## Вердикт-факт (2026-06): лейаут friend-вью корректен, всё на местах,
 ## единственная «поломка» — внешние картинки не грузятся (сетевое ограничение).
+
+## Merge-verify lenta (2026-06-16, commit e937eb8 «Merge origin/main…»)
+- Авто-слияние ЧИСТОЕ. Конфликт-маркеров нет (grep -c =0; regex по innerText = none).
+- Точный счёт в `.feed-container`: ровно 23 `<article>` в порядке 1→23, без дублей.
+  cardOrder: base, ad, congrats __birthday(#3), base×4, ad, base(дзен #9),
+  questions(#10), base(клип #11), group(#12), ad, base(#14), congrats __gift(#15),
+  discussion(#16), stories(#17 момент), contest(#18), ad, base, memory(#21), base, congrats __gift(#23).
+- Шапка: meshokUp=1, «Вокруг вас сейчас» activity=1 (из main), feed-stories=2
+  (карусель «Сейчас на даче» + момент #17). congrats=3 (birthday/gift/gift). questions=1 с 3 карточками.
+- nv-breadcrumbs=14, zeroHeightMedia=[], font=OK Sans. scrollH ВЫРОС до 11124 (было ~10907) — из-за activity-виджета сверху.
+- question-card #10 bg = rgba(131,102,86,0.12) серо-беж, 196x220. Дзен-арт, бонсай-арт (#23 gift-bonsai) и birthday-illustration рендерятся локально и грузятся.
+- ЛОВУШКА скриншота: на ленте висит ФИКС оранжевый промо-баннер «Народный день подарков!»
+  поверх таб-бара снизу — это часть дизайна, НЕ артефакт слияния. Перекрывает низ карточек на скринах, не пугаться.
+- menu.html / profile.html (из main): открываются 200, markers=none, 0 JS-ошибок, textLen 146/274 — не пустые, не сломаны.
