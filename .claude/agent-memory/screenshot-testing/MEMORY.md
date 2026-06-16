@@ -121,6 +121,12 @@
   `img.currentSrc` + `img.naturalWidth>0` (mask-ловушка больше неактуальна для этого примера).
 - Для проверки 404-битых img использовать requestfailed listener + img.naturalWidth===0;
   здесь оба чисты, requestfailed по star/icon пуст.
+- ОТСТУПЫ строки __badge (проверено 2026-06-16, commit f019777): измерены по видимым краям
+  (img.getBoundingClientRect + Range по текст-нодам, separator = div getBoundingClientRect).
+  badge→"Еда"=4px, "Еда"→separator=2px, separator→"Рецепты"=8px. PASS, ровно 4/2/8.
+  Separator computed margin = `0px 8px 0px 2px` (left 2 = gap от "Еда", right 8 = gap до "Рецепты").
+  Видимая стрелка separator уже бокса: rect.w≈5px при заявленных 8px chevron (mask обрезает).
+  Меряй по rect separator'а, не по w глифа.
 ## Merge-verify lenta (2026-06-16, commit e937eb8 «Merge origin/main…»)
 - Авто-слияние ЧИСТОЕ. Конфликт-маркеров нет (grep -c =0; regex по innerText = none).
 - Точный счёт в `.feed-container`: ровно 23 `<article>` в порядке 1→23, без дублей.
