@@ -23,7 +23,17 @@
 - Гэп до первой ячейки 12px (next .uni-cell-wrapper top=188, cardBottom=176) — наезда нет, разделители ниже не съехали.
 - Заголовок `.promo-banner__title` (fw 700, 2 строки) + inline `.promo-banner__arrow` «→».
 
-## Computed animation-name (все применены)
+## АНИМАЦИИ ПОЯВЛЕНИЯ ячеек (новый код, проверено 2026-06-16, PASS) — заменил старые лупы лид-визуалов
+- Файлы: `new-vision/around-you.css` (keyframes au-enter/au-fade/au-neuro-text/au-confetti) + inline-скрипт в конце okruzhenie.html (ставит `--enter-delay`=i*0.06s на каждый `.uni-cell-wrapper`, добавляет `.play` на `#activityList`, перезапуск по `#replayBtn`).
+- ВАЖНО: класс на список — это `.activity-list.play` (id=activityList). `#replayBtn` — ПЕРВЫЙ child списка, но `.uni-cell-wrapper` его не цепляет, индексы стаггера корректные.
+- replay-кнопка делает `remove('play'); offsetWidth; add('play')` СИНХРОННО → если проверять classList до/после click, оба раза true (класс не «слетает» наблюдаемо). Чтобы доказать перезапуск — трейсить computed (color/opacity) через rAF после клика, не classList.
+- Замеры (settled): `.uni-cell-container::before` animName=au-fade у ВСЕХ. bg: обычная rgba(255,138,76,.18); win rgba(255,196,61,.30); holiday rgba(150,120,255,.20); neuro = linear-gradient(90deg, #ff7a18, #ff4d8d 50%, #9b5cff) (bgColor прозрачный, gradient в background — НЕ none). z-index ::before = -1, container isolation:isolate → подложка ЗА текстом, текст читается (overlap нет).
+- neuro-текст: `.uni-cell-additional-content` animName=au-neuro-text. Стартует белым (255,255,255) и держит до ~45% от 1.3s, затем градиент в чёрный; settled color=rgb(0,0,0). Кроссовер белый→серый→чёрный наблюдается ~delay+0.7..1.3s (neuroIdx=13 → delay 0.78s → переход ~1.5–2.1s от replay).
+- Конфетти: holiday-ячейка, 8×`.confetti > i`, animName=au-confetti 1s. `.confetti` лежит в `.uni-cell-wrapper`, НЕ внутри `.uni-cell-container` (тот overflow:hidden) → confInsideContainer=false, частицы свободно летят за края ряда. Ловится визуально на ~delay+150ms.
+- ТАЙМИНГИ ловли: подложки fade 1.3s от своего --enter-delay. Чтобы поймать нижние спец-ячейки (neuroIdx13 delay .78s, holidayIdx15 delay .90s) — scrollIntoView, replay, ждать ~950–1050ms, снимать. Ранний общий кадр (верх списка) — снимать на 200ms сразу после goto(waitUntil:commit).
+- Регрессия чистая: cells 17 (16 + промо-баннер как wrapper? нет — 17 wrappers вкл. промо? фактич. querySelectorAll('.uni-cell-wrapper')=17, buttons 17, ava-cluster 4, photo-pair 1, lead-sticker 6). Разделители/кнопки/лид-визуалы на месте, settled = чистые белые ячейки.
+
+## Computed animation-name (УСТАРЕЛО — лупы лид-визуалов au-shine/au-neuro-ring/au-medal-bob и т.д. УДАЛЕНЫ, заменены анимацией появления выше)
 - `.__cat-win .picture/.avatar ::after` → au-shine 3.2s
 - `.__cat-win .lead-sticker` → au-medal-bob 2.4s (transform-матрица меняется по кадрам — живой bob)
 - `.__cat-neuro .avatar/.picture` → au-neuro-ring 4s (визуально кольцо циклит magenta→blue, ловится кадрами ~1с)
