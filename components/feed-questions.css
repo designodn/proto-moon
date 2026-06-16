@@ -5,7 +5,7 @@
  * .question-card'ов (мини-плашки на серой подложке).
  *
  *   <article class="feed-questions island">
- *     <nav class="breadcrumbs ds-body-m">…Санкт-Петербург > Нужен совет…</nav>
+ *     <nav class="breadcrumbs">…Санкт-Петербург > Нужен совет…</nav>
  *     <h2 class="feed-questions__title">Помогите ответом…</h2>
  *     <div class="feed-questions__list">
  *       <div class="question-card">…</div>
