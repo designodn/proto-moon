@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Меню — New Vision</title>
+<link rel="stylesheet" href="new-vision.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="../components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  /* fill-container: phone-frame на всю ширину/высоту, чтобы tabbar клеился к низу. */
+  .phone-frame {
+    width: 100%; max-width: none;
+    height: 100dvh; min-height: 100dvh;
+    background: var(--dynamic-surface-base-secondary);
+  }
+
+  /* Профиль-строка: имя + «Перейти в профиль» слева, аватар справа.
+     Базируется на uni-cell, лишь меняем отступы и порядок слотов. */
+  .ll-profile { display: block; text-decoration: none; color: inherit; }
+  .ll-profile .uni-cell { align-items: center; gap: var(--space-3); }
+  .ll-profile-title    { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-profile-subtitle { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 2px; }
+
+  /* Сетка быстрых действий — 4 колонки, иконка в скруглённой плашке + подпись. */
+  .ll-quick {
+    padding: var(--space-2) var(--space-4) var(--space-4);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3) var(--space-2);
+  }
+  .ll-quick__item {
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+    background: none; border: 0; padding: 0; cursor: pointer;
+    color: var(--dynamic-text-and-icons-base-primary);
+    transition: var(--ds-transition-transform);
+  }
+  .ll-quick__item:active { transform: scale(0.95); }
+  .ll-quick__tile {
+    position: relative;
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    background-color: var(--dynamic-surface-base-tertiary);
+    border-radius: 16px;
+  }
+  .ll-quick__tile .ll-icon { width: 28px; height: 28px; }
+  .ll-quick__label { font-size: 13px; line-height: 16px; }
+
+  /* Бейдж в правом-верхнем углу плашки. Зелёный кружок с белой цифрой. */
+  .ll-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    min-width: 20px; height: 20px;
+    padding: 0 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--static-surface-status-positive);
+    color: #FFFFFF;
+    border: 2px solid var(--dynamic-surface-base-secondary);
+    border-radius: 999px;
+    font-size: 11px; font-weight: 600; line-height: 1;
+  }
+
+  /* «Свернуть» — иконка-стрелка вверх (rotate переиспользует chevron_down_24). */
+  .ll-quick__tile-chevron { transform: rotate(180deg); }
+
+  /* Список разделов — uni-cell с иконкой в левой части. */
+  .ll-menu-item .uni-cell { align-items: center; gap: var(--space-3); }
+  .ll-menu-icon {
+    width: 24px; height: 24px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR (search-type: + слева, поиск в центре, настройки справа) -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="../assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="../assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="../assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-search">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Добавить"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/add_square_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+          <div class="nav-bar__search">
+            <span class="nav-bar__search-icon"><img class="ll-icon" src="../assets/icons/search_24.svg" width="20" height="20" alt=""></span>
+            <input class="text-input __size-36 ds-body-m" type="search" placeholder="Поиск в ОК">
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Настройки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/settings_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ПРОФИЛЬ-СТРОКА → свой профиль New Vision -->
+      <a class="uni-cell-wrapper ll-profile" href="profile.html?view=self">
+        <div class="uni-cell-container __state-enabled">
+          <div class="uni-cell">
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-l ll-profile-title">Ольга Вайнер</div>
+              <div class="ds-body-m ll-profile-subtitle">Перейти в профиль</div>
+            </div>
+            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/120?img=45" alt="Ольга Вайнер"></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- БЫСТРЫЕ ДЕЙСТВИЯ — 4×2 -->
+      <div class="ll-quick">
+        <button class="ll-quick__item" type="button" data-href="../notifications.html">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/notifications_24.svg" width="28" height="28" alt="">
+            <span class="ll-badge">4</span>
+          </span>
+          <span class="ll-quick__label">Оповещения</span>
+        </button>
+        <button class="ll-quick__item" type="button">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/events_24.svg" width="28" height="28" alt="">
+            <span class="ll-badge">5</span>
+          </span>
+          <span class="ll-quick__label">События</span>
+        </button>
+        <button class="ll-quick__item" type="button" data-href="../guests.html">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/guests_24.svg" width="28" height="28" alt="">
+            <span class="ll-badge">1</span>
+          </span>
+          <span class="ll-quick__label">Гости</span>
+        </button>
+        <button class="ll-quick__item" type="button" data-href="../friends.html">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/users_24.svg" width="28" height="28" alt="">
+          </span>
+          <span class="ll-quick__label">Друзья</span>
+        </button>
+
+        <button class="ll-quick__item" type="button">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/photo_24.svg" width="28" height="28" alt="">
+          </span>
+          <span class="ll-quick__label">Фото</span>
+        </button>
+        <button class="ll-quick__item" type="button">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/video_24.svg" width="28" height="28" alt="">
+          </span>
+          <span class="ll-quick__label">Видео</span>
+        </button>
+        <button class="ll-quick__item" type="button">
+          <span class="ll-quick__tile">
+            <img class="ll-icon" src="../assets/icons/users_3_24.svg" width="28" height="28" alt="">
+          </span>
+          <span class="ll-quick__label">Группы</span>
+        </button>
+        <button class="ll-quick__item" type="button" aria-label="Свернуть">
+          <span class="ll-quick__tile">
+            <img class="ll-icon ll-quick__tile-chevron" src="../assets/icons/chevron_down_24.svg" width="28" height="28" alt="">
+          </span>
+          <span class="ll-quick__label">Свернуть</span>
+        </button>
+      </div>
+
+      <!-- СПИСОК РАЗДЕЛОВ -->
+      <div class="ll-menu-list">
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/photo_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Фото</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/balloons_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Праздники</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item" data-href="../gifts-catalog.html" role="link" tabindex="0">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/gift_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Подарки</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/clips_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Клипы</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/bookmark_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Закладки</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="../assets/icons/moment_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Моменты</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 96px"></div>
+      </div>
+
+    </div>
+
+    <!-- TABBAR — меню активно; лента ведёт на NV-ленту -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed" data-href="lenta.html" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../components/tab-bar.js"></script>
+
+  <!-- Делегированный переход по data-href (quick-actions / menu items) -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var item = e.target.closest && e.target.closest('[data-href][tabindex]');
+      if (!item) return;
+      e.preventDefault();
+      location.href = item.getAttribute('data-href');
+    });
+  </script>
+</body>
+</html>
