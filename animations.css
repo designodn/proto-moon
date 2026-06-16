@@ -45,14 +45,15 @@
 
 /* ============================================================
    ACTIVITY CONVEYOR — вертикальный конвейер ячеек активности.
-   Видно 2 строки. JS двигает .__track вниз на одну строку: новая
-   ячейка падает сверху, стопка сдвигается, нижняя уходит за край и
-   пропадает. Высота строки — --conv-row-h, ровно под аватар 56 + 8/8.
-   Управление: components/... (инлайн-скрипт в lenta.html).
+   Видно --conv-rows строк. JS двигает .__track вниз на одну строку:
+   новая ячейка падает сверху (.__entering — проявляется), стопка
+   сдвигается, нижняя уходит за край (.__leaving — гаснет и уменьшается).
+   Высота строки — --conv-row-h. Управление: инлайн-скрипт в lenta.html.
    ============================================================ */
 .ds-activity-conveyor {
   --conv-row-h: 72px;
-  --conv-rows: 2;
+  --conv-rows: 3;
+  --conv-dur: 0.5s;
   position: relative;
   overflow: hidden;
   height: calc(var(--conv-row-h) * var(--conv-rows));
@@ -60,14 +61,12 @@
 .ds-activity-conveyor__track {
   display: flex;
   flex-direction: column;
-  will-change: transform;
-  transform: translateY(calc(var(--conv-row-h) * -1)); /* стартовая: верхняя строка спрятана над краем */
-  transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 .ds-activity-conveyor__track > .uni-cell-wrapper {
-  flex: 0 0 var(--conv-row-h);
+  flex: 0 0 auto;
   height: var(--conv-row-h);
   box-sizing: border-box;
+  overflow: hidden;            /* контент клипается при коллапсе высоты */
 }
 /* Текст — максимум 2 строки, чтобы строки были одинаковой высоты */
 .ds-activity-conveyor .uni-cell-additional-content {
@@ -76,9 +75,28 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* Доступность: без движения конвейер просто показывает 2 строки */
+/* Новая ячейка падает сверху и раскрывается (своя анимашка появления) */
+.ds-activity-conveyor__track > .__conv-enter {
+  animation: ds-conv-enter var(--conv-dur) cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+@keyframes ds-conv-enter {
+  from { height: 0; opacity: 0; transform: translateY(-6px); }
+  to   { height: var(--conv-row-h); opacity: 1; transform: none; }
+}
+/* Нижняя ячейка НЕ уходит под таббар — сжимается к центру и исчезает на месте */
+.ds-activity-conveyor__track > .__conv-leave {
+  transform-origin: center;
+  animation: ds-conv-leave var(--conv-dur) cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes ds-conv-leave {
+  from { height: var(--conv-row-h); opacity: 1; transform: scale(1); }
+  to   { height: 0; opacity: 0; transform: scale(0.2); }
+}
+
+/* Доступность: без движения конвейер просто показывает строки статично */
 @media (prefers-reduced-motion: reduce) {
-  .ds-activity-conveyor__track { transition: none; }
+  .ds-activity-conveyor__track > .__conv-enter,
+  .ds-activity-conveyor__track > .__conv-leave { animation: none; }
 }
 
 /* ============================================================

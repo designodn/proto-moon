@@ -857,41 +857,46 @@
 
 </script>
 
-<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху,
-     стопка сдвигается вниз, нижняя уходит за край и пропадает. -->
+<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху и
+     раскрывается, стопка сдвигается, нижняя сжимается к центру и исчезает. -->
 <script>
 (function () {
   var conv = document.getElementById('activityConveyor');
   if (!conv) return;
   var track = conv.querySelector('.ds-activity-conveyor__track');
-  if (!track || track.children.length < 3) return;
+  if (!track) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  function rowH() {
-    var v = parseFloat(getComputedStyle(conv).getPropertyValue('--conv-row-h'));
-    return isNaN(v) ? 72 : v;
+  function cssNum(name, dflt) {
+    var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
+    return isNaN(v) ? dflt : v;
   }
   var animating = false;
 
   function step() {
-    if (animating) return;
+    var rows = Math.round(cssNum('--conv-rows', 3));
+    if (animating || track.children.length < rows + 1) return;
     animating = true;
-    // едем вниз на одну строку: новая падает сверху, нижняя уходит за край
-    track.style.transform = 'translateY(0)';
-    track.addEventListener('transitionend', function onEnd(e) {
-      if (e.propertyName !== 'transform') return;
-      track.removeEventListener('transitionend', onEnd);
-      // нижнюю (последнюю) переносим в начало пула как следующую «новую сверху»
-      track.style.transition = 'none';
-      track.insertBefore(track.lastElementChild, track.firstElementChild);
-      track.style.transform = 'translateY(' + (-rowH()) + 'px)';
-      void track.offsetWidth;        // зафиксировать сброс без анимации
-      track.style.transition = '';   // вернуть CSS-переход
+
+    // следующую скрытую (первую под видимой зоной) поднимаем наверх — «падает сверху»
+    var entering = track.children[rows];
+    track.insertBefore(entering, track.firstElementChild);
+    void entering.offsetWidth;                 // reflow → enter стартует с height:0
+    entering.classList.add('__conv-enter');
+
+    // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
+    var leaving = track.children[rows];
+    leaving.classList.add('__conv-leave');
+
+    setTimeout(function () {
+      leaving.classList.remove('__conv-leave');
+      entering.classList.remove('__conv-enter');
+      track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
       animating = false;
-    });
+    }, cssNum('--conv-dur', 0.5) * 1000 + 60);
   }
 
-  setInterval(step, 3200);
+  setInterval(step, 3000);
 })();
 </script>
 
