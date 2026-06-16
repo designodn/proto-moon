@@ -1,0 +1,98 @@
+/**
+ * OK Design System — Tooltip
+ * Source: design-system/components/Tooltip/Tooltip
+ *
+ * Тёмная (или акцентная) подсказка с хвостом. В вебе на проде рендерится
+ * через portal + auto-positioning, в прототипе — простой absolute-блок
+ * с теми же модификаторами:
+ *   __view-{primary|accent-blue|accent-orange|custom}
+ *   __side-{top|bottom|left|right}              — с какой стороны тултипа хвост
+ *   __alignment-{start|center|end}              — выравнивание вдоль стороны
+ *   __placement-{side}-{alignment}              — режет соответствующий угол радиуса
+ *
+ *   <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center
+ *                              __placement-bottom-center" style="top:28px;left:56px">
+ *     <div class="tooltip">Анастасия Кащеева</div>
+ *     <div class="tooltip-tail"></div>
+ *   </div>
+ *
+ * Порядок дочерних элементов значения не имеет — flex-direction сам
+ * определяется через __side-*. Цвет хвоста наследуется из --background-color.
+ */
+
+.tooltip-wrapper {
+  --border-radius:        var(--base-wrapper, 16px);
+  --background-color:     var(--dynamic-surface-base-inverse-primary, #1a1a1c);
+  --box-shadow:           0 4px 16px 0 rgba(0, 0, 0, 0.12);
+  --margin-tail:          var(--tooltip-margin-tail, 8px);
+  --padding-vertical:     var(--tooltip-padding-vertical, 12px);
+  --padding-horizontal:   var(--tooltip-padding-horizontal, 16px);
+
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  pointer-events: none;
+}
+
+/* View — фон пилюли */
+.tooltip-wrapper.__view-primary       { --background-color: var(--dynamic-surface-base-inverse-primary, #1a1a1c); }
+.tooltip-wrapper.__view-accent-blue   { --background-color: var(--static-surface-status-info, #018DEB); }
+.tooltip-wrapper.__view-accent-orange { --background-color: var(--static-surface-status-accent, #EE8208); }
+.tooltip-wrapper.__view-custom        { --background-color: var(--tooltip-custom-background-color, #018DEB); }
+
+/* Side — какая сторона тултипа смотрит на target (там же и хвост) */
+.tooltip-wrapper.__side-top    { flex-direction: column;         margin-top:  var(--margin-tail);                  transform-origin: center top; }
+.tooltip-wrapper.__side-bottom { flex-direction: column-reverse; margin-top:  calc(var(--margin-tail) * -1);       transform-origin: center bottom; }
+.tooltip-wrapper.__side-left   { flex-direction: row;            margin-left: var(--margin-tail);                  transform-origin: center left; }
+.tooltip-wrapper.__side-right  { flex-direction: row-reverse;    margin-left: calc(var(--margin-tail) * -1);       transform-origin: center right; }
+
+/* Alignment — выравнивание вдоль стороны */
+.tooltip-wrapper.__alignment-start  { justify-content: flex-start; align-items: flex-start; }
+.tooltip-wrapper.__alignment-center { justify-content: center;     align-items: center; }
+.tooltip-wrapper.__alignment-end    { justify-content: flex-end;   align-items: flex-end; }
+
+/* Placement — режем угол радиуса под крепление хвоста */
+.tooltip-wrapper.__placement-top-start    > .tooltip { border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius); }
+.tooltip-wrapper.__placement-top-center   > .tooltip { border-radius: var(--border-radius); }
+.tooltip-wrapper.__placement-top-end      > .tooltip { border-radius: var(--border-radius) 0 var(--border-radius) var(--border-radius); }
+.tooltip-wrapper.__placement-bottom-start > .tooltip { border-radius: var(--border-radius) var(--border-radius) var(--border-radius) 0; }
+.tooltip-wrapper.__placement-bottom-center> .tooltip { border-radius: var(--border-radius); }
+.tooltip-wrapper.__placement-bottom-end   > .tooltip { border-radius: var(--border-radius) var(--border-radius) 0 var(--border-radius); }
+.tooltip-wrapper.__placement-right-start  > .tooltip { border-radius: var(--border-radius) 0 var(--border-radius) var(--border-radius); }
+.tooltip-wrapper.__placement-right-center > .tooltip { border-radius: var(--border-radius); }
+.tooltip-wrapper.__placement-right-end    > .tooltip { border-radius: var(--border-radius) var(--border-radius) 0 var(--border-radius); }
+.tooltip-wrapper.__placement-left-start   > .tooltip { border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius); }
+.tooltip-wrapper.__placement-left-center  > .tooltip { border-radius: var(--border-radius); }
+.tooltip-wrapper.__placement-left-end     > .tooltip { border-radius: var(--border-radius) var(--border-radius) var(--border-radius) 0; }
+
+/* Пилюля */
+.tooltip {
+  overflow: hidden;
+  max-width: 260px;
+  padding: var(--padding-vertical) var(--padding-horizontal);
+  border-radius: var(--border-radius);
+  background: var(--background-color);
+  box-shadow: var(--box-shadow);
+  color: var(--dynamic-text-and-icons-base-inverse-primary, #fff);
+}
+
+/* Хвост — CSS-треугольник 12×6 в цвет --background-color */
+.tooltip-tail {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+}
+.tooltip-wrapper.__side-top    > .tooltip-tail { border-left:   6px solid transparent; border-right:  6px solid transparent; border-bottom: 6px solid var(--background-color); }
+.tooltip-wrapper.__side-bottom > .tooltip-tail { border-left:   6px solid transparent; border-right:  6px solid transparent; border-top:    6px solid var(--background-color); }
+.tooltip-wrapper.__side-left   > .tooltip-tail { border-top:    6px solid transparent; border-bottom: 6px solid transparent; border-right:  6px solid var(--background-color); }
+.tooltip-wrapper.__side-right  > .tooltip-tail { border-top:    6px solid transparent; border-bottom: 6px solid transparent; border-left:   6px solid var(--background-color); }
+
+/* Сдвиг хвоста вдоль стороны для start/end (чтобы примыкал к нужному углу) */
+.tooltip-wrapper.__side-top.__alignment-start    > .tooltip-tail,
+.tooltip-wrapper.__side-bottom.__alignment-start > .tooltip-tail { margin-left:  var(--padding-horizontal); }
+.tooltip-wrapper.__side-top.__alignment-end      > .tooltip-tail,
+.tooltip-wrapper.__side-bottom.__alignment-end   > .tooltip-tail { margin-right: var(--padding-horizontal); }
+.tooltip-wrapper.__side-left.__alignment-start   > .tooltip-tail,
+.tooltip-wrapper.__side-right.__alignment-start  > .tooltip-tail { margin-top:   var(--padding-vertical); }
+.tooltip-wrapper.__side-left.__alignment-end     > .tooltip-tail,
+.tooltip-wrapper.__side-right.__alignment-end    > .tooltip-tail { margin-bottom: var(--padding-vertical); }

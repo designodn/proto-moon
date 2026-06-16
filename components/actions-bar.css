@@ -48,8 +48,11 @@
   counter-increment: klass-count 1;
 }
 
-/* Иконка: outline по умолчанию, filled при :checked */
-.button-klass__icon-filled { display: none; }
+/* Иконка: outline по умолчанию, filled при :checked.
+   Префикс `.button-klass` поднимает специфичность до 0,2,0 — это нужно, чтобы
+   локальные стили страниц вида `.ll-icon { display: inline-block }` (0,1,0) не
+   перебивали `display:none` у скрытой иконки. */
+.button-klass .button-klass__icon-filled { display: none; }
 .button-klass:has(> input:checked) .button-klass__icon-outline { display: none; }
 .button-klass:has(> input:checked) .button-klass__icon-filled  { display: inline-flex; }
 
