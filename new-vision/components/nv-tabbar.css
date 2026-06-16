@@ -1,36 +1,45 @@
 /**
- * New Vision — Tabbar variant
+ * New Vision — Tabbar
  *
  * Форкаем у общего .tabbar (components/tabbar.css) ТОЛЬКО то, что расходится с Q3:
- * иконки (пак + размер), раскладку и хват. Структура разметки и поведение —
- * из общей DS. Модификатор вешается на сам таб-бар рядом с платформой:
+ * иконки (пак + размер), раскладку и хват. Структура разметки и поведение — из
+ * общей DS.
  *
- *   <div class="tabbar __platform-android __vision"> … </div>
+ * Применяется КО ВСЕМ NV-страницам автоматически, без опт-ина классом: этот файл
+ * грузится только через new-vision.css (т.е. только на страницах New Vision),
+ * поэтому правила нацелены прямо на .tabbar и не задевают Q3.
  *
  * Источник: Figma node 2855:140933.
  * Иконки — отдельный пак assets/new-vision-icons/ (см. README там же).
  * Пути url() здесь относительны этого файла (new-vision/components/ → ../../).
+ *
+ * Отрисовка — как в общем таб-баре: маска + currentColor. Благодаря этому
+ * активная иконка красится в акцент через .tabbar-icon.__state-on (база).
+ * Поэтому NV-иконки должны быть одноцветными силуэтами (без белых перекрытий).
+ *
+ * NB: у NV 5 слотов — feed/tribune/message/clip/menu (без book/discussion).
+ * Разметку таб-бара на NV-страницах держим в этом наборе.
  */
 
-/* ── Раскладка: иконки по центру с gap 40 (у Q3 — flex:1 на всю ширину) ── */
-.tabbar.__vision .tabbar__row {
+/* ── Раскладка: по центру, gap 40, паддинги 12 / 20 (у Q3 — flex:1 на всю ширину) ── */
+.tabbar .tabbar__row {
   justify-content: center;
   gap: 40px;
-  padding: 12px 0;
+  padding: 12px 20px;
 }
-.tabbar.__vision .tabbar-icon {
+.tabbar .tabbar-icon {
   flex: 0 0 auto;
   height: 32px;
 }
 
-/* ── Размер иконок: 32px (у Q3 — 24px) ── */
-.tabbar.__vision .tabbar-icon::before {
+/* ── Иконки: 32px (маска + currentColor — из базового tabbar.css) ── */
+.tabbar .tabbar-icon::before {
   width: 32px;
   height: 32px;
 }
 
 /* ── Хват-пилюля видна и на Android: 108×4 ── */
-.tabbar.__vision .tabbar__handle::after {
+.tabbar .tabbar__handle::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -43,9 +52,9 @@
   pointer-events: none;
 }
 
-/* ── Набор иконок (5 слотов, без discussion) → пак New Vision ── */
-.tabbar.__vision .tabbar-icon.__slot-feed    { --tabbar-icon-src: url('../../assets/new-vision-icons/feed.svg'); }
-.tabbar.__vision .tabbar-icon.__slot-book    { --tabbar-icon-src: url('../../assets/new-vision-icons/book.svg'); }
-.tabbar.__vision .tabbar-icon.__slot-message { --tabbar-icon-src: url('../../assets/new-vision-icons/message.svg'); }
-.tabbar.__vision .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../../assets/new-vision-icons/clip.svg'); }
-.tabbar.__vision .tabbar-icon.__slot-menu    { --tabbar-icon-src: url('../../assets/new-vision-icons/menu.svg'); }
+/* ── Набор иконок (5 слотов: feed/tribune/message/clip/menu) → пак New Vision ── */
+.tabbar .tabbar-icon.__slot-feed    { --tabbar-icon-src: url('../../assets/new-vision-icons/feed.svg'); }
+.tabbar .tabbar-icon.__slot-tribune { --tabbar-icon-src: url('../../assets/new-vision-icons/tribune.svg'); }
+.tabbar .tabbar-icon.__slot-message { --tabbar-icon-src: url('../../assets/new-vision-icons/message.svg'); }
+.tabbar .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../../assets/new-vision-icons/clip.svg'); }
+.tabbar .tabbar-icon.__slot-menu    { --tabbar-icon-src: url('../../assets/new-vision-icons/menu.svg'); }
