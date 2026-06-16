@@ -39,6 +39,12 @@
   border-radius: 0;
 }
 
+/* Лента фидов отделяется от верхнего блока (мешок + виджет) тем же
+   gap'ом, что и между постами внутри стопки. */
+.__flush-islands .feed-container {
+  margin-top: var(--space-1);
+}
+
 /* Необязательный заголовок поверх контента — caption-стиль */
 .island__header {
   padding-left: var(--space-4);
