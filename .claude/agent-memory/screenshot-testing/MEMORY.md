@@ -60,6 +60,12 @@
 - Ячейка стоит первым .uni-cell-wrapper сразу после .promo-banner (placement верный).
 - accentVar резолвится в #FF7700 (не #EE8208 fallback из tooltip.css).
 
+## .__flush-islands (commit f2cfa39, проверено 2026-06-16, PASS)
+- Модификатор на `.phone-frame__feed` (lenta.html). Правило `components/island.css`: `.__flush-islands .island, .island.__flush { border-radius: 0 }` (spec 0,2,0) перебивает базовый `.island{border-radius:20px}` (line 27, spec 0,1,0). Работает.
+- В ленте 18 `.island`: [0] активити-виджет, [1] feed-stories, [2] feed-contest, [3] feed-memory, [4] feed-discussion, [5] feed-questions, [6-8/12-16] feed-base, [9] feed-group, [10] feed-birthday, [11] feed-ad, [17] финальный CTA. У ВСЕХ computed border-radius=0px (было 20px).
+- Чтобы перечислить острова с лейблами: querySelectorAll('.phone-frame__feed .island'), label = текст .activity-header .ds-title-l / .island__header или класс feed-*.
+- Шеврон/навигация ещё раз подтверждены на этом коммите (см. блок ниже).
+
 ## Навигация (PASS)
 - Клик `.activity-header` в lenta → okruzhenie.html, title «Вокруг вас сейчас — New Vision».
 - Клик `.nav-bar__back` в okruzhenie → lenta.html, title «Лента — New Vision».
