@@ -2,7 +2,8 @@
  * OK Design System — Breadcrumbs
  *
  * Inline trail of clickable category links separated by a chevron icon.
- * Typography is locked to body M (15/20). No size or weight modifiers.
+ * Typography is locked to title S (15/20, weight 600). Self-contained —
+ * no need to add a `.ds-*` class on the host.
  *
  * STRUCTURE (max 3 levels):
  *   <nav class="breadcrumbs">
@@ -12,6 +13,14 @@
  *     <span class="breadcrumbs__separator" aria-hidden="true"></span>
  *     <span class="breadcrumbs__item __state-on">Тесто</span>
  *   </nav>
+ *
+ * LEADING BADGE (optional):
+ *   A 16px icon may precede the text inside the first item. Drop an
+ *   <img> (or any 16px glyph) as the first child and tag it
+ *   `.breadcrumbs__badge` — it sits 4px before the text.
+ *     <a class="breadcrumbs__item" href="…">
+ *       <img class="breadcrumbs__badge" src="…" alt="">Еда
+ *     </a>
  *
  * ITEM STATES:
  *   .__state-on        — current level, non-link (rendered as <span>)
@@ -33,15 +42,32 @@
   flex-wrap: wrap;
   align-items: center;
   color: var(--breadcrumbs-color);
+
+  /* title S — 15 / 20 / 600 */
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   white-space: nowrap;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
   border-radius: 4px;
   transition: background-color var(--ds-animation-duration) var(--ds-animation-easing);
+}
+
+/* Leading badge — 16px glyph 4px before the text (gap handled by item) */
+.breadcrumbs__badge {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }
 
 a.breadcrumbs__item:hover {
