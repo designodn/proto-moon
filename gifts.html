@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подарки — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+
+  .gp-scene {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--dynamic-surface-base-secondary);
+    touch-action: pan-y; /* разрешаем вертикальный скролл, горизонталь обрабатываем сами */
+  }
+
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+
+  .gp-scene .meshok-up { position: absolute; left: 0; right: 0; top: 0; z-index: 5; }
+
+  /* Крестик закрытия — у правого края viewport */
+  .gp__close {
+    position: absolute;
+    top: 67px;
+    right: 13px;
+    width: 44px; height: 44px;
+    border: 0; padding: 0; background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .gp__close .icon { width: 24px; height: 24px; }
+
+  /* Заголовок — по центру по горизонтали через 50% + translateX(-50%). */
+  .gp__title {
+    position: absolute;
+    left: 50%;
+    width: 312px;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 32px; line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    margin: 0;
+    top: 249px;
+    transition: opacity 280ms ease-out;
+  }
+  .gp.__state-2 .gp__title,
+  .gp.__state-3 .gp__title,
+  .gp.__state-4 .gp__title { top: 130px; }
+
+  /* Карточка — DS-компонент .gift-card 300×350. Позиция/размер/угол
+     задаются исключительно через transform (JS-спринг). */
+  .gp .gift-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    /* JS будет писать transform: translate(tx, ty) scale(s) rotate(r)
+       и обновлять CSS-переменную --gift-card-scale */
+    margin-left: 0; /* card box левый край прижат к центру viewport */
+  }
+
+  /* z-index в стейтах 1-2 (стак-веер): Gift 1 — самая ближняя сверху. */
+  .gp .gift-card[data-i="1"] { z-index: 3; }
+  .gp .gift-card[data-i="2"] { z-index: 2; }
+  .gp .gift-card[data-i="3"] { z-index: 1; }
+
+  /* В стейтах 3+ (карточки в ряд) z-index одинаковый — порядок не важен. */
+  .gp.__state-3 .gift-card,
+  .gp.__state-4 .gift-card { z-index: 2; }
+
+  /* Постеры — декоративный градиент под каждый id */
+  .gp .gift-card[data-i="3"] .gift-card__poster {
+    background: linear-gradient(140deg, #ff6fa3 0%, #c2185b 100%);
+  }
+  .gp .gift-card[data-i="2"] .gift-card__poster {
+    background: linear-gradient(140deg, #fff1d6 0%, #ffb7a3 60%, #ff8a65 100%);
+    color: #6a3b1c; text-shadow: 0 1px 0 rgba(255,255,255,.4);
+  }
+  .gp .gift-card[data-i="1"] .gift-card__poster {
+    background: linear-gradient(140deg, #a07a55 0%, #5e4226 100%);
+  }
+
+  /* Нижний CTA */
+  .gp__bottom {
+    position: absolute; left: 0; right: 0; bottom: 24px;
+    padding: 0 16px;
+    display: flex;
+    z-index: 5;
+  }
+  .gp__bottom .button-wrapper { width: 100%; }
+  .gp__bottom .button-container { width: 100%; }
+
+  .gp__handle {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 24px;
+  }
+  .gp__handle::after {
+    content: '';
+    position: absolute; bottom: 8px; left: 50%;
+    width: 134px; height: 5px; border-radius: 3px;
+    background: var(--dynamic-text-and-icons-base-primary);
+    transform: translateX(-50%);
+    opacity: .9;
+  }
+
+  /* Lottie-конфетти на финал «Принять все». Хост — fullscreen overlay,
+     SVG-render. Сам файл — assets/lottie/confetti.json (DS-pattern,
+     уже используется на lenta.html). */
+  .gp-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .gp-confetti svg { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gp__title { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="gp-scene" id="gpScene">
+
+  <div class="meshok-up">
+    <div class="status-bar">
+      <span class="status-bar__time">9:41</span>
+      <span class="status-bar__indicators">
+        <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+        <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+        <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+      </span>
+    </div>
+  </div>
+
+  <button class="gp__close nav-bar__back" aria-label="Закрыть">
+    <span class="icon __slot-close"></span>
+  </button>
+
+  <main class="gp" id="gp">
+    <h1 class="gp__title">Вам подарили<br>3 подарка!</h1>
+
+    <article class="gift-card" data-i="3">
+      <div class="gift-card__slot">
+        <div class="gift-card__cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=23" alt=""></div>
+          <span class="gift-card__name ds-body-m">Виктория Петрова</span>
+        </div>
+        <div class="gift-card__img">
+          <img class="gift-card__photo" src="https://gifotkrytki.ru/_ph/2/2/933237960.gif" alt="" loading="lazy">
+        </div>
+      </div>
+      <div class="gift-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
+        </div>
+      </div>
+      <button class="gift-card__trash" aria-label="Удалить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
+      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
+      <div class="gift-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="gift-card" data-i="2">
+      <div class="gift-card__slot">
+        <div class="gift-card__cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=47" alt=""></div>
+          <span class="gift-card__name ds-body-m">Мария Иванова</span>
+        </div>
+        <div class="gift-card__img">
+          <img class="gift-card__photo" src="https://i.pinimg.com/originals/66/e6/94/66e694e55cbeb513cb966a8fe3eace42.gif" alt="" loading="lazy">
+        </div>
+      </div>
+      <div class="gift-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
+        </div>
+      </div>
+      <button class="gift-card__trash" aria-label="Удалить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
+      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
+      <div class="gift-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="gift-card" data-i="1">
+      <div class="gift-card__slot">
+        <div class="gift-card__cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=12" alt=""></div>
+          <span class="gift-card__name ds-body-m">Дмитрий Кузнецов</span>
+        </div>
+        <div class="gift-card__img">
+          <img class="gift-card__photo" src="https://i.pinimg.com/originals/6a/ce/be/6acebe49b3f9ded9c96e66c095d0a4c0.gif" alt="" loading="lazy">
+        </div>
+      </div>
+      <div class="gift-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
+        </div>
+      </div>
+      <button class="gift-card__trash" aria-label="Удалить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
+      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
+      <div class="gift-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+  </main>
+
+  <div class="gp__bottom">
+    <div class="button-wrapper __size-56">
+      <button class="button-container __style-primary" id="gpAcceptAll">
+        <span class="button-content">Принять все</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="gp__handle"></div>
+
+  <div class="gp-confetti" id="gpConfetti" aria-hidden="true"></div>
+
+</div>
+
+<script src="components/back-button.js"></script>
+<!-- Lottie-плеер для конфетти на финал «Принять все». -->
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+<script>
+  (function () {
+    var root  = document.getElementById('gp');
+    var scene = document.getElementById('gpScene');
+    if (!root) return;
+
+    // ── СПРИНГ ──────────────────────────────────────────────────
+    var SPRING = { k: 96, c: 6, m: 1, duration: 2000, delay: 500 };
+
+    function makeSpring(k, c, m) {
+      var w0 = Math.sqrt(k / m);
+      var z  = c / (2 * Math.sqrt(k * m));
+      if (Math.abs(z - 1) < 1e-6) {
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - (1 + w0 * t) * Math.exp(-w0 * t);
+        };
+      }
+      if (z < 1) {
+        var wd = w0 * Math.sqrt(1 - z * z);
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - Math.exp(-z * w0 * t) *
+            (Math.cos(wd * t) + (z * w0 / wd) * Math.sin(wd * t));
+        };
+      }
+      var wd2 = w0 * Math.sqrt(z * z - 1);
+      return function (tMs) {
+        var t = tMs / 1000;
+        return 1 - Math.exp(-z * w0 * t) *
+          (Math.cosh(wd2 * t) + (z * w0 / wd2) * Math.sinh(wd2 * t));
+      };
+    }
+
+    // ── СТЕЙТЫ ──────────────────────────────────────────────────
+    // У каждого стейта — позиция центра карточки в Figma-сетке (cx, cy),
+    // её unrotated-ширина (для scale) и угол поворота. CSS-карточка имеет
+    // фиксированный размер 300×350; всё движение — только через transform.
+    //
+    // Конверсия в transform-translate:
+    //   tx = cx - 330  (= cx - 180 (центр 360-сетки) - 150 (половина CSS-карточки))
+    //   ty = cy - 175
+    //   scale = unrotated_w / 300
+    var STATES = [
+      // Стейт 1 — закрытый стак. opacity 0 (карточки скрыты, появляются на стейте 2).
+      { title: 249, cards: {
+          3: { cx: 185.600, cy: 526.545, s: 0.50246, r: -6.46,  o: 0 },
+          2: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0.50,  o: 0 },
+          1: { cx: 179.842, cy: 558.120, s: 0.50246, r:  9.78,  o: 0 }
+      }},
+      // Стейт 2 — раскрытый веер.
+      { title: 130, cards: {
+          3: { cx: 154.014, cy: 377.251, s: 0.74440, r: -7.21,  o: 1 },
+          2: { cx: 237.871, cy: 479.750, s: 0.74440, r:  15,    o: 1 },
+          1: { cx: 135.122, cy: 560.177, s: 0.74440, r: -16.48, o: 1 }
+      }},
+      // Стейт 3 — в ряд, шаг 316 (300 + gap 16), первая на x=125.
+      { title: 130, cards: {
+          3: { cx: 275, cy: 441, s: 1, r: 0, o: 1 },
+          2: { cx: 591, cy: 441, s: 1, r: 0, o: 1 },
+          1: { cx: 907, cy: 441, s: 1, r: 0, o: 1 }
+      }},
+      // Стейт 4 — сдвинут влево, первая карточка с гаттером 16px от левого края.
+      { title: 130, cards: {
+          3: { cx: 166, cy: 441, s: 1, r: 0, o: 1 },
+          2: { cx: 482, cy: 441, s: 1, r: 0, o: 1 },
+          1: { cx: 798, cy: 441, s: 1, r: 0, o: 1 }
+      }},
+      // Стейт 5 (exit) — «Принять все» внизу. Карточки ужимаются до
+      // стейта 1 (scale 0.50246, рутации той же стопки) и уходят ВНИЗ
+      // за viewport (cy ≈ +310 к state 1), opacity → 0. Title едет вниз.
+      { title: 312, cards: {
+          3: { cx: 185.600, cy: 836.510, s: 0.50246, r: -6.46,  o: 0 },
+          2: { cx: 185.503, cy: 850.341, s: 0.50246, r:  0.50,  o: 0 },
+          1: { cx: 179.842, cy: 868.120, s: 0.50246, r:  9.78,  o: 0 }
+      }}
+    ];
+    // data-i отражает порядок «спереди-назад» в стопочно-веерных стейтах
+    // (i=1 — самая ближняя/верхняя, i=3 — самая дальняя/нижняя), поэтому
+    // нумерация инвертирована относительно визуального ряда в стейте 4:
+    //   data-i=3 → Виктория (leftmost в ряду, back в стопке)
+    //   data-i=2 → Мария    (middle)
+    //   data-i=1 → Дмитрий  (rightmost в ряду, front в стопке)
+    // Итерация IDX=[3,2,1] идёт «back → front», чтобы applyCard перерисовал
+    // нижние карточки первыми (z-index уже задан в CSS).
+    var IDX = [3, 2, 1];
+
+    var els = {};
+    IDX.forEach(function (i) {
+      els[i] = root.querySelector('.gift-card[data-i="' + i + '"]');
+    });
+    var titleEl = root.querySelector('.gp__title');
+
+    // Применить состояние одной карточки. dxPan — горизонтальный сдвиг (от свайпа).
+    function applyCard(el, s, dxPan) {
+      var tx = (s.cx - 330) + (dxPan || 0);
+      var ty = s.cy - 175;
+      el.style.transform =
+        'translate(' + tx.toFixed(3) + 'px, ' + ty.toFixed(3) + 'px) ' +
+        'scale(' + s.s.toFixed(5) + ') ' +
+        'rotate(' + s.r.toFixed(3) + 'deg)';
+      el.style.setProperty('--gift-card-scale', s.s.toFixed(5));
+      if (s.o !== undefined) el.style.opacity = s.o.toFixed(3);
+    }
+
+    var current = 0;
+    var animating = false;
+    var panOffset = 0;  // активный горизонтальный сдвиг (свайп пользователя)
+
+    function applyState(idx) {
+      var st = STATES[idx];
+      IDX.forEach(function (i) { applyCard(els[i], st.cards[i], 0); });
+      titleEl.style.top = st.title + 'px';
+    }
+    applyState(0);
+    root.classList.add('__state-1');
+
+    // Предзагружаем lottie-конфетти. Запустим один раз после exit-цепочки
+    // «Принять все». Lottie-web подключён ниже как <script>.
+    var confettiHost = document.getElementById('gpConfetti');
+    var confettiData = null;
+    fetch('assets/lottie/confetti.json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { confettiData = d; })
+      .catch(function () { /* offline / file missing — silently skip */ });
+    function fireConfetti() {
+      if (!confettiData || !window.lottie || !confettiHost) return;
+      var anim = window.lottie.loadAnimation({
+        container: confettiHost,
+        renderer: 'svg', loop: false, autoplay: true,
+        rendererSettings: {
+          // Растягиваем lottie от верха до низа viewport, по ширине
+          // обрезаем (composition 1100×800, экран ≤390×800 — крайние
+          // частицы уходят за края, это норм).
+          preserveAspectRatio: 'xMidYMid slice'
+        },
+        animationData: JSON.parse(JSON.stringify(confettiData))
+      });
+      anim.addEventListener('complete', function () {
+        anim.destroy();
+        confettiHost.innerHTML = '';
+      });
+    }
+    // Финальный экран: меняем заголовок + конфетти. Вызывается и из exit-
+    // цепочки «Принять все», и из processCard, когда liveCards опустел.
+    function showAllAccepted() {
+      titleEl.innerHTML = 'Вы приняли<br>все подарки';
+      fireConfetti();
+      // Через пару секунд шторка автоматически закрывается.
+      setTimeout(function () {
+        var closeBtn = document.querySelector('.gp__close');
+        if (closeBtn) closeBtn.click();
+      }, 2200);
+    }
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    // CSS cubic-bezier(x1, y1, x2, y2) реализация: по x находим u через
+    // Ньютона, потом считаем y(u). Используем для exit-«падения»
+    // (Figma даёт bezier 0, 0, 1, -0.01 — почти линейно с лёгким overshoot'ом).
+    function makeBezier(x1, y1, x2, y2) {
+      return function (t) {
+        var u = t;
+        for (var i = 0; i < 8; i++) {
+          var omu = 1 - u;
+          var x  = 3 * omu * omu * u * x1 + 3 * omu * u * u * x2 + u * u * u;
+          var dx = 3 * omu * omu * x1 + 6 * omu * u * (x2 - x1) + 3 * u * u * (1 - x2);
+          if (Math.abs(dx) < 1e-6) break;
+          u -= (x - t) / dx;
+          if (u < 0) u = 0; else if (u > 1) u = 1;
+        }
+        var omu2 = 1 - u;
+        return 3 * omu2 * omu2 * u * y1 + 3 * omu2 * u * u * y2 + u * u * u;
+      };
+    }
+    // Считываем live при каждом transitionTo — юзер может переключить
+    // OS-preference во время сессии.
+    function reducedMotion() {
+      try { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+      catch (_) { return false; }
+    }
+
+    function transitionTo(toIdx, opts) {
+      opts = opts || { mode: 'spring' };
+      if (animating || toIdx === current) return;
+      animating = true;
+      // Снапшоты «откуда» делаем явно и до любых мутаций (`current` и
+      // root.classList меняются ниже). Если позже кто-то переместит
+      // `current = toIdx` выше этих строк, тождество from===to сразу
+      // сломает анимацию — поэтому фиксируем явно.
+      var prevIdx = current;
+      var from    = STATES[prevIdx];
+      var to      = STATES[toIdx];
+      // Коммитим current ДО смены классов: re-entrant observer-ы увидят
+      // согласованное состояние (класс и current указывают на один индекс).
+      current = toIdx;
+      root.classList.remove('__state-1', '__state-2', '__state-3', '__state-4', '__state-5');
+      root.classList.add('__state-' + (toIdx + 1));
+
+      function done() {
+        applyState(toIdx);
+        animating = false;
+        if (toIdx === 3) attachSwipe();
+        if (opts.onDone) opts.onDone();
+      }
+
+      // Accessibility: при prefers-reduced-motion сразу перескакиваем
+      // в финальное состояние, никаких rAF-кривых.
+      if (reducedMotion()) { done(); return; }
+
+      // Оба режима — на JS-rAF с собственной progress-функцией. Это даёт
+      // детерминистичный тайминг и обходит проблемы @property-поддержки.
+      var dur, progress;
+      if (opts.mode === 'spring') {
+        dur = opts.duration || SPRING.duration;
+        progress = makeSpring(opts.k || SPRING.k, opts.c || SPRING.c, opts.m || SPRING.m);
+      } else if (opts.mode === 'bezier') {
+        // opts.bezier = [x1, y1, x2, y2]
+        dur = opts.duration || 300;
+        var bz = opts.bezier;
+        var ease = makeBezier(bz[0], bz[1], bz[2], bz[3]);
+        progress = function (tMs) { return ease(Math.min(1, tMs / dur)); };
+      } else {
+        dur = opts.duration || 300;
+        progress = function (tMs) { return easeOutCubic(Math.min(1, tMs / dur)); };
+      }
+
+      var t0 = performance.now();
+      (function frame(now) {
+        var elapsed = Math.min(dur, now - t0);
+        var p = progress(elapsed);
+        IDX.forEach(function (i) {
+          var fc = from.cards[i], tc = to.cards[i];
+          var fo = fc.o !== undefined ? fc.o : 1;
+          var to_ = tc.o !== undefined ? tc.o : 1;
+          applyCard(els[i], {
+            cx: fc.cx + (tc.cx - fc.cx) * p,
+            cy: fc.cy + (tc.cy - fc.cy) * p,
+            s:  fc.s  + (tc.s  - fc.s)  * p,
+            r:  fc.r  + (tc.r  - fc.r)  * p,
+            o:  fo    + (to_   - fo)    * p
+          }, 0);
+        });
+        titleEl.style.top =
+          (from.title + (to.title - from.title) * p).toFixed(3) + 'px';
+        if (elapsed < dur) requestAnimationFrame(frame);
+        else done();
+      })(performance.now());
+    }
+
+    // ── СВАЙП КАРУСЕЛИ ──────────────────────────────────────────
+    // После стейта 4: пользователь может свайпать ряд горизонтально.
+    // Активируем модификатор .__active на всех карточках, пока пользователь
+    // не вернулся в исходное положение (panOffset≈0).
+    function attachSwipe() {
+      if (scene.dataset.swipeAttached) return;
+      scene.dataset.swipeAttached = '1';
+
+      // STEP и minSnap выводим из STATES[3] — единственный источник правды
+      // для геометрии ряда (изменение gap/количества карт сразу отразится).
+      var rowState = STATES[3].cards;
+      var STEP = rowState[2].cx - rowState[3].cx;   // шаг между соседними карточками
+      // liveCards — массив data-i карт, оставшихся в ряду (слева направо).
+      // По мере acceptCard/dismissCard уменьшается, rowState[i].cx и minSnap
+      // пересчитываются. firstCx — left-most cx (state 4 position 0).
+      var firstCx = rowState[3].cx;
+      // IDX = [3, 2, 1] и так в порядке left → right (см. data-i convention).
+      var liveCards = IDX.slice();                   // [3, 2, 1]
+      var minSnap = -(liveCards.length - 1);         // n карт → 0..-(n-1)
+      var processing = {};                           // защита от double-tap accept/trash
+
+      var startX = 0, startY = 0;
+      var dragging = false;
+      var locked = false;             // зафиксировали направление как «горизонталь»
+      var pointerId = null;
+      var snapRaf = null;             // активная rAF снапа
+      var GUTTER = 5;
+      var snapped = 0;                // последняя зафиксированная позиция
+      // Кнопки/«активный» вид появляются на первом свайпе и ОСТАЮТСЯ (не
+      // пропадают при возврате к первой карточке). При единственной карточке
+      // свайпнуть некуда — активируем сразу.
+      var activated = (liveCards.length <= 1);
+
+      function setActiveAll(on) {
+        IDX.forEach(function (i) { els[i].classList.toggle('__active', on); });
+      }
+      // Однажды активировав (первый свайп), держим кнопки видимыми навсегда.
+      function activateButtons() {
+        if (activated) return;
+        activated = true;
+        setActiveAll(true);
+        // Нижний CTA «Принять все» делаем серым (вторичным).
+        var allBtn = document.getElementById('gpAcceptAll');
+        if (allBtn && allBtn.classList.contains('__style-primary')) {
+          allBtn.classList.replace('__style-primary', '__style-secondary');
+        }
+      }
+      setActiveAll(activated);
+      // Округление «от нуля» — симметрично для ±0.5 (Math.round даёт асимметрию).
+      function symmetricRound(x) {
+        return x < 0 ? -Math.round(-x) : Math.round(x);
+      }
+
+      function onDown(e) {
+        if (animating) return;
+        if (dragging) return;                                  // блок второго пальца
+        if (e.target && e.target.closest && e.target.closest('button')) return;
+
+        // Снап НЕ отменяем сразу — это сделает onMove, когда подтвердит,
+        // что началось горизонтальное движение. Тап без движения
+        // (или вертикальный жест) не должен прерывать снап.
+        startX = e.clientX;
+        startY = e.clientY;
+        dragging = true;
+        locked = false;
+        pointerId = e.pointerId;
+        try { scene.setPointerCapture(pointerId); } catch (_) {}
+      }
+      function releaseCapture() {
+        if (pointerId !== null) {
+          try { scene.releasePointerCapture(pointerId); } catch (_) {}
+          pointerId = null;
+        }
+      }
+      function endDrag() {
+        // Универсальный «выход из drag-режима»: чистим состояние и
+        // освобождаем pointer capture. Безопасно вызывать повторно.
+        dragging = false;
+        locked = false;
+        releaseCapture();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        if (e.pointerId !== pointerId) return;                 // другие пальцы — мимо
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (!locked) {
+          if (Math.abs(dx) < GUTTER && Math.abs(dy) < GUTTER) return;
+          if (Math.abs(dy) > Math.abs(dx)) {
+            // Жест вертикальный — отпускаем capture, чтобы не блокировать
+            // нативный pan-y. Снап (если был) продолжает идти своим ходом.
+            endDrag();
+            return;
+          }
+          // Защищаем нативный gesture-classifier preventDefault'ом ДО
+          // любых вычислений: на iOS Safari это надёжнее на первом кадре.
+          if (e.cancelable) e.preventDefault();
+          locked = true;
+          activateButtons();   // первый свайп — кнопки появляются и остаются
+          // Подтвердили горизонталь — отменяем доигрывающийся снап
+          // и подкручиваем startX, чтобы pan продолжился с visual'а без скачка.
+          if (snapRaf) {
+            cancelAnimationFrame(snapRaf);
+            snapRaf = null;
+            startX = e.clientX - (panOffset - snapped * STEP);
+            dx = e.clientX - startX;
+          }
+        } else if (e.cancelable) {
+          e.preventDefault();
+        }
+        var pan = snapped * STEP + dx;
+        // Резинка: позитивная сторона — только при snapped===0.
+        if (pan > 0 && snapped === 0) pan = pan * 0.3;
+        var minPan = minSnap * STEP;
+        if (pan < minPan) pan = minPan + (pan - minPan) * 0.3;
+        panOffset = pan;
+        IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+        setActiveAll(activated);
+      }
+      function onUp(e) {
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        // endDrag сбрасывает dragging + releaseCapture даже если мы уже
+        // вышли в vertical-lock (там dragging уже false). Capture-leak'а
+        // больше не происходит.
+        endDrag();
+        if (!wasLocked) return;   // tap или вертикаль — снап идёт сам собой
+        var raw = panOffset / STEP;
+        var target = symmetricRound(raw);
+        if (target > 0) target = 0;
+        if (target < minSnap) target = minSnap;
+        snapped = target;
+        animateSnap(target * STEP);
+      }
+      function onCancel(e) {
+        // Браузер/ОС прервали жест — возвращаемся к последней зафиксированной
+        // позиции, не «коммитим» промежуточный pan.
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        endDrag();
+        if (!wasLocked) return;   // pre-lock cancel — snap'у нечего отменять
+        animateSnap(snapped * STEP);
+      }
+      function animateSnap(targetPan) {
+        if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+        var fromPan = panOffset;
+        var t0 = performance.now();
+        var dur = 280;
+        function frame(now) {
+          var p = Math.min(1, (now - t0) / dur);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var pan = fromPan + (targetPan - fromPan) * eased;
+          panOffset = pan;
+          IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+          setActiveAll(activated);
+          if (p < 1) snapRaf = requestAnimationFrame(frame);
+          else snapRaf = null;
+        }
+        snapRaf = requestAnimationFrame(frame);
+      }
+
+      // ── ACCEPT / DISMISS ────────────────────────────────────
+      // Тап «Принять» → залить оранжевым + галочка → улёт вверх → ряд сдвигается.
+      // Тап трэш  → улёт вниз (без заливки) → ряд сдвигается.
+      function processCard(i, kind) {
+        if (processing[i]) return;
+        processing[i] = true;
+        var el = els[i];
+        var FILL_DUR = 700;      // accept: длительность заливки + чекмарк
+        var FLY_DUR  = 600;      // длительность улёта за viewport
+        var SHIFT_DUR = 350;     // длительность сдвига оставшихся карт
+
+        function flyOut() {
+          var dir = (kind === 'accept') ? -1 : 1;
+          el.classList.add(dir < 0 ? '__flying-up' : '__flying-down');
+          var cs = rowState[i];
+          var tx = (cs.cx - 330) + panOffset;
+          var ty = (cs.cy - 175) + dir * 800;
+          var rot = dir < 0 ? 22 : -22;
+          requestAnimationFrame(function () {
+            el.style.transform =
+              'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
+              'scale(1) rotate(' + rot + 'deg)';
+          });
+          setTimeout(removeFromRow, FLY_DUR);
+        }
+        function removeFromRow() {
+          el.style.display = 'none';
+          var idx = liveCards.indexOf(i);
+          if (idx >= 0) liveCards.splice(idx, 1);
+          // Сжимаем ряд: новые cx по индексу в liveCards.
+          for (var k = 0; k < liveCards.length; k++) {
+            rowState[liveCards[k]].cx = firstCx + k * STEP;
+          }
+          minSnap = -(liveCards.length - 1);
+          if (snapped < minSnap) snapped = minSnap;
+          // Анимируем оставшиеся к новым позициям + догоняем snap при необходимости.
+          liveCards.forEach(function (j) {
+            els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
+          });
+          var newPan = snapped * STEP;
+          requestAnimationFrame(function () {
+            panOffset = newPan;
+            liveCards.forEach(function (j) {
+              applyCard(els[j], rowState[j], newPan);
+            });
+            setActiveAll(activated);
+          });
+          setTimeout(function () {
+            liveCards.forEach(function (j) {
+              els[j].style.transition = '';
+            });
+          }, SHIFT_DUR + 30);
+          // Все карточки приняты по одной — финальный экран.
+          if (liveCards.length === 0) {
+            setTimeout(showAllAccepted, SHIFT_DUR);
+          }
+        }
+
+        if (kind === 'accept') {
+          el.classList.add('__accepting');
+          setTimeout(flyOut, FILL_DUR);
+        } else {
+          flyOut();
+        }
+      }
+
+      IDX.forEach(function (i) {
+        var el = els[i];
+        var accBtn = el.querySelector('.gift-card__accept .button-container');
+        var trashBtn = el.querySelector('.gift-card__trash');
+        if (accBtn) accBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          processCard(i, 'accept');
+        });
+        if (trashBtn) trashBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          processCard(i, 'dismiss');
+        });
+      });
+
+      scene.addEventListener('pointerdown', onDown);
+      scene.addEventListener('pointermove', onMove);
+      scene.addEventListener('pointerup', onUp);
+      scene.addEventListener('pointercancel', onCancel);
+
+      // ── «Принять все» (нижний CTA) ─────────────────────────────
+      // Возвращаем карточки в стейт 2 (веер), потом ужимаем до стейта 1
+      // и уводим вниз за viewport с opacity 0 (STATES[4] / __state-5).
+      var acceptAllBtn = document.getElementById('gpAcceptAll');
+      if (acceptAllBtn && !acceptAllBtn.dataset.wired) {
+        acceptAllBtn.dataset.wired = '1';
+        acceptAllBtn.addEventListener('click', function () {
+          if (animating) return;
+          if (!liveCards.length) return;
+          // Останавливаем активный снап + бэйкаем текущий panOffset в
+          // STATES[3].cards.cx, чтобы from-снапшот transitionTo был
+          // визуально точным (без рывка из off-axis в state-2-fan).
+          if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+          if (panOffset !== 0) {
+            liveCards.forEach(function (j) {
+              STATES[3].cards[j].cx += panOffset;
+            });
+            panOffset = 0;
+            snapped = 0;
+          }
+          setActiveAll(false);
+          // Шаг 1 — «сборка в кулечек»: обратно в веер (state 2).
+          //   Overdamped spring k=80, c=20, m=1, 600мс (Figma custom spring).
+          // Шаг 2 — «падают и исчезают» (state 5 = exit).
+          //   Cubic-bezier(0, 0, 1, -0.01), 500мс, delay 1мс.
+          transitionTo(1, {
+            mode: 'spring', k: 80, c: 20, m: 1, duration: 600,
+            onDone: function () {
+              setTimeout(function () {
+                transitionTo(4, {
+                  mode: 'bezier', bezier: [0, 0, 1, -0.01], duration: 500,
+                  onDone: showAllAccepted
+                });
+              }, 1);
+            }
+          });
+        });
+      }
+    }
+
+    // ── СЦЕНАРИЙ ────────────────────────────────────────────────
+    //   1 → 2 (спринг 2000мс, k=96 c=6 m=1) — после старта SPRING.delay
+    //   2 → 3 (ease-out 300мс)              — пауза PAUSE_BETWEEN после 1→2
+    //   3 → 4 (overdamped спринг 600мс)     — Figma: delay 1мс после 2→3
+    //
+    // Используем onDone-колбэки вместо хрупких setTimeout-цепочек:
+    // 3→4 стартует строго после finalize 2→3, без гонки с animating-флагом.
+    var PAUSE_BETWEEN = 800;
+    var EASE_DUR = 300;
+
+    // При prefers-reduced-motion прыгаем сразу в стейт 4 без пауз
+    // (иначе юзер ждёт 2.8с статичного экрана перед мгновенным переходом).
+    if (reducedMotion()) {
+      // Тот же порядок что и в transitionTo: current → class → applyState.
+      current = 3;
+      root.classList.remove('__state-1');
+      root.classList.add('__state-4');
+      applyState(3);
+      attachSwipe();
+    } else {
+      setTimeout(function () {
+        transitionTo(1, {
+          mode: 'spring',
+          onDone: function () {
+            setTimeout(function () {
+              transitionTo(2, {
+                mode: 'css', duration: EASE_DUR, easing: 'ease-out',
+                onDone: function () {
+                  transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
+                }
+              });
+            }, PAUSE_BETWEEN);
+          }
+        });
+      }, SPRING.delay);
+    }
+  })();
+</script>
+
+</body>
+</html>

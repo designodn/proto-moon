@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Лента — OK</title>
+<title>Лента (light) — прототип</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -20,8 +20,15 @@
   html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
     background: var(--dynamic-surface-base-primary);
   }
+  /* fullscreen-оболочка + скролл-фид + .ll-tabbar + .ll-icon → components/app-shell.css.
+     Фон страницы — base-primary (совпадает с дефолтом .phone-frame, не дублируем).
+     Локально оставляем только свой стекинг-контекст у фида: стики-статусбар (z-60)
+     внутри ленты не должен пробивать поверх оверлея уведомлений (z-45). */
+  .phone-frame__feed { position: relative; z-index: 0; }
+
   /* Иконки <img src="…svg"> (.ll-icon) → components/app-shell.css */
 
   /* Шапка — DS-компонент meshok-up (sticky + скругление снизу) */
@@ -60,6 +67,11 @@
      (+ → ✓), лейбл («Добавить в друзья» → «У вас в друзьях») и стиль
      (secondary → tertiary, прозрачный фон). */
   .ll-add-friend { cursor: pointer; }
+
+  /* Тап по текстовому посту открывает его (post.html). Контролы внутри
+     (actions-bar, кнопки) свой клик обрабатывают сами — см. скрипт ниже. */
+  .text-feed { cursor: pointer; }
+
   .ll-add-friend .ll-add-friend__icon-done.ll-icon,
   .ll-add-friend .ll-add-friend__label-added { display: none; }
   .ll-add-friend:has(> input:checked) .ll-add-friend__icon-add.ll-icon,
@@ -137,7 +149,7 @@
   .text-feed__media.__row { overflow-x: hidden; }
   .text-feed__media.__row .text-feed__media-cell { flex: 1 1 0; min-width: 0; }
 
-  /* «Возможно, вы знакомы» — компонент .pymk (components/pymk.css) */
+  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css) */
 
   /* Баннер под сторис — PNG на фоне контейнера, паддинги 16, текст внутри. */
   .ll-banner {
@@ -281,11 +293,31 @@
   @media (prefers-reduced-motion: reduce) {
     .ll-anniv-poster { animation: none; }
   }
-  .ll-anniv-poster__avatars {
+  /* Аватары — DS-компонент .avatar (.__type-image). Размер и позицию
+     переопределяем под макет: 137/343 ≈ 40% диаметр, абсолют в постере.
+     Селектор с .avatar повышает специфичность над базовым width/height. */
+  .avatar.ll-anniv-poster__ava {
     position: absolute;
-    top: 26px; left: 50%;
-    transform: translateX(-50%);
+    width: 40%;
+    height: auto;
+    aspect-ratio: 1;
     z-index: 1;
+  }
+  .ll-anniv-poster__ava.__top { top: 6.7%;  left: 46%;  }  /* x158 / y33  */
+  .ll-anniv-poster__ava.__mid { top: 33%;   left: 9.3%; }  /* x32  / y162 */
+
+  /* «Мишка» (pic_gift_box) — низ-справа. */
+  .ll-anniv-poster__bear {
+    position: absolute;
+    width: 39.4%;            /* 135/343 */
+    aspect-ratio: 1;
+    top: 44.3%; left: 53.6%; /* x184 / y218 */
+    z-index: 1;
+  }
+  .ll-anniv-poster__bear img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
   }
   /* Тёмный градиент снизу — чтобы текст читался поверх любой подложки */
   .ll-anniv-poster::after {
@@ -308,7 +340,7 @@
   }
   .ll-anniv-poster__since {
     position: absolute;
-    left: 0; right: 0; bottom: 32px;
+    left: 0; right: 0; bottom: 48px;
     text-align: center;
     z-index: 1;
   }
@@ -318,8 +350,8 @@
 </head>
 <body>
 
-  <div data-screen>
-    <div>
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
 
       <!-- Шапка: DS meshok-up = status-bar + nav-bar __type-publish -->
       <div class="meshok-up">
@@ -370,20 +402,14 @@
         <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
              CTA-кнопка снизу — только у ВВЗ. -->
         <div class="avatar __size-56 __type-image __ring-active"
-             data-stories="1" data-name="Возможно вы знакомы" data-vvz
-             aria-label="Возможно вы знакомы">
+             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
+             aria-label="Возможно, вы знакомы">
           <img src="assets/icons/vvz_stories.png" alt="">
         </div>
         <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
 
-        <!-- Сториз годовщины дружбы — пакет из 2 слайдов, в шапке стек из
-             двух аватарок (двойная авА через .stories-row__couple). -->
-        <div class="avatar __size-56 __ring-active stories-row__couple"
-             data-stories="2" data-name="Анна и Кристина" data-friendship
-             aria-label="Анна и Кристина">
-          <span class="stories-row__face" style="background-image: url('https://i.pravatar.cc/96?img=47');"></span>
-          <span class="stories-row__face" style="background-image: url('https://i.pravatar.cc/96?img=49');"></span>
-        </div>
+        <!-- Сториз годовщины дружбы убрана из стака — открывается тапом
+             по постеру «Годовщина дружбы» в фиде (см. скрипт ниже). -->
         <!-- Просмотренные (серое кольцо) -->
         <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
         <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
@@ -476,85 +502,101 @@
           </div>
         </article>
 
-        <!-- Возможно, вы знакомы — горизонтальный ряд friend-card (dismissible) -->
-        <section class="pymk island" data-dismiss-row aria-label="Возможно, вы знакомы">
-          <header class="pymk__header">
-            <a class="pymk__title ds-title-l" href="vvz.html">Возможно, вы знакомы</a>
+        <!-- Возможно, вы знакомы — горизонтальный ряд vvz-card.__default (dismissible) -->
+        <section class="vvz-portlet island" data-dismiss-row aria-label="Возможно, вы знакомы">
+          <header class="vvz-portlet__header">
+            <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
+            <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
           </header>
-          <div class="pymk__row">
+          <div class="vvz-portlet__row">
 
-            <div class="friend-card" data-dismiss-target>
-              <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=47')"></div>
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=47')"></div>
                 <img src="https://i.pravatar.cc/240?img=47" alt="">
-                <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
-              <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Алёна Ящук</div>
-                <div class="friend-card__subtitle ds-caption-m">20 общих друзей</div>
-                <div class="friend-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Алёна Ящук</div>
+                <div class="vvz-card__subtitle ds-caption-m">20 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
               </div>
             </div>
 
-            <div class="friend-card" data-dismiss-target>
-              <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=44')"></div>
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=44')"></div>
                 <img src="https://i.pravatar.cc/240?img=44" alt="">
-                <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
-              <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Анна Смирнова</div>
-                <div class="friend-card__subtitle ds-caption-m">12 общих друзей</div>
-                <div class="friend-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Анна Смирнова</div>
+                <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
               </div>
             </div>
 
-            <div class="friend-card" data-dismiss-target>
-              <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
                 <img src="https://i.pravatar.cc/240?img=52" alt="">
-                <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
-              <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Александр Фёдоров</div>
-                <div class="friend-card__subtitle ds-caption-m">12 общих друзей</div>
-                <div class="friend-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>
+                <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
               </div>
             </div>
 
-            <div class="friend-card" data-dismiss-target>
-              <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=45')"></div>
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=45')"></div>
                 <img src="https://i.pravatar.cc/240?img=45" alt="">
-                <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
-              <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Мария Иванова</div>
-                <div class="friend-card__subtitle ds-caption-m">10 общих друзей</div>
-                <div class="friend-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Мария Иванова</div>
+                <div class="vvz-card__subtitle ds-caption-m">10 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
               </div>
             </div>
 
-            <div class="friend-card" data-dismiss-target>
-              <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
                 <img src="https://i.pravatar.cc/240?img=33" alt="">
-                <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
-              <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Олег Зайцев</div>
-                <div class="friend-card__subtitle ds-caption-m">8 общих друзей</div>
-                <div class="friend-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
+                <div class="vvz-card__subtitle ds-caption-m">8 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
+              </div>
+            </div>
+
+            <!-- Финальная карточка стека: «Найдите ещё больше друзей» -->
+            <div class="vvz-card __help">
+              <div class="vvz-card__help-top">
+                <div class="vvz-card__help-icon"><img class="ll-icon" src="assets/icons/smile_24.svg" width="24" height="24" alt=""></div>
+                <div class="vvz-card__help-text">
+                  <div class="vvz-card__help-title ds-title-s">Найдите ещё больше друзей</div>
+                  <div class="vvz-card__help-subtitle ds-caption-m">Вы можете найти ещё больше друзей или одноклассников</div>
+                </div>
+              </div>
+              <div class="vvz-card__help-links">
+                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по контактам</button>
+                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по школам</button>
               </div>
             </div>
 
@@ -915,12 +957,11 @@
 
           <div>
             <div class="ll-anniv-poster">
-              <div class="avatars-view __size-96 ll-anniv-poster__avatars">
-                <div class="avatars-view__stack">
-                  <div class="avatar __size-96 __type-image"><img src="https://i.pravatar.cc/192?img=49" alt=""></div>
-                  <div class="avatar __size-96 __type-image"><img src="https://i.pravatar.cc/192?img=23" alt=""></div>
-                </div>
-              </div>
+              <!-- Аватары разнесены: верх-право и центр-лево (по макету) -->
+              <div class="avatar __type-image ll-anniv-poster__ava __top"><img src="https://i.pravatar.cc/288?img=49" alt=""></div>
+              <div class="avatar __type-image ll-anniv-poster__ava __mid"><img src="https://i.pravatar.cc/288?img=23" alt=""></div>
+              <!-- Карточка «мишки» (pic_gift_box) -->
+              <div class="ll-anniv-poster__bear"><img src="assets/icons/pic.png" alt=""></div>
               <div class="ll-anniv-poster__count">478 подарков</div>
               <div class="ll-anniv-poster__since ds-body-m">С 1 июня 2023 года</div>
             </div>
@@ -1125,6 +1166,33 @@
   </script>
   <script src="components/back-trap.js" data-target="start.html"></script>
   <script src="components/tab-bar.js"></script>
+
+  <!-- Делегированный переход по data-href (кнопка «Ещё» в vvz-portlet → vvz.html) -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('button[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
+  </script>
+
+  <!-- Тап по текстовому посту → открыть запись (post.html).
+       Клики по контролам поста (actions-bar, кнопки/ссылки/инпуты) не
+       перехватываем — они работают как раньше. -->
+  <script>
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      var post = e.target.closest('.text-feed');
+      if (!post) return;
+      if (e.target.closest('.actions-bar, button, a, input')) return;
+      e.preventDefault();
+      // Связываем открытый пост с лентой: текст, картинку и акшн-кнопки
+      // переносим как есть в post.html через sessionStorage.
+      try { sessionStorage.setItem('openPost', post.innerHTML); } catch (_) {}
+      location.href = 'post.html';
+    });
+  </script>
   <script src="components/dismissible.js"></script>
 
   <!-- Просмотрщик сториз ----------------------------------------------- -->
@@ -1155,19 +1223,19 @@
       // ВВЗ, и для рекламной вставки между сторизами.
       function makeVvzSlide() {
         return MomentViewer.vvzSlide({
-          title:  'Возможно вы знакомы',
+          title:  'Возможно, вы знакомы',
           people: VVZ_PEOPLE,
           cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
         });
       }
 
-      // Логика «ВВЗ как реклама»:
-      //  - считаем обычные сториз в карусели (= не data-skip-viewer / vvz /
-      //    friendship / bday). Если их ≥2 — убираем ВВЗ-аватарку из DOM,
-      //    флаг vvzAsAd включается.
-      //  - В callback slides() для обычной сториз ВВЗ-слайд один раз за
-      //    сессию вставляется случайной позицией в середину массива.
-      var vvzAva = row.querySelector('[data-vvz]');
+      // Правило «ВВЗ как реклама»:
+      //  - если в карусели ≥2 обычных сториз (= не data-skip-viewer / vvz /
+      //    friendship / bday) — между обычными сторизами одной из аватарок
+      //    ОДИН раз за сессию случайно вставляется ВВЗ-слайд (как реклама).
+      //  - ВВЗ-аватарка в карусели остаётся всегда — это вторая точка входа.
+      // Глобальный флаг VVZ_AD_ENABLED включает/выключает рекламу.
+      var VVZ_AD_ENABLED = false; // ⇦ on/off для правила «ВВЗ-ад между сториз»
       var regularStoriesCount = Array.prototype.filter.call(
         row.querySelectorAll('.avatar'),
         function (a) {
@@ -1177,11 +1245,13 @@
               && !a.hasAttribute('data-bday');
         }
       ).length;
-      var vvzAsAd = regularStoriesCount >= 2;
+      var vvzAsAd = VVZ_AD_ENABLED && regularStoriesCount >= 2;
       var vvzAdShown = false;
-      if (vvzAsAd && vvzAva) vvzAva.remove();
+      // ВВЗ-аватарка остаётся в карусели даже когда ≥2 обычных сториз — это
+      // дополнительная точка входа. ВВЗ-ад всё равно показывается случайно
+      // между обычными сторизами (один раз за сессию).
 
-      MomentViewer.bindRow(row, viewer, {
+      var momentApi = MomentViewer.bindRow(row, viewer, {
         slides: function (ava) {
           // ВВЗ-сториз — собирается из готового хелпера, иначе null → fallback
           // на дефолтную палитру из bindRow (см. MomentViewer.palette).
@@ -1244,6 +1314,32 @@
           return slides;
         }
       });
+
+      // Сториз годовщины дружбы убрана из карусели — единственная точка входа
+      // теперь тап по постеру «Годовщина дружбы» в фиде. Открываем её как
+      // «виртуального автора» (элемент-аватарка с нужными data-*, но НЕ в стаке)
+      // через публичный momentApi.open — флоу слайдов/шапки переиспользуется.
+      var friendshipAuthor = document.createElement('div');
+      friendshipAuthor.className = 'avatar __size-56 __ring-active stories-row__couple';
+      friendshipAuthor.setAttribute('data-stories', '2');
+      friendshipAuthor.setAttribute('data-name', 'Анна и Кристина');
+      friendshipAuthor.setAttribute('data-friendship', '');
+      friendshipAuthor.setAttribute('aria-label', 'Анна и Кристина');
+      friendshipAuthor.innerHTML =
+        '<span class="stories-row__face" style="background-image: url(\'https://i.pravatar.cc/96?img=47\');"></span>' +
+        '<span class="stories-row__face" style="background-image: url(\'https://i.pravatar.cc/96?img=49\');"></span>';
+
+      var annivPoster = document.querySelector('.ll-anniv-poster');
+      if (annivPoster && momentApi) {
+        annivPoster.style.cursor = 'pointer';
+        annivPoster.setAttribute('role', 'button');
+        annivPoster.setAttribute('tabindex', '0');
+        annivPoster.setAttribute('aria-label', 'Открыть сториз годовщины дружбы');
+        annivPoster.addEventListener('click', function () { momentApi.open(friendshipAuthor); });
+        annivPoster.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); momentApi.open(friendshipAuthor); }
+        });
+      }
     })();
   </script>
 

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подарки — каталог</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    /* primary = тёплый серый — на нём «остров» (.island, secondary=#fff)
+       видно как контрастный блок. */
+    background: var(--dynamic-surface-base-primary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-primary); }
+
+  /* meshok-up (status + nav + tabs) сохраняет белый фон через DS-токены,
+     прибавляем secondary к самой шапке, чтобы под табами стык был ровный. */
+  .meshok-up .status-bar,
+  .meshok-up .nav-bar {
+    background-color: var(--dynamic-surface-base-secondary) !important;
+  }
+
+  /* Вкладки (DS TabsView base) — отступы как в других экранах */
+  .ll-gc-tabs {
+    --tabs-view-padding-left: var(--space-4);
+    --tabs-view-padding-right: var(--space-4);
+    --tabs-view-padding-top: var(--space-1);
+    background-color: var(--dynamic-surface-base-secondary);
+  }
+  .ll-gc-tabs .tabs-row { background-color: var(--dynamic-surface-base-secondary); }
+
+  /* Островная обёртка вокруг хедера и грида — без верхнего/нижнего паддинга
+     острова (грид сам управляет внутренними отступами 12/36).
+     flex-shrink: 0 — иначе flex-column родитель (.phone-frame__feed) сжимает
+     остров и скролл ломается. */
+  .ll-gc-island {
+    flex-shrink: 0;
+    margin: var(--space-2) 0 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: var(--dynamic-surface-base-secondary);
+    overflow: visible;
+  }
+
+  /* Хедер «День рождения!» — DS header __size-l, внутри острова, 16/12/16/0 */
+  .ll-gc-section-head {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+  }
+
+  /* Сетка подарков — 2×N, gap 12, бока 16, низ 36, верх 12 (под хедером уже
+     есть его собственный padding-bottom, поэтому верх грида = 0; общий
+     верхний отступ контента в карточке = 12 хедера + 12 от карточки). */
+  .ll-gc-grid {
+    display: grid;
+    /* 2×N — две колонки. minmax(0,1fr) гасит min-content-расширение от
+       крупного font-size в постере. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-3);                          /* 12px */
+    padding: 0 var(--space-4) 36px;
+  }
+
+  /* Сама карточка — вертикальный стек: image squircle + price-tag под ним.
+     Тег прижат к левому краю с лёгким отступом сверху (4px). */
+  .ll-gift {
+    display: flex;
+    flex-direction: column;
+    align-items: center;                          /* ценник по центру под карточкой */
+    gap: var(--space-1);                          /* 4px между картинкой и тегом */
+    min-width: 0;                                 /* не давать постеру растягивать колонку */
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ll-gift:active { transform: scale(0.97); }
+
+  /* Squircle-постер: real-image открытка. Заполняет квадрат, object-fit: cover. */
+  .ll-gift__poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--dynamic-surface-contrast-low);
+    display: block;
+    user-select: none;
+  }
+  .ll-gift__poster img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Подарки</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/search_24.svg" width="24" height="24" alt=""></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Закладки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/bookmark_24.svg" width="24" height="24" alt=""></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКИ (DS Tab, base) — Популярное / Категории / Мои подарки -->
+      <div class="tabs-view __with-divider ll-gc-tabs">
+        <div class="tabs-row __scroll">
+          <button class="tab-wrapper __view-base __selected" role="tab" aria-selected="true">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Популярное</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Категории</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Мои подарки</span></span></span></span>
+            <span class="line"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ИСЛАНД: хедер «День рождения!» + сетка подарков -->
+      <section class="ll-gc-island">
+        <header class="header __size-l ll-gc-section-head">
+          <div class="header__title ds-title-l">День рождения!</div>
+        </header>
+
+        <div class="ll-gc-grid">
+
+          <a class="ll-gift" href="send-gift.html?gift=cake">
+            <span class="ll-gift__poster"><img src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg" alt="" loading="lazy"></span>
+            <span class="price-tag">0 ОК</span>
+          </a>
+
+          <a class="ll-gift" href="send-gift.html?gift=bouquet">
+            <span class="ll-gift__poster"><img src="https://cool.klev.club/uploads/posts/2025-05/2630/na_den_rozhdeniya_odnoklassniku_15_9e514099.jpg" alt="" loading="lazy"></span>
+            <span class="price-tag">0 ОК</span>
+          </a>
+
+          <a class="ll-gift" href="send-gift.html?gift=classic">
+            <span class="ll-gift__poster"><img src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassnik-1841.jpg" alt="" loading="lazy"></span>
+            <span class="price-tag">0 ОК</span>
+          </a>
+
+          <a class="ll-gift" href="send-gift.html?gift=heart">
+            <span class="ll-gift__poster"><img src="https://play-lh.googleusercontent.com/DIUjj_0djlD0xfteoleEnmD6CkmpIqMoHMwuH3AvhL85duDITmjEr9w_ib_VAC3ejQc=w240-h480-rw" alt="" loading="lazy"></span>
+            <span class="price-tag">0 ОК</span>
+          </a>
+
+          <a class="ll-gift" href="send-gift.html?gift=social">
+            <span class="ll-gift__poster"><img src="https://123ot.ru/img/00003/skachaty-besplatno-whatsapp-odnoklassniki-instagram-774945.jpg" alt="" loading="lazy"></span>
+            <span class="price-tag">2 ОК</span>
+          </a>
+
+          <a class="ll-gift" href="send-gift.html?gift=flowers">
+            <span class="ll-gift__poster"><img src="https://kartinki-life.ru/articles/2020/02/07/kartinki-i-otkrytki-s-dnjom-rozhdeniya-22-7.jpg" alt="" loading="lazy"></span>
+            <span class="price-tag">5 ОК</span>
+          </a>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- TABBAR -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-ios">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="components/back-button.js"></script>
+  <script src="components/tab.js"></script>
+  <script src="components/tab-bar.js"></script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Гости — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; background: var(--dynamic-surface-base-secondary); }
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+
+  /* Список секций экрана (баннер → Новые → Просмотренные → ВВЗ).
+     Горизонтальный паддинг 16 — единый для всех секций; PYMK тянется во всю
+     ширину через отрицательные margin'ы.
+     Снизу 96 — чтобы последние карточки не уходили под фиксированный таббар. */
+  .ll-guests {
+    display: flex; flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-4) var(--space-4) 96px;
+  }
+  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга */
+  .ll-guests .vvz-portlet {
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: calc(var(--space-4) * -1);
+  }
+
+  /* ── Баннер «Невидимка»: DS-токены, акцентный orange tint ─────── */
+  .ll-nevidimka {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--static-surface-status-contrast-accent);
+    border-radius: 16px;
+  }
+  .ll-nevidimka__text { flex: 1 1 0; min-width: 0; }
+  .ll-nevidimka__subtitle { margin-top: 2px; color: var(--dynamic-text-and-icons-base-secondary); }
+
+  /* Switch — нативный checkbox, оформление в стиле DS (32x52, дот 28) */
+  .ll-switch { position: relative; display: inline-block; width: 52px; height: 32px; flex-shrink: 0; }
+  .ll-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+  .ll-switch__track {
+    position: absolute; inset: 0; border-radius: 999px;
+    background: var(--dynamic-surface-contrast-high, rgba(131,102,86,0.36));
+    transition: background-color 200ms ease;
+  }
+  .ll-switch__track::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--static-surface-base-inverse-primary, #fff);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    transition: transform 200ms ease;
+  }
+  .ll-switch input:checked + .ll-switch__track { background: var(--static-surface-status-accent); }
+  .ll-switch input:checked + .ll-switch__track::after { transform: translateX(20px); }
+
+  /* ── Секция «Новые/Просмотренные» — header + ячейки гостей ────── */
+  .ll-guests__section { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  /* Ячейка гостя — DS-компонент .user-cell (components/user-cell.css). */
+
+  /* «Возможно, вы знакомы» — компонент .vvz-portlet (карточки 220px по дефолту) */
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Гости</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- КОНТЕНТ -->
+      <div class="ll-guests">
+
+        <!-- Баннер «Невидимка» -->
+        <div class="ll-nevidimka" role="group" aria-label="Невидимка">
+          <div class="ll-nevidimka__text">
+            <div class="ds-title-s">Невидимка</div>
+            <div class="ds-body-m ll-nevidimka__subtitle">Другие пользователи не увидят, что вы заходили в их профили</div>
+          </div>
+          <label class="ll-switch" aria-label="Включить невидимку">
+            <input type="checkbox">
+            <span class="ll-switch__track"></span>
+          </label>
+        </div>
+
+        <!-- Новые -->
+        <section class="ll-guests__section" aria-label="Новые">
+          <header class="header __size-l"><div class="header__title">Новые</div></header>
+
+          <div class="user-cell">
+            <div class="avatar __size-56 __type-image __has-addon">
+              <img src="https://i.pravatar.cc/112?img=47" alt="">
+              <span class="avatar__addon __pos-bl"><span class="user-cell__online-dot"></span></span>
+            </div>
+            <div class="user-cell__body">
+              <div class="ds-title-s user-cell__title">Алёна Ящук</div>
+              <div class="ds-caption-m user-cell__time">4 минуты назад</div>
+            </div>
+            <div class="user-cell__actions">
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Написать"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/message_24.svg" width="24" height="24" alt=""></span></button></span>
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Просмотренные -->
+        <section class="ll-guests__section" aria-label="Просмотренные">
+          <header class="header __size-l"><div class="header__title">Просмотренные</div></header>
+
+          <div class="user-cell">
+            <div class="avatar __size-56 __type-image __has-addon">
+              <img src="https://i.pravatar.cc/112?img=32" alt="">
+              <span class="avatar__addon __pos-bl"><span class="user-cell__online-dot"></span></span>
+            </div>
+            <div class="user-cell__body">
+              <div class="ds-title-s user-cell__title">Лена Каткина</div>
+              <div class="ds-caption-m user-cell__time">час назад</div>
+            </div>
+            <div class="user-cell__actions">
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Написать"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/message_24.svg" width="24" height="24" alt=""></span></button></span>
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
+            </div>
+          </div>
+
+          <div class="user-cell">
+            <div class="avatar __size-56 __type-image">
+              <img src="https://i.pravatar.cc/112?img=12" alt="">
+            </div>
+            <div class="user-cell__body">
+              <div class="ds-title-s user-cell__title">Александр Фёдоров</div>
+              <div class="ds-caption-m user-cell__time">вчера</div>
+            </div>
+            <div class="user-cell__actions">
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Написать"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/message_24.svg" width="24" height="24" alt=""></span></button></span>
+              <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Возможно вы знакомы — DS vvz-card.__default (horizontal row, dismissible) -->
+        <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
+          <header class="vvz-portlet__header">
+            <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
+            <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
+          </header>
+
+          <div class="vvz-portlet__row">
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=15')"></div>
+                <img src="https://i.pravatar.cc/240?img=15" alt="">
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+              </div>
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Ажар Сарбасова</div>
+                <div class="vvz-card__subtitle ds-caption-m">3 общих друга</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=68')"></div>
+                <img src="https://i.pravatar.cc/240?img=68" alt="">
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+              </div>
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Александр Кирюшкин</div>
+                <div class="vvz-card__subtitle ds-caption-m">3 общих друга</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
+                <img src="https://i.pravatar.cc/240?img=52" alt="">
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+              </div>
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Мария Иванова</div>
+                <div class="vvz-card__subtitle ds-caption-m">7 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
+                <img src="https://i.pravatar.cc/240?img=33" alt="">
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+              </div>
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
+                <div class="vvz-card__subtitle ds-caption-m">2 общих друга</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Финальная карточка стека: «Найдите ещё больше друзей» -->
+            <div class="vvz-card __help">
+              <div class="vvz-card__help-top">
+                <div class="vvz-card__help-icon"><img class="ll-icon" src="assets/icons/smile_24.svg" width="24" height="24" alt=""></div>
+                <div class="vvz-card__help-text">
+                  <div class="vvz-card__help-title ds-title-s">Найдите ещё больше друзей</div>
+                  <div class="vvz-card__help-subtitle ds-caption-m">Вы можете найти ещё больше друзей или одноклассников</div>
+                </div>
+              </div>
+              <div class="vvz-card__help-links">
+                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по контактам</button>
+                <button type="button" class="vvz-card__help-link ds-caption-m">Поиск по школам</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TABBAR -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DS компонент скрытия vvz-card (X на фото) -->
+  <script src="components/dismissible.js"></script>
+  <!-- Навигация по таббару -->
+  <script src="components/tab-bar.js"></script>
+
+  <!-- Делегированный переход по data-href (кнопка «Ещё» → vvz.html) -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('button[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
+  </script>
+</body>
+</html>

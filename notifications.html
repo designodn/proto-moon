@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оповещения — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  /* fullscreen-оболочка + скролл-фид + .ll-tabbar + .ll-icon → components/app-shell.css.
+     Здесь только фон страницы (secondary). */
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+
+  /* Шапка — DS-компонент meshok-up (sticky + secondary-фон + скругление снизу) */
+
+  /* Вкладки-фильтр (DS TabsView base) */
+  .ll-notifs-tabs {
+    --tabs-view-padding-left: var(--space-4);
+    --tabs-view-padding-right: var(--space-4);
+    --tabs-view-padding-top: var(--space-1);
+    /* нижний паддинг даёт .tabs-row.__scroll — чтобы линия активного таба
+       и разделитель совпали по вертикали */
+  }
+
+  /* Список оповещений — плоские ряды; гэп между ячейками = cell-view-vertical,
+     паддинги: верх 16, бока 16, низ 32 */
+  .ll-notifs-list {
+    display: flex; flex-direction: column;
+    gap: var(--dynamic-cell-view-vertical-default);
+    padding: var(--space-4) var(--space-4) var(--space-8);
+  }
+
+  /* .ll-tabbar → components/app-shell.css */
+
+  .gift-trigger { cursor: pointer; }
+  .gift-trigger:active .notification-cell__title { opacity: 0.6; }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen">
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Оповещения</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Настройки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/settings_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКИ (DS Tab, base) — фильтр оповещений -->
+      <div class="tabs-view __with-divider ll-notifs-tabs">
+        <div class="tabs-row __scroll" id="notifsTabs">
+          <button class="tab-wrapper __view-base __selected" role="tab" aria-selected="true" data-filter="all">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Все</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false" data-filter="friends">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Дружбы</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false" data-filter="gifts">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Подарки</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false" data-filter="groups">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Группы</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false" data-filter="games">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Игры</span></span></span></span>
+            <span class="line"></span>
+          </button>
+          <button class="tab-wrapper __view-base" role="tab" aria-selected="false" data-filter="other">
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label">Разное</span></span></span></span>
+            <span class="line"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- список оповещений -->
+      <div class="ll-notifs-list" id="notifsList">
+
+        <!-- 0. Триггер: подарили 3 подарка → открывает экран gifts.html -->
+        <div class="notification-cell gift-trigger" data-cat="gifts" data-href="gifts.html" role="button" tabindex="0">
+          <div class="avatars-view __size-56">
+            <div class="avatars-view__stack">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=47" alt=""></div>
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+            </div>
+          </div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title"><b>Виктория, Мария и Дмитрий</b> подарили вам 3 подарка 🎁</div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 13:02</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-primary" data-href="gifts.html"><span class="button-content">Принять все</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Рекомендуемый друг -->
+        <div class="notification-cell" data-cat="friends">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title">Новый рекомендуемый друг: <b>Анна Первомайская</b></div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 12:34</div>
+            <div class="notification-cell__mutuals">
+              <div class="avatars-view __size-24">
+                <div class="avatars-view__stack">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+                </div>
+              </div>
+              <span class="ds-caption-m">4 общих друга</span>
+            </div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Дружить</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Скрыть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Подарок -->
+        <div class="notification-cell" data-cat="gifts">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LTuMnskCqIRVVNmbIRQm0SyOPKRB5xqO1dDrESkvimyYk1_3Bg6yWFnHdTR3FZ6H0cpIr5ieLa6VEDiSnjOEc3ciYl1SSXw8J7D33_QccAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title"><b>Мария Маяковская</b> подарила вам подарок 🎁</div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 11:20</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Подарить в ответ</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Класс -->
+        <div class="notification-cell" data-cat="other">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title"><b>Александр Борщицкий</b> и ещё 8 человек оценили ваше фото</div>
+            <div class="ds-caption-m notification-cell__time">вчера в 19:05</div>
+          </div>
+        </div>
+
+        <!-- 4. Открытка -->
+        <div class="notification-cell" data-cat="gifts">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title"><b>Евгения Молчанова</b> отправила вам открытку «С добром!»</div>
+            <div class="ds-caption-m notification-cell__time">вчера</div>
+          </div>
+        </div>
+
+        <!-- 5. Подарок -->
+        <div class="notification-cell" data-cat="gifts">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KlPJb2p-6eK2lnJ5zICRbTaNaonSN6tKv9jm9OP4liccV1Jgpm_D-XHaUnT4NuMNnP3vDReRbjjmJ7dZqat-wXAZKU9tVWLrcf8vhMiW0AAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title"><b>Альберт Фёдоров</b> хочет подарить вам подарок</div>
+            <div class="ds-caption-m notification-cell__time">2 дня назад</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Принять</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Группа -->
+        <div class="notification-cell" data-cat="groups">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title">В группе <b>«6 соток»</b> новая запись: «Готовим грядки к зиме»</div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 09:15</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Открыть</span></button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Игра -->
+        <div class="notification-cell" data-cat="games">
+          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+          <div class="notification-cell__body">
+            <div class="ds-body-m notification-cell__title">В игре <b>«Зоомир»</b> вас ждёт ежедневный подарок 🎁</div>
+            <div class="ds-caption-m notification-cell__time">вчера в 20:40</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Забрать</span></button></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TABBAR -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- переключение вкладок + анимация линии -->
+  <script src="components/tab.js"></script>
+  <!-- каунтеры табов = реальное число ячеек в разделе (0 → каунтер не показываем) -->
+  <script>
+    (function () {
+      var row = document.getElementById('notifsTabs');
+      var list = document.getElementById('notifsList');
+      if (!row || !list) return;
+      var cells = list.querySelectorAll('.notification-cell');
+      Array.prototype.forEach.call(row.querySelectorAll('.tab-wrapper'), function (tab) {
+        var f = tab.getAttribute('data-filter');
+        var count = 0;
+        Array.prototype.forEach.call(cells, function (c) {
+          if (f === 'all' || c.getAttribute('data-cat') === f) count++;
+        });
+        var content = tab.querySelector('.content');
+        var counter = content && content.querySelector('.counter-inline');
+        if (count > 0) {
+          if (!counter) {
+            counter = document.createElement('span');
+            counter.className = 'counter-inline';
+            content.appendChild(counter);
+          }
+          counter.textContent = count;
+        } else if (counter) {
+          counter.remove();
+        }
+      });
+    })();
+  </script>
+  <!-- фильтрация списка по выбранной вкладке -->
+  <script>
+    (function () {
+      var row = document.getElementById('notifsTabs');
+      var list = document.getElementById('notifsList');
+      if (!row || !list) return;
+      row.addEventListener('click', function (e) {
+        var tab = e.target.closest && e.target.closest('.tab-wrapper');
+        if (!tab) return;
+        var f = tab.getAttribute('data-filter');
+        Array.prototype.forEach.call(list.querySelectorAll('.notification-cell'), function (n) {
+          var cat = n.getAttribute('data-cat');
+          n.style.display = (f === 'all' || cat === f) ? '' : 'none';
+        });
+      });
+    })();
+  </script>
+  <!-- навигация по таббару (feed → лента, message → сообщения) -->
+  <script src="components/tab-bar.js"></script>
+
+  <!-- Триггер: клик по ячейке / клавиатура → переход на gifts.html -->
+  <script>
+    (function () {
+      document.querySelectorAll('.gift-trigger').forEach(function (cell) {
+        var href = cell.getAttribute('data-href');
+        if (!href) return;
+        cell.addEventListener('click', function (e) {
+          // Кнопки внутри ячейки сами уведут (data-href), не дублируем.
+          if (e.target.closest('button')) return;
+          location.href = href;
+        });
+        cell.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = href; }
+        });
+      });
+      // Делегированный обработчик для всех data-href на кнопках.
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('button[data-href]');
+        if (!btn) return;
+        e.preventDefault();
+        location.href = btn.getAttribute('data-href');
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -499,6 +499,46 @@
   </section>
 
   <section class="preview-section">
+    <h2>InAppPush — notificationToast 1.0</h2>
+    <div class="preview-label">Пуш <b>внутри приложения</b> (не системная шторка): DS-баннер, который прилетает поверх контента — например, «новое сообщение». Источник — Figma <code>notificationToast 1.0</code>. Карточка: surface/quaternary, тень elevate-3, радиус 16, аватар 56, типографика <code>ds-title-s</code> / <code>ds-body-m</code>.</div>
+
+    <div class="preview-label" style="margin-top: 12px;"><code>__type-user</code> — аватар + имя + текст (2 строки)</div>
+    <div class="preview-stage" style="background: var(--dynamic-surface-base-tertiary);">
+      <div class="inapp-push __type-user" style="position: relative; max-width: 360px;">
+        <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/240?img=45" alt=""></div>
+        <div class="inapp-push__main">
+          <div class="inapp-push__title ds-title-s">Мария Чай</div>
+          <div class="inapp-push__body ds-body-m">Петровна, а ты уже видела скидки на удобрения? Нужно срочно бежать покупать на следующий год</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-label" style="margin-top: 12px;"><code>__type-ok</code> — иконка в круге + заголовок</div>
+    <div class="preview-stage" style="background: var(--dynamic-surface-base-tertiary);">
+      <div class="inapp-push __type-ok" style="position: relative; max-width: 360px;">
+        <div class="inapp-push__avaicon"><img src="assets/icons/web_24.svg" alt=""></div>
+        <div class="inapp-push__main">
+          <div class="inapp-push__title ds-title-s">Посмотрите еще больше публикаций о политике</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th colspan="2">Что умеет</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>контекст</td><td>баннер поверх контента в приложении (новое сообщение, апдейт ленты)</td></tr>
+        <tr><td>типы</td><td><code>.__type-user</code> (аватар + имя + текст) · <code>.__type-ok</code> (иконка-круг + заголовок)</td></tr>
+        <tr><td>карточка</td><td>bg <code>--dynamic-surface-base-quaternary</code>, тень elevate-3 (<code>0 8px 24px -8px rgba(0,0,0,.12)</code>), радиус 16, паддинг 12×16, gap 12</td></tr>
+        <tr><td>текст</td><td>заголовок <code>.ds-title-s</code> (primary), превью <code>.ds-body-m</code> (secondary, 2 строки)</td></tr>
+        <tr><td>поведение</td><td>прилёт сверху → колода (max 3) → свайп-вверх дисмисс, тап ведёт по <code>href</code>, авто-гашение</td></tr>
+        <tr><td>JS</td><td><code>OkInApp.start/stop/fire/fireNext/setItems</code> (<code>components/inapp-push.js</code>); живой пример — <code>messages.html</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="preview-section">
     <h2>Tag — primary</h2>
     <div class="preview-label">Pill-плашка для категорий, статусов, времени. Источник — Figma <code>primary ◇ tag 1.2</code>.</div>
 
@@ -970,7 +1010,7 @@
       </thead>
       <tbody>
         <tr><td><code>.__platform-ios</code></td><td>iOS-композиция: 5 слотов</td></tr>
-        <tr><td><code>.__platform-android</code></td><td>Android-композиция: 7 слотов (добавлен discussion)</td></tr>
+        <tr><td><code>.__platform-android</code></td><td>Android-композиция: 6 слотов (добавлен discussion)</td></tr>
         <tr><td><code>.tabbar__row</code></td><td>flex-ряд с равными ячейками (<code>flex: 1 1 0</code>)</td></tr>
         <tr><td><code>.tabbar__handle</code></td><td>нижняя зона под home-indicator (24px)</td></tr>
         <tr><td><code>.tabbar-icon</code></td><td>иконка-кнопка 24px (mask) в ячейке высотой 48px</td></tr>

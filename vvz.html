@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Найдите друзей — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+
+  /* Шапка: компактный nav-bar с centered title — фон prosвечивает */
+  .vk-tinder-nav .nav-bar__title {
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+
+  /* ============================================================
+     Сцена «дека карточек» — занимает всё пространство между шапкой
+     и нижней панелью кнопок.
+     ============================================================ */
+  .vk-tinder-deck {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    min-height: 0;
+  }
+
+  /* Слот-стек: 328×464, флекс-центрируется в deck. Внутри 3 карточки
+     лежат друг на друге через position: absolute → inset: 0. */
+  .vk-tinder-stack {
+    position: relative;
+    width: 328px;
+    height: 464px;
+    flex-shrink: 0;
+  }
+
+  /* Карточка-кандидат — DS uni-card по духу, но композиция уникальная
+     (фото + центрированный текст + аватары + большая мягкая тень). */
+  .vk-tinder-card {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    background: var(--dynamic-surface-base-quaternary, #fff);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    will-change: transform, opacity;
+    /* при дёрге убираем переход — JS управляет напрямую */
+    transition:
+      transform 320ms cubic-bezier(0.2, 0, 0, 1),
+      opacity   320ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .vk-tinder-card.__dragging { transition: none; }
+
+  .vk-tinder-card__photo {
+    position: relative;
+    width: 296px;
+    height: 296px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .vk-tinder-card__photo > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Подсветка-стикер «Дружить / Пропустить» при свайпе */
+  .vk-tinder-card__stamp {
+    position: absolute;
+    top: 16px;
+    padding: 6px 12px;
+    border: 3px solid currentColor;
+    border-radius: 8px;
+    font: 700 18px/1 var(--font-family);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transform: rotate(-12deg);
+    pointer-events: none;
+  }
+  .vk-tinder-card__stamp.__like  { right: 16px; color: var(--static-surface-status-accent, #f50); transform: rotate(-12deg); }
+  .vk-tinder-card__stamp.__nope  { left: 16px;  color: var(--dynamic-text-and-icons-base-primary); transform: rotate(12deg); }
+
+  .vk-tinder-card__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .vk-tinder-card__name {
+    color: var(--dynamic-text-and-icons-base-primary);
+    text-align: center;
+    font-weight: 500;
+  }
+  .vk-tinder-card__meta {
+    color: var(--dynamic-text-and-icons-base-secondary);
+    text-align: center;
+  }
+
+  /* «18 общих друзей» + строка отдельных аватарок 28px, gap 8 */
+  .vk-tinder-card__friends {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .vk-tinder-card__friends-label {
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+  .vk-tinder-card__friends-list {
+    display: flex;
+    gap: 8px;
+  }
+  .vk-tinder-card .avatar { --avatar-size: 28px; }
+
+  /* Финальная карточка-подсказка «Найдите ещё больше друзей»
+     (Figma 2453:3653). Та же подложка стэка, но без фото и стампов:
+     иконка-смайл в круге + центрированные тексты + 2 ссылки-строки. */
+  .vk-tinder-card.__help {
+    background: var(--dynamic-surface-base-tertiary, #f7f4f2);
+    padding: 12px;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+  }
+  .vk-tinder-card__help-top {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 16px; width: 100%;
+  }
+  .vk-tinder-card__help-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--dynamic-surface-contrast-low);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .vk-tinder-card__help-text {
+    display: flex; flex-direction: column; gap: 2px; width: 100%;
+  }
+  .vk-tinder-card__help-title    { color: var(--dynamic-text-and-icons-base-primary); text-align: center; }
+  .vk-tinder-card__help-subtitle { color: var(--dynamic-text-and-icons-base-secondary); text-align: center; }
+  .vk-tinder-card__help-links {
+    display: flex; flex-direction: column; gap: 16px; width: 100%;
+  }
+  .vk-tinder-card__help-link {
+    color: var(--dynamic-text-and-icons-base-secondary);
+    text-align: center;
+    background: none; border: 0; padding: 0;
+    font-family: inherit; cursor: pointer;
+  }
+
+  /* ============================================================
+     Нижняя панель — два круглых button-circle (72px)
+     ============================================================ */
+  .vk-tinder-actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 40px;
+  }
+  /* Системный home-indicator (iOS-стиль): 4×108 пилюля по центру 24-px полосы. */
+  .vk-tinder-handle {
+    flex-shrink: 0;
+    position: relative;
+    height: 24px;
+  }
+  .vk-tinder-handle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    width: 108px;
+    height: 4px;
+    border-radius: 12px;
+    background: var(--dynamic-surface-base-inverse-primary, #2e2f33);
+  }
+  .vk-tinder-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 72px;
+  }
+  .vk-tinder-action__label {
+    color: var(--dynamic-text-and-icons-base-primary);
+    text-align: center;
+  }
+
+  /* Состояние «пусто» — когда карточки закончились */
+  .vk-tinder-empty {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px;
+    text-align: center;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+  .vk-tinder-stack.__empty .vk-tinder-empty { display: flex; }
+  .vk-tinder-empty__title {
+    color: var(--dynamic-text-and-icons-base-primary);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar vk-tinder-nav">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary">
+              <button class="button-inline __size-24 nav-bar__back" aria-label="Закрыть">
+                <span class="button-inline__content">
+                  <img class="ll-icon button-inline__icon" src="assets/icons/close_24.svg" width="24" height="24" alt="">
+                </span>
+              </button>
+            </span>
+          </div>
+          <div class="nav-bar__title ds-title-l">Найдите друзей</div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary">
+              <button class="button-inline __size-24" aria-label="Помощь">
+                <span class="button-inline__content">
+                  <img class="ll-icon button-inline__icon" src="assets/icons/help_circle_24.svg" width="24" height="24" alt="">
+                </span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ДЕКА КАРТОЧЕК — flex-центрирует .vk-tinder-stack по горизонтали и вертикали -->
+      <div class="vk-tinder-deck">
+        <div class="vk-tinder-stack" id="vk-tinder-deck">
+          <!-- Карточки рендерятся скриптом ниже из data[] -->
+
+          <div class="vk-tinder-empty">
+            <div class="vk-tinder-empty__title ds-title-m">Друзей пока больше нет</div>
+            <div class="ds-body-m">Загляните позже — мы найдём ещё людей, с которыми у вас много общего.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- КНОПКИ ДЕЙСТВИЙ — DS button-circle __size-72 -->
+      <div class="vk-tinder-actions">
+        <div class="vk-tinder-action">
+          <span class="button-circle-wrapper __size-72 __style-secondary">
+            <button class="button-circle" id="vk-tinder-skip" aria-label="Пропустить">
+              <span class="icon __size-32 __slot-close"></span>
+            </button>
+          </span>
+          <span class="vk-tinder-action__label ds-caption-m">Пропустить</span>
+        </div>
+        <div class="vk-tinder-action">
+          <span class="button-circle-wrapper __size-72 __style-primary">
+            <button class="button-circle" id="vk-tinder-like" aria-label="Дружить">
+              <span class="icon __size-32 __slot-done"></span>
+            </button>
+          </span>
+          <span class="vk-tinder-action__label ds-caption-m">Дружить</span>
+        </div>
+      </div>
+
+      <!-- Home indicator -->
+      <div class="vk-tinder-handle" aria-hidden="true"></div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  // Кандидаты — i.pravatar отдаёт стабильные портреты по img-id.
+  // 32-я аватарка из стека «общих друзей» подбирается из соседних,
+  // чтобы у каждой карточки была своя тройка.
+  var people = [
+    { name: 'Карина Затонская',  meta: '28 лет, Рига, Латвия',         photo: 49, mutual: 18, friends: [12, 31, 5] },
+    { name: 'Анна Смирнова',     meta: '24 года, Москва, Россия',      photo: 47, mutual: 12, friends: [15, 33, 23] },
+    { name: 'Мария Иванова',     meta: '31 год, Санкт-Петербург',       photo: 45, mutual: 10, friends: [14, 22, 18] },
+    { name: 'Алёна Ящук',        meta: '26 лет, Минск, Беларусь',      photo: 44, mutual: 20, friends: [7, 11, 27] },
+    { name: 'Светлана Орлова',   meta: '29 лет, Алматы, Казахстан',     photo: 32, mutual: 6,  friends: [21, 34, 36] },
+    /* Финальная карточка-подсказка (Figma 2453:3653) — закрывает стек.
+       Свайп/тап по кнопкам уведёт стек в empty-state. */
+    { type: 'help',
+      title:    'Найдите еще больше друзей',
+      subtitle: 'Вы можете найти еще больше друзей или одноклассников',
+      links:    ['Поиск по контактам', 'Поиск по школам'] }
+  ];
+
+  var deck = document.getElementById('vk-tinder-deck');
+  var btnSkip = document.getElementById('vk-tinder-skip');
+  var btnLike = document.getElementById('vk-tinder-like');
+
+  // Рендерим только верхние 3 карточки в DOM — нижние ждут очереди.
+  // i = 0 — верхняя, i = 1 — за ней, i = 2 — самая глубокая.
+  var STACK = 3;
+  var idx = 0;
+
+  function render() {
+    // Уберём старые карточки (но не .vk-tinder-empty).
+    Array.prototype.slice.call(deck.querySelectorAll('.vk-tinder-card')).forEach(function (n) { n.remove(); });
+
+    var live = people.slice(idx, idx + STACK);
+    if (!live.length) {
+      deck.classList.add('__empty');
+      btnSkip.disabled = true;
+      btnLike.disabled = true;
+      btnSkip.closest('.button-circle-wrapper').classList.add('__state-disabled');
+      btnLike.closest('.button-circle-wrapper').classList.add('__state-disabled');
+      return;
+    }
+    // Рендерим в обратном порядке, чтобы верхняя оказалась последним
+    // дочерним элементом (выше по z-order без явных z-index'ов).
+    for (var i = live.length - 1; i >= 0; i--) {
+      deck.appendChild(buildCard(live[i], i));
+    }
+  }
+
+  function buildCard(p, depth) {
+    var card = document.createElement('div');
+    card.className = 'vk-tinder-card';
+    // depth 0 — верхняя; 1, 2 — отъезд назад по Y и масштабу.
+    setDepth(card, depth);
+
+    if (p.type === 'help') {
+      card.classList.add('__help');
+      card.innerHTML =
+        '<div class="vk-tinder-card__help-top">' +
+          '<div class="vk-tinder-card__help-icon">' +
+            '<img class="ll-icon" src="assets/icons/smile_24.svg" width="24" height="24" alt="">' +
+          '</div>' +
+          '<div class="vk-tinder-card__help-text">' +
+            '<div class="vk-tinder-card__help-title ds-title-s">' + p.title + '</div>' +
+            '<div class="vk-tinder-card__help-subtitle ds-caption-m">' + p.subtitle + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="vk-tinder-card__help-links">' +
+          p.links.map(function (l) {
+            return '<button type="button" class="vk-tinder-card__help-link ds-caption-m">' + l + '</button>';
+          }).join('') +
+        '</div>';
+      /* drag не подключаем — у help-card нет like/nope стампов;
+         кнопки skip/like снизу всё равно дёрнут fly() для верхней карточки. */
+      return card;
+    }
+
+    var avatars = p.friends.map(function (id) {
+      return '<div class="avatar __type-image"><img src="https://i.pravatar.cc/56?img=' + id + '" alt=""></div>';
+    }).join('');
+
+    card.innerHTML =
+      '<div class="vk-tinder-card__photo">' +
+        '<img src="https://i.pravatar.cc/600?img=' + p.photo + '" alt="">' +
+        '<div class="vk-tinder-card__stamp __like">Дружить</div>' +
+        '<div class="vk-tinder-card__stamp __nope">Пропустить</div>' +
+      '</div>' +
+      '<div class="vk-tinder-card__info">' +
+        '<div class="vk-tinder-card__name ds-display-m">' + p.name + '</div>' +
+        '<div class="vk-tinder-card__meta ds-caption-m">' + p.meta + '</div>' +
+        '<div class="vk-tinder-card__friends">' +
+          '<div class="vk-tinder-card__friends-label ds-caption-m">' + p.mutual + ' общих друзей</div>' +
+          '<div class="vk-tinder-card__friends-list">' + avatars + '</div>' +
+        '</div>' +
+      '</div>';
+
+    if (depth === 0) attachDrag(card);
+    return card;
+  }
+
+  function setDepth(card, depth) {
+    // depth 0: на месте; 1: -12px Y и 0.96 scale; 2: -24px Y и 0.92.
+    var ty = -depth * 12;
+    var s  = 1 - depth * 0.04;
+    card.style.transform = 'translate(0px,' + ty + 'px) rotate(0deg) scale(' + s + ')';
+    card.style.opacity = depth === 0 ? '1' : (1 - depth * 0.15).toFixed(2);
+    card.style.zIndex = String(STACK - depth);
+  }
+
+  // Анимированный «вылет» верхней карточки в сторону.
+  function fly(direction) {
+    var top = deck.querySelector('.vk-tinder-card');
+    if (!top) return;
+    var dx = direction === 'like' ? 480 : -480;
+    var rot = direction === 'like' ? 18 : -18;
+    top.style.transform = 'translate(' + dx + 'px,-40px) rotate(' + rot + 'deg)';
+    top.style.opacity = '0';
+    // Подтягиваем оставшиеся карточки вперёд.
+    var rest = Array.prototype.slice.call(deck.querySelectorAll('.vk-tinder-card')).slice(1);
+    rest.forEach(function (c, i) { setDepth(c, i); });
+    // Через transition-конец — перерисовываем стек целиком.
+    setTimeout(function () {
+      idx++;
+      render();
+    }, 320);
+  }
+
+  btnSkip.addEventListener('click', function () { fly('skip'); });
+  btnLike.addEventListener('click', function () { fly('like'); });
+
+  // ============================================================
+  // Drag-свайп верхней карточки — porting от Tinder-pattern'а.
+  // ============================================================
+  function attachDrag(card) {
+    var startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
+    var likeStamp = card.querySelector('.__like');
+    var nopeStamp = card.querySelector('.__nope');
+
+    function onDown(e) {
+      // Не дёргаем drag из тапа по кнопкам в карточке — у нас их нет,
+      // но на всякий случай игнорим вторичные пальцы.
+      if (e.touches && e.touches.length > 1) return;
+      dragging = true;
+      var p = pointFromEvent(e);
+      startX = p.x; startY = p.y; dx = 0; dy = 0;
+      card.classList.add('__dragging');
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      var p = pointFromEvent(e);
+      dx = p.x - startX;
+      dy = p.y - startY;
+      var rot = dx / 16;
+      card.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
+      // Прозрачность стампов в зависимости от направления и силы.
+      var t = Math.min(1, Math.abs(dx) / 120);
+      likeStamp.style.opacity = dx > 0 ? t.toFixed(2) : '0';
+      nopeStamp.style.opacity = dx < 0 ? t.toFixed(2) : '0';
+    }
+
+    function onUp() {
+      if (!dragging) return;
+      dragging = false;
+      card.classList.remove('__dragging');
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+
+      if (dx > 120) { fly('like'); return; }
+      if (dx < -120) { fly('skip'); return; }
+      // Возвращаемся на место.
+      card.style.transform = 'translate(0,0) rotate(0)';
+      likeStamp.style.opacity = '0';
+      nopeStamp.style.opacity = '0';
+    }
+
+    function pointFromEvent(e) {
+      if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    card.addEventListener('pointerdown', onDown);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

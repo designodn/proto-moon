@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новые друзья — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+
+  .fp-scene {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--dynamic-surface-base-secondary);
+    touch-action: pan-y;
+  }
+
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+
+  .fp-scene .meshok-up { position: absolute; left: 0; right: 0; top: 0; z-index: 5; }
+
+  /* Крестик закрытия — у правого края viewport */
+  .fp__close {
+    position: absolute;
+    top: 67px;
+    right: 13px;
+    width: 44px; height: 44px;
+    border: 0; padding: 0; background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .fp__close .icon { width: 24px; height: 24px; }
+
+  /* Заголовок — по центру по горизонтали через 50% + translateX(-50%). */
+  .fp__title {
+    position: absolute;
+    left: 50%;
+    width: 312px;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 32px; line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    margin: 0;
+    top: 96px;
+    transition: opacity 280ms ease-out;
+  }
+  /* Положение заголовка по стейтам задаётся из JS (STATES[i].title). */
+
+  /* Карточка — DS-компонент .friend-big-card 300×460. Позиция/размер/угол
+     задаются исключительно через transform (JS-спринг). */
+  .fp .friend-big-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: 0; /* левый край карточки прижат к центру viewport */
+  }
+
+  /* z-index в кружковых стейтах (кучка): мелкие кружки (больший data-i) сверху. */
+  .fp .friend-big-card[data-i="1"] { z-index: 1; }
+  .fp .friend-big-card[data-i="2"] { z-index: 2; }
+  .fp .friend-big-card[data-i="3"] { z-index: 3; }
+  .fp .friend-big-card[data-i="4"] { z-index: 4; }
+  .fp .friend-big-card[data-i="5"] { z-index: 5; }
+  .fp .friend-big-card[data-i="6"] { z-index: 6; }
+  .fp .friend-big-card[data-i="7"] { z-index: 7; }
+
+  /* В стейтах 3+ (карточки в ряд) z-index одинаковый; улетающая — поверх. */
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card { z-index: 2; }
+  .fp .friend-big-card.__flying-up { z-index: 8; }
+
+  /* ── КРУЖОЧНЫЙ ВИЗУАЛ ─────────────────────────────────────────
+     В кружковых стейтах элементы выглядят как круглые аватарки: фото-квадрат
+     скруглён в круг и центрирован по высоте бокса (margin-top 80 = (460-300)/2),
+     карточная обвязка (фон, обводка, тень, инфо) скрыта.
+       __state-1 — кучка, __state-2 — разлёт, __state-5 — выход (падение вниз).
+     В ряду (__state-3/4) всё это плавно проявляется → полноценная карточка;
+     при «Дружить со всеми» (возврат в стейт 2 → падение) карточки так же
+     плавно сворачиваются обратно в кружки. Морф задаётся transition'ами в
+     friend-big-card.css. На первом рендере класс __state-1 уже стоит в разметке,
+     поэтому стартовый переход карточка→кружок НЕ проигрывается. */
+  .fp.__state-1 .friend-big-card,
+  .fp.__state-2 .friend-big-card,
+  .fp.__state-5 .friend-big-card,
+  .fp.__state-6 .friend-big-card {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .fp.__state-1 .friend-big-card .friend-big-card__photo,
+  .fp.__state-2 .friend-big-card .friend-big-card__photo,
+  .fp.__state-5 .friend-big-card .friend-big-card__photo,
+  .fp.__state-6 .friend-big-card .friend-big-card__photo {
+    margin-top: 80px;
+    border-radius: 50%;
+  }
+  .fp.__state-1 .friend-big-card .friend-big-card__info,
+  .fp.__state-2 .friend-big-card .friend-big-card__info,
+  .fp.__state-5 .friend-big-card .friend-big-card__info,
+  .fp.__state-6 .friend-big-card .friend-big-card__info {
+    opacity: 0;
+  }
+
+  /* Логика высоты как в gift-card: фото ФИКСИРОВАННОЙ высоты (300×300 квадрат),
+     а карточка в ряду РАСТЁТ ВНИЗ (height:auto; позиционируется по верху через
+     transform ty), освобождая место под инфо/кнопку — фото НЕ сжимается.
+     В кружковых стейтах фото 300×300 центрируется (margin-top 80) в боксе 460. */
+  .friend-big-card__photo { transition: margin-top 600ms ease, border-radius 600ms ease; }
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card { height: auto; }
+
+  /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0).
+     Появляется в ряду после первого свайпа (флаг __buttons-shown) и больше НЕ
+     исчезает — в т.ч. при доскролле обратно в начало (матчим подарки). При
+     раскрытии карточка подрастает вниз, фото остаётся на месте. */
+  .friend-big-card__accept {
+    opacity: 0; pointer-events: none;
+    max-height: 0; padding: 0 16px; overflow: hidden;
+    transition: max-height 360ms ease, padding 360ms ease, opacity 320ms ease;
+  }
+  .fp.__buttons-shown.__state-3 .friend-big-card__accept,
+  .fp.__buttons-shown.__state-4 .friend-big-card__accept {
+    opacity: 1; pointer-events: auto;
+    max-height: 100px; padding: 12px 16px 16px;
+  }
+
+  /* Нижний CTA */
+  .fp__bottom {
+    position: absolute; left: 0; right: 0; bottom: 24px;
+    padding: 0 16px;
+    display: flex;
+    z-index: 5;
+  }
+  .fp__bottom .button-wrapper { width: 100%; }
+  .fp__bottom .button-container { width: 100%; }
+
+  .fp__handle {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 24px;
+  }
+  .fp__handle::after {
+    content: '';
+    position: absolute; bottom: 8px; left: 50%;
+    width: 134px; height: 5px; border-radius: 3px;
+    background: var(--dynamic-text-and-icons-base-primary);
+    transform: translateX(-50%);
+    opacity: .9;
+  }
+
+  /* Lottie-конфетти на финал «Дружить со всеми». */
+  .fp-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .fp-confetti svg { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fp__title { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="fp-scene" id="fpScene">
+
+  <div class="meshok-up">
+    <div class="status-bar">
+      <span class="status-bar__time">9:41</span>
+      <span class="status-bar__indicators">
+        <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+        <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+        <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+      </span>
+    </div>
+  </div>
+
+  <button class="fp__close nav-bar__back" data-href="lenta-q3.html" aria-label="Закрыть">
+    <span class="icon __slot-close"></span>
+  </button>
+
+  <main class="fp __state-1" id="fp">
+    <h1 class="fp__title">У вас<br>7 новых друзей</h1>
+
+    <!-- 7 карточек-друзей. В кружковых стейтах рендерятся как круглые аватарки
+         (CSS), в ряду — как полноценные карточки с кнопкой «Дружить». -->
+    <article class="friend-big-card" data-i="1">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=49" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Ольга Вайнер</div>
+        <div class="friend-big-card__caption">58 лет, Москва</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=11" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=12" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=13" alt=""></div>
+          </div>
+          <span class="avatars-view__text">18 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="2">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=15" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Александр Соколов</div>
+        <div class="friend-big-card__caption">42 года, Санкт-Петербург</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=21" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=22" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=23" alt=""></div>
+          </div>
+          <span class="avatars-view__text">12 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="3">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=33" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Михаил Фёдоров</div>
+        <div class="friend-big-card__caption">35 лет, Казань</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=31" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=32" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=34" alt=""></div>
+          </div>
+          <span class="avatars-view__text">7 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="4">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=45" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Екатерина Новикова</div>
+        <div class="friend-big-card__caption">29 лет, Москва</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=41" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=42" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=43" alt=""></div>
+          </div>
+          <span class="avatars-view__text">5 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="5">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=52" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Дмитрий Орлов</div>
+        <div class="friend-big-card__caption">47 лет, Сочи</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=51" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=53" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=54" alt=""></div>
+          </div>
+          <span class="avatars-view__text">9 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="6">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=20" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Анна Кузнецова</div>
+        <div class="friend-big-card__caption">33 года, Пермь</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=5" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=6" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=9" alt=""></div>
+          </div>
+          <span class="avatars-view__text">4 общих друга</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="7">
+      <div class="friend-big-card__photo">
+        <img src="https://i.pravatar.cc/600?img=68" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Сергей Морозов</div>
+        <div class="friend-big-card__caption">51 год, Уфа</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=61" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=62" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=63" alt=""></div>
+          </div>
+          <span class="avatars-view__text">15 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+  </main>
+
+  <div class="fp__bottom">
+    <div class="button-wrapper __size-56">
+      <button class="button-container __style-primary" id="fpAcceptAll">
+        <span class="button-content">Дружить со всеми</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="fp__handle"></div>
+
+  <div class="fp-confetti" id="fpConfetti" aria-hidden="true"></div>
+
+</div>
+
+<script src="components/back-button.js"></script>
+<!-- Lottie-плеер для конфетти на финал «Дружить со всеми». -->
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+<script>
+  (function () {
+    var root  = document.getElementById('fp');
+    var scene = document.getElementById('fpScene');
+    if (!root) return;
+
+    // ── СПРИНГ ──────────────────────────────────────────────────
+    var SPRING = { k: 96, c: 6, m: 1, duration: 2000, delay: 500 };
+
+    function makeSpring(k, c, m) {
+      var w0 = Math.sqrt(k / m);
+      var z  = c / (2 * Math.sqrt(k * m));
+      if (Math.abs(z - 1) < 1e-6) {
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - (1 + w0 * t) * Math.exp(-w0 * t);
+        };
+      }
+      if (z < 1) {
+        var wd = w0 * Math.sqrt(1 - z * z);
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - Math.exp(-z * w0 * t) *
+            (Math.cos(wd * t) + (z * w0 / wd) * Math.sin(wd * t));
+        };
+      }
+      var wd2 = w0 * Math.sqrt(z * z - 1);
+      return function (tMs) {
+        var t = tMs / 1000;
+        return 1 - Math.exp(-z * w0 * t) *
+          (Math.cosh(wd2 * t) + (z * w0 / wd2) * Math.sinh(wd2 * t));
+      };
+    }
+
+    // ── СТЕЙТЫ ──────────────────────────────────────────────────
+    // Конверсия в transform-translate (карточка 300×460):
+    //   tx = cx - 330  (= cx - 180 (центр 360-сетки) - 150 (половина CSS-карточки))
+    //   ty = cy - 230  (половина высоты карточки 460)
+    //   scale = unrotated_w / 300
+    // 7 карточек (data-i 1..7). cx — в 360-сетке (центр=180); cy — центр круга
+    // (фото центрируется в боксе через margin-top:80); s — масштаб (⌀круга/300).
+    var STATES = [
+      // Стейт 1 — КУЧКА: все 7 кружков сбиты в кучу у центра (~190,455).
+      // Аватарки на 0% прозрачности → к стейту 2 (разлёт) проявляются до 100%.
+      { title: 210, cards: {
+          1: { cx: 193.45, cy: 442.35, s: 0.42234, r: 0, o: 0 },
+          2: { cx: 210.85, cy: 466.55, s: 0.48377, r: 0, o: 0 },
+          3: { cx: 169.45, cy: 457.55, s: 0.46317, r: 0, o: 0 },
+          4: { cx: 191.25, cy: 468.25, s: 0.30167, r: 0, o: 0 },
+          5: { cx: 213.90, cy: 448.90, s: 0.24600, r: 0, o: 0 },
+          6: { cx: 191.20, cy: 464.20, s: 0.26800, r: 0, o: 0 },
+          7: { cx: 191.00, cy: 449.00, s: 0.12667, r: 0, o: 0 }
+      }},
+      // Стейт 2 — РАЗЛЁТ: облако кружков С ЗАЗОРАМИ, без наложений, по центру и
+      // в границах экрана (bbox-центр ≈ 180/468). ⌀ слегка уменьшены, чтобы 7
+      // кружков развести без перекрытий в ширину 390.
+      { title: 96, cards: {
+          1: { cx: 229, cy: 333, s: 0.65330, r: 0, o: 1 },  // ⌀196 (крупный, верх-право)
+          2: { cx: 224, cy: 578, s: 0.56000, r: 0, o: 1 },  // ⌀168 (низ-право)
+          3: { cx:  79, cy: 453, s: 0.50000, r: 0, o: 1 },  // ⌀150 (лево)
+          4: { cx:  74, cy: 253, s: 0.28000, r: 0, o: 1 },  // ⌀84  (верх-лево)
+          5: { cx: 324, cy: 458, s: 0.22000, r: 0, o: 1 },  // ⌀66  (право)
+          6: { cx:  74, cy: 603, s: 0.24000, r: 0, o: 1 },  // ⌀72  (низ-лево)
+          7: { cx: 159, cy: 683, s: 0.12000, r: 0, o: 1 }   // ⌀36  (низ-центр)
+      }},
+      // Стейт 3 — в ряд (вход), шаг 316 (300 + gap 16), сдвинут вправо на +109.
+      { title: 96, cards: {
+          1: { cx:  275, cy: 441, s: 1, r: 0, o: 1 },
+          2: { cx:  591, cy: 441, s: 1, r: 0, o: 1 },
+          3: { cx:  907, cy: 441, s: 1, r: 0, o: 1 },
+          4: { cx: 1223, cy: 441, s: 1, r: 0, o: 1 },
+          5: { cx: 1539, cy: 441, s: 1, r: 0, o: 1 },
+          6: { cx: 1855, cy: 441, s: 1, r: 0, o: 1 },
+          7: { cx: 2171, cy: 441, s: 1, r: 0, o: 1 }
+      }},
+      // Стейт 4 — ряд (покой), первая карточка с гаттером 16px (cx 166), шаг 316.
+      { title: 96, cards: {
+          1: { cx:  166, cy: 441, s: 1, r: 0, o: 1 },
+          2: { cx:  482, cy: 441, s: 1, r: 0, o: 1 },
+          3: { cx:  798, cy: 441, s: 1, r: 0, o: 1 },
+          4: { cx: 1114, cy: 441, s: 1, r: 0, o: 1 },
+          5: { cx: 1430, cy: 441, s: 1, r: 0, o: 1 },
+          6: { cx: 1746, cy: 441, s: 1, r: 0, o: 1 },
+          7: { cx: 2062, cy: 441, s: 1, r: 0, o: 1 }
+      }},
+      // Стейт 5 (exit/drop) — НЕБРЕЖНЫЙ комок падает вниз: позиции кучки (стейт 1,
+      // вразнобой cx 169–214) + смещение вниз (cy = кучка + 650), гаснут до o:0
+      // (быстрый фейд — fadeProgress в accept-all). Кружки слегка вразнобой, не в линию.
+      { title: 396, cards: {
+          1: { cx: 193.45, cy: 1092.35, s: 0.42234, r: 0, o: 0 },
+          2: { cx: 210.85, cy: 1116.55, s: 0.48377, r: 0, o: 0 },
+          3: { cx: 169.45, cy: 1107.55, s: 0.46317, r: 0, o: 0 },
+          4: { cx: 191.25, cy: 1118.25, s: 0.30167, r: 0, o: 0 },
+          5: { cx: 213.90, cy: 1098.90, s: 0.24600, r: 0, o: 0 },
+          6: { cx: 191.20, cy: 1114.20, s: 0.26800, r: 0, o: 0 },
+          7: { cx: 191.00, cy: 1099.00, s: 0.12667, r: 0, o: 0 }
+      }},
+      // Стейт 6 (collapse) — кружки СХЛОПЫВАЮТСЯ в НЕБРЕЖНЫЙ комок на месте
+      // (позиции кучки из стейта 1, вразнобой у центра ~455), видимы (o:1).
+      // Промежуточный бит: разлёт (стейт 2) → схлопнулись здесь → упали (стейт 5).
+      { title: 96, cards: {
+          1: { cx: 193.45, cy: 442.35, s: 0.42234, r: 0, o: 1 },
+          2: { cx: 210.85, cy: 466.55, s: 0.48377, r: 0, o: 1 },
+          3: { cx: 169.45, cy: 457.55, s: 0.46317, r: 0, o: 1 },
+          4: { cx: 191.25, cy: 468.25, s: 0.30167, r: 0, o: 1 },
+          5: { cx: 213.90, cy: 448.90, s: 0.24600, r: 0, o: 1 },
+          6: { cx: 191.20, cy: 464.20, s: 0.26800, r: 0, o: 1 },
+          7: { cx: 191.00, cy: 449.00, s: 0.12667, r: 0, o: 1 }
+      }}
+    ];
+    // Порядок слева-направо в ряду = 1..7 (card1 — первая видимая, крупный кружок).
+    var IDX = [1, 2, 3, 4, 5, 6, 7];
+    var SUCCESS_TOP = 396;  // «Вы подружились со всеми» — между навбаром и кнопкой
+
+    var els = {};
+    IDX.forEach(function (i) {
+      els[i] = root.querySelector('.friend-big-card[data-i="' + i + '"]');
+    });
+    var titleEl = root.querySelector('.fp__title');
+
+    // Применить состояние одной карточки. dxPan — горизонтальный сдвиг (от свайпа).
+    function applyCard(el, s, dxPan) {
+      var tx = (s.cx - 330) + (dxPan || 0);
+      var ty = s.cy - 230;
+      el.style.transform =
+        'translate(' + tx.toFixed(3) + 'px, ' + ty.toFixed(3) + 'px) ' +
+        'scale(' + s.s.toFixed(5) + ') ' +
+        'rotate(' + s.r.toFixed(3) + 'deg)';
+      el.style.setProperty('--friend-big-card-scale', s.s.toFixed(5));
+      if (s.o !== undefined) el.style.opacity = s.o.toFixed(3);
+    }
+
+    var current = 0;
+    var animating = false;
+    var panOffset = 0;
+
+    function applyState(idx) {
+      var st = STATES[idx];
+      IDX.forEach(function (i) { applyCard(els[i], st.cards[i], 0); });
+      titleEl.style.top = st.title + 'px';
+    }
+    applyState(0);
+    root.classList.add('__state-1');
+
+    // Предзагружаем lottie-конфетти. Запустим после exit-цепочки.
+    var confettiHost = document.getElementById('fpConfetti');
+    var confettiData = null;
+    fetch('assets/lottie/confetti.json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { confettiData = d; })
+      .catch(function () { /* offline / file missing — silently skip */ });
+    function fireConfetti() {
+      if (!confettiData || !window.lottie || !confettiHost) return;
+      var anim = window.lottie.loadAnimation({
+        container: confettiHost,
+        renderer: 'svg', loop: false, autoplay: true,
+        rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+        animationData: JSON.parse(JSON.stringify(confettiData))
+      });
+      anim.addEventListener('complete', function () {
+        anim.destroy();
+        confettiHost.innerHTML = '';
+      });
+    }
+    // Финальный экран: «Вы подружились со всеми» — по центру между навбаром и
+    // нижней кнопкой (top = SUCCESS_TOP) + конфетти. Через пару секунд шторка
+    // автоматически закрывается (клик по крестику → переход на ленту).
+    function showAllAccepted() {
+      titleEl.innerHTML = 'Вы подружились<br>со всеми';
+      titleEl.style.top = SUCCESS_TOP + 'px';
+      fireConfetti();
+      setTimeout(function () {
+        var closeBtn = document.querySelector('.fp__close');
+        if (closeBtn) closeBtn.click();
+      }, 2200);
+    }
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    // CSS cubic-bezier(x1, y1, x2, y2) реализация: по x находим u через
+    // Ньютона, потом считаем y(u).
+    function makeBezier(x1, y1, x2, y2) {
+      return function (t) {
+        var u = t;
+        for (var i = 0; i < 8; i++) {
+          var omu = 1 - u;
+          var x  = 3 * omu * omu * u * x1 + 3 * omu * u * u * x2 + u * u * u;
+          var dx = 3 * omu * omu * x1 + 6 * omu * u * (x2 - x1) + 3 * u * u * (1 - x2);
+          if (Math.abs(dx) < 1e-6) break;
+          u -= (x - t) / dx;
+          if (u < 0) u = 0; else if (u > 1) u = 1;
+        }
+        var omu2 = 1 - u;
+        return 3 * omu2 * omu2 * u * y1 + 3 * omu2 * u * u * y2 + u * u * u;
+      };
+    }
+    function reducedMotion() {
+      try { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+      catch (_) { return false; }
+    }
+
+    function transitionTo(toIdx, opts) {
+      opts = opts || { mode: 'spring' };
+      if (animating || toIdx === current) return;
+      animating = true;
+      var prevIdx = current;
+      var from    = STATES[prevIdx];
+      var to      = STATES[toIdx];
+      current = toIdx;
+      root.classList.remove('__state-1', '__state-2', '__state-3', '__state-4', '__state-5');
+      root.classList.add('__state-' + (toIdx + 1));
+      // Флаг «дошли до ряда» (хук для тестов/стилей; на визуал не влияет —
+      // кружковый вид задаётся классами __state-1/2/5).
+      if (toIdx >= 2) root.classList.add('__cards-revealed');
+
+      function done() {
+        applyState(toIdx);
+        animating = false;
+        if (toIdx === 3) attachSwipe();
+        if (opts.onDone) opts.onDone();
+      }
+
+      if (reducedMotion()) { done(); return; }
+
+      var dur, progress;
+      if (opts.mode === 'spring') {
+        dur = opts.duration || SPRING.duration;
+        progress = makeSpring(opts.k || SPRING.k, opts.c || SPRING.c, opts.m || SPRING.m);
+      } else if (opts.mode === 'bezier') {
+        dur = opts.duration || 300;
+        var bz = opts.bezier;
+        var ease = makeBezier(bz[0], bz[1], bz[2], bz[3]);
+        progress = function (tMs) { return ease(Math.min(1, tMs / dur)); };
+      } else {
+        dur = opts.duration || 300;
+        progress = function (tMs) { return easeOutCubic(Math.min(1, tMs / dur)); };
+      }
+
+      var t0 = performance.now();
+      (function frame(now) {
+        var elapsed = Math.min(dur, now - t0);
+        var p = progress(elapsed);
+        // Отдельный прогресс для прозрачности (опц.) — чтобы фейд успевал
+        // раньше, чем закончится движение (напр. погасить до кнопки на exit).
+        var op = opts.fadeProgress ? opts.fadeProgress(p) : p;
+        IDX.forEach(function (i) {
+          var fc = from.cards[i], tc = to.cards[i];
+          var fo = fc.o !== undefined ? fc.o : 1;
+          var to_ = tc.o !== undefined ? tc.o : 1;
+          applyCard(els[i], {
+            cx: fc.cx + (tc.cx - fc.cx) * p,
+            cy: fc.cy + (tc.cy - fc.cy) * p,
+            s:  fc.s  + (tc.s  - fc.s)  * p,
+            r:  fc.r  + (tc.r  - fc.r)  * p,
+            o:  fo    + (to_   - fo)    * op
+          }, 0);
+        });
+        titleEl.style.top =
+          (from.title + (to.title - from.title) * p).toFixed(3) + 'px';
+        if (elapsed < dur) requestAnimationFrame(frame);
+        else done();
+      })(performance.now());
+    }
+
+    // ── СВАЙП КАРУСЕЛИ ──────────────────────────────────────────
+    function attachSwipe() {
+      if (scene.dataset.swipeAttached) return;
+      scene.dataset.swipeAttached = '1';
+
+      var rowState = STATES[3].cards;
+      var STEP = rowState[IDX[1]].cx - rowState[IDX[0]].cx;  // 312
+      var firstCx = rowState[IDX[0]].cx;                     // 166 (card1, leftmost)
+      var liveCards = IDX.slice();                           // [1..7], слева-направо
+      var minSnap = -(liveCards.length - 1);
+      var processing = {};
+
+      var startX = 0, startY = 0;
+      var dragging = false;
+      var locked = false;
+      var pointerId = null;
+      var snapRaf = null;
+      var GUTTER = 5;
+      var snapped = 0;
+
+      function symmetricRound(x) {
+        return x < 0 ? -Math.round(-x) : Math.round(x);
+      }
+
+      function onDown(e) {
+        if (animating) return;
+        if (dragging) return;
+        if (e.target && e.target.closest && e.target.closest('button')) return;
+
+        startX = e.clientX;
+        startY = e.clientY;
+        dragging = true;
+        locked = false;
+        pointerId = e.pointerId;
+        try { scene.setPointerCapture(pointerId); } catch (_) {}
+      }
+      function releaseCapture() {
+        if (pointerId !== null) {
+          try { scene.releasePointerCapture(pointerId); } catch (_) {}
+          pointerId = null;
+        }
+      }
+      function endDrag() {
+        dragging = false;
+        locked = false;
+        releaseCapture();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        if (e.pointerId !== pointerId) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (!locked) {
+          if (Math.abs(dx) < GUTTER && Math.abs(dy) < GUTTER) return;
+          if (Math.abs(dy) > Math.abs(dx)) { endDrag(); return; }
+          if (e.cancelable) e.preventDefault();
+          locked = true;
+          // Первый горизонтальный свайп — показываем кнопки «Дружить» на карточках
+          // (дальше класс не снимается, кнопки остаются видимыми до конца списка),
+          // и нижний CTA «Дружить со всеми» делаем серым (вторичным).
+          root.classList.add('__buttons-shown');
+          var allBtn = document.getElementById('fpAcceptAll');
+          if (allBtn && allBtn.classList.contains('__style-primary')) {
+            allBtn.classList.replace('__style-primary', '__style-secondary');
+          }
+          if (snapRaf) {
+            cancelAnimationFrame(snapRaf);
+            snapRaf = null;
+            startX = e.clientX - (panOffset - snapped * STEP);
+            dx = e.clientX - startX;
+          }
+        } else if (e.cancelable) {
+          e.preventDefault();
+        }
+        var pan = snapped * STEP + dx;
+        if (pan > 0 && snapped === 0) pan = pan * 0.3;
+        var minPan = minSnap * STEP;
+        if (pan < minPan) pan = minPan + (pan - minPan) * 0.3;
+        panOffset = pan;
+        IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+      }
+      function onUp(e) {
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        endDrag();
+        if (!wasLocked) return;
+        var raw = panOffset / STEP;
+        var target = symmetricRound(raw);
+        if (target > 0) target = 0;
+        if (target < minSnap) target = minSnap;
+        snapped = target;
+        animateSnap(target * STEP);
+      }
+      function onCancel(e) {
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        endDrag();
+        if (!wasLocked) return;
+        animateSnap(snapped * STEP);
+      }
+      function animateSnap(targetPan) {
+        if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+        var fromPan = panOffset;
+        var t0 = performance.now();
+        var dur = 280;
+        function frame(now) {
+          var p = Math.min(1, (now - t0) / dur);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var pan = fromPan + (targetPan - fromPan) * eased;
+          panOffset = pan;
+          IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+          if (p < 1) snapRaf = requestAnimationFrame(frame);
+          else snapRaf = null;
+        }
+        snapRaf = requestAnimationFrame(frame);
+      }
+
+      // ── ACCEPT («Дружить» на карточке) ─────────────────────
+      // Тап «Дружить» → заливка оранжевым + галочка (UI как в подарках,
+      // класс __accepting) → улёт вверх → ряд сдвигается влево.
+      function processCard(i) {
+        if (processing[i]) return;
+        processing[i] = true;
+        var el = els[i];
+        var FILL_DUR = 600;   // время заливки/галочки до улёта
+        var FLY_DUR  = 600;
+        var SHIFT_DUR = 350;
+
+        function flyOut() {
+          el.classList.add('__flying-up');
+          var cs = rowState[i];
+          var tx = (cs.cx - 330) + panOffset;
+          var ty = (cs.cy - 230) - 800;
+          var rot = 22;
+          requestAnimationFrame(function () {
+            el.style.transform =
+              'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
+              'scale(1) rotate(' + rot + 'deg)';
+          });
+          setTimeout(removeFromRow, FLY_DUR);
+        }
+        function removeFromRow() {
+          el.style.display = 'none';
+          var idx = liveCards.indexOf(i);
+          if (idx >= 0) liveCards.splice(idx, 1);
+          for (var k = 0; k < liveCards.length; k++) {
+            rowState[liveCards[k]].cx = firstCx + k * STEP;
+          }
+          minSnap = -(liveCards.length - 1);
+          if (snapped < minSnap) snapped = minSnap;
+          liveCards.forEach(function (j) {
+            els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
+          });
+          var newPan = snapped * STEP;
+          requestAnimationFrame(function () {
+            panOffset = newPan;
+            liveCards.forEach(function (j) {
+              applyCard(els[j], rowState[j], newPan);
+            });
+          });
+          setTimeout(function () {
+            liveCards.forEach(function (j) {
+              els[j].style.transition = '';
+            });
+          }, SHIFT_DUR + 30);
+          if (liveCards.length === 0) {
+            setTimeout(showAllAccepted, SHIFT_DUR);
+          }
+        }
+
+        // Сначала заливка + галочка (как в подарках), затем улёт.
+        el.classList.add('__accepting');
+        setTimeout(flyOut, FILL_DUR);
+      }
+
+      IDX.forEach(function (i) {
+        var el = els[i];
+        var accBtn = el.querySelector('.friend-big-card__accept .button-container');
+        if (accBtn) accBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          processCard(i);
+        });
+      });
+
+      scene.addEventListener('pointerdown', onDown);
+      scene.addEventListener('pointermove', onMove);
+      scene.addEventListener('pointerup', onUp);
+      scene.addEventListener('pointercancel', onCancel);
+
+      // ── «Дружить со всеми» (нижний CTA) ────────────────────────
+      // Шаг 1: карточки возвращаются в стейт 2 (разлёт) и сворачиваются
+      // обратно в кружки (CSS-морф по классу __state-2). Шаг 2: кружки
+      // падают вниз за viewport, тая (STATES[4]=exit, __state-5).
+      var acceptAllBtn = document.getElementById('fpAcceptAll');
+      if (acceptAllBtn && !acceptAllBtn.dataset.wired) {
+        acceptAllBtn.dataset.wired = '1';
+        acceptAllBtn.addEventListener('click', function () {
+          if (animating) return;
+          if (!liveCards.length) return;
+          if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+          if (panOffset !== 0) {
+            liveCards.forEach(function (j) {
+              STATES[3].cards[j].cx += panOffset;
+            });
+            panOffset = 0;
+            snapped = 0;
+          }
+          // Шаг 1 — обратно в сетку/разлёт (state 2), overdamped spring 600мс.
+          // Шаг 2 — СХЛОПЫВАНИЕ в плотный комок по центру на месте (state 6), ease 300мс.
+          // Шаг 3 — комок ПАДАЕТ вниз вместе (state 5), bezier 600мс;
+          //         fadeProgress — гасим до 0 уже к ~40% падения (до кнопки).
+          transitionTo(1, {
+            mode: 'spring', k: 80, c: 20, m: 1, duration: 600,
+            onDone: function () {
+              setTimeout(function () {
+                transitionTo(5, {
+                  mode: 'css', duration: 300, easing: 'ease-out',
+                  onDone: function () {
+                    transitionTo(4, {
+                      mode: 'bezier', bezier: [0, 0, 1, -0.01], duration: 600,
+                      fadeProgress: function (p) { return Math.min(1, p / 0.4); },
+                      onDone: showAllAccepted
+                    });
+                  }
+                });
+              }, 1);
+            }
+          });
+        });
+      }
+    }
+
+    // ── СЦЕНАРИЙ ────────────────────────────────────────────────
+    //   1 → 2 (спринг 2000мс, k=96 c=6 m=1) — после старта SPRING.delay
+    //   2 → 3 (ease-out 300мс)              — пауза PAUSE_BETWEEN после 1→2
+    //   3 → 4 (overdamped спринг 600мс)     — Figma: delay 1мс после 2→3
+    var PAUSE_BETWEEN = 800;
+    var EASE_DUR = 300;
+
+    if (reducedMotion()) {
+      current = 3;
+      root.classList.remove('__state-1');
+      root.classList.add('__state-4', '__cards-revealed');
+      applyState(3);
+      attachSwipe();
+    } else {
+      setTimeout(function () {
+        transitionTo(1, {
+          mode: 'spring',
+          onDone: function () {
+            setTimeout(function () {
+              transitionTo(2, {
+                mode: 'css', duration: EASE_DUR, easing: 'ease-out',
+                onDone: function () {
+                  transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
+                }
+              });
+            }, PAUSE_BETWEEN);
+          }
+        });
+      }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
+    }
+  })();
+</script>
+
+</body>
+</html>

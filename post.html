@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Запись — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+
+  /* Контент-стопка: пост-остров + блок комментов; нижний паддинг под
+     прибитый инпут (его высота ~64px + safe-area). */
+  .ll-post-feed {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 88px;
+  }
+
+  /* Блок комментов под постом: серый фон страницы просвечивает сверху 8px */
+  .ll-comments {
+    background: var(--dynamic-surface-base-primary);
+    padding-top: var(--space-4);
+  }
+  .ll-comments .ds-divider { margin: 0 0 var(--space-4); }
+
+  /* Прибитый снизу инпут ответа */
+  .ll-answer {
+    position: sticky;
+    bottom: 0;
+    z-index: 40;
+    border-top: 1px solid var(--dynamic-stroke-contrast-low);
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen">
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up phone-frame__sticky">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="ds-title-l">Запись</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><span class="icon __size-24 __slot-more"></span></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ll-post-feed">
+
+        <!-- ПОСТ — контент подставляется из ленты (sessionStorage 'openPost'),
+             иначе показывается демо-пост ниже как fallback. -->
+        <article class="text-feed island" id="ll-post">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Всё ОК!</div>
+              <div class="ds-caption-s text-feed__time">27 апреля</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-title-s text-feed__body" style="font-weight:600">Народный труд: расскажите о своей профессии</p>
+
+          <p class="ds-body-m text-feed__body">Приближаются майские праздники — время отдыха, тёплых встреч и, конечно, приятных хлопот. Но перед этим нас ждёт ещё немного рабочих дней — а значит, есть повод поговорить о самом важном: о наше…</p>
+
+          <div class="text-feed__media __single" style="aspect-ratio: 343/200">
+            <img src="https://i.pravatar.cc/600?img=32" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
+          </div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">&nbsp;2,9к</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">&nbsp;12</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 190;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt="">&nbsp;<span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <!-- КОММЕНТЫ -->
+        <div class="ll-comments">
+          <hr class="ds-divider">
+
+          <div class="ct-list">
+
+            <!-- Ветка: верхний коммент + 3 ответа -->
+            <div class="ct-thread">
+
+              <article class="ct-item __has-line">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">Татьяна ВолотькО</span>
+                    <span class="ct-item__meta">· 27 апреля</span>
+                  </div>
+                  <p class="ct-item__text">Моя профессия-монтажница радиоэлектронной аппаратуры и приборов. 4 разряд был, паяльник маленький, как продолжение руки. Очень любила свою работу.</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>8</span></button></span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ct-item __reply">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=31" alt=""></div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">Галина Карташова (Заборина)</span>
+                  </div>
+                  <p class="ct-item__text">Татьяна, ты молодец! Я бы ничего не смогла бы в радиоэлектроннике сделать. Только навредить! Ну я — гуманитарий!</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ct-item __reply">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">Марина Митина-Сырейщикова</span>
+                  </div>
+                  <p class="ct-item__text">Доброй наступающей ночки, Танюша! Я присоединяюсь к Галине и восхищаюсь твоими способностями!</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>3</span></button></span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ct-item __reply">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">Татьяна ВолотькО</span>
+                  </div>
+                  <p class="ct-item__text">Так и я гуманитарий, но работе это никак не мешало.</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>3</span></button></span>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+            <div class="ct-more">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 6 ответов</span></button></span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ПРИБИТЫЙ ИНПУТ ОТВЕТА -->
+      <div class="comment-input ll-answer">
+        <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
+        <div class="comment-input__field">
+          <input class="text-input __size-36" placeholder="Написать ответ…">
+          <div class="comment-input__actions">
+            <span class="comment-input__action icon __size-24 __slot-attach"></span>
+            <span class="comment-input__action icon __size-24 __slot-smile"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Контент поста приходит из ленты: тап по .text-feed кладёт его
+       innerHTML в sessionStorage('openPost'), здесь подставляем в #ll-post.
+       Без записи (прямое открытие) остаётся демо-пост из разметки. -->
+  <script>
+    (function () {
+      try {
+        var html = sessionStorage.getItem('openPost');
+        if (!html) return;
+        var el = document.getElementById('ll-post');
+        if (el) el.innerHTML = html;
+        sessionStorage.removeItem('openPost');
+      } catch (_) {}
+    })();
+  </script>
+
+</body>
+</html>

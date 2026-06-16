@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Отправка открытки — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-primary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-primary); }
+
+  /* nav-bar — leading с двухстрочным титлом (title + subtitle). DS-навбар
+     одноуровневый по умолчанию; кладём двухстрочный header через __has-left
+     слот (back-кнопка слева, текст справа от неё). */
+  .ll-sg-navtitle {
+    display: flex; flex-direction: column; gap: 2px;
+    min-width: 0;
+  }
+  .ll-sg-navtitle__title    { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-sg-navtitle__subtitle { color: var(--dynamic-text-and-icons-base-secondary); }
+
+  /* Верхний блок «остров» (на белом фоне) — preview + сообщение + приватность +
+     получатель + CTA. Сидит на secondary; ниже отступ-разделитель в primary.
+     flex-shrink: 0 — иначе flex-column родитель (.phone-frame__feed) сжимает
+     секции и контент режется/скролл ломается. */
+  .ll-sg-card {
+    flex-shrink: 0;
+    background-color: var(--dynamic-surface-base-secondary);
+    padding: var(--space-6) var(--space-4) var(--space-4);
+    display: flex; flex-direction: column; gap: var(--space-4);
+  }
+
+  /* Preview подарка — squircle + price-tag по центру под ним. */
+  .ll-sg-preview {
+    align-self: center;
+    display: flex; flex-direction: column; align-items: center;
+    gap: var(--space-1);
+  }
+  .ll-sg-preview__poster {
+    position: relative;
+    width: 140px; height: 140px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--dynamic-surface-contrast-low);
+    user-select: none;
+  }
+  .ll-sg-preview__poster img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  /* Поле «Сообщение к открытке» — линейное (одна линия снизу) поле + счётчик */
+  .ll-sg-message {
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+  /* Типографика приходит DS-классом .ds-body-l на самом <textarea>. */
+  .ll-sg-message__input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    background: transparent;
+    border-bottom: 1px solid var(--dynamic-stroke-contrast-low);
+    padding: var(--space-2) 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    outline: none;
+    resize: none;
+    min-height: 32px;
+  }
+  .ll-sg-message__input::placeholder { color: var(--dynamic-text-and-icons-base-secondary); }
+  .ll-sg-message__counter {
+    align-self: flex-end;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+
+  /* Ряд «Приватность открытки» — иконка слева, лейбл, значение справа */
+  .ll-sg-row {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-2) 0;
+  }
+  .ll-sg-row__icon { width: 24px; height: 24px; flex-shrink: 0; }
+  .ll-sg-row__label { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-sg-row__value {
+    margin-left: auto;
+    color: var(--dynamic-text-and-icons-base-secondary);
+    display: inline-flex; align-items: center; gap: var(--space-1);
+  }
+
+  /* Объединённый «баннер» отправки: селектор получателей + CTA внутри одной
+     светло-кремовой плашки (contrast-low). */
+  .ll-sg-give {
+    background-color: var(--dynamic-surface-contrast-low);
+    border-radius: 20px;
+    padding: var(--space-2);
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+  /* Ряд «Всем друзьям» — иконка + лейбл + chevron-right. Прозрачный фон,
+     потому что подкладку даёт .ll-sg-give. */
+  .ll-sg-recipient {
+    background: transparent;
+    border: 0;
+    width: 100%;
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    display: flex; align-items: center; gap: var(--space-3);
+    cursor: pointer;
+    transition: var(--ds-transition-transform);
+  }
+  .ll-sg-recipient:active { transform: scale(0.99); }
+  .ll-sg-recipient__icon { width: 24px; height: 24px; flex-shrink: 0; }
+  .ll-sg-recipient__label { flex: 1; color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-sg-recipient__chevron {
+    width: 24px; height: 24px;
+    flex-shrink: 0;
+    transform: rotate(-90deg);   /* chevron_down → chevron right */
+    opacity: 0.55;
+  }
+
+  /* Раздел «Друзья» — заголовок-ряд + список. flex-shrink: 0 по тем же
+     причинам, что и .ll-sg-card. */
+  .ll-sg-friends {
+    flex-shrink: 0;
+    background-color: var(--dynamic-surface-base-secondary);
+    margin-top: var(--space-2);
+    padding: var(--space-4) 0 var(--space-8);
+  }
+  .ll-sg-friends__head {
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: 0 var(--space-4) var(--space-2);
+  }
+  .ll-sg-friends__title {
+    flex: 1;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+
+  /* Строка-друг — uni-cell. У DS .uni-cell нет дефолтного gap'а (его задают
+     специализированные подклассы вроде message-cell). Здесь сами кладём
+     gap 12 и центрируем по вертикали. */
+  .ll-sg-friend .uni-cell {
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .ll-sg-friend__name { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-sg-friend__sent {
+    margin-left: auto;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR (двухстрочный левый title + bookmark справа) -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <div class="ll-sg-navtitle">
+              <div class="ds-title-m ll-sg-navtitle__title">Отправка открытки</div>
+              <div class="ds-caption-m ll-sg-navtitle__subtitle">На счёте: 79 ОК</div>
+            </div>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Закладки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/bookmark_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВЕРХНИЙ ИСЛАНД: preview + message + privacy + recipient + CTA -->
+      <section class="ll-sg-card">
+
+        <!-- Preview открытки. Картинку и цену подставляет JS по ?gift=… -->
+        <div class="ll-sg-preview">
+          <div class="ll-sg-preview__poster"><img id="sgPreviewImg" src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg" alt=""></div>
+          <span class="price-tag" id="sgPrice">2 ОК</span>
+        </div>
+
+        <!-- Сообщение к открытке -->
+        <div class="ll-sg-message">
+          <textarea
+            class="ds-body-l ll-sg-message__input"
+            id="sgMessage"
+            placeholder="Сообщение к открытке"
+            maxlength="200"
+            rows="1"></textarea>
+          <div class="ds-caption-m ll-sg-message__counter"><span id="sgCount">0</span>/200</div>
+        </div>
+
+        <!-- Приватность открытки -->
+        <div class="ll-sg-row" role="button" tabindex="0">
+          <img class="ll-icon ll-sg-row__icon" src="assets/icons/privacy_16_20.svg" width="24" height="24" alt="">
+          <span class="ds-body-l ll-sg-row__label">Приватность открытки</span>
+          <span class="ds-body-l ll-sg-row__value">Публичный</span>
+        </div>
+
+        <!-- Селектор получателей + CTA — в одном кремовом баннере -->
+        <div class="ll-sg-give">
+          <button class="ll-sg-recipient" type="button" aria-label="Выбрать получателей: Всем друзьям">
+            <img class="ll-icon ll-sg-recipient__icon" src="assets/icons/gift_24.svg" width="24" height="24" alt="">
+            <span class="ds-body-l ll-sg-recipient__label">Всем друзьям</span>
+            <img class="ll-icon ll-sg-recipient__chevron" src="assets/icons/chevron_down_24.svg" width="24" height="24" alt="">
+          </button>
+
+          <div class="button-wrapper __size-36 __full-width">
+            <button class="button-container __style-primary" id="sgGiveBtn" style="width:100%;">
+              <span class="button-content">Подарить за 2 ОК</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- НИЖНИЙ ИСЛАНД: список друзей -->
+      <section class="ll-sg-friends">
+
+        <div class="ll-sg-friends__head">
+          <span class="ds-body-l ll-sg-friends__title">Друзья</span>
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/search_24.svg" width="24" height="24" alt=""></span></button></span>
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Друзья со звездой"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/user_star_24.svg" width="24" height="24" alt=""></span></button></span>
+        </div>
+
+        <!-- Friend cells — DS uni-cell -->
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=23" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Никита Мизин</div>
+              </div>
+              <span class="ds-body-m ll-sg-friend__sent">Отправлено</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Татьяна Бровина</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=49" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Галина Мартынова</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Дмитрий Кузнецов</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Елена Воронцова</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=14" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Сергей Лебедев</div>
+              </div>
+              <span class="ds-body-m ll-sg-friend__sent">Отправлено</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=20" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Ольга Семёнова</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=8" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Андрей Никитин</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=24" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Мария Соколова</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-sg-friend">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=53" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s ll-sg-friend__name">Павел Морозов</div>
+              </div>
+              <div class="button-wrapper __size-36">
+                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+  <script src="components/back-button.js"></script>
+  <script>
+    // Подставляем картинку + цену preview по ?gift= из gifts-catalog.
+    (function () {
+      var GIFTS = {
+        cake:     { src: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg', price: '0 ОК' },
+        bouquet:  { src: 'https://cool.klev.club/uploads/posts/2025-05/2630/na_den_rozhdeniya_odnoklassniku_15_9e514099.jpg', price: '0 ОК' },
+        classic:  { src: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassnik-1841.jpg', price: '0 ОК' },
+        heart:    { src: 'https://play-lh.googleusercontent.com/DIUjj_0djlD0xfteoleEnmD6CkmpIqMoHMwuH3AvhL85duDITmjEr9w_ib_VAC3ejQc=w240-h480-rw', price: '0 ОК' },
+        social:   { src: 'https://123ot.ru/img/00003/skachaty-besplatno-whatsapp-odnoklassniki-instagram-774945.jpg', price: '2 ОК' },
+        flowers:  { src: 'https://kartinki-life.ru/articles/2020/02/07/kartinki-i-otkrytki-s-dnjom-rozhdeniya-22-7.jpg', price: '5 ОК' }
+      };
+      var id = new URLSearchParams(location.search).get('gift');
+      var g = GIFTS[id];
+      if (!g) return;
+      var img = document.getElementById('sgPreviewImg');
+      var price = document.getElementById('sgPrice');
+      var cta = document.getElementById('sgGiveBtn');
+      if (img) img.src = g.src;
+      if (price) price.textContent = g.price;
+      if (cta) cta.querySelector('.button-content').textContent = 'Подарить за ' + g.price;
+    })();
+
+    // Счётчик символов «Сообщения к открытке».
+    (function () {
+      var ta = document.getElementById('sgMessage');
+      var counter = document.getElementById('sgCount');
+      if (!ta || !counter) return;
+      ta.addEventListener('input', function () {
+        counter.textContent = String(ta.value.length);
+      });
+    })();
+
+    // Главная CTA «Подарить» → секондари-дизейблд + «Подарок отправлен».
+    (function () {
+      var giveBtn = document.getElementById('sgGiveBtn');
+      if (!giveBtn) return;
+      giveBtn.addEventListener('click', function () {
+        giveBtn.classList.remove('__style-primary');
+        giveBtn.classList.add('__style-secondary', '__state-disabled');
+        giveBtn.querySelector('.button-content').textContent = 'Подарок отправлен';
+        giveBtn.disabled = true;
+      });
+    })();
+
+    // Per-friend «Отправить» → заменяем кнопку статусом «Отправлено».
+    (function () {
+      document.querySelectorAll('[data-give]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var wrap = btn.closest('.button-wrapper');
+          if (!wrap) return;
+          var sent = document.createElement('span');
+          sent.className = 'ds-body-m ll-sg-friend__sent';
+          sent.textContent = 'Отправлено';
+          wrap.replaceWith(sent);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
