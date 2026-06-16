@@ -421,15 +421,23 @@
     <h2>Breadcrumbs</h2>
     <div class="preview-label">2 levels — last item is current (__state-on)</div>
     <div class="preview-row">
-      <nav class="breadcrumbs ds-body-m">
+      <nav class="breadcrumbs">
         <a class="breadcrumbs__item" href="#">Еда</a>
+        <span class="breadcrumbs__separator" aria-hidden="true"></span>
+        <span class="breadcrumbs__item __state-on">Рецепты</span>
+      </nav>
+    </div>
+    <div class="preview-label">with leading badge (__badge)</div>
+    <div class="preview-row">
+      <nav class="breadcrumbs">
+        <a class="breadcrumbs__item" href="#"><img class="breadcrumbs__badge" src="assets/icons/ok_star_16_20.svg" alt="">Еда</a>
         <span class="breadcrumbs__separator" aria-hidden="true"></span>
         <span class="breadcrumbs__item __state-on">Рецепты</span>
       </nav>
     </div>
     <div class="preview-label">3 levels (max)</div>
     <div class="preview-row">
-      <nav class="breadcrumbs ds-body-m">
+      <nav class="breadcrumbs">
         <a class="breadcrumbs__item" href="#">Дача</a>
         <span class="breadcrumbs__separator" aria-hidden="true"></span>
         <a class="breadcrumbs__item" href="#">Огород</a>
@@ -439,7 +447,7 @@
     </div>
     <div class="preview-label">__state-disabled</div>
     <div class="preview-row">
-      <nav class="breadcrumbs ds-body-m">
+      <nav class="breadcrumbs">
         <a class="breadcrumbs__item __state-disabled" href="#">Еда</a>
         <span class="breadcrumbs__separator" aria-hidden="true"></span>
         <span class="breadcrumbs__item __state-on">Рецепты</span>
@@ -451,9 +459,10 @@
         <tr><th colspan="2">Что умеет</th></tr>
       </thead>
       <tbody>
-        <tr><td><code>.breadcrumbs</code></td><td>обёртка-навигация, до 3 уровней, типографика 15/20</td></tr>
+        <tr><td><code>.breadcrumbs</code></td><td>обёртка-навигация, до 3 уровней, типографика 15/20/600 (self-contained)</td></tr>
         <tr><td><code>.breadcrumbs__item</code></td><td>звено пути — ссылка или <code>&lt;span&gt;</code></td></tr>
-        <tr><td><code>.breadcrumbs__separator</code></td><td>chevron 12px между звеньями, через CSS mask</td></tr>
+        <tr><td><code>.breadcrumbs__badge</code></td><td>опциональная ведущая иконка 16px внутри звена (gap 4px до текста)</td></tr>
+        <tr><td><code>.breadcrumbs__separator</code></td><td>стрелка → 8×8 между звеньями (arrow_right_12), через CSS mask</td></tr>
         <tr><td><code>.__state-on</code></td><td>текущий уровень — primary-цвет, не кликается</td></tr>
         <tr><td><code>.__state-disabled</code></td><td>opacity 0.36, клики отключены</td></tr>
         <tr><td><code>:hover</code> (только ссылка)</td><td>лёгкая подложка под звеном</td></tr>
@@ -690,7 +699,7 @@
     <div class="preview-label">Воспоминание «в этот день». Использует layout <code>feed-base</code>.</div>
     <div class="preview-stage" style="padding: 0; background: transparent;">
       <article class="feed-memory island">
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Воспоминания</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">В этот день</span>
@@ -725,7 +734,7 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Рыбалка</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Клипы</span>
@@ -748,7 +757,7 @@
     <div class="preview-label">Q&amp;A карточка с топ-комментом, кнопкой «Посмотреть N ответов» и полем ввода.</div>
     <div class="preview-stage" style="padding: 0; background: transparent;">
       <article class="feed-discussion island">
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Здоровье</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Обсуждают</span>
@@ -782,7 +791,7 @@
     <div class="preview-label">Карусель вопросов от соседей. Карточки <code>.question-card</code> на сером фоне, горизонтальный скролл.</div>
     <div class="preview-stage" style="padding: 0; background: transparent;">
       <article class="feed-questions island">
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Санкт-Петербург</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Нужен совет</span>
@@ -896,7 +905,7 @@
           </div>
         </div>
 
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Еда</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Рецепты</span>

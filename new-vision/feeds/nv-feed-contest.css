@@ -39,3 +39,16 @@
 }
 .feed-contest .picture-stack::-webkit-scrollbar { display: none; }
 .feed-contest .picture-stack > * { flex: 0 0 auto; }
+
+/* ── Двойные паддинги вокруг фида-конкурса (выделяем промо-блок) ──
+   Вертикальные — на самом острове, горизонтальные — на детях (как в базовой
+   раскладке выше), всё ×2 от обычного --space-4. */
+.feed-contest.island {
+  padding-top: calc(var(--space-4) * 2);
+  padding-bottom: calc(var(--space-4) * 2);
+}
+.feed-contest > :not(.media):not(.picture-stack),
+.feed-contest .picture-stack {
+  padding-left: calc(var(--space-4) * 2);
+  padding-right: calc(var(--space-4) * 2);
+}

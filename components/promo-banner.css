@@ -1,0 +1,64 @@
+/**
+ * OK Design System — PromoBanner
+ * Source: Figma «Общаг» promo-banner (node 2850:140040)
+ *
+ * Промо-блок ленты: фоновая картинка + заголовок + две кнопки
+ * (Подарить / Скрыть). Фон задаётся через --promo-banner-image; до того, как
+ * картинка проставлена, виден тёмный фолбэк (как контейнер в макете).
+ *
+ *   <div class="promo-banner __sticky" style="--promo-banner-image:url('...')">
+ *     <p class="promo-banner__title">Народный день подарков!</p>
+ *     <div class="promo-banner__actions">
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
+ *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
+ *     </div>
+ *   </div>
+ *
+ * MODIFIERS:
+ *   .__sticky — приклеивает баннер ко дну ленты, над таб-баром (см. ниже).
+ */
+
+.promo-banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 168px;
+  padding: 18px 20px 20px;
+  border-radius: 32px;
+  overflow: hidden;
+  background-color: var(--dynamic-surface-base-inverse-primary, #1a1a1c);
+  background-image: var(--promo-banner-image, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+.promo-banner__title {
+  max-width: 268px;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--whitelabel, #fff);
+}
+
+.promo-banner__actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ============================================================
+   STICKY — баннер прилеплен ко дну ленты над таб-баром.
+   Размещается последним ребёнком .phone-frame__feed: при скролле
+   висит над таб-баром, в самом низу ленты «садится» на своё место.
+   Смещение = высота таб-бара (--phone-tabbar-height) + зазор 8px.
+   ============================================================ */
+.promo-banner.__sticky {
+  position: sticky;
+  bottom: calc(var(--phone-tabbar-height, 73px) + var(--space-2));
+  z-index: 35;
+  margin: var(--space-2) var(--space-2) 0;
+}
