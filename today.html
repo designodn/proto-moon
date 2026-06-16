@@ -358,8 +358,9 @@
 
         <!-- 3. Колесо призов -->
         <section class="tg-island">
-          <article class="cover-card __on-image __size-220 __fill"
-                   style="--cover-card-bg: radial-gradient(circle at 50% 40%, #ffb43d 0%, #ff7a00 55%, #e85d00 100%);">
+          <article class="cover-card __on-image __size-220 __fill" id="rouletteWidget"
+                   role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
+                   style="--cover-card-bg: radial-gradient(circle at 50% 40%, #ffb43d 0%, #ff7a00 55%, #e85d00 100%); cursor: pointer;">
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-l">Колесо призов</div>
@@ -835,5 +836,18 @@
 
   <script src="components/dismissible.js"></script>
   <script src="components/tab-bar.js"></script>
+
+  <script>
+    // Виджет «Колесо призов» → открытие рулетки.
+    (function () {
+      var w = document.getElementById('rouletteWidget');
+      if (!w) return;
+      function open() { window.location.href = 'koleso/koleso.html'; }
+      w.addEventListener('click', open);
+      w.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+    })();
+  </script>
 </body>
 </html>
