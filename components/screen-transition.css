@@ -1,0 +1,50 @@
+/**
+ * OK Design System (proto) — ScreenTransition
+ *
+ * Системный направленный переход между экранами через View Transitions API.
+ *   forward (push):  новый экран въезжает справа поверх, старый чуть уходит влево.
+ *   back (pop):       текущий экран уезжает вправо поверх, предыдущий выезжает слева.
+ *
+ * Направление back помечается классом html.nav-back, который проставляется
+ * синхронно в pagereveal входящего документа (см. screen-transition.js) — это
+ * надёжнее, чем view-transition types для кросс-документных переходов.
+ *
+ * Кнопка «назад» в навбаре — стандартная .nav-bar__back → history.back().
+ * Без поддержки View Transitions навигация мгновенная (без рывка).
+ */
+
+@view-transition { navigation: auto; }
+
+/* ---- по умолчанию = push (forward) ---- */
+::view-transition-old(root) {
+  animation: screen-out-left 300ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+::view-transition-new(root) {
+  animation: screen-in-right 300ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+/* ---- pop (back): текущий уезжает вправо ПОВЕРХ предыдущего ---- */
+html.nav-back::view-transition-old(root) {
+  z-index: 2;
+  animation: screen-out-right 300ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+html.nav-back::view-transition-new(root) {
+  z-index: 1;
+  animation: screen-in-left 300ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes screen-in-right  { from { transform: translateX(100%); }  to { transform: translateX(0); } }
+@keyframes screen-out-left  { from { transform: translateX(0); }     to { transform: translateX(-25%); } }
+@keyframes screen-in-left   { from { transform: translateX(-25%); }  to { transform: translateX(0); } }
+@keyframes screen-out-right { from { transform: translateX(0); }     to { transform: translateX(100%); } }
+
+/* ---- tab switch: мгновенный переход без анимации ---- */
+html.nav-tab::view-transition-old(root),
+html.nav-tab::view-transition-new(root) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}
