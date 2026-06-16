@@ -94,6 +94,33 @@
 ## Вердикт-факт (2026-06): лейаут friend-вью корректен, всё на местах,
 ## единственная «поломка» — внешние картинки не грузятся (сетевое ограничение).
 
+## preview.html — Breadcrumbs (2026-06)
+- Якорь: `section.preview-section` где `h2` содержит "Breadcrumbs". На странице
+  МНОГО `.breadcrumbs__item` (есть и в карточках ленты ниже) — бери секцию по h2,
+  не первый item в DOM.
+- `.breadcrumbs__item`: font-weight 600, 15px/20px — жирный, как заявлено. OK.
+- `.breadcrumbs__badge` (`<icon-glyph class="breadcrumbs__badge __size-16">`):
+  bounding 16x16, gap до текста 4px (gap на родителе-ссылке, align-items center). OK по лейауту.
+- ГРАБЛИ / БАГ: иконка-звёздочка badge НЕ рисуется. icon-glyph красит
+  `background-color: currentColor` под CSS-mask из `--icon-glyph-src`. Свойство задано
+  ИНЛАЙНОМ `url('assets/icons/ok_star_16_20.svg')`, но `mask: var(--icon-glyph-src)`
+  объявлен в `/components/icon-glyph.css` → Chromium резолвит относительный url
+  ОТНОСИТЕЛЬНО стайлшита (`/components/`), а не документа. Итог mask-url =
+  `/components/assets/icons/ok_star_16_20.svg` → 404 → mask пустой → бокс 16px есть,
+  но прозрачный. Проверять так: `getComputedStyle(badge).maskImage` (резолвнутый
+  абсолютный url) + curl этого url. Правильный путь `/assets/icons/...` отдаёт 200.
+  Separator-chevron при этом виден (его src объявлен ВНУТРИ стайлшита breadcrumbs, не инлайном).
+- Gap badge→текст: Range по текстовой ноде ссылки, `range.rect.left - badge.right`.
+- ДСФ-ловушка: секция глубоко (y badge ~4696). При deviceScaleFactor 3 abs-clip за
+  пределами скриншота → "Clipped area empty". Скриншоть через locator.screenshot()/scrollIntoView.
+- ИСПРАВЛЕНО (commit 1d8c602, проверено 2026-06-16): badge переписан с `<icon-glyph mask>`
+  на обычный `<img class="breadcrumbs__badge" src="assets/icons/ok_star_16_20.svg">`.
+  Теперь резолв относительно ДОКУМЕНТА → currentSrc=`/assets/icons/ok_star_16_20.svg`,
+  HTTP 200, naturalW/H=16, imgW/H=16, display:block, gap до текста=4px. Звезда видна.
+  Текст всё ещё font-weight 600 / 15px/20px. PASS. Проверять img так:
+  `img.currentSrc` + `img.naturalWidth>0` (mask-ловушка больше неактуальна для этого примера).
+- Для проверки 404-битых img использовать requestfailed listener + img.naturalWidth===0;
+  здесь оба чисты, requestfailed по star/icon пуст.
 ## Merge-verify lenta (2026-06-16, commit e937eb8 «Merge origin/main…»)
 - Авто-слияние ЧИСТОЕ. Конфликт-маркеров нет (grep -c =0; regex по innerText = none).
 - Точный счёт в `.feed-container`: ровно 23 `<article>` в порядке 1→23, без дублей.
