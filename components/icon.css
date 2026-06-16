@@ -77,16 +77,21 @@
    В HTML: <span class="icon __size-20 __slot-reshare"></span>
    ============================================================ */
 .icon.__slot-arrow-left    { --icon-src: url('../assets/icons/arrow-left.svg'); }
+.icon.__slot-attach        { --icon-src: url('../assets/icons/attach_24.svg'); }
+.icon.__slot-back          { --icon-src: url('../assets/icons/back_24.svg'); }
 .icon.__slot-bell          { --icon-src: url('../assets/icons/bell.svg'); }
 .icon.__slot-close         { --icon-src: url('../assets/icons/close_24.svg'); }
 .icon.__slot-comment       { --icon-src: url('../assets/icons/comment_24.svg'); }
 .icon.__slot-dots          { --icon-src: url('../assets/icons/dots-horizontal.svg'); }
 .icon.__slot-klass-outline { --icon-src: url('../assets/icons/klass_16_20.svg'); }
 .icon.__slot-klass-filled  { --icon-src: url('../assets/icons/klass_filled_16_20.svg'); }
+.icon.__slot-more          { --icon-src: url('../assets/icons/more_24.svg'); }
 .icon.__slot-play          { --icon-src: url('../assets/icons/play.svg'); }
 .icon.__slot-plus          { --icon-src: url('../assets/icons/plus.svg'); }
+.icon.__slot-reply         { --icon-src: url('../assets/icons/reply_24.svg'); }
 .icon.__slot-reshare       { --icon-src: url('../assets/icons/reshare_24.svg'); }
 .icon.__slot-search        { --icon-src: url('../assets/icons/search.svg'); }
+.icon.__slot-smile         { --icon-src: url('../assets/icons/smile_24.svg'); }
 .icon.__slot-status-wifi    { --icon-src: url('../assets/icons/status-wifi.svg'); }
 .icon.__slot-status-signal  { --icon-src: url('../assets/icons/status-signal.svg'); }
 .icon.__slot-status-battery { --icon-src: url('../assets/icons/status-battery.svg'); }
