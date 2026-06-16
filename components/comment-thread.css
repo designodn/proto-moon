@@ -1,0 +1,209 @@
+/**
+ * OK Design System — CommentThread
+ *
+ * Тредовый блок комментариев для экрана открытого поста. Максимум собран
+ * на DS-примитивах: avatar (24px), button-inline (Ответить / класс), icon,
+ * типографика ds-*. Свой код — только лейаут ряда, медиа-вложение и
+ * тред-линии (рисуются чистым CSS через border + radius, themeable).
+ *
+ * Префикс `ct-` намеренно НЕ пересекается с легаси `.comment` (comment.css).
+ *
+ * СТРУКТУРА
+ *
+ *   <div class="ct-list">
+ *
+ *     <!-- Группа: верхнеуровневый коммент + ветка ответов (макс. 2 уровня) -->
+ *     <div class="ct-thread">
+ *
+ *       <article class="ct-item __has-line">           ← __has-line: трунк вниз к ответам
+ *         <div class="ct-item__aside">
+ *           <div class="avatar __size-24 __type-image"><img src="…"></div>
+ *         </div>
+ *         <div class="ct-item__body">
+ *           <div class="ct-item__head">
+ *             <span class="ct-item__author ds-title-s">Татьяна ВолотькО</span>
+ *             <span class="ct-item__meta">· 27 апреля</span>
+ *           </div>
+ *           <p class="ct-item__text">…текст…</p>
+ *           <div class="ct-item__media"><img src="…"></div>   ← опц. фото/стикер
+ *           <div class="ct-item__actions">
+ *             <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+ *             <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>8</span></button></span>
+ *           </div>
+ *         </div>
+ *       </article>
+ *
+ *       <article class="ct-item __reply">  …ответ 1 (локоть ┗)… </article>
+ *       <article class="ct-item __reply">  …ответ 2 (последний — без хвоста трунка)… </article>
+ *     </div>
+ *
+ *     <!-- «Посмотреть N ответов / все комментарии» -->
+ *     <div class="ct-more">
+ *       <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 6 ответов</span></button></span>
+ *     </div>
+ *   </div>
+ *
+ * МОДИФИКАТОРЫ
+ *   .ct-item.__has-line    — на верхнеуровневом комменте, у которого есть ответы;
+ *                            рисует вертикальный трунк от аватара вниз к ветке.
+ *   .ct-item.__reply       — ответ: отступ слева + локоть-коннектор к аватару;
+ *                            хвост трунка к следующему ответу скрывается у :last-child.
+ *   .ct-item__media.__sticker — стикер без скругления (фото — со скруглением 12px).
+ */
+
+.ct-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5); /* 20px между верхнеуровневыми комментами/группами */
+}
+
+/* Группа «коммент + его ответы» — внутренний gap меньше внешнего */
+.ct-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* 12px */
+}
+
+/* ============================================================
+   ITEM — один комментарий (ряд: аватар + тело)
+   ============================================================ */
+.ct-item {
+  /* Геометрия тред-линий завязана на эти константы */
+  --ct-pad-x: var(--space-4);            /* 16px — гориз. паддинг ряда */
+  --ct-avatar: 24px;
+  --ct-trunk-x: 28px;                    /* центр аватара верхнего уровня: 16 + 12 */
+  --ct-reply-indent: 28px;               /* доп. сдвиг ответа вправо */
+  --ct-line: var(--dynamic-stroke-contrast-mid);
+
+  position: relative;
+  display: flex;
+  gap: var(--space-2);                   /* 8px между аватаром и телом */
+  padding: 0 var(--ct-pad-x);
+  align-items: flex-start;
+}
+
+.ct-item__aside {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ct-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);                   /* 4px между головой/текстом/действиями */
+}
+
+/* Голова: имя (bold) + мета (вторичный) в одну строку с переносом */
+.ct-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 20px;
+}
+.ct-item__author {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.ct-item__meta {
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+/* Текст коммента — Body M Read (15 / 1.35 / medium) */
+.ct-item__text {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--dynamic-text-and-icons-base-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Медиа-вложение (фото / стикер) */
+.ct-item__media {
+  margin-top: var(--space-1);
+  max-width: 144px;
+}
+.ct-item__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.ct-item__media.__sticker {
+  max-width: 120px;
+}
+.ct-item__media.__sticker img {
+  border-radius: 0;
+}
+
+/* Действия — на button-inline, ряд с gap 12 */
+.ct-item__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-0-5);
+}
+
+/* ============================================================
+   THREAD LINES — трунк + локоть, чистый CSS
+   Координаты считаются от левого края .ct-item (padding-box),
+   поэтому --ct-trunk-x = 28px одинаков и для верхнего уровня, и для ответа.
+   ============================================================ */
+
+/* Верхний коммент с ответами: вертикаль от низа аватара вниз
+   и на 12px в gap группы — чтобы дотянуться до локтя первого ответа. */
+.ct-item.__has-line::after {
+  content: "";
+  position: absolute;
+  left: var(--ct-trunk-x);
+  top: calc(var(--ct-avatar) + 4px);     /* чуть ниже аватара */
+  bottom: calc(-1 * var(--space-3));      /* мост через 12px gap до ветки */
+  width: 2px;
+  background: var(--ct-line);
+}
+
+/* Ответ: сдвиг вправо так, чтобы аватар встал правее трунка */
+.ct-item.__reply {
+  padding-left: calc(var(--ct-pad-x) + var(--ct-reply-indent));
+}
+
+/* Локоть ┗: приходит сверху (из gap) и заворачивает вправо к аватару */
+.ct-item.__reply::before {
+  content: "";
+  position: absolute;
+  left: var(--ct-trunk-x);
+  top: calc(-1 * var(--space-3));         /* стартует в gap над ответом */
+  width: var(--ct-reply-indent);          /* 28: трунк(28) → левый край аватара(44) перекрывает */
+  height: calc(var(--space-3) + 12px);    /* до вертикального центра аватара (~12px) */
+  border-left: 2px solid var(--ct-line);
+  border-bottom: 2px solid var(--ct-line);
+  border-bottom-left-radius: 10px;
+}
+
+/* Хвост трунка вниз к следующему ответу; у последнего ответа скрыт */
+.ct-item.__reply::after {
+  content: "";
+  position: absolute;
+  left: var(--ct-trunk-x);
+  top: 12px;                              /* от центра аватара */
+  bottom: calc(-1 * var(--space-3));      /* мост к следующему ответу */
+  width: 2px;
+  background: var(--ct-line);
+}
+.ct-item.__reply:last-child::after {
+  display: none;
+}
+
+/* ============================================================
+   MORE — «Посмотреть N ответов / все комментарии»
+   ============================================================ */
+.ct-more {
+  padding: 0 var(--space-4);
+}

@@ -1,0 +1,283 @@
+/**
+ * OK Design System — Tab (вкладка)
+ *
+ * Порт DS-компонента Tab. Переключатель вкладок. Виды:
+ *   __view-base      — текст + нижняя линия-индикатор (.line), цвета secondary→primary
+ *   __view-primary   — сегмент: выбранный с фоном surface/base/quaternary
+ *   __view-secondary — сегмент: выбранный с фоном contrast-low + обводка
+ *   __view-custom    — все цвета через --tab-custom-* переменные
+ *
+ * Состояния: __selected (выбран), __clicked (анимация нажатия).
+ *
+ *   <button class="tab-wrapper __view-base __selected" role="tab" aria-selected="true">
+ *     <span class="overlays-container"></span>
+ *     <span class="inner-wrapper">
+ *       <span class="tab">
+ *         <span class="content">
+ *           <span class="left-icon-wrapper"><img …></span>   <!-- опц. -->
+ *           <span class="label">Лента</span>
+ *           <span class="right-icon-wrapper"><img …></span>  <!-- опц. -->
+ *         </span>
+ *       </span>
+ *     </span>
+ *     <span class="line"></span>   <!-- только __view-base -->
+ *   </button>
+ *
+ * Несколько табов оборачиваются в TabsView: .tabs-view > .tabs-row.
+ * Счётчик-бейдж кладётся в .counter-wrapper (справа-сверху для сегментов).
+ *
+ *   <div class="tabs-view __with-divider">
+ *     <div class="tabs-row">
+ *       <button class="tab-wrapper __view-base __selected" …>…</button>
+ *       <button class="tab-wrapper __view-base" …>…</button>
+ *     </div>
+ *   </div>
+ *
+ * Переключение по клику (и анимация «разъезжания» линии) — подключи
+ * components/tab.js: <script src="components/tab.js"></script>
+ */
+
+/* ============================================================
+   TABS VIEW — обёртка (.tabs-view) + контейнер-ряд (.tabs-row).
+   Порт TabsView.styl. NB: класс .tabs уже занят отдельным компонентом
+   (секционный свитчер в tabs.css), поэтому обёртка — .tabs-view, ряд — .tabs-row.
+   ============================================================ */
+.tabs-view {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
+  padding: var(--tabs-view-padding-top, 0) var(--tabs-view-padding-right, 0)
+           var(--tabs-view-padding-bottom, 0) var(--tabs-view-padding-left, 0);
+}
+/* base-вид с разделителем: нижняя линия на всю ширину (1px), поверх неё
+   «разъезжается» линия активного таба */
+.tabs-view.__with-divider {
+  box-shadow: inset 0 -1px 0 var(--dynamic-surface-contrast-low);
+}
+
+/* контейнер-ряд табов (Tabs). Горизонтальный сдвиг — через --tabs-view-container-offset-x
+   (как в DS ScrollContainer), при анимации — __movement-animating. */
+.tabs-row {
+  display: flex;
+  gap: var(--space-3);              /* 12px между табами */
+  transform: translateX(var(--tabs-view-container-offset-x, 0));
+}
+.tabs-row.__movement-animating { transition: transform 0.5s ease-in-out; }
+/* опц.: нативный горизонтальный скролл вместо JS-ScrollContainer.
+   padding-bottom — место под линию-индикатор base (overflow-x:auto клипает по Y) */
+.tabs-row.__scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--space-2);
+}
+.tabs-row.__scroll::-webkit-scrollbar { display: none; }
+
+/* скелетон-таб (loading) — 64×36, contrast-low */
+.tabs-view .skeleton-tab {
+  flex-shrink: 0;
+  width: 64px;
+  height: 36px;
+  border-radius: var(--space-3);
+  background-color: var(--dynamic-surface-contrast-low);
+}
+
+/* ============================================================
+   TAB — корневая интерактивная кнопка
+   ============================================================ */
+.tab-wrapper {
+  /* button reset */
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;                /* снимаем нативный паддинг кнопки */
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  --overlay-opacity: 0.2;
+  --tab-stroke-color: transparent;
+  --overlay-color: var(--tab-overlay-color);
+
+  box-sizing: border-box;
+  position: relative;
+  border-radius: var(--space-3);
+  background-color: var(--tab-surface-color, transparent);
+  box-shadow: inset 0 0 0 1px var(--tab-stroke-color);
+  user-select: none;
+  flex-shrink: 0;
+}
+.tab-wrapper:hover { text-decoration: none; }
+
+/* нажатие — лёгкое уменьшение внутреннего блока */
+.tab-wrapper .inner-wrapper {
+  position: relative;
+  z-index: 1;   /* анимация клика не перекрывает индикатор-линию */
+  transition: transform var(--tab-clicked-time, 500ms) cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.tab-wrapper:active .inner-wrapper,
+.tab-wrapper.__clicked .inner-wrapper {
+  transform: scale(var(--tab-clicked-transform, 0.95));
+  z-index: 1;
+}
+
+/* ---- selected ---- */
+.tab-wrapper.__selected {
+  --overlay-color: var(--tab-selected-overlay-color, var(--tab-overlay-color));
+  --tab-stroke-color: var(--tab-selected-stroke-color, transparent);
+  background-color: var(--tab-selected-surface-color, var(--tab-surface-color));
+}
+.tab-wrapper.__selected .label          { color: var(--tab-selected-label-color, var(--tab-label-color)); }
+.tab-wrapper.__selected .left-icon-wrapper  { color: var(--tab-selected-left-icon-color, var(--tab-left-icon-color)); }
+.tab-wrapper.__selected .right-icon-wrapper { color: var(--tab-selected-right-icon-color, var(--tab-right-icon-color)); }
+/* линия «разъезжается» из центра при выборе (scaleX 0 → 1) */
+.tab-wrapper.__selected .line { transform: scaleX(1); }
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+.tab-wrapper.__view-primary,
+.tab-wrapper.__view-secondary,
+.tab-wrapper.__view-custom {
+  --tab-left-icon-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-label-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-right-icon-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-overlay-color: var(--dynamic-surface-base-inverse-primary);
+  --tab-clicked-transform: 0.95;
+  --tab-clicked-time: 500ms;
+  --tab-horizontal-padding: var(--space-3);
+  --tab-counter-right-position: var(--space-1);
+}
+.tab-wrapper.__view-primary {
+  --tab-selected-surface-color: var(--dynamic-surface-base-quaternary);
+}
+.tab-wrapper.__view-secondary {
+  --tab-selected-surface-color: var(--dynamic-surface-contrast-low);
+  --tab-selected-stroke-color: var(--dynamic-surface-base-secondary);
+}
+
+.tab-wrapper.__view-base {
+  display: block;
+  --tab-left-icon-color: var(--dynamic-text-and-icons-base-secondary);
+  --tab-right-icon-color: var(--dynamic-text-and-icons-base-secondary);
+  --tab-label-color: var(--dynamic-text-and-icons-base-secondary);
+  --tab-overlay-color: var(--dynamic-surface-base-inverse-primary);
+  --tab-clicked-transform: 0.94;
+  --tab-clicked-time: 500ms;
+  --tab-horizontal-padding: 0;            /* base — без гор. паддингов, расстояние задаёт gap ряда */
+  --tab-selected-left-icon-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-selected-right-icon-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-selected-label-color: var(--dynamic-text-and-icons-base-primary);
+  --tab-counter-right-position: -2px;
+}
+.tab-wrapper.__view-base.__selected { --tab-clicked-time: 400ms; }
+.tab-wrapper.__view-base:hover .content,
+.tab-wrapper.__view-base:hover .counter-wrapper {
+  opacity: 0.84;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* custom — все цвета через параметры --tab-custom-* */
+.tab-wrapper.__view-custom {
+  --tab-surface-color: var(--tab-custom-surface-color);
+  --tab-left-icon-color: var(--tab-custom-left-icon-color);
+  --tab-label-color: var(--tab-custom-label-color);
+  --tab-right-icon-color: var(--tab-custom-right-icon-color);
+  --tab-overlay-color: var(--tab-custom-overlay-color);
+  --tab-stroke-color: var(--tab-custom-stroke-color);
+  --tab-selected-surface-color: var(--tab-custom-selected-surface-color);
+  --tab-selected-left-icon-color: var(--tab-custom-selected-left-icon-color);
+  --tab-selected-label-color: var(--tab-custom-selected-label-color);
+  --tab-selected-right-icon-color: var(--tab-custom-selected-right-icon-color);
+  --tab-selected-overlay-color: var(--tab-custom-selected-overlay-color);
+  --tab-selected-stroke-color: var(--tab-custom-selected-stroke-color);
+}
+
+/* ============================================================
+   INNER PARTS
+   ============================================================ */
+.tab-wrapper .tab {
+  display: block;
+  position: relative;
+  padding: var(--space-2) var(--tab-horizontal-padding);
+  border-radius: var(--space-3);
+  overflow: hidden;
+  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* press/hover overlay (поверх фона, под контентом) */
+.tab-wrapper .tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--overlay-color);
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-wrapper.__view-primary:hover .tab::after,
+.tab-wrapper.__view-secondary:hover .tab::after,
+.tab-wrapper.__view-custom:hover .tab::after { opacity: calc(var(--overlay-opacity) * 0.5); }
+.tab-wrapper.__view-primary:active .tab::after,
+.tab-wrapper.__view-secondary:active .tab::after,
+.tab-wrapper.__view-custom:active .tab::after { opacity: var(--overlay-opacity); }
+
+.tab-wrapper .content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+/* лейбл — стиль ds-title-s (15/20, вес 600) */
+.tab-wrapper .label {
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--tab-label-color);
+}
+
+/* инлайн-счётчик в base-табе (рядом с лейблом) — стиль title-s, приглушённый */
+.tab-wrapper .counter-inline {
+  font-family: var(--font-family);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tab-wrapper .left-icon-wrapper  { line-height: 0; color: var(--tab-left-icon-color); }
+.tab-wrapper .right-icon-wrapper { line-height: 0; color: var(--tab-right-icon-color); }
+/* <img>-иконки красим фильтром нельзя по currentColor; для inline-svg работает fill:currentColor */
+.tab-wrapper .left-icon-wrapper svg,
+.tab-wrapper .right-icon-wrapper svg { display: block; fill: currentColor; }
+
+/* нижняя линия-индикатор (__view-base) */
+.tab-wrapper .line {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  height: var(--space-1);
+  transform-origin: center;
+  background-color: var(--static-surface-status-accent);
+  border-top-left-radius: 999px;
+  border-top-right-radius: 999px;
+  /* «разъезжается» из центра при выборе; лёгкий пружинный overshoot */
+  transform: scaleX(0);
+  transition: transform 360ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* счётчик-бейдж: справа-сверху для сегментов, чуть выше у base */
+.tab-wrapper .counter-wrapper {
+  position: absolute;
+  top: -4px;
+  right: var(--tab-counter-right-position);
+  z-index: 2;
+}

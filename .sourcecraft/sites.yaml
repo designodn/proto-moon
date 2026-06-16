@@ -1,0 +1,11 @@
+# SourceCraft Sites — публикация статического прототипа.
+#
+# Файлы уже собраны (обычный HTML/CSS/JS), сборка не нужна — раздаём
+# корень репозитория из ветки main напрямую. Homepage — index.html
+# в корне (редиректит на preview.html).
+#
+# Сайт будет доступен по адресу:
+#   https://<organization_slug>.sourcecraft.site/<repository_name>
+#   т.е. https://desogn-ds-proto.sourcecraft.site/proto-moon-mirror
+site:
+  ref: "main"

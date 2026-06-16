@@ -1,0 +1,243 @@
+/**
+ * OK Design System — Chips (ChipChoice + ChipsView)
+ *
+ * Семейство компонентов:
+ *   .chips-view              — внешний wrapper (relative, w-100%)
+ *   .chips-view__row         — flex-ряд чипов; в __nowrap режиме — горизонтальный скролл
+ *   .chip-container          — обычный чип с лейблом (+опц. left-icon, +опц. right-icon при selected)
+ *   .chip-container.__type-dropdown — dropdown: лейбл + counter + chevron-down справа
+ *   .chip-icon-container     — квадратный, только иконка (+badge-counter при selected)
+ *
+ * Размеры: __size-default (44h) / __size-large (56h).
+ * Виды:    __view-primary  + __selected-primary
+ *          __view-custom   + __selected-custom (брендовые — через --chip-*-color)
+ *
+ * Анимации: при :active / .__clicked — scale(0.95) + overlay-вспышка через ::after.
+ */
+
+/* ============================================================
+   CHIPS-VIEW — контейнер для ряда чипов
+   ============================================================ */
+.chips-view {
+  position: relative;
+  width: 100%;
+}
+
+.chips-view__row {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-right: 20px;
+}
+
+/* __nowrap = горизонтальный скролл без переноса */
+.chips-view__row.__nowrap {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.chips-view__row.__nowrap::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   CHIP-CONTAINER / CHIP-ICON-CONTAINER — сам чип
+   ============================================================ */
+.chip-container,
+.chip-icon-container {
+  --overlay-opacity: 0;
+  --overlay-color: var(--static-surface-base-inverse-primary);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+
+  color: var(--chip-color);
+  background: var(--chip-background);
+  border: 0;
+  border-radius: var(--chip-border-radius);
+
+  /* Типографика чипа — встроена в компонент (ds-title-m: 17/24, weight 600).
+     На странице добавлять ds-title-m на каждый чип не нужно. */
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+
+  cursor: pointer;
+  transition:
+    background-color var(--ds-animation-duration) var(--ds-animation-easing),
+    color var(--ds-animation-duration) var(--ds-animation-easing),
+    var(--ds-transition-transform);
+}
+
+.chip-container:hover,
+.chip-icon-container:hover {
+  text-decoration: none;
+}
+
+.chip-container:active,
+.chip-container.__clicked,
+.chip-icon-container:active,
+.chip-icon-container.__clicked {
+  transform: scale(0.95);
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+.chip-container.__view-primary,
+.chip-icon-container.__view-primary {
+  --chip-background: var(--dynamic-surface-contrast-low);
+  --chip-color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.chip-container.__view-custom,
+.chip-icon-container.__view-custom {
+  --chip-background: var(--chip-background-color);
+  --chip-color: var(--chip-color-custom);
+}
+
+.chip-container.__selected-primary,
+.chip-icon-container.__selected-primary {
+  --chip-background: var(--dynamic-surface-base-inverse-secondary);
+  --chip-color: var(--dynamic-text-and-icons-base-inverse-primary);
+}
+
+.chip-container.__selected-custom,
+.chip-icon-container.__selected-custom {
+  --chip-background: var(--chip-background-selected-color);
+  --chip-color: var(--chip-selected-color);
+}
+
+/* ============================================================
+   OVERLAY (hover/press вспышка)
+   ============================================================ */
+.chip-container:not(:disabled)::after,
+.chip-icon-container:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--overlay-color);
+  border-radius: var(--chip-border-radius);
+  opacity: var(--overlay-opacity);
+  transition: opacity var(--ds-animation-duration) var(--ds-animation-easing);
+  pointer-events: none;
+}
+
+.chip-container:not(:disabled):hover,
+.chip-icon-container:not(:disabled):hover {
+  --overlay-opacity: var(--state-overlay-hovered);
+}
+
+.chip-container:not(:disabled):active,
+.chip-container:not(:disabled).__clicked,
+.chip-icon-container:not(:disabled):active,
+.chip-icon-container:not(:disabled).__clicked {
+  --overlay-opacity: var(--state-overlay-pressed);
+}
+
+.chip-container:not(:disabled):active::after,
+.chip-container:not(:disabled).__clicked::after,
+.chip-icon-container:not(:disabled):active::after,
+.chip-icon-container:not(:disabled).__clicked::after {
+  opacity: 0;
+  transition: opacity 0.8s var(--ds-animation-easing);
+}
+
+/* ============================================================
+   SIZES
+   ============================================================ */
+.chip-container.__size-default {
+  height: 44px;
+  padding: 10px 16px;
+  --chip-border-radius: var(--custom-cr-16, 16px);
+}
+
+.chip-container.__size-large {
+  height: 56px;
+  padding: 16px 20px;
+  --chip-border-radius: var(--custom-cr-20, 20px);
+}
+
+.chip-icon-container.__size-default {
+  width: 44px;
+  height: 44px;
+  --chip-border-radius: var(--custom-cr-16, 16px);
+}
+
+.chip-icon-container.__size-large {
+  width: 56px;
+  height: 56px;
+  --chip-border-radius: var(--custom-cr-20, 20px);
+}
+
+/* ============================================================
+   ADDONS: иконки и каунтеры
+   ============================================================ */
+.chip-container .left-icon,
+.chip-container .right-icon {
+  padding-top: 1px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.chip-container .left-icon {
+  margin-right: 6px;
+}
+
+/* Иконки внутри чипса — обычные <img>. Чтобы перекрасить чёрный SVG в белый
+   для selected-чипса, добавь инлайн `style="filter: brightness(0) invert(1)"`.
+   Маска не используется намеренно — оставляем оригинальные цвета по умолчанию. */
+
+/* right-icon появляется при selected default/dropdown — с плавным fade-in */
+.chip-container .right-icon {
+  margin-left: 6px;
+  opacity: 0;
+  animation: chip-icon-fade-in 0.8s forwards;
+}
+
+@keyframes chip-icon-fade-in {
+  to { opacity: 1; }
+}
+
+/* dropdown-counter: inline между лейблом и стрелкой */
+.chip-container .counter {
+  margin-left: 6px;
+  margin-right: 2px;
+  --counter-custom-background-color: var(--dynamic-surface-contrast-on-color-inverse-mid);
+}
+
+/* badge-counter поверх icon-container (top-right) */
+.chip-icon-container .icon-counter {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  --counter-custom-background-color: var(--static-surface-status-positive);
+  --counter-custom-stroke-color: var(--dynamic-surface-base-secondary);
+  --counter-custom-text-color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+.chip-icon-container.__size-large .icon-counter {
+  top: -6px;
+  right: -6px;
+}
+
+/* ============================================================
+   DISABLED
+   ============================================================ */
+.chip-container:disabled,
+.chip-icon-container:disabled,
+.chip-container.__state-disabled,
+.chip-icon-container.__state-disabled {
+  pointer-events: none;
+  opacity: var(--state-element-disabled, 0.36);
+}

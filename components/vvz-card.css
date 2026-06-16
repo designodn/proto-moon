@@ -1,0 +1,301 @@
+/**
+ * OK Design System (proto) — VvzCard «ВВЗ»
+ *
+ * Карточка «Возможно, вы знакомы». ОДИН компонент на все места ВВЗ, варианты
+ * задаются модификатором:
+ *  - .__default — в ленте / друзьях / гостях / профиле: квадратное фото с
+ *                 blur-подложкой + крестик on-image, текст слева, кнопка
+ *                 primary. Ширина 220 (дефолт) или 160 (.__cards-160 у ряда).
+ *  - .__message — в сообщениях: горизонтальный ряд, ширина 160px, круглый
+ *                 аватар, без avatars-view, кнопка primary-on-color (белая)
+ *  - .__stories — в сториз ВВЗ: вертикальный стек, ширина 100%, круглый
+ *                 аватар + avatars-view общих друзей, кнопка primary (оранжевая)
+ *  - .__help    — финальная карточка стека «Найдите ещё больше друзей»: без
+ *                 фото и кнопки «Дружить», смайл-иконка + текст + строки-ссылки
+ *
+ * Вертикальный ритм аватарных вариантов (.__message / .__stories):
+ *   аватар 96 → 8 → (title ds-title-s + ds-body-m) → 8 → avatars-view 36
+ *   → 12 → кнопка
+ *
+ * Вид: круглый аватар по центру + крестик «×» в углу + имя и сабтайтл по
+ * центру + (опц.) ряд общих друзей + кнопка «Дружить» во всю ширину.
+ *
+ *   <div class="vvz-card">
+ *     <div class="vvz-card__media"><img …><button class="vvz-card__close">✕</button></div>
+ *     <div class="vvz-card__content">
+ *       <div class="vvz-card__title ds-title-s">Имя</div>
+ *       <div class="vvz-card__subtitle ds-caption-m">28 лет, Москва</div>
+ *       <!-- (опц.) общие друзья: показ через .__has-mutuals на корне -->
+ *       <div class="vvz-card__mutuals">
+ *         <div class="avatars-view __size-32">
+ *           <div class="avatars-view__stack">…</div>
+ *           <span class="avatars-view__text">18 общих друзей</span>
+ *         </div>
+ *       </div>
+ *       <div class="vvz-card__btn button-wrapper __size-36 __full-width">…Дружить…</div>
+ *     </div>
+ *   </div>
+ *
+ * MODIFIERS:
+ *   .__message      — вариант «сообщения» (160px, кнопка on-color, без avatars-view)
+ *   .__stories      — вариант «сториз» (100% ширины, кнопка primary, с avatars-view)
+ *   .__has-mutuals  — есть данные общих друзей (иначе avatars-view-плейсхолдер
+ *                     держит высоту через visibility:hidden)
+ *   .__state-hidden — состояние «Рекомендация скрыта»: контент карточки
+ *                     заменяется на заглушку, высота сохраняется (вариант сториз)
+ */
+
+.vvz-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 160px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  background-color: var(--dynamic-surface-base-tertiary);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.vvz-card:active,
+.vvz-card.__clicked { transform: scale(0.98); }
+
+/* Вариант СТОРИЗ — карточка занимает всю ширину ячейки грида (moment__body-grid).
+   avatars-view общих друзей — только здесь (см. правило ниже + __has-mutuals). */
+.vvz-card.__stories {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+/* Вариант СООБЩЕНИЯ — фикс. ширина 160 (как дефолт) + кнопка primary-on-color.
+   Переопределяем CSS-переменные DS-кнопки, чтобы разметка кнопки не менялась
+   (остаётся __style-primary) — стиль задаёт модификатор карточки. */
+.vvz-card.__message .vvz-card__btn .button-container {
+  --button-color: var(--base-black-100);
+  --button-background-color: var(--static-surface-base-inverse-primary);
+}
+
+/* ============================================================
+   ВАРИАНТ DEFAULT — квадратное фото с blur-подложкой (лента / друзья /
+   гости / профиль). Бывший отдельный компонент friend-card (Figma
+   2339:88742, на базе uniCard 160 + media). Отличия от аватарных
+   вариантов: фото во всю ширину сверху (не круглый аватар по центру),
+   текст слева, крестик «скрыть» — button-circle on-image поверх фото.
+   Ширину (220 / 160) задаёт .vvz-portlet__row, см. vvz-portlet.css.
+   ============================================================ */
+.vvz-card.__default {
+  align-items: stretch;
+  padding-top: 0;
+  overflow: hidden;
+}
+/* Медиа — квадрат с blur-подложкой (заполняет поля непропорциональных фото).
+   Внутренняя обводка 1px contrast-low — поверх содержимого через ::after. */
+.vvz-card.__default .vvz-card__media {
+  position: relative;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 0;
+  border-bottom: 0.5px solid var(--dynamic-stroke-contrast-low);
+}
+.vvz-card.__default .vvz-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--dynamic-stroke-contrast-low);
+}
+.vvz-card__blur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.2);
+  filter: blur(6px);
+}
+.vvz-card.__default .vvz-card__media > img { position: relative; }
+/* Крестик «скрыть» поверх фото — DS button-circle __size-24 __style-on-image */
+.vvz-card.__default .vvz-card__close {
+  top: 8px;
+  right: 8px;
+}
+/* Контент — слева, паддинг 12 со всех сторон */
+.vvz-card.__default .vvz-card__content {
+  padding: 12px;
+  align-items: stretch;
+}
+.vvz-card.__default .vvz-card__title,
+.vvz-card.__default .vvz-card__subtitle { text-align: left; }
+
+/* ============================================================
+   ВАРИАНТ HELP — финальная карточка стека «Найдите ещё больше друзей».
+   Без фото и кнопки «Дружить»: иконка-смайл в круге + центрированные
+   тексты + строки-ссылки (поиск по контактам / по школам).
+   ============================================================ */
+.vvz-card.__help {
+  padding: 12px;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+.vvz-card__help-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.vvz-card__help-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dynamic-surface-contrast-low);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.vvz-card__help-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+.vvz-card__help-title    { color: var(--dynamic-text-and-icons-base-primary);   text-align: center; }
+.vvz-card__help-subtitle { color: var(--dynamic-text-and-icons-base-secondary); text-align: center; }
+.vvz-card__help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.vvz-card__help-link {
+  color: var(--dynamic-text-and-icons-base-secondary);
+  text-align: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+.vvz-card__help-link:active { opacity: 0.6; }
+
+/* Круглый аватар по центру (аватарные варианты __message / __stories) */
+.vvz-card__media {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.vvz-card__media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Крестик «скрыть» в правом верхнем углу карточки — DS button-inline size 16.
+   Поведение и анимация — components/dismissible.{css,js}. */
+.vvz-card__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}
+
+/* Контент — по центру. flex: 1 + margin-top:auto на .vvz-card__btn даёт
+   выравнивание кнопок по низу карточки, когда в сетке (grid stretch) одни
+   карточки с mutuals, другие — без. */
+.vvz-card__content {
+  width: 100%;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  padding: 8px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.vvz-card__title {
+  max-width: 100%;
+  text-align: center;
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vvz-card__subtitle {
+  margin-top: 2px;
+  max-width: 100%;
+  text-align: center;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Общие друзья — стек аватарок. Блок рендерится ВСЕГДА: если данных нет,
+   внутри лежат 3 аватарки .__type-placeholder того же размера, через
+   visibility: hidden они невидимы, но занимают высоту. Это даёт автоматическое
+   выравнивание кнопок в сетке без жёстких пиксельных констант — работает
+   на любом DPR, шрифте и размере avatar. */
+.vvz-card__mutuals {
+  display: flex;
+  margin-top: 8px;
+  visibility: hidden;
+}
+.vvz-card.__has-mutuals .vvz-card__mutuals {
+  visibility: visible;
+}
+
+/* Кнопка прижата к низу карточки. margin-top:auto в flex column забирает
+   всё свободное пространство сверху — работает и в V2 (с mutuals), и в V3
+   (с плейсхолдером). В обычной горизонтальной раскладке (мессаджи) высота
+   карточки определяется контентом, auto = 0 — поведение прежнее. */
+.vvz-card__btn {
+  margin-top: auto;
+  padding-top: 12px;
+  display: block;
+  width: 100%;
+}
+.vvz-card__btn .button-container {
+  width: 100%;
+}
+
+/* ============================================================
+   STATE: HIDDEN — V1 из Figma. Карточка-заглушка после тапа на ✕.
+   Высота сохраняется. Видны только:
+     - title «Рекомендация скрыта» (центрирован по карточке)
+     - кнопка «Отменить» style secondary-on-color
+   Фон прозрачный + полупрозрачный белый border (карточка лежит на
+   тёмном фоне сториз — белый текст читается).
+   Текст title и текст кнопки меняются JS, см. vvz-card.js.
+   ============================================================ */
+.vvz-card.__state-hidden {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  cursor: default;
+}
+.vvz-card.__state-hidden .vvz-card__media,
+.vvz-card.__state-hidden .vvz-card__close,
+.vvz-card.__state-hidden .vvz-card__subtitle,
+.vvz-card.__state-hidden .vvz-card__mutuals {
+  display: none;
+}
+.vvz-card.__state-hidden .vvz-card__content {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+.vvz-card.__state-hidden .vvz-card__title {
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+/* Кнопка визуально становится secondary-on-color без смены классов через JS:
+   переопределяем CSS-переменные DS-кнопки. */
+.vvz-card.__state-hidden .vvz-card__btn .button-container {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  --button-background-color: rgba(255, 255, 255, 0.16);
+}

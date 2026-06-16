@@ -1,0 +1,268 @@
+/**
+ * OK Design System (proto) — GiftCard
+ *
+ * Карточка-подарок из шторы «Вам подарили N подарков».
+ * Эталон — стейт 3 (300×350): белая карточка с border 1px, padding 20px,
+ * border-radius 36px. Меньшие/большие версии получаются через CSS
+ * `transform: scale(s)` снаружи (см. gifts.html — анимация четырёх стейтов).
+ *
+ * Borders держим визуально 1px при любом scale: через CSS-переменную
+ * --gift-card-scale, которую JS обновляет каждый кадр анимации.
+ *
+ *   <article class="gift-card" data-i="3">
+ *     <div class="gift-card__slot">
+ *       <div class="gift-card__cell">
+ *         <div class="avatar __size-36 __type-image"><img …></div>
+ *         <span class="gift-card__name ds-body-m">Виктория Петрова</span>
+ *       </div>
+ *       <div class="gift-card__img">
+ *         <img class="gift-card__photo" src="…" alt="">
+ *         <!-- или декоративный плакат: <div class="gift-card__poster">…</div> -->
+ *       </div>
+ *     </div>
+ *
+ *     <div class="gift-card__accept">
+ *       <div class="button-wrapper __size-56">
+ *         <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
+ *       </div>
+ *     </div>
+ *
+ *     <button class="gift-card__trash" aria-label="Удалить">
+ *       <img src="assets/icons/trash_16_20.svg" alt="">
+ *     </button>
+ *   </article>
+ *
+ * МОДИФИКАТОР:
+ *   .__active — показывает trash (top-right) и кнопку «Принять» внизу;
+ *                gap между slot и accept становится 20px (был 10).
+ */
+
+.gift-card {
+  --gift-card-scale: 1;
+
+  position: relative;
+  width: 300px;
+  height: 350px;
+  box-sizing: border-box;
+  background: #fff;
+  /* border принудительно 1px независимо от scale — компенсируем через calc */
+  border: solid #e7e7e7;
+  border-width: calc(1px / var(--gift-card-scale));
+  border-radius: 36px;
+  /* В .__active высота растёт вниз (top:0 anchor), чтобы слот с картинкой
+     не сжимался под кнопку «Принять». См. правило .__active ниже. */
+  transition: height 240ms ease-out;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform-origin: 50% 50%;
+  /* Лёгкая тень для разделения карточек в стопке/веере (стейты 1-2). */
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08),
+              0 2px 6px  rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   SLOT — uniCell (avatar + name) + Img.
+   ============================================================ */
+.gift-card__slot {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gift-card__cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  width: 100%;
+}
+
+.gift-card__name {
+  flex: 1 1 0;
+  min-width: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gift-card__img {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f0f0f0;
+  position: relative;
+}
+.gift-card__photo,
+.gift-card__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.gift-card__poster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,.18);
+  padding: 16px;
+}
+.gift-card__poster-emoji {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.2));
+}
+.gift-card__poster-text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic; font-weight: 700;
+  font-size: 22px; line-height: 26px; letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   ACCEPT — кнопка «Принять» под Img. Скрыта по умолчанию (h:0, opacity:0),
+   разворачивается при .__active.
+   ============================================================ */
+.gift-card__accept {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  pointer-events: none;
+  transition: height 240ms ease-out,
+              opacity 240ms ease-out,
+              margin-top 240ms ease-out;
+}
+.gift-card__accept .button-wrapper { width: 100%; }
+.gift-card__accept .button-container { width: 100%; }
+
+/* ============================================================
+   TRASH — кружок 36×36 в правом верхнем углу. Скрыт по умолчанию.
+   ============================================================ */
+.gift-card__trash {
+  position: absolute;
+  top: 19px;
+  right: 19px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease-out;
+  z-index: 2;
+}
+.gift-card__trash img { width: 20px; height: 20px; display: block; }
+
+/* ============================================================
+   .__active — открываем trash и кнопку «Принять»
+   ============================================================ */
+.gift-card.__active {
+  /* Карточка вырастает на высоту accept-блока (56px) + gap (20px).
+     За счёт `top: 0` (см. gifts.html) визуально она растёт ВНИЗ — слот
+     и картинка остаются в исходном положении, не сжимаются. */
+  height: 426px;
+}
+.gift-card.__active .gift-card__trash {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gift-card.__active .gift-card__accept {
+  height: 56px;
+  opacity: 1;
+  margin-top: 20px;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   .__accepting — нажали «Принять»: радиальный градиент заливает
+   карточку снизу-вверх, поверх появляется галочка.
+   После анимации заливки наружный JS добавляет .__flying-up.
+   ============================================================ */
+.gift-card__accept-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* Радиальный градиент один-в-один с Figma circle 2461:93299. */
+  background:
+    radial-gradient(circle 405px at 50% 92%,
+      #ffb44a 0%,
+      #ff8224 16%,
+      #f55418 32%,
+      #de3a08 58%,
+      #cd2800 100%);
+  /* ПОДЛОЖКА КНОПКИ расширяется: старт — footprint кнопки «Принять»
+     (card padding 20, кнопка высотой 56 у низа), затем clip разворачивается
+     во всю карточку → выглядит, будто оранжевая кнопка растёт и заливает. */
+  clip-path: inset(calc(100% - 76px) 20px 20px 20px round 28px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+  transition: clip-path 600ms cubic-bezier(.2, .8, .2, 1),
+              opacity 140ms ease-out;
+}
+.gift-card__accept-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 240ms ease-out 300ms,
+              transform 380ms cubic-bezier(0, -0.3, 0.5, 1.3) 300ms;
+}
+.gift-card__accept-check img,
+.gift-card__accept-check svg {
+  width: 96px;
+  height: auto;
+  display: block;
+}
+.gift-card.__accepting .gift-card__accept-overlay {
+  clip-path: inset(0px 0px 0px 0px round 36px);
+  opacity: 1;
+}
+.gift-card.__accepting .gift-card__accept-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   .__flying-up / .__flying-down — улёт после accept/trash.
+   Карточку транслирует за пределы viewport (вверх или вниз)
+   + лёгкая ротация. Opacity не трогаем — карточка улетает в полном виде.
+   ============================================================ */
+.gift-card.__flying-up,
+.gift-card.__flying-down {
+  pointer-events: none;
+  transition: transform 600ms cubic-bezier(.5, 0, .75, 0);
+}
+/* Сами transform-значения JS подмешивает к существующему translate
+   текущей позиции в ряду (см. acceptCard / dismissCard в gifts.html). */
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-card,
+  .gift-card__trash,
+  .gift-card__accept { transition: none !important; animation: none !important; }
+}

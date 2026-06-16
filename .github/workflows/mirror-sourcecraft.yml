@@ -1,0 +1,57 @@
+name: Mirror to SourceCraft
+
+# Зеркалирует репозиторий в SourceCraft (sourcecraft.dev) на каждый push.
+# Цель — держать актуальную резервную копию на случай недоступности GitHub.
+#
+# Требуются три секрета (Settings → Secrets and variables → Actions):
+#   SOURCECRAFT_REPO_URL — адрес репо без схемы и токена,
+#                          например: sourcecraft.dev/<owner>/<repo>.git
+#   SOURCECRAFT_USER     — логин в SourceCraft
+#   SOURCECRAFT_TOKEN    — Personal Access Token (scope: repo)
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  workflow_dispatch:
+
+concurrency:
+  group: mirror-sourcecraft
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Проверить, что секреты заданы
+        env:
+          SC_URL: ${{ secrets.SOURCECRAFT_REPO_URL }}
+          SC_USER: ${{ secrets.SOURCECRAFT_USER }}
+          SC_TOKEN: ${{ secrets.SOURCECRAFT_TOKEN }}
+        run: |
+          if [ -z "$SC_URL" ] || [ -z "$SC_USER" ] || [ -z "$SC_TOKEN" ]; then
+            echo "::error::Не заданы секреты SOURCECRAFT_REPO_URL / SOURCECRAFT_USER / SOURCECRAFT_TOKEN. См. комментарий в начале workflow."
+            exit 1
+          fi
+
+      - name: Сделать bare-зеркало с GitHub
+        run: git clone --mirror "https://github.com/${{ github.repository }}.git" repo.git
+
+      - name: Запушить зеркало в SourceCraft
+        working-directory: repo.git
+        env:
+          SC_URL: ${{ secrets.SOURCECRAFT_REPO_URL }}
+          SC_USER: ${{ secrets.SOURCECRAFT_USER }}
+          SC_TOKEN: ${{ secrets.SOURCECRAFT_TOKEN }}
+        run: |
+          # Срезаем возможный префикс схемы и хвост ?query, чтобы секрет можно
+          # было задать как полным URL, так и в виде host/owner/repo.git
+          clean_url="${SC_URL#http://}"
+          clean_url="${clean_url#https://}"
+          clean_url="${clean_url%%\?*}"
+          clean_url="${clean_url%/}"
+          # Basic-auth через заголовок — не ломается на спецсимволах в токене
+          auth="$(printf '%s:%s' "$SC_USER" "$SC_TOKEN" | base64 -w0)"
+          echo "::add-mask::${auth}"
+          git -c http.extraheader="Authorization: Basic ${auth}" \
+            push --mirror "https://${clean_url}"
