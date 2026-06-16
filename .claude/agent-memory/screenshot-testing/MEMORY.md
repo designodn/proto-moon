@@ -1,5 +1,11 @@
 # screenshot-testing memory — proto-moon
 
+## preview.html — Breadcrumbs component (2026-06-16)
+- `.breadcrumbs__separator` = inline mask glyph. Computed maskImage/webkitMaskImage = `assets/icons/arrow_right_12.svg` (FILLED right arrow →, HTTP 200), bg-color rgb(0,0,0). Box is exactly 8x8. NOTE: glyph paints on the element itself (mask on `.breadcrumbs__separator`), NOT via ::before/::after — both pseudos return mask:none/content:none (false negative; ignore them). This differs from new-vision/nv-breadcrumbs where arrow is a ::after `›` text pseudo.
+- "with leading badge" example: itemLink has `img.breadcrumbs__badge` (ok_star_16_20.svg). Measured gaps via Range on text nodes + getBoundingClientRect: badge→"Еда" 4px, "Еда"→sep 2px, sep→"Рецепты" 8px. Item text font-weight 600.
+- To find the badge example: `document.querySelector('.breadcrumbs__badge').closest('.breadcrumbs')`. Multiple `.breadcrumbs` blocks on the page (5+), but only the badge one has the img.
+- Component table label (preview.html:465) still says "chevron 8px" — stale doc text, actual glyph is the filled arrow now. Cosmetic, not a render bug.
+
 ## Setup
 - Serve from REPO ROOT: `python3 -m http.server 8080 --bind 127.0.0.1` (new-vision pages pull `../index.css`, `../assets/`).
 - new-vision/lenta.html = vision feed. Congrats cards are the first 4 articles after the stories row.
