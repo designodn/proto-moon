@@ -63,7 +63,8 @@
           <span class="pulse-dot"></span>
           <span class="activity-header__chevron" aria-hidden="true"></span>
         </a>
-        <div class="ds-activity-slot">
+        <div class="ds-activity-conveyor" id="activityConveyor">
+          <div class="ds-activity-conveyor__track">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -97,9 +98,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="ds-activity-slot">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -132,6 +130,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -823,6 +822,44 @@
     sessionStorage.setItem('nav-tab', '1');
     location.href = (entity === 'self') ? PROFILE_SELF : PROFILE_USER;
   });
+})();
+</script>
+
+<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху,
+     стопка сдвигается вниз, нижняя уходит за край и пропадает. -->
+<script>
+(function () {
+  var conv = document.getElementById('activityConveyor');
+  if (!conv) return;
+  var track = conv.querySelector('.ds-activity-conveyor__track');
+  if (!track || track.children.length < 3) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function rowH() {
+    var v = parseFloat(getComputedStyle(conv).getPropertyValue('--conv-row-h'));
+    return isNaN(v) ? 72 : v;
+  }
+  var animating = false;
+
+  function step() {
+    if (animating) return;
+    animating = true;
+    // едем вниз на одну строку: новая падает сверху, нижняя уходит за край
+    track.style.transform = 'translateY(0)';
+    track.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName !== 'transform') return;
+      track.removeEventListener('transitionend', onEnd);
+      // нижнюю (последнюю) переносим в начало пула как следующую «новую сверху»
+      track.style.transition = 'none';
+      track.insertBefore(track.lastElementChild, track.firstElementChild);
+      track.style.transform = 'translateY(' + (-rowH()) + 'px)';
+      void track.offsetWidth;        // зафиксировать сброс без анимации
+      track.style.transition = '';   // вернуть CSS-переход
+      animating = false;
+    });
+  }
+
+  setInterval(step, 3200);
 })();
 </script>
 
