@@ -1,0 +1,92 @@
+/**
+ * OK Design System (proto) — CalendarDate
+ *
+ * Иконка-календарь с текущим числом месяца на «листе» + зелёный
+ * индикатор-точка (события сегодня). Кладётся в button-inline навбара
+ * ленты как первая иконка. Число проставляет components/calendar-date.js
+ * (= new Date().getDate()).
+ *
+ *   <span class="calendar-date" aria-hidden="true">
+ *     <span class="calendar-date__tab"></span>
+ *     <span class="calendar-date__tab"></span>
+ *     <span class="calendar-date__body"><span class="calendar-date__num">3</span></span>
+ *     <span class="calendar-date__dot"></span>
+ *   </span>
+ *
+ * Цвет контура/числа = currentColor (наследуется от button-inline → тема).
+ * Оранжевая «шапка» календаря и зелёная точка — статичные акцентные токены.
+ */
+
+.calendar-date {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  color: var(--dynamic-text-and-icons-base-primary);
+  vertical-align: middle;
+}
+
+/* Кольца-штырьки сверху (крепление календаря) */
+.calendar-date__tab {
+  position: absolute;
+  top: 0;
+  width: 2.5px;
+  height: 6px;
+  border-radius: 2px;
+  background: currentColor;
+  z-index: 2;
+}
+.calendar-date__tab:nth-of-type(1) { left: 7px; }
+.calendar-date__tab:nth-of-type(2) { right: 7px; }
+
+/* Тело календаря — белый лист с контуром */
+.calendar-date__body {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  bottom: 0;
+  top: 3px;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  background: var(--dynamic-surface-base-secondary);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Оранжевая «шапка» */
+.calendar-date__body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7px;
+  background: var(--static-surface-status-accent);
+}
+
+/* Число месяца */
+.calendar-date__num {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1;
+  padding-bottom: 2px;
+  color: currentColor;
+}
+
+/* Зелёный индикатор «есть события сегодня» */
+.calendar-date__dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--static-surface-status-positive, #4bb34b);
+  border: 2px solid var(--dynamic-surface-base-secondary);
+  z-index: 3;
+}

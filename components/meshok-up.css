@@ -1,38 +1,51 @@
 /**
  * OK Design System — MeshokUp
  *
- * Sticky top chrome: status-bar + nav-bar + tabs.
- * Закруглён снизу на 20px, чтобы совпадать с островами в фиде.
+ * Top chrome: status-bar + nav-bar + tabs.
+ * border-radius: 0 — не менять.
  *
  *   <div class="meshok-up">
- *     <div class="status-bar">…</div>
- *     <div class="nav-bar">…</div>
- *     <div class="tabs">…</div>
+ *     <div class="status-bar">…</div>            ← sticky (всегда виден)
+ *     <div class="nav-bar">…</div>               ← скроллится с лентой
+ *     <div class="tabs">…</div>                  ← скроллится с лентой
  *   </div>
+ *
+ *   При скролле прилеплен ТОЛЬКО status-bar; nav-bar и tabs уезжают
+ *   вверх вместе с контентом. Sticky висит на .status-bar напрямую,
+ *   чтобы overflow/clipping на .meshok-up не мешал.
+ *
+ * --status-bar-height — высота status-bar (44px). Опубликована на :root,
+ *   чтобы оверлеи (system-notifications heads-up и пр.) отстраивались
+ *   от неё, а не зашивали число.
  */
+:root {
+  --status-bar-height: 44px;
+}
 
+/* meshok-up — «прозрачная» обёртка: display:contents убирает её собственный
+   box, но сохраняет дочерние status-bar/nav-bar/tabs в потоке родителя.
+   Так status-bar получает в качестве containing block scroll-контейнер
+   страницы (а не короткий meshok-up), и sticky-top остаётся пинов на
+   весь скролл — nav-bar/tabs уезжают мимо него. */
 .meshok-up {
-  display: flex;
-  flex-direction: column;
+  display: contents;
+}
+
+/* ============================================================
+   STATUS BAR — единственный sticky-элемент в meshok-up
+   ============================================================ */
+.status-bar {
   position: sticky;
   top: 0;
   z-index: 50;
   flex-shrink: 0;
-  background-color: var(--dynamic-surface-base-secondary);
-  border-radius: 0 0 20px 20px;
-  overflow: hidden;
-}
-
-/* ============================================================
-   STATUS BAR
-   ============================================================ */
-.status-bar {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  height: 44px;
-  padding: 0 var(--space-5) var(--space-2);
-  background-color: var(--dynamic-surface-base-secondary);
+  height: var(--status-bar-height);
+  padding: var(--space-2) var(--space-5) var(--space-2);
+  /* Цвет фона зафиксирован — переопределять на странице нельзя */
+  background-color: var(--dynamic-surface-base-secondary) !important;
   color: var(--dynamic-text-and-icons-base-primary);
   font-family: var(--font-family);
 }
@@ -55,12 +68,14 @@
    NAV BAR
    ============================================================ */
 .nav-bar {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 56px;
   padding: 0 var(--space-4);
-  background-color: var(--dynamic-surface-base-secondary);
+  /* Цвет фона зафиксирован — переопределять на странице нельзя */
+  background-color: var(--dynamic-surface-base-secondary) !important;
 }
 
 .nav-bar__leading,
@@ -68,6 +83,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+
+/* Иконочные button-inline в навбаре: центрируем контент во весь контейнер
+   (без baseline-зазора inline-block → иконки сидят ровно, контейнер не «прыгает»). */
+.nav-bar .button-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .nav-bar__title {
@@ -97,45 +121,40 @@
 .nav-bar.__type-publish {
   height: auto;
   padding: var(--space-2) var(--space-4);
-  background-color: transparent;
+  background-color: transparent !important;
 }
 .nav-bar.__type-publish .nav-bar__trailing {
   gap: var(--space-4);
 }
 
-/* ── Search-навбар: back (leading) + растягивающееся поле поиска + trailing.
-   Поле поиска — единая пилюля (иконка + borderless-инпут внутри). */
+/* ============================================================
+   TYPE: SEARCH — back + растянутый поисковый input + button-circle.
+   Используется в Трибуне и других экранах со встроенным поиском.
+   ============================================================ */
 .nav-bar.__type-search {
   gap: var(--space-2);
 }
 .nav-bar.__type-search .nav-bar__leading,
 .nav-bar.__type-search .nav-bar__trailing {
-  flex: 0 0 auto;
+  flex-shrink: 0;
 }
-.nav-bar__search {
-  flex: 1 1 auto;
+.nav-bar.__type-search .nav-bar__search {
+  flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  height: 36px;
-  padding: 0 var(--space-3);
-  border-radius: 9px;
-  background-color: var(--dynamic-surface-contrast-low);
+  position: relative;
 }
-.nav-bar__search-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
+.nav-bar.__type-search .nav-bar__search .text-input {
+  padding-left: 40px;
+}
+.nav-bar.__type-search .nav-bar__search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
   color: var(--dynamic-text-and-icons-base-secondary);
-}
-/* Инпут внутри пилюли — без собственного фона и боковых паддингов. */
-.nav-bar__search .text-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
-  padding: 0;
-  background-color: transparent;
 }
 
 /* ============================================================

@@ -93,12 +93,12 @@
   .rl-prize__pod {
     width: 168px; height: 168px;
     border-radius: 32px;
-    background: #fff;
-    box-shadow: 0 18px 40px rgba(120,40,0,0.28), inset 0 1px 0 rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.16);
+    box-shadow: 0 18px 40px rgba(120,40,0,0.28), inset 0 1px 0 rgba(255,255,255,0.28);
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    backdrop-filter: blur(2px);
   }
-  .rl-prize__img { width: 140px; height: 140px; object-fit: contain; }
+  .rl-prize__emoji { font-size: 96px; line-height: 1; filter: drop-shadow(0 10px 14px rgba(120,40,0,0.35)); }
   .rl-prize__cap { font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(120,40,0,0.4); }
 
   /* анимация прокрутки: -1 копия из двух (см. JS дублирование) */
@@ -119,27 +119,23 @@
   .rl-action {
     position: relative;
     width: 106px; height: 110px;
-    background: transparent;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(120,40,0,0.18);
     cursor: pointer;
   }
-  /* Белая подложка-squircle (radius 20, corner smoothing ~60%), повёрнута на -6.73° как в макете.
-     CSS не умеет нативный corner-smoothing → форма задана суперэллипс-контуром через clip-path,
-     тень — через drop-shadow (повторяет вырезанную форму). Контент карточки остаётся прямым. */
+  /* лёгкий наклон «подложки» как в макете */
   .rl-action::before {
     content: ''; position: absolute; inset: 0;
-    background: #fff;
-    -webkit-clip-path: path('M 20 0 L 86 0 L 90.54 0.03 L 92.69 0.11 L 94.38 0.26 L 95.82 0.46 L 97.08 0.72 L 98.21 1.04 L 99.23 1.41 L 100.16 1.85 L 101 2.35 L 101.77 2.91 L 102.46 3.54 L 103.09 4.23 L 103.65 5 L 104.15 5.84 L 104.59 6.77 L 104.96 7.79 L 105.28 8.92 L 105.54 10.18 L 105.74 11.62 L 105.89 13.31 L 105.97 15.46 L 106 20 L 106 90 L 105.97 94.54 L 105.89 96.69 L 105.74 98.38 L 105.54 99.82 L 105.28 101.08 L 104.96 102.21 L 104.59 103.23 L 104.15 104.16 L 103.65 105 L 103.09 105.77 L 102.46 106.46 L 101.77 107.09 L 101 107.65 L 100.16 108.15 L 99.23 108.59 L 98.21 108.96 L 97.08 109.28 L 95.82 109.54 L 94.38 109.74 L 92.69 109.89 L 90.54 109.97 L 86 110 L 20 110 L 15.46 109.97 L 13.31 109.89 L 11.62 109.74 L 10.18 109.54 L 8.92 109.28 L 7.79 108.96 L 6.77 108.59 L 5.84 108.15 L 5 107.65 L 4.23 107.09 L 3.54 106.46 L 2.91 105.77 L 2.35 105 L 1.85 104.16 L 1.41 103.23 L 1.04 102.21 L 0.72 101.08 L 0.46 99.82 L 0.26 98.38 L 0.11 96.69 L 0.03 94.54 L 0 90 L 0 20 L 0.03 15.46 L 0.11 13.31 L 0.26 11.62 L 0.46 10.18 L 0.72 8.92 L 1.04 7.79 L 1.41 6.77 L 1.85 5.84 L 2.35 5 L 2.91 4.23 L 3.54 3.54 L 4.23 2.91 L 5 2.35 L 5.84 1.85 L 6.77 1.41 L 7.79 1.04 L 8.92 0.72 L 10.18 0.46 L 11.62 0.26 L 13.31 0.11 L 15.46 0.03 L 20 0 Z');
-            clip-path: path('M 20 0 L 86 0 L 90.54 0.03 L 92.69 0.11 L 94.38 0.26 L 95.82 0.46 L 97.08 0.72 L 98.21 1.04 L 99.23 1.41 L 100.16 1.85 L 101 2.35 L 101.77 2.91 L 102.46 3.54 L 103.09 4.23 L 103.65 5 L 104.15 5.84 L 104.59 6.77 L 104.96 7.79 L 105.28 8.92 L 105.54 10.18 L 105.74 11.62 L 105.89 13.31 L 105.97 15.46 L 106 20 L 106 90 L 105.97 94.54 L 105.89 96.69 L 105.74 98.38 L 105.54 99.82 L 105.28 101.08 L 104.96 102.21 L 104.59 103.23 L 104.15 104.16 L 103.65 105 L 103.09 105.77 L 102.46 106.46 L 101.77 107.09 L 101 107.65 L 100.16 108.15 L 99.23 108.59 L 98.21 108.96 L 97.08 109.28 L 95.82 109.54 L 94.38 109.74 L 92.69 109.89 L 90.54 109.97 L 86 110 L 20 110 L 15.46 109.97 L 13.31 109.89 L 11.62 109.74 L 10.18 109.54 L 8.92 109.28 L 7.79 108.96 L 6.77 108.59 L 5.84 108.15 L 5 107.65 L 4.23 107.09 L 3.54 106.46 L 2.91 105.77 L 2.35 105 L 1.85 104.16 L 1.41 103.23 L 1.04 102.21 L 0.72 101.08 L 0.46 99.82 L 0.26 98.38 L 0.11 96.69 L 0.03 94.54 L 0 90 L 0 20 L 0.03 15.46 L 0.11 13.31 L 0.26 11.62 L 0.46 10.18 L 0.72 8.92 L 1.04 7.79 L 1.41 6.77 L 1.85 5.84 L 2.35 5 L 2.91 4.23 L 3.54 3.54 L 4.23 2.91 L 5 2.35 L 5.84 1.85 L 6.77 1.41 L 7.79 1.04 L 8.92 0.72 L 10.18 0.46 L 11.62 0.26 L 13.31 0.11 L 15.46 0.03 L 20 0 Z');
-    transform: rotate(-6.73deg);
-    filter: drop-shadow(0 10px 24px rgba(120,40,0,0.18));
+    background: #fff; border-radius: 20px;
+    transform: rotate(-4deg); z-index: -1;
+    box-shadow: 0 10px 24px rgba(120,40,0,0.12);
   }
-  .rl-action__emoji,
-  .rl-action__img {
+  .rl-action__emoji {
     position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
     font-size: 64px; line-height: 1;
     filter: drop-shadow(0 8px 10px rgba(120,40,0,0.28));
   }
-  .rl-action__img { width: 84px; height: 84px; object-fit: contain; }
   .rl-action__label {
     position: absolute; left: 6px; right: 6px; bottom: 22px;
     text-align: center; font-size: 15px; font-weight: 600; color: #000;
@@ -161,7 +157,6 @@
     font-size: 17px; font-weight: 700; color: #000;
   }
   .rl-coin__emoji { font-size: 22px; line-height: 1; }
-  .rl-coin__img { width: 26px; height: 26px; object-fit: contain; }
 
   /* ── Нижняя плашка (meshok ↓): CTA + дисклеймер ─────────────────── */
   .rl-bottom {
@@ -172,7 +167,6 @@
   /* CTA — каноничная DS-кнопка __size-56 __style-primary-on-color (белый фон) */
   .rl-cta .button-content { gap: 8px; }
   .rl-cta__emoji { font-size: 20px; line-height: 1; }
-  .rl-cta__img { width: 24px; height: 24px; object-fit: contain; }
   .rl-disclaimer {
     margin: 12px 0 0;
     text-align: center; font-size: 13px; line-height: 16px; color: #fff;
@@ -212,18 +206,18 @@
     <!-- Кнопки-карточки -->
     <div class="rl-actions">
       <div class="rl-action" role="button" tabindex="0" aria-label="Мои призы">
-        <img class="rl-action__img" src="../assets/koleso/moi-prizy.png" alt="">
+        <span class="rl-action__emoji">🎁</span>
         <span class="rl-action__label">Мои призы</span>
         <span class="rl-action__badge">2</span>
       </div>
       <div class="rl-action" role="button" tabindex="0" aria-label="Задания" data-href="koleso-tasks.html">
-        <img class="rl-action__img" src="../assets/koleso/zadaniia.png" alt="">
+        <span class="rl-action__emoji">📋</span>
         <span class="rl-action__label">Задания</span>
         <span class="rl-action__badge">2</span>
       </div>
       <div class="rl-coin" aria-label="Билеты">
         <span id="coin-count">1</span>
-        <img class="rl-coin__img" src="../assets/koleso/biletik.png" alt="">
+        <span class="rl-coin__emoji">🎟️</span>
       </div>
     </div>
 
@@ -231,7 +225,7 @@
     <div class="rl-bottom">
       <div class="button-wrapper __size-56 __full-width rl-cta" id="cta">
         <button class="button-container __style-primary-on-color">
-          <span class="button-content"><span id="cta-text">Крутить колесо за 1</span><img class="rl-cta__img" src="../assets/koleso/biletik.png" alt=""></span>
+          <span class="button-content"><span id="cta-text">Крутить колесо за 1</span><span class="rl-cta__emoji">🎟️</span></span>
         </button>
       </div>
       <p class="rl-disclaimer">
@@ -243,28 +237,23 @@
   </div>
 
   <script>
-    // ── Призы барабана ────────────────────────────────────────────
+    // ── Призы барабана (эмодзи-плейсхолдеры) ──────────────────────
     var PRIZES = [
-      { img: 'aifon.png',            c: 'iPhone 15 Pro' },
-      { img: 'ozon-promokod.png',    c: 'Промокод OZON' },
-      { img: 'telefon.png',          c: 'Смартфон ОК' },
-      { img: 'pylesos.png',          c: 'Пылесос' },
-      { img: 'fen.png',              c: 'Фен' },
-      { img: 'chainik.png',          c: 'Электрочайник' },
-      { img: 'gril.png',             c: 'Электрогриль' },
-      { img: 'barbekiu.png',         c: 'Гриль-барбекю' },
-      { img: 'shveinaia.png',        c: 'Швейная машина' },
-      { img: 'mebel.png',            c: 'Кресло' },
-      { img: 'chainik-igrushka.png', c: 'Чайник' },
-      { img: 'podarok.png',          c: 'Сюрприз' },
-      { img: 'oki.png',              c: '1000 ОК' }
+      { e: '📱', c: 'iPhone 15' },
+      { e: '🎟️', c: 'Промокод 500₽' },
+      { e: '🎧', c: 'Наушники' },
+      { e: '⌚', c: 'Смарт-часы' },
+      { e: '💰', c: '1000 ОК' },
+      { e: '🎮', c: 'Геймпад' },
+      { e: '🛍️', c: 'Сертификат' },
+      { e: '🏆', c: 'Суперприз' }
     ];
 
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
-      el.innerHTML = '<div class="rl-prize__pod"><img class="rl-prize__img" src="../assets/koleso/' +
-                     p.img + '" alt=""></div><div class="rl-prize__cap">' + p.c + '</div>';
+      el.innerHTML = '<div class="rl-prize__pod"><span class="rl-prize__emoji">' + p.e +
+                     '</span></div><div class="rl-prize__cap">' + p.c + '</div>';
       return el;
     }
 

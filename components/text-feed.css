@@ -253,20 +253,41 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
-/* Стих — крупный засечный шрифт (Source Serif Pro 24/28). Шрифт подключает
-   хост-страница (Google Fonts). Фолбэк — общий serif. */
-.text-feed__body.__poem {
-  font-family: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+/* Текстовый стиль «poem» — для стихов. Source Serif Pro, 24/28, 0.24 трекинг.
+   По спеке — клэмп 4 строки с многоточием. Переносы между строфами через <br>.
+     <p class="text-feed__body __poem">…<br>…</p>
+   ВАЖНО: на странице должен быть подключён шрифт Source Serif Pro
+   (Google Fonts: family=Source+Serif+Pro:wght@400). */
+.text-feed__body.__poem,
+.poem {
+  font-family: 'Source Serif Pro', Georgia, serif;
   font-size: 24px;
   line-height: 28px;
+  letter-spacing: 0.24px;
   font-weight: 400;
-  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/* Крупная новость/цитата — тот же кегль, но гротеск (Roboto 24/28). */
-.text-feed__body.__news {
+
+/* Текстовый стиль «news» — для крупных текстовых постов-новостей.
+   Roboto Regular, 24/28, 0.24 трекинг. Клэмп 4 строки с многоточием.
+     <p class="text-feed__body __news">…</p>
+   Шрифт Roboto уже подключён в проекте через fonts.css. */
+.text-feed__body.__news,
+.news {
+  font-family: var(--font-family);
   font-size: 24px;
   line-height: 28px;
+  letter-spacing: 0.24px;
   font-weight: 400;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .text-feed__body-full { display: none; }
@@ -335,3 +356,49 @@
 /* Внешние боковые границы у крайних ячеек не нужны (внешний бордер карточки). */
 .text-feed__media.__row .text-feed__media-cell:first-child { border-left: 0; }
 .text-feed__media.__row .text-feed__media-cell:last-child  { border-right: 0; }
+
+/* — mosaic — 1 крупная + 3 миниатюры. Используется для альбомов, годовщин,
+   сборников фото за период и т.п. Высоты hero / thumb меняются через
+   --text-feed-mosaic-hero-h / --text-feed-mosaic-thumb-h. */
+.text-feed__media.__mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+}
+.text-feed__media.__mosaic .text-feed__media-cell:first-child {
+  grid-column: 1 / -1;
+  height: var(--text-feed-mosaic-hero-h, 200px);
+}
+.text-feed__media.__mosaic .text-feed__media-cell:not(:first-child) {
+  height: var(--text-feed-mosaic-thumb-h, 122px);
+}
+
+/* — overlay «Ещё N» поверх последней ячейки галереи.
+   Кладётся внутрь .text-feed__media-cell, по аналогии с любым counter'ом. */
+.text-feed__media-cell-more {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--static-surface-special-layer-quaternary, rgba(0, 0, 0, 0.36));
+  color: var(--static-stroke-base-inverse-primary, #fff);
+}
+
+/* ============================================================
+   AVATARS-VIEW КАК ШАПКА — альтернатива uni-cell для memory-карточек,
+   когда субъект не один (пара / трио аватаров без имени).
+   ============================================================
+   <div class="avatars-view __size-72">
+     <div class="avatars-view__stack">
+       <div class="avatar __size-72 __type-image"><img …></div>
+       <div class="avatar __size-72 __type-image"><img …></div>
+     </div>
+   </div>
+
+   Компенсируем 2px белого outline вокруг каждой аватарки внутри
+   .avatars-view__stack — иначе самая левая «уезжает» на 2px правее
+   текста, который выравнен по .text-feed > * (padding-left: 16). */
+.text-feed > .avatars-view {
+  margin-left: -2px;
+}

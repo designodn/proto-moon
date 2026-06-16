@@ -69,6 +69,9 @@
 @import url('./components/inapp-push.css');
 @import url('./components/gift-card.css');
 @import url('./components/friend-big-card.css');
+@import url('./components/calendar-date.css');
+@import url('./components/collage-card.css');
+@import url('./components/cover-card.css');
 @import url('./components/user-cell.css');
 @import url('./components/vvz-portlet.css');
 @import url('./components/chips.css');

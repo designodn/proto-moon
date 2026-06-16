@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Сегодня — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
+  .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
+                 background: var(--dynamic-surface-base-secondary); }
+  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone-frame__feed::-webkit-scrollbar { display: none; }
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+  .ll-tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; }
+
+  /* Оранжевая локация справа в навбаре */
+  .tg-location { color: var(--static-surface-status-accent); }
+
+  /* ============================================================
+     ЛЕНТА «Сегодня» — вертикальный ритм 12px между секциями,
+     нижний клиренс под прибитый таббар.
+     ============================================================ */
+  .tg-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+    padding-bottom: calc(72px + var(--space-6));
+  }
+  /* Острова контента — поля по 8px (как во всех discovery-фреймах Figma) */
+  .tg-island { padding: 0 var(--space-2); }
+  /* Две карточки в ряд (погода+луна, мини-аппы) */
+  .tg-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+
+  /* ============================================================
+     ЗАГОЛОВОК СЕКЦИИ: title слева + «Все» (оранжевый) справа.
+     На базе DS header, ряд — page-local.
+     ============================================================ */
+  .tg-sec-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4) var(--space-1);
+  }
+  .tg-all {
+    flex-shrink: 0;
+    border: 0;
+    background: none;
+    padding: 0;
+    font-family: var(--font-family);
+    color: var(--static-surface-status-accent);
+    cursor: pointer;
+  }
+  .tg-all:active { opacity: 0.6; }
+
+  /* ============================================================
+     КАРУСЕЛЬ — горизонтальный скролл, первый элемент в 8px от края.
+     ============================================================ */
+  .tg-carousel {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding: 0 var(--space-2) var(--space-1);
+    scrollbar-width: none;
+  }
+  .tg-carousel::-webkit-scrollbar { display: none; }
+  .tg-carousel > * { flex: 0 0 auto; scroll-snap-align: start; }
+  .tg-carousel > .__w-300 { width: 300px; }
+  .tg-carousel > .__w-168 { width: 168px; }
+
+  /* ============================================================
+     FEATURE-BANNER — напоминание о событии (закрываемое).
+     ============================================================ */
+  .tg-feature {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 20px;
+    background: var(--dynamic-surface-base-tertiary);
+    border: 0.5px solid var(--dynamic-stroke-contrast-low);
+  }
+  .tg-feature__title { color: var(--dynamic-text-and-icons-base-primary); }
+  .tg-feature__actions { display: flex; gap: var(--space-2); }
+
+  /* ============================================================
+     «Друзья на сайте» — аватар + имя + online-точка.
+     ============================================================ */
+  .tg-friend {
+    width: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .tg-friend:active { transform: scale(0.95); }
+  .tg-friend__ava { position: relative; }
+  .tg-friend__dot {
+    position: absolute;
+    right: 0; bottom: 0;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--static-surface-status-positive, #4bb34b);
+    border: 3px solid var(--dynamic-surface-base-secondary);
+  }
+  .tg-friend__name {
+    width: 100%;
+    text-align: center;
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     UNICARD-баннер «Международный день культуры» — лого ОК в углу.
+     ============================================================ */
+  .tg-ok-logo {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--static-surface-status-accent);
+    color: #fff; font-weight: 700; font-size: 13px; letter-spacing: -0.3px;
+  }
+
+  /* ============================================================
+     PROMO «Новое в OK» — карусель: белая карточка на цветной подложке,
+     текст + кнопка слева, иллюстрация справа.
+     ============================================================ */
+  .tg-promo {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(120deg, #ff7a33, #ff5500);
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .tg-promo__inner {
+    height: 100%;
+    box-sizing: border-box;
+    background: var(--dynamic-surface-base-secondary);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tg-promo__text { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .tg-promo__title {
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .tg-promo__art {
+    flex-shrink: 0;
+    width: 96px; height: 96px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 40px;
+    background: radial-gradient(circle at 30% 30%, #b06ad6, #7d3cb5);
+    color: #fff; font-weight: 700;
+  }
+
+  /* ============================================================
+     NEWS-PORTLET «Сейчас в СМИ» — header + табы-чипы + список + кнопка.
+     ============================================================ */
+  .tg-news {
+    border-radius: 20px;
+    background: var(--dynamic-surface-base-tertiary);
+    border: 0.5px solid var(--dynamic-stroke-contrast-low);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .tg-news__title { color: var(--dynamic-text-and-icons-base-primary); }
+  /* Компактные табы новостей (tabsView 36px) на базе DS chips */
+  .tg-news .chips-view__row { gap: var(--space-2); }
+  .tg-news .chip-container {
+    height: 36px;
+    padding: 8px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    --chip-border-radius: 12px;
+  }
+  .tg-news__list { display: flex; flex-direction: column; gap: 16px; }
+  .tg-news__item { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+  .tg-news__item:active { opacity: 0.7; }
+  .tg-news__src {
+    flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 700;
+  }
+  .tg-news__text { color: var(--dynamic-text-and-icons-base-primary); }
+
+  /* ============================================================
+     ЛУНА — список «можно/нельзя» с иконкой-чипом.
+     ============================================================ */
+  .tg-moon-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .tg-moon-row { display: flex; align-items: center; gap: 10px; }
+  .tg-moon-ic {
+    flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  /* ============================================================
+     ТЕЛЕПРОГРАММА — ряд лого-каналов.
+     ============================================================ */
+  .tg-chan-row { display: flex; gap: var(--space-2); overflow-x: auto; padding: 0 var(--space-2) 12px; scrollbar-width: none; }
+  .tg-chan-row::-webkit-scrollbar { display: none; }
+  .tg-chan {
+    flex: 0 0 auto;
+    height: 40px; width: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: #fff;
+    border: 0; cursor: pointer;
+  }
+  .tg-chan:active { transform: scale(0.95); }
+  .tg-chan.__active { width: 88px; background: var(--static-surface-status-accent); }
+
+  /* TV-карточка: кнопки в ряд снизу + список передач сверху */
+  .tg-tv__list { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; }
+  .tg-tv__row { color: rgba(255, 255, 255, 0.92); }
+  .tg-tv__actions { display: flex; gap: var(--space-2); }
+
+  /* ============================================================
+     ОБСУЖДАЮТ СЕЙЧАС — ячейка-тема (uniCell-подобная) с реакцией.
+     ============================================================ */
+  .tg-topic {
+    width: 300px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 16px;
+    border-radius: 20px;
+    background: var(--dynamic-surface-base-tertiary);
+    border: 0.5px solid var(--dynamic-stroke-contrast-low);
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  .tg-topic:active { transform: scale(0.99); }
+  .tg-topic__text { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tg-topic__title {
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .tg-topic__meta { display: flex; align-items: center; gap: 6px; color: var(--dynamic-text-and-icons-base-secondary); }
+  .tg-topic__react {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--static-surface-status-accent); color: #fff; font-size: 11px;
+  }
+  .tg-topic__thumb {
+    flex-shrink: 0;
+    width: 68px; height: 68px; border-radius: 14px; overflow: hidden;
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .tg-topic__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ============================================================
+     СПРАШИВАЮТ СЕЙЧАС (FAQ) — вопрос + ответ + реакции, с разделителем.
+     ============================================================ */
+  .tg-faq {
+    border-radius: 20px;
+    background: var(--dynamic-surface-base-tertiary);
+    border: 0.5px solid var(--dynamic-stroke-contrast-low);
+    padding: 16px;
+  }
+  .tg-faq__q { display: flex; flex-direction: column; gap: 8px; }
+  .tg-faq__question { color: var(--dynamic-text-and-icons-base-primary); }
+  .tg-faq__label { color: var(--dynamic-text-and-icons-base-secondary); }
+  .tg-faq__answer {
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .tg-faq__react { display: flex; gap: 16px; margin-top: 4px; }
+  .tg-faq__react span { display: inline-flex; align-items: center; gap: 6px; color: var(--dynamic-text-and-icons-base-secondary); }
+  .tg-faq__divider { height: 1px; background: var(--dynamic-stroke-contrast-low); margin: 16px 0; }
+  .tg-faq__all { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; color: var(--dynamic-text-and-icons-base-secondary); cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="phone-frame" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- ===== ШАПКА ===== -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary">
+              <button class="button-inline __size-24 nav-bar__back" aria-label="Назад">
+                <span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span>
+              </button>
+            </span>
+            <span class="ds-title-l">Сегодня</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <span class="tg-location ds-body-m">Санкт-Петербург</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== КОНТЕНТ ===== -->
+      <div class="tg-feed">
+
+        <!-- 1. Напоминание о событии (закрываемое) -->
+        <section class="tg-island" data-dismiss-row>
+          <article class="tg-feature" data-dismiss-target>
+            <div class="tg-feature__title ds-title-s">Вы сегодня записаны на мероприятие «Скандинавская ходьба»</div>
+            <div class="tg-feature__actions">
+              <span class="button-wrapper __size-36 __style-primary">
+                <button class="button-container __style-primary"><span class="button-content">Подробнее</span></button>
+              </span>
+              <span class="button-wrapper __size-36 __style-secondary">
+                <button class="button-container __style-secondary" data-dismiss="row"><span class="button-content">Скрыть</span></button>
+              </span>
+            </div>
+          </article>
+        </section>
+
+        <!-- 2. День рождения друга -->
+        <section class="tg-island">
+          <article class="cover-card __size-164 __fill"
+                   style="--cover-card-bg: linear-gradient(120deg, #bfe3ff 0%, #ffd1e8 60%, #ffd9a8 100%); color: var(--base-black-100);">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-m" style="max-width: 220px;">День Рождения у Семёна Вишневского</div>
+              </div>
+              <div class="cover-card__bottom" style="align-items: flex-start;">
+                <span class="button-wrapper __size-36 __style-primary">
+                  <button class="button-container __style-primary"><span class="button-content">Поздравить!</span></button>
+                </span>
+              </div>
+            </div>
+            <div class="cover-card__badge __pos-tr">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=68" alt=""></div>
+            </div>
+          </article>
+        </section>
+
+        <!-- 3. Колесо призов -->
+        <section class="tg-island">
+          <article class="cover-card __on-image __size-220 __fill"
+                   style="--cover-card-bg: radial-gradient(circle at 50% 40%, #ffb43d 0%, #ff7a00 55%, #e85d00 100%);">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-l">Колесо призов</div>
+              </div>
+              <div class="cover-card__bottom cover-card__cta">
+                <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Крутить</span></button>
+                </span>
+              </div>
+            </div>
+            <div class="cover-card__badge __pos-tr" style="font-size: 56px; opacity: 0.9;">🎡</div>
+          </article>
+        </section>
+
+        <!-- 4. Друзья на сайте -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Друзья на сайте</div></header>
+          <button class="tg-all ds-body-m">Все</button>
+        </div>
+        <div class="tg-carousel" style="gap: var(--space-4);">
+          <div class="tg-friend">
+            <div class="tg-friend__ava">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=45" alt=""></div>
+              <span class="tg-friend__dot"></span>
+            </div>
+            <div class="tg-friend__name ds-caption-m">Мария Баринова</div>
+          </div>
+          <div class="tg-friend">
+            <div class="tg-friend__ava">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=31" alt=""></div>
+              <span class="tg-friend__dot"></span>
+            </div>
+            <div class="tg-friend__name ds-caption-m">Елизавета Иванова</div>
+          </div>
+          <div class="tg-friend">
+            <div class="tg-friend__ava">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+              <span class="tg-friend__dot"></span>
+            </div>
+            <div class="tg-friend__name ds-caption-m">Павел Петров</div>
+          </div>
+          <div class="tg-friend">
+            <div class="tg-friend__ava">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=47" alt=""></div>
+              <span class="tg-friend__dot"></span>
+            </div>
+            <div class="tg-friend__name ds-caption-m">Света Иванова</div>
+          </div>
+          <div class="tg-friend">
+            <div class="tg-friend__ava">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
+              <span class="tg-friend__dot"></span>
+            </div>
+            <div class="tg-friend__name ds-caption-m">Игорь Сомов</div>
+          </div>
+        </div>
+
+        <!-- 5. Какой сегодня день -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Какой сегодня день</div></header>
+        </div>
+        <section class="tg-island">
+          <article class="cover-card __on-image __scrim __size-194"
+                   style="--cover-card-image: url('https://picsum.photos/seed/kremlin-city/688/388');">
+            <div class="cover-card__body">
+              <div class="cover-card__top"></div>
+              <div class="cover-card__bottom">
+                <div class="cover-card__title ds-title-xl">Международный день культуры</div>
+                <div class="cover-card__subtitle ds-body-m">расскажите о лучших местах вашего города</div>
+              </div>
+            </div>
+            <div class="cover-card__badge __pos-tl"><span class="tg-ok-logo">ОК</span></div>
+          </article>
+        </section>
+
+        <!-- 6. Новое в OK (промо-карусель) -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Новое в OK</div></header>
+        </div>
+        <div class="tg-carousel">
+          <div class="tg-promo __w-300" style="height: 218px;">
+            <div class="tg-promo__inner">
+              <div class="tg-promo__text">
+                <div class="tg-promo__title ds-body-l">Делитесь анкетами подопечных детских домов, чтобы помочь им найти семью</div>
+                <span class="button-wrapper __size-36 __style-primary">
+                  <button class="button-container __style-primary"><span class="button-content">Подробнее</span></button>
+                </span>
+              </div>
+              <div class="tg-promo__art">добро</div>
+            </div>
+          </div>
+          <div class="tg-promo __w-300" style="height: 218px; background: linear-gradient(120deg, #6c5ce7, #4834b5);">
+            <div class="tg-promo__inner">
+              <div class="tg-promo__text">
+                <div class="tg-promo__title ds-body-l">Новые открытки ко всем праздникам — отправляйте друзьям бесплатно</div>
+                <span class="button-wrapper __size-36 __style-primary">
+                  <button class="button-container __style-primary"><span class="button-content">Открыть</span></button>
+                </span>
+              </div>
+              <div class="tg-promo__art" style="background: radial-gradient(circle at 30% 30%, #ffd34e, #ff9500);">🎁</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Сейчас в СМИ -->
+        <section class="tg-island">
+          <article class="tg-news">
+            <div class="tg-news__title ds-title-m">Сейчас в СМИ</div>
+            <div class="chips-view">
+              <div class="chips-view__row __nowrap">
+                <button class="chip-container __view-primary __selected-primary">Главное</button>
+                <button class="chip-container __view-primary">Москва</button>
+                <button class="chip-container __view-primary">Происшествия</button>
+              </div>
+            </div>
+            <div class="tg-news__list">
+              <div class="tg-news__item">
+                <span class="tg-news__src" style="background:#1a1a1a;">L</span>
+                <div class="tg-news__text ds-body-m">Трамп выступит с заявлением вечером в четверг</div>
+              </div>
+              <div class="tg-news__item">
+                <span class="tg-news__src" style="background:#6bbf2a;">RT</span>
+                <div class="tg-news__text ds-body-m">Путин: правительство пытается сохранить разные инструменты для покупки ипотеки</div>
+              </div>
+              <div class="tg-news__item">
+                <span class="tg-news__src" style="background:#6bbf2a;">RT</span>
+                <div class="tg-news__text ds-body-m">СМИ сообщили о задержании главы Агентства по страхованию вкладов Мельникова</div>
+              </div>
+              <div class="tg-news__item">
+                <span class="tg-news__src" style="background:#1a1a1a;">L</span>
+                <div class="tg-news__text ds-body-m">Власти обсудят смягчение условий по НДС для малого бизнеса</div>
+              </div>
+              <div class="tg-news__item">
+                <span class="tg-news__src" style="background:#7d3cb5;">re</span>
+                <div class="tg-news__text ds-body-m">Автономный автомобиль проехал самостоятельно из Москвы в Тулу и обратно</div>
+              </div>
+            </div>
+            <span class="button-wrapper __size-36 __style-secondary __full-width">
+              <button class="button-container __style-secondary"><span class="button-content">Посмотреть ещё</span></button>
+            </span>
+          </article>
+        </section>
+
+        <!-- 8. Погода + Луна -->
+        <section class="tg-island">
+          <div class="tg-duo">
+            <article class="cover-card __on-image __size-220 __fill"
+                     style="--cover-card-bg: linear-gradient(160deg, #8fd0ff 0%, #5aa9f0 100%);">
+              <div class="cover-card__body">
+                <div class="cover-card__top">
+                  <div class="cover-card__title ds-title-s">Солнечно</div>
+                  <div class="cover-card__value ds-display-m" style="font-size: 48px; line-height: 56px; font-weight: 500;">+10°</div>
+                </div>
+                <div class="cover-card__bottom">
+                  <div class="ds-body-m">Лёгкий ветер<br>1 м/с</div>
+                </div>
+              </div>
+            </article>
+            <article class="cover-card __on-image __size-220 __fill"
+                     style="--cover-card-bg: linear-gradient(160deg, #2a3a66 0%, #121a33 100%);">
+              <div class="cover-card__body">
+                <div class="cover-card__top">
+                  <div class="cover-card__title ds-title-l">Новая луна</div>
+                  <div class="tg-moon-list">
+                    <div class="tg-moon-row">
+                      <span class="tg-moon-ic" style="background: rgba(124,108,255,.4);">✂️</span>
+                      <span class="ds-body-m">Можно стричься</span>
+                    </div>
+                    <div class="tg-moon-row">
+                      <span class="tg-moon-ic" style="background: rgba(75,179,75,.35);">🌱</span>
+                      <span class="ds-body-m">Сажайте баклажаны</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 9. Гороскоп -->
+        <section class="tg-island">
+          <article class="cover-card __on-image __size-220 __fill"
+                   style="--cover-card-bg: linear-gradient(160deg, #1d2440 0%, #0c1124 100%);">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-l">Рыбы</div>
+                <div class="ds-body-m" style="margin-top: 6px; opacity: 0.92; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;">Неожиданные трудности в работе могут возникнуть из-за промахов, допущенных другими. Вряд ли захочется тратить своё время на исправление чужих ошибок.</div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- 10. Видео дня -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Видео дня</div></header>
+        </div>
+        <section class="tg-island">
+          <article class="cover-card __on-image __scrim __size-184"
+                   style="--cover-card-image: url('https://picsum.photos/seed/kitchen-cook/688/368');">
+            <div class="cover-card__body">
+              <div class="cover-card__top"></div>
+              <div class="cover-card__bottom">
+                <div class="cover-card__title ds-title-m">Едим дома с Юлией Высоцкой</div>
+              </div>
+            </div>
+            <div class="cover-card__badge __pos-tl">
+              <span class="button-circle-wrapper __size-36 __style-on-image">
+                <button class="button-circle"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
+              </span>
+            </div>
+            <div class="cover-card__badge __pos-br"><span class="cover-card__live">ЭФИР</span></div>
+          </article>
+        </section>
+
+        <!-- 11. Телепрограмма -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Телепрограмма</div></header>
+        </div>
+        <div class="tg-chan-row">
+          <button class="tg-chan __active">ОК</button>
+          <button class="tg-chan" style="background:#0a4dab;">1</button>
+          <button class="tg-chan" style="background:#1a1a1a; font-size:11px;">М24</button>
+          <button class="tg-chan" style="background:linear-gradient(135deg,#33c,#3c3);">▦</button>
+          <button class="tg-chan" style="background:#e23;">+O</button>
+          <button class="tg-chan" style="background:#0a8;">▶</button>
+        </div>
+        <div class="tg-carousel">
+          <article class="cover-card __on-image __size-220 __w-300 __fill"
+                   style="--cover-card-bg: linear-gradient(160deg, #ff8a3d, #ff5500);">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-m">Юбилейный вечер Марка Захарова</div>
+                <div class="tg-tv__list">
+                  <div class="tg-tv__row ds-body-m">Духовные тропы: Сергиев Посад</div>
+                  <div class="tg-tv__row ds-body-m">Юмор на все времена: Куравлёв</div>
+                </div>
+              </div>
+              <div class="cover-card__bottom tg-tv__actions">
+                <span class="button-wrapper __size-36 __style-primary-on-color">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Смотреть</span></button>
+                </span>
+                <span class="button-wrapper __size-36 __style-secondary-on-color">
+                  <button class="button-container __style-secondary-on-color"><span class="button-content">Все шоу от OK</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+          <article class="cover-card __on-image __size-220 __w-300 __fill"
+                   style="--cover-card-bg: linear-gradient(160deg, #2f6fe0, #1846a8);">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-m">«Доброе утро» на Первом</div>
+                <div class="tg-tv__list">
+                  <div class="tg-tv__row ds-body-m">15:00 — Новости</div>
+                  <div class="tg-tv__row ds-body-m">16:10 — Жить здорово</div>
+                  <div class="tg-tv__row ds-body-m">18:00 — Время покажет</div>
+                </div>
+              </div>
+              <div class="cover-card__bottom tg-tv__actions">
+                <span class="button-wrapper __size-36 __style-primary-on-color">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Смотреть</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- 12. Подборка на сегодня (коллажи) -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Подборка на сегодня</div></header>
+          <button class="tg-all ds-body-m">Все</button>
+        </div>
+        <section class="tg-island" style="display:flex; flex-direction:column; gap:12px;">
+          <article class="collage-card">
+            <div class="collage-card__head">
+              <div class="collage-card__text">
+                <div class="collage-card__title ds-title-m">Завтраки</div>
+                <div class="collage-card__subtitle ds-body-m">Еда</div>
+              </div>
+              <span class="button-circle-wrapper __size-44 __style-secondary">
+                <button class="button-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/arrow_right_24.svg')"></span></button>
+              </span>
+            </div>
+            <div class="collage-card__photos">
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/pancakes/200/200" alt=""></div>
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/toast/200/200" alt=""></div>
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/omelet/200/200" alt=""></div>
+            </div>
+          </article>
+          <article class="collage-card">
+            <div class="collage-card__head">
+              <div class="collage-card__text">
+                <div class="collage-card__title ds-title-m">Скверы и набережные</div>
+                <div class="collage-card__subtitle ds-body-m">Прогулки по городу</div>
+              </div>
+              <span class="button-circle-wrapper __size-44 __style-secondary">
+                <button class="button-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/arrow_right_24.svg')"></span></button>
+              </span>
+            </div>
+            <div class="collage-card__photos">
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/city1/200/200" alt=""></div>
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/city2/200/200" alt=""></div>
+              <div class="collage-card__photo"><img src="https://picsum.photos/seed/city3/200/200" alt=""></div>
+            </div>
+          </article>
+        </section>
+
+        <!-- 13. Обсуждают сейчас -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Обсуждают сейчас</div></header>
+          <button class="tg-all ds-body-m">Все</button>
+        </div>
+        <div class="tg-carousel">
+          <article class="tg-topic">
+            <div class="tg-topic__text">
+              <div class="tg-topic__title ds-title-s">На городской площади поставили ёлку</div>
+              <div class="tg-topic__meta ds-caption-m">
+                <span class="tg-topic__react">👍</span>
+                <span>24 · 120 комментариев</span>
+              </div>
+            </div>
+            <div class="tg-topic__thumb"><img src="https://picsum.photos/seed/treesquare/160/160" alt=""></div>
+          </article>
+          <article class="tg-topic">
+            <div class="tg-topic__text">
+              <div class="tg-topic__title ds-title-s">Кяхта отмечает 1900-летие: реконструкция Камской дороги</div>
+              <div class="tg-topic__meta ds-caption-m">
+                <span class="tg-topic__react">👍</span>
+                <span>18 · 86 комментариев</span>
+              </div>
+            </div>
+            <div class="tg-topic__thumb"><img src="https://picsum.photos/seed/road/160/160" alt=""></div>
+          </article>
+        </div>
+
+        <!-- 14. Спрашивают сейчас (FAQ) -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Спрашивают сейчас</div></header>
+        </div>
+        <section class="tg-island">
+          <article class="tg-faq">
+            <div class="tg-faq__q">
+              <div class="tg-faq__question ds-title-s">Почему болит живот от жирного?</div>
+              <div class="tg-faq__label ds-body-m">Ответ специалиста:</div>
+              <div class="tg-faq__answer ds-body-m">Для молодой женщины это нормально. Посоветуйтесь с гинекологом, чтобы выписала обезболивающее и проверила гормоны.</div>
+              <div class="tg-faq__react ds-caption-m">
+                <span><span class="icon __size-16 __slot-comment"></span> 2</span>
+                <span><span class="icon __size-16 __slot-klass-outline"></span> 3</span>
+              </div>
+            </div>
+            <div class="tg-faq__divider"></div>
+            <div class="tg-faq__q">
+              <div class="tg-faq__question ds-title-s">Помогите найти схему льва на брелок?</div>
+              <div class="tg-faq__label ds-body-m">Ответ специалиста:</div>
+              <div class="tg-faq__answer ds-body-m">Здравствуйте, Светлана. Льва можно связать без схемы. Принцип следующий: для этого наберите 8–9 воздушных петель и далее по кругу.</div>
+              <div class="tg-faq__react ds-caption-m">
+                <span><span class="icon __size-16 __slot-comment"></span> 2</span>
+                <span><span class="icon __size-16 __slot-klass-outline"></span> 3</span>
+              </div>
+            </div>
+            <div class="tg-faq__all ds-body-m">Все вопросы <span class="icon __size-16 __src" style="--icon-src:url('assets/icons/arrow_right_24.svg')"></span></div>
+          </article>
+        </section>
+
+        <!-- 15. Афиша -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Афиша</div></header>
+          <button class="tg-all ds-body-m">Все</button>
+        </div>
+        <div class="tg-carousel">
+          <article class="cover-card __on-image __scrim __size-220 __w-300"
+                   style="--cover-card-image: url('https://picsum.photos/seed/illustration1/600/440');">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-l">20 декабря – 25 декабря</div>
+                <div class="cover-card__subtitle ds-body-m">Иллюстрации к детским книгам и «взгляд на Восток»</div>
+              </div>
+              <div class="cover-card__bottom" style="align-items: flex-start;">
+                <span class="button-wrapper __size-36 __style-primary-on-color">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Узнать подробнее</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+          <article class="cover-card __on-image __scrim __size-220 __w-300"
+                   style="--cover-card-image: url('https://picsum.photos/seed/theatre/600/440');">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-l">28 декабря</div>
+                <div class="cover-card__subtitle ds-body-m">Новогодний концерт в Филармонии</div>
+              </div>
+              <div class="cover-card__bottom" style="align-items: flex-start;">
+                <span class="button-wrapper __size-36 __style-primary-on-color">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Узнать подробнее</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- 16. Игра дня -->
+        <div class="tg-sec-head">
+          <header class="header"><div class="header__title ds-title-l">Игра дня</div></header>
+          <button class="tg-all ds-body-m">Все</button>
+        </div>
+        <section class="tg-island">
+          <article class="cover-card __on-image __scrim __size-220"
+                   style="--cover-card-image: url('https://picsum.photos/seed/candygame/688/440');">
+            <div class="cover-card__body">
+              <div class="cover-card__top">
+                <div class="cover-card__title ds-title-l">Разбей все цепи!</div>
+              </div>
+              <div class="cover-card__bottom cover-card__cta">
+                <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Играть</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- 17. Мини-аппы (вода / лекарства) -->
+        <section class="tg-island">
+          <div class="tg-duo">
+            <article class="cover-card __on-image __size-220 __fill"
+                     style="--cover-card-bg: linear-gradient(160deg, #5a9bf0, #3f7fe0);">
+              <div class="cover-card__body">
+                <div class="cover-card__top">
+                  <div class="cover-card__title ds-title-s">Следите, сколько воды вы пьёте</div>
+                </div>
+                <div class="cover-card__bottom cover-card__cta">
+                  <span class="button-wrapper __size-36 __style-primary-on-color __full-width">
+                    <button class="button-container __style-primary-on-color"><span class="button-content">Начать следить</span></button>
+                  </span>
+                </div>
+              </div>
+              <div class="cover-card__badge __pos-tr" style="font-size: 32px;">💧</div>
+            </article>
+            <article class="cover-card __on-image __size-220 __fill"
+                     style="--cover-card-bg: linear-gradient(160deg, #f0726b, #e0534b);">
+              <div class="cover-card__body">
+                <div class="cover-card__top">
+                  <div class="cover-card__title ds-title-s">Добавьте напоминание о лекарствах</div>
+                </div>
+                <div class="cover-card__bottom cover-card__cta">
+                  <span class="button-wrapper __size-36 __style-primary-on-color __full-width">
+                    <button class="button-container __style-primary-on-color"><span class="button-content">Добавить</span></button>
+                  </span>
+                </div>
+              </div>
+              <div class="cover-card__badge __pos-tr" style="font-size: 32px;">💊</div>
+            </article>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ===== TABBAR ===== -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-ios">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+        </div>
+        <div class="tabbar__handle"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="components/dismissible.js"></script>
+  <script src="components/tab-bar.js"></script>
+</body>
+</html>
