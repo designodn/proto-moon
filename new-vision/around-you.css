@@ -240,10 +240,10 @@
 }
 /* Затухание категорийной подложки */
 @keyframes au-fade { from { opacity: 1; } to { opacity: 0; } }
-/* Нейро: текст белый на входе → обычный */
+/* Нейро: текст белый на входе → обычный (дефолтный dynamic-токен) */
 @keyframes au-neuro-text {
   0%, 45% { color: var(--static-text-and-icons-base-inverse-primary); }
-  100%    { color: var(--static-text-and-icons-base-primary); }
+  100%    { color: var(--dynamic-text-and-icons-base-primary); }
 }
 /* Конфетти-частица: вылет из центра наружу с затуханием */
 @keyframes au-confetti {
@@ -284,7 +284,9 @@
   background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%);
 }
 .activity-list.play .__cat-neuro .uni-cell-additional-content {
-  animation: au-neuro-text 1.3s ease-out both;
+  /* backwards (не both): после анимации цвет возвращается в каскад
+     (dynamic-токен), а не пиннится навсегда — корректно для тёмной темы. */
+  animation: au-neuro-text 1.3s ease-out backwards;
   animation-delay: var(--enter-delay, 0s);
 }
 
