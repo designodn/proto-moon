@@ -55,6 +55,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-4) 0;
+  background-color: var(--dynamic-surface-base-secondary);
   border: 2px solid var(--dynamic-stroke-contrast-low, rgba(131, 102, 86, 0.08));
   border-radius: 20px;
   overflow: hidden;
@@ -82,6 +83,71 @@
   border-radius: 0;
 }
 .nv-gift-card .media img { object-fit: cover; }
+
+/* ── Reveal-анимация: фиолетовая подложка → белая ────────────────────────
+   Из Figma node 2849:139940 (правая колонка). Когда фид впервые попадает в
+   зону видимости, он показывается с фиолетовой градиентной подложкой (белый
+   текст шапки, кнопка-подарок белая «primaryOnColor»). Затем подложка плавно
+   уходит в белую, текст темнеет, кнопка возвращает фирменный градиент.
+
+   Кросс-фейд градиента невозможен напрямую (градиенты не интерполируются),
+   поэтому подложку держим в ::before и гасим её opacity, а белый фон острова
+   остаётся под ней. Снятие класса .__intro (см. скрипт в lenta.html) запускает
+   переход. */
+.feed-congrats { position: relative; }
+.feed-congrats > * { position: relative; z-index: 1; }
+
+.feed-congrats::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 85% at 100% 0%, rgba(104, 185, 255, 0.85), rgba(152, 204, 250, 0) 58%),
+    radial-gradient(130% 100% at 0% 100%, rgba(152, 83, 253, 0.9), rgba(152, 83, 253, 0) 60%),
+    linear-gradient(120deg, #8d41ff 58%, #cfa4de 100%);
+  transition: opacity 600ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.feed-congrats.__intro::before { opacity: 1; }
+
+/* Текст шапки/заголовка на подложке — белый. Переход в тёмный при снятии. */
+.feed-congrats .nv-feed__title,
+.feed-congrats .avatars-view__text,
+.feed-congrats .uni-cell .ds-title-m,
+.feed-congrats .uni-cell .ds-caption-m {
+  transition: color 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.feed-congrats.__intro .nv-feed__title,
+.feed-congrats.__intro .avatars-view__text,
+.feed-congrats.__intro .uni-cell .ds-title-m,
+.feed-congrats.__intro .uni-cell .ds-caption-m {
+  color: #fff !important;
+}
+/* «+N» в стеке аватаров — на подложке делаем полупрозрачно-белым */
+.feed-congrats.__intro .avatars-view__more {
+  background-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+/* Кнопка-подарок на подложке — белая «primaryOnColor» (тёмный лейбл/иконка) */
+.feed-congrats .nv-gift-btn.button-container {
+  transition:
+    background-color 500ms cubic-bezier(0, -0.3, 0.5, 1.3),
+    color 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+}
+.feed-congrats.__intro .nv-gift-btn.button-container {
+  background-image: none;
+  background-color: #fff;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.feed-congrats.__intro .nv-gift-btn .button-content { color: var(--dynamic-text-and-icons-base-primary); }
+
+/* Без анимации (системная настройка) — подложку не показываем вовсе. */
+@media (prefers-reduced-motion: reduce) {
+  .feed-congrats::before { transition: none; }
+}
 
 /* ── Постовая открытка: горизонтальный скролл мини-карточек ──────────────── */
 .feed-congrats__scroll {

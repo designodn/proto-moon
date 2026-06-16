@@ -231,7 +231,7 @@
       </article>
 
       <!-- 3. Николай празднует свой День рождения! (congrats) -->
-      <article class="feed-congrats __birthday island">
+      <article class="feed-congrats __birthday island __intro">
         <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/144?img=68" alt=""></div>
         <h2 class="nv-feed__title">Николай празднует свой День рождения!</h2>
         <div class="avatars-view __size-36">
@@ -528,7 +528,7 @@
       </article>
 
       <!-- 15. Создал и подарил уникальный подарок (congrats) -->
-      <article class="feed-congrats __gift island">
+      <article class="feed-congrats __gift island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -721,7 +721,7 @@
       </article>
 
       <!-- 23. Получил подарок на День сельскохозяйственных строителей (congrats) -->
-      <article class="feed-congrats __gift island">
+      <article class="feed-congrats __gift island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -892,6 +892,37 @@
   }
 
   setInterval(step, 3200);
+})();
+</script>
+
+<!-- Поздравительные фиды (ДР / подарок / ИИ-подарок): при первом появлении
+     в зоне видимости фиолетовая подложка плавно сменяется на белую.
+     Срабатывает один раз на фид. Подложка задана классом .__intro в разметке. -->
+<script>
+(function () {
+  var feeds = document.querySelectorAll('.feed-congrats.__intro');
+  if (!feeds.length) return;
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Без анимаций или без IntersectionObserver — сразу показываем белую карточку.
+  if (reduce || !('IntersectionObserver' in window)) {
+    feeds.forEach(function (f) { f.classList.remove('__intro'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries, observer) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var feed = entry.target;
+      observer.unobserve(feed);
+      // Небольшая задержка, чтобы пользователь успел увидеть фиолетовую подложку,
+      // прежде чем она сменится на белую.
+      setTimeout(function () { feed.classList.remove('__intro'); }, 550);
+    });
+  }, { threshold: 0.35 });
+
+  feeds.forEach(function (f) { io.observe(f); });
 })();
 </script>
 
