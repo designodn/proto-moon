@@ -1,0 +1,22 @@
+/**
+ * New Vision — Tabbar variant
+ *
+ * Форкаем у общего .tabbar (components/tabbar.css) ТОЛЬКО иконки: структура,
+ * размеры, состояния и поведение остаются из общей DS. Модификатор вешается
+ * на сам таб-бар рядом с платформой:
+ *
+ *   <div class="tabbar __platform-android __vision"> … </div>
+ *
+ * Иконки берём из отдельного пака assets/new-vision-icons/ (см. README там же).
+ * Пути url() здесь относительны этого файла (new-vision/components/ → ../../).
+ *
+ * NB: набор/порядок слотов у NV может отличаться от Q3 — сверить с макетом
+ * Figma и при необходимости поправить список ниже.
+ */
+
+.tabbar.__vision .tabbar-icon.__slot-feed       { --tabbar-icon-src: url('../../assets/new-vision-icons/feed.svg'); }
+.tabbar.__vision .tabbar-icon.__slot-book       { --tabbar-icon-src: url('../../assets/new-vision-icons/book.svg'); }
+.tabbar.__vision .tabbar-icon.__slot-message    { --tabbar-icon-src: url('../../assets/new-vision-icons/message.svg'); }
+.tabbar.__vision .tabbar-icon.__slot-discussion { --tabbar-icon-src: url('../../assets/new-vision-icons/discussion.svg'); }
+.tabbar.__vision .tabbar-icon.__slot-clip       { --tabbar-icon-src: url('../../assets/new-vision-icons/clip.svg'); }
+.tabbar.__vision .tabbar-icon.__slot-menu       { --tabbar-icon-src: url('../../assets/new-vision-icons/menu.svg'); }
