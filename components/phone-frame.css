@@ -10,6 +10,10 @@
  */
 
 .phone-frame {
+  /* Высота нижнего таб-бара (.tabbar: ряд 48 + хват 24 + бордер 1).
+     Опубликована, чтобы sticky-элементы ленты (например .promo-banner.__sticky)
+     отстраивались над таб-баром и в primitive-, и в __fullscreen-шелле. */
+  --phone-tabbar-height: 73px;
   position: relative;
   width: 375px;
   min-height: 100vh;
