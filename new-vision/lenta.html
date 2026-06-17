@@ -891,9 +891,9 @@
   // Длительность жизни подложки (синхронно с au-fade 1.3s в around-you.css).
   var APPEAR_MS = 1300;
 
-  // ── Lottie-конфетти для «Праздника» ────────────────────────────────────
+  // ── Lottie-эффекты при появлении ячейки ─────────────────────────────────
   // Лениво грузим lottie-web (как actions-bar.js), оверлей кладём на body —
-  // ряд конвейера overflow:hidden, частицы должны лететь за его пределы.
+  // ряд конвейера overflow:hidden, эффект должен выходить за его пределы.
   var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
   var lottieLoading = null;
   function ensureLottie() {
@@ -908,10 +908,10 @@
     });
     return lottieLoading;
   }
-  function playConfetti(cell) {
+  // Проигрывает Lottie-оверлей по центру anchorEl (один раз, с самоудалением).
+  function playLottie(path, anchorEl, size) {
     ensureLottie().then(function (lottie) {
-      var rect = cell.getBoundingClientRect();
-      var size = Math.max(rect.width, 200);
+      var rect = anchorEl.getBoundingClientRect();
       var host = document.createElement('div');
       host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
         'width:' + size + 'px;height:' + size + 'px;' +
@@ -919,17 +919,22 @@
         'top:' + (rect.top + rect.height / 2 - size / 2) + 'px;';
       document.body.appendChild(host);
       var anim = lottie.loadAnimation({
-        container: host, renderer: 'svg', loop: false, autoplay: true,
-        path: '../assets/lottie/confetti.json'
+        container: host, renderer: 'svg', loop: false, autoplay: true, path: path
       });
       anim.addEventListener('complete', function () { anim.destroy(); host.remove(); });
     }).catch(function () {});
   }
 
-  // Вспышка подложки категории + (для «Праздника») конфетти.
+  // Вспышка подложки категории + Lottie по категории:
+  //   «Праздник» — конфетти на всю ячейку; «1 место» — трофей над аватаром.
   function appear(cell) {
     cell.classList.add('__conv-appear');
-    if (cell.classList.contains('__cat-holiday')) playConfetti(cell);
+    if (cell.classList.contains('__cat-holiday')) {
+      playLottie('../assets/lottie/confetti.json', cell, Math.max(cell.offsetWidth, 200));
+    } else if (cell.classList.contains('__cat-win')) {
+      var ava = cell.querySelector('.avatar');
+      playLottie('../assets/lottie/trophy.json', ava || cell, 80);
+    }
     setTimeout(function () { cell.classList.remove('__conv-appear'); }, APPEAR_MS);
   }
 
