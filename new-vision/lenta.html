@@ -73,7 +73,10 @@
           <div class="uni-cell-wrapper __type-activity __cat-win">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ТБ</div>
+                <div class="activity-lead">
+                  <div class="avatar __size-44 __type-initials">ТБ</div>
+                  <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
+                </div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> заняла 1 место в фотоконкурсе</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -965,26 +968,33 @@
     }).catch(function () {});
   }
 
-  // Lottie-эффект по категории ячейки. Вызывать, КОГДА ячейка уже раскрыта
-  // (иначе getBoundingClientRect отдаёт схлопнутый rect → эффект «уезжает»).
-  //   «Праздник» — конфетти по центру ячейки; «1 место» — трофей справа от аватара.
+  // Конфетти «Праздника» — разовый бёрст по центру ячейки (body-оверлей, т.к.
+  // должен выходить за overflow:hidden ряда). Вызывать после раскрытия ячейки.
+  // Трофей «1 место» — НЕ здесь: он прибит к ячейке как in-cell бейдж (.lead-lottie),
+  // поэтому едет вместе с ячейкой при сдвиге конвейера (см. загрузчик ниже).
   function playCellLottie(cell) {
     if (cell.classList.contains('__cat-holiday')) {
       var cr = cell.getBoundingClientRect();
       var size = 220;
       playLottie('../assets/lottie/confetti.json',
         cr.left + cr.width / 2 - size / 2, cr.top + cr.height / 2 - size / 2, size);
-    } else if (cell.classList.contains('__cat-win')) {
-      var ava = cell.querySelector('.avatar');
-      if (!ava) return;
-      var ar = ava.getBoundingClientRect();
-      var tsize = 52;
-      playLottie('../assets/lottie/trophy.json',
-        ar.right - 10,                          // справа от аватара (с лёгким нахлёстом)
-        ar.top + ar.height / 2 - tsize / 2,     // по вертикали — по центру аватара
-        tsize);
     }
   }
+
+  // Прибитые in-cell Lottie-бейджи (трофей «1 место»): грузим один раз, зациклено.
+  // Живут внутри ячейки → позиция всегда относительно аватара, сдвиг конвейера
+  // их не отрывает. До загрузки/без сети — emoji-фолбэк 🥇 внутри span.
+  conv.querySelectorAll('.lead-lottie[data-lottie]').forEach(function (host) {
+    ensureLottie().then(function (lottie) {
+      var fb = host.textContent;
+      var anim = lottie.loadAnimation({
+        container: host, renderer: 'svg', loop: true, autoplay: true,
+        path: host.getAttribute('data-lottie')
+      });
+      anim.addEventListener('data_ready', function () { host.classList.add('__lottie-on'); });
+      anim.addEventListener('data_failed', function () { anim.destroy(); host.textContent = fb; });
+    }).catch(function () {});
+  });
 
   // Вспышка категорийной подложки (Lottie запускается отдельно, после раскрытия).
   function appear(cell) {
