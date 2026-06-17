@@ -122,7 +122,7 @@ function subscribeBtn() {
 }
 
 /** Шапка автора (uni-cell). id — число/строка из people, либо {name} для рекламы. */
-function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', subscribe = true, literalName = null } = {}) {
+function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', subscribe = true, literalName = null, onMedia = false } = {}) {
   let avatar, name;
   if (literalName != null) {
     avatar = `<div class="avatar __size-${size} __type-initials">${esc(initialsOf(literalName))}</div>`;
@@ -131,7 +131,9 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
     avatar = `<div class="avatar __size-${size} __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`;
     name = `<div class="${nameClass}" data-person-name="${esc(id)}"></div>`;
   }
-  const sub = subtitle ? `\n            <div class="ds-caption-m" style="${SECONDARY}">${esc(subtitle)}</div>` : '';
+  // На медиа цвет подзаголовка задаёт .feed-header.__on-media (белый), inline не ставим.
+  const subStyle = onMedia ? '' : ` style="${SECONDARY}"`;
+  const sub = subtitle ? `\n            <div class="ds-caption-m"${subStyle}>${esc(subtitle)}</div>` : '';
   return `        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           ${avatar}
           <div class="contents-view-container uni-cell-additional-content">
@@ -143,7 +145,7 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
 /** Верхушка фида (feed-header): крошки СВЕРХУ + строка автора.
  *  Ава 44, имя через ds-title-m в 1 строку (feed-header__name), под именем —
  *  ВРЕМЯ всегда (не «Сообщество»). */
-function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null } = {}) {
+function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null, onMedia = false } = {}) {
   const crumbs = breadcrumbs(tema, rubrika);
   const cell = authorHeader(id, {
     size,
@@ -151,8 +153,10 @@ function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-
     subtitle: time,
     subscribe,
     literalName,
+    onMedia,
   });
-  return `        <header class="feed-header">${crumbs ? '\n' + crumbs : ''}\n${cell}\n        </header>`;
+  const cls = onMedia ? 'feed-header __on-media' : 'feed-header';
+  return `        <header class="${cls}">${crumbs ? '\n' + crumbs : ''}\n${cell}\n        </header>`;
 }
 
 /** Хлебные крошки из темы/рубрики. */
@@ -183,17 +187,18 @@ function feedText(text, clamp) {
  *  Иконки экшенов — отдельный NV-пак (assets/new-vision-icons/), рендерятся как
  *  обычные <img class="ll-icon"> (не CSS-маска): у глифов зашит fill, поэтому
  *  они сразу видимы и совпадают по цвету с q3-лентой. «Троеточие» — общий слот. */
-function actionsBar(likes, comments, reshares) {
+function actionsBar(likes, comments, reshares, { style = 'secondary', barClass = '' } = {}) {
   const klassVar = likes ? ` style="--button-klass-count: ${likes};"` : '';
+  const st = `__style-${style}`;
   const nvIcon = (file, extraClass = '') =>
     `<img class="ll-icon${extraClass}" src="../assets/new-vision-icons/${file}" width="20" height="20" alt="">`;
   const num = (file, n) =>
-    `<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">${nvIcon(file)}${n ? esc(n) : ''}</span></button></div>`;
-  return `        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"${klassVar}><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content">${nvIcon('glyph_like_24.svg', ' button-klass__icon-outline')}${nvIcon('glyph_like_24.svg', ' button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>
+    `<div class="button-wrapper __size-36"><button class="button-container ${st}"><span class="button-content">${nvIcon(file)}${n ? esc(n) : ''}</span></button></div>`;
+  return `        <div class="actions-bar${barClass ? ' ' + barClass : ''}">
+          <label class="button-wrapper __size-36 button-klass"${klassVar}><input type="checkbox" hidden><span class="button-container ${st}"><span class="button-content">${nvIcon('glyph_like_24.svg', ' button-klass__icon-outline')}${nvIcon('glyph_like_24.svg', ' button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>
           ${num('glyph_comment_24.svg', comments)}
           ${num('glyph_reshare_24.svg', reshares)}
-          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container ${st}" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>`;
 }
 
@@ -219,25 +224,20 @@ function youtubeId(url) {
   return m ? m[1] : null;
 }
 
-function mediaClip(photos) {
+/** Внутренний визуал клипа: YouTube-iframe (автоплей+mute+loop), прямой
+ *  mp4/webm (нативный autoplay-video) или статичный постер-img. */
+function clipVisual(photos) {
   const src = photos[0];
   const yt = src && youtubeId(src);
-  let visual = '';
   if (yt) {
-    // YouTube-плеер: автоплей (только с mute), зацикливание (loop+playlist),
-    // без контролов/брендинга. Формат 9:16 задаёт .media.__type-clip.
     const params = `autoplay=1&mute=1&loop=1&playlist=${yt}&controls=0&playsinline=1&modestbranding=1&rel=0`;
-    visual = `<iframe class="media__yt" src="https://www.youtube.com/embed/${yt}?${params}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-  } else if (src && /\.(mp4|webm|ogg|mov|m3u8)(\?|#|$)/i.test(src)) {
-    // Прямой видео-файл: нативный <video>, автоплей зацикленно без звука.
-    const poster = photos[1] ? ` poster="${esc(photos[1])}"` : '';
-    visual = `<video src="${esc(src)}" autoplay loop muted playsinline${poster}></video>`;
-  } else if (src) {
-    visual = img(src);
+    return `<iframe class="media__yt" src="https://www.youtube.com/embed/${yt}?${params}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
   }
-  return `        <div class="media __type-clip">${visual}
-          <button class="media__mute" aria-label="Mute">🔇</button>
-        </div>`;
+  if (src && /\.(mp4|webm|ogg|mov|m3u8)(\?|#|$)/i.test(src)) {
+    const poster = photos[1] ? ` poster="${esc(photos[1])}"` : '';
+    return `<video src="${esc(src)}" autoplay loop muted playsinline${poster}></video>`;
+  }
+  return src ? img(src) : '';
 }
 function mediaGallery(photos) {
   const cells = photos.slice(0, 4).map((u, i) => {
@@ -275,8 +275,18 @@ function renderPost(p, idx) {
   const x = EXTRAS[id] || {};
 
   switch (type) {
-    /* ── feed-base: text / photo / gallery / clip / video / article / question ── */
-    case 'text': case 'photo': case 'gallery': case 'clip': case 'video':
+    /* ── клип: иммерсивная карточка clip-feed (видео + оверлеи поверх) ── */
+    case 'clip': {
+      return `      <article class="clip-feed">
+        <div class="clip-feed__media">${clipVisual(photos)}</div>
+${feedHeader(author, { time, subscribe: false, onMedia: true })}
+        <button class="clip-feed__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('../assets/icons/sound_off_24.svg')"></span></button>
+${actionsBar(likes, comments, reshares, { style: 'on-image', barClass: 'clip-feed__actions' })}
+      </article>`;
+    }
+
+    /* ── feed-base: text / photo / gallery / video / article / question ── */
+    case 'text': case 'photo': case 'gallery': case 'video':
     case 'article': {
       const entity = grp ? ' data-entity="group"' : '';
       const parts = [];
@@ -290,7 +300,6 @@ function renderPost(p, idx) {
         if (title) parts.push(`        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`);
         parts.push(feedText(text));
         if (type === 'video')   parts.push(mediaVideo(photos));
-        if (type === 'clip')    parts.push(mediaClip(photos));
         if (type === 'gallery') parts.push(mediaGallery(photos));
         if (type === 'photo')   parts.push(mediaPhoto(photos));
       }
