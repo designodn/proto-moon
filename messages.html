@@ -41,11 +41,18 @@
   .ll-fab__icon { display: block; width: 28px; height: 28px; filter: brightness(0) invert(1); }
 
   /* .ll-tabbar → components/app-shell.css */
+
+  /* Механика «Давно не общались» — два чередующихся состояния (A/B).
+     Состояние задаёт [data-dno] на .phone-frame (messages-dno.js):
+       A — карусель #dnoBlock сверху, тег-ячейки скрыты;
+       B — карусели нет, диалоги с тегом-чипом подняты наверх списка. */
+  [data-dno="a"] [data-dno-item] { display: none; }
+  [data-dno="b"] #dnoBlock       { display: none; }
 </style>
 </head>
 <body>
 
-  <div class="phone-frame __fullscreen" data-screen>
+  <div class="phone-frame __fullscreen" data-screen data-dno="a">
     <div class="phone-frame__feed">
 
       <!-- STATUS + NAVBAR — DS meshok-up -->
@@ -74,10 +81,12 @@
         </div>
       </div>
 
-      <!-- Возможно, вы знакомы — стек vvz-card (dismissible row) -->
-      <section class="vvz-portlet __messages" data-dismiss-row aria-label="Возможно, вы знакомы">
+      <!-- Давно не общались (состояние A) — карусель vvz-card с кнопкой
+           «Написать». Заменяет ВВЗ. Скрывается в состоянии B (см. data-dno).
+           Механика «давно не общались»: components/messages-dno.js -->
+      <section class="vvz-portlet __messages" id="dnoBlock" data-dismiss-row aria-label="Давно не общались">
         <header class="vvz-portlet__header">
-          <header class="header __size-m"><div class="header__title">Возможно, вы знакомы</div></header>
+          <header class="header __size-m"><div class="header__title">Давно не общались</div></header>
           <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" data-dismiss="row"><span class="button-inline__content">Скрыть</span></button></span>
         </header>
         <div class="vvz-portlet__row">
@@ -89,9 +98,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Алёна Ящук</div>
-              <div class="vvz-card__subtitle ds-body-m">20 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -103,9 +112,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Анна Смирнова</div>
-              <div class="vvz-card__subtitle ds-body-m">12 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -117,9 +126,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Мария Иванова</div>
-              <div class="vvz-card__subtitle ds-body-m">10 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -131,9 +140,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>
-              <div class="vvz-card__subtitle ds-body-m">12 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -145,9 +154,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
-              <div class="vvz-card__subtitle ds-body-m">8 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -159,9 +168,9 @@
             </div>
             <div class="vvz-card__content">
               <div class="vvz-card__title ds-title-s">Светлана Орлова</div>
-              <div class="vvz-card__subtitle ds-body-m">6 общих друзей</div>
+              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -171,6 +180,36 @@
 
       <!-- Список диалогов -->
       <div class="ll-messages">
+
+        <!-- Давно не общались (состояние B) — диалоги с тегом-чипом, подняты
+             наверх списка. Скрыты в состоянии A (см. data-dno + #dnoBlock). -->
+        <div class="uni-cell-wrapper" data-dno-item>
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell message-cell __read">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="message-cell__name ds-title-s">Алёна Ящук</div>
+                <div class="message-cell__row">
+                  <span class="message-cell__tag ds-caption-m-accent">Вы давно не общались</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper" data-dno-item>
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell message-cell __read">
+              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/96?img=44" alt=""></div>
+              <div class="uni-cell-additional-content">
+                <div class="message-cell__name ds-title-s">Анна Смирнова</div>
+                <div class="message-cell__row">
+                  <span class="message-cell__tag ds-caption-m-accent">Вы давно не общались</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="uni-cell-wrapper">
           <div class="uni-cell-container __state-enabled">
@@ -308,5 +347,6 @@
   <script src="components/dismissible.js"></script>
   <script src="components/tab-bar.js"></script>
   <script src="components/inapp-push.js"></script>
+  <script src="components/messages-dno.js"></script>
 </body>
 </html>
