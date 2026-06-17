@@ -52,16 +52,26 @@
 .__font-roboto {
   --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Roboto — отдельный токен для текстов публикаций (тело поста, комментарии).
-     Заголовки/кнопки/UI наследуют --font-family (OK Sans). */
+  /* Roboto — текстовый шрифт для body/caption стилей. Title/Display
+     наследуют --font-family (OK Sans). */
   --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* Тексты публикаций — Roboto. Точечно на тело поста и комментарии,
-   чтобы заголовки карточек (.nv-feed__title), кнопки и прочий UI
-   остались на OK Sans. */
-.feed-text__body,
-.text-feed__body,
-.comment__text {
+/* Шрифтовая карта текстовых стилей — только для New Vision.
+   Прод-прототипы (.__font-roboto в tokens.css) не затрагиваются: там всё
+   остаётся Roboto-first.
+
+   Правило: title/display — OK Sans (через --font-family по умолчанию);
+   все остальные текстовые стили (body, caption) — Roboto.
+
+   Привязка идёт к ds-* стилям, а не к компонентам: Roboto получают только
+   элементы, набранные этими стилями. Кнопки своих ds-классов не несут
+   (стилизуются через .button-container), поэтому остаются на OK Sans. */
+.ds-body-l,
+.ds-body-m,
+.ds-caption-m,
+.ds-caption-m-accent,
+.ds-caption-s,
+.ds-caption-s-accent {
   font-family: var(--font-family-content);
 }
