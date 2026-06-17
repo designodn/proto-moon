@@ -113,6 +113,11 @@
 .feed-congrats { position: relative; }
 .feed-congrats > * { position: relative; z-index: 1; }
 
+/* Центр радиального градиента (анимируется в keyframe). @property нужен,
+   чтобы значения интерполировались плавно, а не прыгали на полпути. */
+@property --nv-gx { syntax: "<percentage>"; inherits: false; initial-value: -44%; }
+@property --nv-gy { syntax: "<percentage>"; inherits: false; initial-value: 105%; }
+
 .feed-congrats::before {
   content: '';
   position: absolute;
@@ -120,25 +125,19 @@
   z-index: 0;
   opacity: 0;
   pointer-events: none;
-  /* Фиолетовый mesh из Figma: #8d41ff → #ae72ef → #cfa4de.
-     background-size > 100% — запас для «перетекания» по background-position. */
-  background:
-    radial-gradient(80% 70% at 18% 12%, #cfa4de 0%, rgba(207, 164, 222, 0) 60%),
-    radial-gradient(90% 80% at 88% 28%, #ae72ef 0%, rgba(174, 114, 239, 0) 62%),
-    linear-gradient(158deg, #8d41ff 0%, #ae72ef 55%, #cfa4de 100%);
-  background-size: 165% 165%;
-  background-position: 0% 0%;
+  /* Один радиальный градиент из Figma (node 2948:219874): #8d41ff → #ae72ef
+     → #cfa4de. Центр (--nv-gx/--nv-gy) переезжает между стейтами — это и есть
+     «перетекание»: яркое ядро свипает из низа-слева в верх-право. */
+  --nv-gx: -44%;
+  --nv-gy: 105%;
+  background: radial-gradient(130% 130% at var(--nv-gx) var(--nv-gy),
+    #8d41ff 0%, #ae72ef 50%, #cfa4de 100%);
 }
-/* ИИ-подарок (.__ai) — тот же reveal, но тёплый mesh из Figma node 3155:202411:
-   малиново-розовый верх-центр, оранжевые бока, коралловая база, золотой низ. */
+/* ИИ-подарок (.__ai) — тот же свип, тёплое ядро из Figma node 3155:202411:
+   коралл/малиновый → оранжевый → золотой. */
 .feed-congrats.__ai::before {
-  background:
-    radial-gradient(70% 55% at 50% 0%, #c93f8f 0%, rgba(201, 63, 143, 0) 55%),
-    radial-gradient(80% 70% at 100% 32%, #ef6a3d 0%, rgba(239, 106, 61, 0) 60%),
-    radial-gradient(90% 85% at 0% 100%, #f08a3a 0%, rgba(240, 138, 58, 0) 55%),
-    radial-gradient(95% 80% at 100% 100%, #f8c659 0%, rgba(248, 198, 89, 0) 55%),
-    linear-gradient(150deg, #f0813c 0%, #e85a55 45%, #f3a340 100%);
-  background-size: 165% 165%;
+  background: radial-gradient(130% 130% at var(--nv-gx) var(--nv-gy),
+    #d83f6f 0%, #f0813c 50%, #f8c659 100%);
 }
 
 /* Статичная подложка до старта анимации (и при reduced-motion не используется). */
@@ -148,13 +147,16 @@
   animation: nv-congrats-reveal 2600ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 @keyframes nv-congrats-reveal {
-  /* 0–500мс — фон проявлен, держим положение A */
-  0%   { opacity: 1; background-position: 0% 0%;     transform: translateY(0); }
-  19%  { opacity: 1; background-position: 0% 0%;     transform: translateY(0); }
-  /* 500–1700мс — перетекание A → B (длительность ≈1200мс) */
-  65%  { opacity: 1; background-position: 100% 100%; transform: translateY(0); }
-  /* 1700–2600мс — уход вниз + в прозрачность (длительность ≈900мс) */
-  100% { opacity: 0; background-position: 100% 130%; transform: translateY(36px); }
+  /* state 1 — ядро снизу-слева (-44%, 105%), держим до 500мс */
+  0%   { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0); }
+  /* перетекание едет линейно (равномерно) — ядро доезжает до state2 ровно
+     к 1700мс, а не залипает раньше из-за ease-in-out */
+  19%  { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0);
+         animation-timing-function: linear; }
+  /* state 2 — перетекание ядра в верх-право (90%, -19%), длительность ≈1200мс */
+  65%  { --nv-gx: 90%;  --nv-gy: -19%; opacity: 1; transform: translateY(0); }
+  /* state 3 — в прозрачность + уход вниз, длительность ≈900мс */
+  100% { --nv-gx: 90%;  --nv-gy: -19%; opacity: 0; transform: translateY(36px); }
 }
 
 /* Текст шапки/заголовка на подложке — белый. Переход в тёмный при снятии .__intro. */

@@ -351,9 +351,9 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  height: 20px;
-  min-width: 20px;
-  padding: 0 6px;
+  height: 26px;                 /* кружок одной цифры — 26×26 по макету */
+  min-width: 26px;
+  padding: 0 8px;
   border-radius: 999px;
   background-color: var(--activity-indicator-color);
   color: var(--static-text-and-icons-base-inverse-primary, #fff);
@@ -362,8 +362,45 @@
   font-size: 13px;
   line-height: 1;
   white-space: nowrap;
-  /* мягкое «всплытие» при появлении цифры и раскрытии в пилюлю */
+}
+/* «Пых» — увеличение к 26×26 из центра. Класс перезапускается JS на каждой
+   смене значения (см. инлайн-скрипт), поэтому анимация на отдельном классе. */
+.activity-indicator__badge.__pop {
   animation: ai-pop 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Окно переката цифры: клипает по высоте строки, цифра въезжает/уезжает по Y.
+   Grid-стопка (обе цифры в одной ячейке) держит окно по ширине максимальной
+   цифры и центрирует её — без смещения влево при перекате. */
+.activity-indicator__count {
+  display: inline-grid;
+  justify-items: center;
+  align-items: center;
+  height: 16px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.activity-indicator__digit {
+  grid-area: 1 / 1;     /* обе цифры в одной ячейке — стопкой */
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+}
+/* Новая цифра въезжает сверху */
+.activity-indicator__digit.__enter {
+  animation: ai-digit-in 460ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+/* Старая цифра падает вниз и исчезает */
+.activity-indicator__digit.__leave {
+  animation: ai-digit-out 460ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+@keyframes ai-digit-in {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes ai-digit-out {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
 }
 /* Слово «новых» — только в раскрытом состоянии (плавно проявляется) */
 .activity-indicator__word {
@@ -386,7 +423,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .activity-indicator__badge { animation: none; }
+  .activity-indicator__badge.__pop { animation: none; }
+  .activity-indicator__digit.__enter,
+  .activity-indicator__digit.__leave { animation: none; }
   .activity-indicator__word  { transition: none; }
 }
 
