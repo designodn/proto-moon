@@ -504,6 +504,7 @@
   --static-text-and-icons-base-primary: #000000;
   --static-text-and-icons-base-secondary: rgba(46, 47, 51, 0.88);
   --static-text-and-icons-base-tertiary: rgba(46, 47, 51, 0.64);
+  --static-surface-tint-asphalt: #E0E3EA;
 }
 
 /* ============================================================
