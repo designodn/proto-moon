@@ -13,6 +13,10 @@
  *   <link rel="stylesheet" href="new-vision.css">   (со страниц внутри new-vision/)
  */
 
+/* 0. Roboto — шрифт для текстов публикаций (пост, комментарий).
+   Заголовки, кнопки и весь UI остаются на OK Sans (см. оверрайды ниже). */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap');
+
 /* 1. Общая дизайн-система (токены, примитивы, базовые компоненты) */
 @import url('../index.css');
 
@@ -47,4 +51,17 @@
 .__ui-theme_enabled,
 .__font-roboto {
   --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Roboto — отдельный токен для текстов публикаций (тело поста, комментарии).
+     Заголовки/кнопки/UI наследуют --font-family (OK Sans). */
+  --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Тексты публикаций — Roboto. Точечно на тело поста и комментарии,
+   чтобы заголовки карточек (.nv-feed__title), кнопки и прочий UI
+   остались на OK Sans. */
+.feed-text__body,
+.text-feed__body,
+.comment__text {
+  font-family: var(--font-family-content);
 }
