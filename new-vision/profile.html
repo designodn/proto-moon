@@ -505,6 +505,32 @@
     }
     function applySavedBg() { paintCover(savedBg, savedDark); }
 
+    // Анимация появления фона после «Сохранить»: новый фон проявляется кольцом
+    // (clip-path) из низа обложки — за контентом, перекрывая старый. По
+    // окончании коммитим реальный фон и (для сакуры) качаем ветки.
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function targetBgCss(bg) {
+      if (!bg || bg === 'none') return '';
+      return isSakura(bg) ? '#FFE8E0' : bg;
+    }
+    function revealBg() {
+      if (reduceMotion) { applySavedBg(); shakeSakura(); return; }
+      var ov = document.createElement('div');
+      ov.className = 'nv-pr-cover__reveal';
+      ov.style.background = targetBgCss(savedBg) || 'var(--dynamic-surface-base-secondary)';
+      // вставляем над текущим фоном/ветками, но под контентом (z-index в CSS)
+      coverEl.insertBefore(ov, sakuraLayer ? sakuraLayer.nextSibling : coverEl.firstChild);
+      // заранее ставим тему текста/кнопок под новый фон — чтобы не было мигания
+      coverEl.classList.toggle('__bg-dark', !!savedDark && !!savedBg && savedBg !== 'none' && !isSakura(savedBg));
+      void ov.offsetWidth;           // reflow → запустить анимацию
+      ov.classList.add('__play');
+      ov.addEventListener('animationend', function () {
+        applySavedBg();
+        shakeSakura();
+        ov.remove();
+      });
+    }
+
     // «Встряхивание» веток сакуры — проигрывается при заходе/обновлении и
     // после «Сохранить». Рестарт анимации через снятие класса + reflow.
     function shakeSakura() {
@@ -656,9 +682,8 @@
         sessionStorage.removeItem('nv-cover-bg');
         sessionStorage.removeItem('nv-cover-bg-dark');
       }
-      applySavedBg();
-      shakeSakura();
       closeS(bgSheet);
+      revealBg();
     });
 
     // закрытие любой шторки (✕ / Закрыть / overlay). Для «Фон» — откат превью.

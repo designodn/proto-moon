@@ -74,6 +74,24 @@
 .nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); box-shadow: none; }
 .nv-sheet__footer.__stack .button-wrapper { width: 100%; }
 
+/* Анимация появления фона после «Сохранить» — кольцо clip-path из низа
+   обложки, за контентом (z-index ниже body). */
+.nv-pr-cover__reveal {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+.nv-pr-cover__reveal.__play {
+  animation: nv-bg-reveal 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes nv-bg-reveal {
+  0%   { clip-path: circle(0% at 50% 96%);   opacity: 0.6; }
+  40%  { opacity: 1; }
+  100% { clip-path: circle(145% at 50% 96%); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-pr-cover__reveal.__play { animation: none; }
+}
+
 /* Обложка с тёмным выбранным фоном — текст/иконки светлые */
 .nv-pr-cover.__bg-dark {
   color: var(--static-text-and-icons-base-inverse-primary);
