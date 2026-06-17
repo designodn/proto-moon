@@ -106,6 +106,18 @@
   }
   .nv-pr-stat:active { transform: scale(0.95); }
   .nv-pr-stat__num { white-space: nowrap; }
+  /* «1000 фото» — стопка из двух фоток 36×36 внахлёст (Figma 3190:197324):
+     задняя наклонена −7.2°, передняя +11.6°, белый бордер, тень elevate-3. */
+  .nv-pr-photostack { position: relative; width: 40px; height: 40px; }
+  .nv-pr-photostack__item {
+    position: absolute; top: 50%; left: 50%;
+    width: 36px; height: 36px; border-radius: 8px; object-fit: cover;
+    border: 1.5px solid #fff;
+    box-shadow: 0 7px 22px -7px rgba(0, 0, 0, 0.12);
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .nv-pr-photostack__item.__back  { transform: translate(-50%, -50%) translate(-3px, -1px) rotate(-7.2deg); }
+  .nv-pr-photostack__item.__front { transform: translate(-50%, -50%) translate(4px, 3px) rotate(11.6deg); }
   /* Панель «Бонсай» → компонент new-vision/components/nv-bonsai.css */
 
   /* лёгкий разделитель-зазор между белыми блоками и лентой */
@@ -144,14 +156,14 @@
           </span>
           <!-- свой профиль: создать запись + редактировать обложку -->
           <div class="nv-pr-cover__nav-actions" data-nav="self" hidden>
-            <span class="button-inline-wrapper __size-24">
-              <button class="button-inline __size-24" aria-label="Создать">
-                <span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/icons/add_square_24.svg')"></span></span>
+            <span class="button-inline-wrapper __size-32">
+              <button class="button-inline __size-32" aria-label="Создать запись">
+                <span class="button-inline__content"><span class="button-inline__icon icon __size-32 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpost_24.svg')"></span></span>
               </button>
             </span>
-            <span class="button-inline-wrapper __size-24">
-              <button class="button-inline __size-24" aria-label="Редактировать обложку">
-                <span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/icons/photo_cover_install_24.svg')"></span></span>
+            <span class="button-inline-wrapper __size-32">
+              <button class="button-inline __size-32" aria-label="Добавить фото">
+                <span class="button-inline__content"><span class="button-inline__icon icon __size-32 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpic_24.svg')"></span></span>
               </button>
             </span>
           </div>
@@ -249,11 +261,10 @@
 
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">1000 фото</span>
-          <div class="avatars-view __size-36"><div class="avatars-view__stack">
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto1/72/72" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto2/72/72" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto3/72/72" alt=""></div>
-          </div></div>
+          <div class="nv-pr-photostack">
+            <img class="nv-pr-photostack__item __back"  src="https://picsum.photos/seed/olgaphoto1/72/72" alt="">
+            <img class="nv-pr-photostack__item __front" src="https://picsum.photos/seed/olgaphoto2/72/72" alt="">
+          </div>
         </button>
 
         <button class="nv-pr-stat">
@@ -366,8 +377,6 @@
         </article>
 
       </div>
-
-      <div style="height: 96px"></div>
 
     </div>
 
@@ -505,6 +514,32 @@
     }
     function applySavedBg() { paintCover(savedBg, savedDark); }
 
+    // Анимация появления фона после «Сохранить»: новый фон проявляется кольцом
+    // (clip-path) из низа обложки — за контентом, перекрывая старый. По
+    // окончании коммитим реальный фон и (для сакуры) качаем ветки.
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function targetBgCss(bg) {
+      if (!bg || bg === 'none') return '';
+      return isSakura(bg) ? '#FFE8E0' : bg;
+    }
+    function revealBg() {
+      if (reduceMotion) { applySavedBg(); shakeSakura(); return; }
+      var ov = document.createElement('div');
+      ov.className = 'nv-pr-cover__reveal';
+      ov.style.background = targetBgCss(savedBg) || 'var(--dynamic-surface-base-secondary)';
+      // вставляем над текущим фоном/ветками, но под контентом (z-index в CSS)
+      coverEl.insertBefore(ov, sakuraLayer ? sakuraLayer.nextSibling : coverEl.firstChild);
+      // заранее ставим тему текста/кнопок под новый фон — чтобы не было мигания
+      coverEl.classList.toggle('__bg-dark', !!savedDark && !!savedBg && savedBg !== 'none' && !isSakura(savedBg));
+      void ov.offsetWidth;           // reflow → запустить анимацию
+      ov.classList.add('__play');
+      ov.addEventListener('animationend', function () {
+        applySavedBg();
+        shakeSakura();
+        ov.remove();
+      });
+    }
+
     // «Встряхивание» веток сакуры — проигрывается при заходе/обновлении и
     // после «Сохранить». Рестарт анимации через снятие класса + reflow.
     function shakeSakura() {
@@ -564,11 +599,125 @@
       }
     }
 
+    // ── Рандомизация чужого профиля (friend/stranger) ──────────────────────
+    // У других людей всё генерится: уровень бонсая 1–5 (поливы по таблице),
+    // ~5 поливавших из people.js, инфа в «Живом подарке», заливка обложки,
+    // числа в статистике. Свой профиль (self) не трогаем.
+    var POUR_BY_LEVEL = { 1: 5, 2: 20, 3: 50, 4: 100, 5: 1000 };
+    function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+    function realPeople() {
+      return (window.DS_PEOPLE_DATA || []).filter(function (p) { return typeof p.id === 'number'; });
+    }
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      return arr;
+    }
+    function pluralPour(n) {
+      var a = Math.abs(n) % 100, b = a % 10;
+      if (a > 10 && a < 20) return 'поливов';
+      if (b > 1 && b < 5) return 'полива';
+      if (b === 1) return 'полив';
+      return 'поливов';
+    }
+    function pluralFriends(n) {
+      var a = n % 100, b = n % 10;
+      if (a >= 11 && a <= 14) return 'друзей';
+      if (b === 1) return 'друг';
+      if (b >= 2 && b <= 4) return 'друга';
+      return 'друзей';
+    }
+
+    function randomizeOtherProfile() {
+      // 1) бонсай: уровень 1–5, поливы по таблице
+      var level = randInt(1, 5);
+      var poured = POUR_BY_LEVEL[level];
+      if (window.NVBonsai) window.NVBonsai.setState(level, poured);
+
+      // инфа в «Живом подарке»: подзаголовок, прогресс, текст
+      var sub = document.querySelector('.nv-gift-status__sub');
+      if (sub) sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
+      var fill = document.querySelector('.nv-progress__fill');
+      var txt  = document.querySelector('.nv-gift-status__text');
+      if (level < 5) {
+        var next = POUR_BY_LEVEL[level + 1];
+        if (fill) fill.style.width = Math.round(poured / next * 100) + '%';
+        if (txt)  txt.textContent = 'Осталось ' + (next - poured) + ' поливов до ' + (level + 1) + ' уровня';
+      } else {
+        if (fill) fill.style.width = '100%';
+        if (txt)  txt.textContent = 'Достигнут максимальный уровень';
+      }
+
+      // ~5 поливавших из people.js
+      var list = document.querySelector('[data-watered-list]');
+      if (list) {
+        list.querySelectorAll('.uni-cell-wrapper').forEach(function (el) { el.remove(); });
+        shuffle(realPeople()).slice(0, randInt(4, 6)).forEach(function (p) {
+          var w = document.createElement('div');
+          w.className = 'uni-cell-wrapper';
+          w.innerHTML = '<div class="uni-cell-container __state-enabled"><div class="uni-cell">' +
+            '<div class="avatar __size-44 __type-image"><img alt=""></div>' +
+            '<div class="uni-cell-additional-content"><div class="ds-body-m"></div></div></div></div>';
+          var img = w.querySelector('img');
+          if (p.photo) img.src = p.photo;
+          img.alt = p.name;
+          w.querySelector('.ds-body-m').textContent = p.name;
+          list.appendChild(w);
+        });
+      }
+
+      // 2) случайная заливка обложки (из свотчей шторки «Фон», кроме «без фона»)
+      var sw = shuffle(Array.prototype.filter.call(
+        document.querySelectorAll('#bgSheet .nv-pick[data-bg]'),
+        function (s) { return s.getAttribute('data-bg') !== 'none'; }
+      ))[0];
+      if (sw) { paintCover(sw.getAttribute('data-bg'), sw.getAttribute('data-dark') === '1'); shakeSakura(); }
+
+      // 3) статистика: друзья 10–30, фото 2–50, группы 12, заметка 1
+      var nums = document.querySelectorAll('.nv-pr-stat__num');
+      var fr = randInt(10, 30), ph = randInt(2, 50);
+      if (nums[0]) nums[0].textContent = fr + ' ' + pluralFriends(fr);
+      if (nums[1]) nums[1].textContent = ph + ' фото';
+      if (nums[2]) nums[2].textContent = '12 групп';
+      if (nums[3]) nums[3].textContent = '1 заметка';
+    }
+
     // init из URL
     var initial = new URLSearchParams(location.search).get('view') || 'friend';
     applyView(initial);
-    // при заходе/обновлении на свой профиль с фоном «Сакура» — встряхнуть ветки
-    if (document.body.getAttribute('data-view') === 'self') shakeSakura();
+    if (document.body.getAttribute('data-view') === 'self') {
+      shakeSakura();   // свой профиль с сакурой — качнуть ветки
+    } else {
+      randomizeOtherProfile();
+    }
+
+    // Я полил → появляюсь в начале списка «Кто поливал», счётчик поливов +1.
+    document.addEventListener('nv-bonsai-watered', function () {
+      var list = document.querySelector('[data-watered-list]');
+      if (list && !list.querySelector('[data-watered-me]')) {
+        var u = window.DS_USER || {};
+        var w = document.createElement('div');
+        w.className = 'uni-cell-wrapper';
+        w.setAttribute('data-watered-me', '');
+        w.innerHTML = '<div class="uni-cell-container __state-enabled"><div class="uni-cell">' +
+          '<div class="avatar __size-44 __type-image"><img alt=""></div>' +
+          '<div class="uni-cell-additional-content"><div class="ds-body-m"></div></div></div></div>';
+        var img = w.querySelector('img');
+        if (u.avatarSrc) img.src = u.avatarSrc;
+        img.alt = u.name || 'Вы';
+        w.querySelector('.ds-body-m').textContent = u.name || 'Вы';
+        list.insertBefore(w, list.querySelector('.uni-cell-wrapper'));
+      }
+      // счётчик поливов в шторке +1 (полив = человек)
+      var sub = document.querySelector('.nv-gift-status__sub');
+      var m = sub && /(\d+)\D+(\d+)\s*уровень/.exec(sub.textContent);
+      if (m) {
+        var poured = +m[1] + 1, level = +m[2];
+        sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
+      }
+    });
 
     // клики по переключателю — меняем состояние + ?view= без перезагрузки.
     // dev-пилюля убрана из разметки; обработчик оставлен под защитой, если её вернут.
@@ -656,9 +805,8 @@
         sessionStorage.removeItem('nv-cover-bg');
         sessionStorage.removeItem('nv-cover-bg-dark');
       }
-      applySavedBg();
-      shakeSakura();
       closeS(bgSheet);
+      revealBg();
     });
 
     // закрытие любой шторки (✕ / Закрыть / overlay). Для «Фон» — откат превью.

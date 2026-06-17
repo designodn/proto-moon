@@ -25,8 +25,10 @@
   display: flex; align-items: flex-end; justify-content: center;
   visibility: hidden;
   pointer-events: none;
+  /* при закрытии прячем visibility только ПОСЛЕ съезда дока (зеркально открытию) */
+  transition: visibility 0s linear 300ms;
 }
-.nv-sheet.__open { visibility: visible; pointer-events: auto; }
+.nv-sheet.__open { visibility: visible; pointer-events: auto; transition-delay: 0s; }
 
 .nv-sheet__overlay {
   position: absolute; inset: 0;
@@ -119,9 +121,10 @@
   background: transparent;
   box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low);
 }
-/* обводка вокруг активного — 3px (визуал как в шторке выбора цвета) */
+/* обводка активного — 3px с оффсетом 2px (визуал как в шторке выбора цвета) */
 .nv-pick.__selected {
-  box-shadow: 0 0 0 3px #F23C00;
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-quaternary),
+              0 0 0 5px #F23C00;
 }
 
 /* ── Статус «Бонсай»: заголовок → подзаголовок → картинка → прогресс → текст
