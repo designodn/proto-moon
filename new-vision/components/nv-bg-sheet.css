@@ -1,0 +1,32 @@
+/**
+ * New Vision — шторка «Фон» (выбор фона обложки профиля).
+ *
+ * Отдельная фича (Figma 2719:192682): на СВОЁМ профиле тап по обложке
+ * открывает шторку с сеткой фонов. «Сохранить» красит обложку и запоминает.
+ *
+ * Chrome шторки (.nv-sheet*) переиспользуется из nv-gift-sheet.css.
+ * Здесь — только сетка свотчей, плейсхолдеры иллюстраций и вертикальный футер.
+ */
+
+/* Сетка свотчей 4 в ряд */
+.nv-bg-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+/* свотч = та же плитка .nv-pick, но тянется по сетке (квадрат) */
+.nv-bg-grid .nv-pick {
+  width: 100%; height: auto; aspect-ratio: 1;
+  font-size: 26px;
+}
+/* иллюстрированный фон — плейсхолдер (заменим на ассет) */
+.nv-pick.__illus { background: linear-gradient(135deg, #FBE3E8 0%, #F4C7AE 100%); }
+
+/* Футер с двумя кнопками — вертикально (Сохранить + Закрыть) */
+.nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); }
+.nv-sheet__footer.__stack .button-wrapper { width: 100%; }
+
+/* Обложка self с тёмным выбранным фоном — текст/иконки светлые */
+body[data-view="self"] .nv-pr-cover.__bg-dark {
+  color: var(--static-text-and-icons-base-inverse-primary);
+}

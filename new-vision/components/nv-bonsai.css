@@ -1,0 +1,56 @@
+/**
+ * New Vision — виджет «Бонсай» (живой подарок в профиле).
+ *
+ * Вынесен из profile.html в компонент. Тап по виджету открывает шторку
+ * «Живой подарок»; кнопка «Полить» запускает анимацию роста (states из
+ * Figma 2719:199306): Полить → Поливаем… → +уровень, новая иллюстрация,
+ * +полив, кулдаун «Через 23ч 59м», тост «Вы помогли бонсай расцвести».
+ *
+ * Логика — components/nv-bonsai.js. Иллюстрации — пока эмодзи-плейсхолдеры
+ * по стадиям (assets/new-vision/bonsai/ подключим позже).
+ *
+ * Переиспуем DS: button (Полить), icon (drop). Ново — раскладка панели,
+ * арт-стадии, grow-пульс и тост.
+ */
+
+.nv-bonsai {
+  position: relative; display: flex; align-items: center;
+  padding: var(--space-4);
+  background: var(--dynamic-surface-base-quaternary);
+  cursor: pointer;
+}
+.nv-bonsai__text {
+  display: flex; flex-direction: column; gap: var(--space-3);
+  align-items: flex-start; max-width: 60%;
+}
+.nv-bonsai__title { margin: 0; }
+.nv-bonsai__sub   { margin: 0; color: var(--dynamic-text-and-icons-base-primary); }
+
+.nv-bonsai__art {
+  position: absolute; right: var(--space-4); top: 50%;
+  transform: translateY(-50%);
+  font-size: 92px; line-height: 1;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
+  pointer-events: none; user-select: none;
+}
+/* пульс роста при переходе на новый уровень */
+.nv-bonsai__art.__grow { animation: nv-bonsai-grow 720ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes nv-bonsai-grow {
+  0%   { transform: translateY(-50%) scale(1); }
+  35%  { transform: translateY(-50%) scale(0.82) rotate(-4deg); }
+  70%  { transform: translateY(-50%) scale(1.12) rotate(2deg); }
+  100% { transform: translateY(-50%) scale(1); }
+}
+
+/* В состояниях «поливаем»/«кулдаун» кнопка неактивна (DS-disabled-вид). */
+.nv-bonsai.__watering .nv-bonsai__water .button-container,
+.nv-bonsai.__cooldown .nv-bonsai__water .button-container {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-bonsai__art.__grow { animation: none; }
+}
+
+/* Тост о росте — компонент new-vision/components/nv-toast.css */

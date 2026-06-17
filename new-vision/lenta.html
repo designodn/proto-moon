@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
+<script src="../components/screen-transition.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -24,7 +25,7 @@
 
   <div class="phone-frame">
 
-    <div class="phone-frame__feed">
+    <div class="phone-frame__feed __flush-islands">
 
       <!-- MeshokUp: sticky status + nav + tabs -->
       <div class="meshok-up">
@@ -48,8 +49,8 @@
         </div>
         <div class="tabs">
           <button class="tabs-tab ds-title-xl __state-on">Лента</button>
-          <button class="tabs-tab ds-title-xl">Сегодня</button>
-          <button class="tabs-tab ds-title-xl">Подарки</button>
+          <button class="tabs-tab ds-title-xl" data-href="../today.html">Сегодня</button>
+          <button class="tabs-tab ds-title-xl" data-href="../gifts.html">Подарки</button>
           <button class="tabs-tab ds-title-xl">Обсуждение</button>
           <div class="button-circle-wrapper __size-32 __style-secondary"><button class="button-circle" aria-label="Создать"><span class="icon __slot-plus"></span></button></div>
         </div>
@@ -57,11 +58,13 @@
 
       <!-- Activity widget -->
       <div class="island">
-        <div style="display:flex; align-items:center; gap:6px; padding: 0 16px 6px;">
+        <a class="activity-header" href="okruzhenie.html">
           <span class="ds-title-l">Вокруг вас сейчас</span>
           <span class="pulse-dot"></span>
-        </div>
-        <div class="ds-activity-slot">
+          <span class="activity-header__chevron" aria-hidden="true"></span>
+        </a>
+        <div class="ds-activity-conveyor" id="activityConveyor">
+          <div class="ds-activity-conveyor__track">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -95,9 +98,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="ds-activity-slot">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -131,190 +131,150 @@
               </div>
             </div>
           </div>
+          </div>
         </div>
       </div>
 
 
+      <!-- Лента фидов (each feed = свой остров, gap между ними).
+           Дача-сториз — первый фид в стопке, поэтому внутри feed-container. -->
+      <div class="feed-container">
+
       <!-- Сториз-карусель «Сейчас на даче» -->
       <article class="feed-stories island">
-        <nav class="breadcrumbs ds-body-m">
+        <nav class="breadcrumbs">
           <a class="breadcrumbs__item" href="#">Дача</a>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Сейчас на даче</span>
         </nav>
-        <div class="feed-stories__list">
-          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption">
+        <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
+          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption" data-skip-viewer>
             <img src="https://i.pravatar.cc/128?img=15" alt="">
             <div class="avatar__addon __pos-br">
               <div class="button-circle-wrapper __size-20 __style-primary"><button class="button-circle" aria-label="Добавить момент"><span class="icon __slot-plus"></span></button></div>
             </div>
             <div class="avatar__caption">Ваш момент</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="3" data-name="Елена">
             <img src="https://i.pravatar.cc/128?img=49" alt="">
             <div class="avatar__caption">Елена</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="2" data-name="Евгения">
             <img src="https://i.pravatar.cc/128?img=23" alt="">
             <div class="avatar__caption">Евгения</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="4" data-name="Александр">
             <img src="https://i.pravatar.cc/128?img=52" alt="">
             <div class="avatar__caption">Александр</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="1" data-name="Ирина">
             <img src="https://i.pravatar.cc/128?img=44" alt="">
             <div class="avatar__caption">Ирина</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="2" data-name="Михаил">
             <img src="https://i.pravatar.cc/128?img=33" alt="">
             <div class="avatar__caption">Михаил</div>
           </div>
         </div>
       </article>
 
-      <!-- Feed posts (wrapped in .feed-container) -->
-      <div class="feed-container">
-
-      <!-- Конкурс — Урожай -->
-      <article class="feed-contest island">
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Конкурс</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Урожай</span>
-        </nav>
-        <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
-        <div class="picture-stack">
-          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest1/200/200" alt=""></div>
-          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest2/200/200" alt=""></div>
-          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest3/200/200" alt=""></div>
-          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest4/200/200" alt=""></div>
-        </div>
-        <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">📷 Загрузить фото</span></button>
-        </div>
-        <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">🖼 Смотреть работы</span></button>
-        </div>
-      </article>
-
-      <!-- Воспоминание -->
-      <article class="feed-memory island">
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Воспоминания</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">В этот день</span>
-        </nav>
-        <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Дополните фотографию роз спустя 5 лет</h2>
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content" data-entity="self">
-            <div class="ds-title-s">Вы</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 лет назад</div>
-          </div>
-        </div></div></div>
-        <p class="ds-body-m">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут.</p>
-        <div class="media" style="background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64)); aspect-ratio: 4/3;"></div>
-        <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Поделиться снова</span></button>
-        </div>
-      </article>
-
-      <!-- Q&A — обсуждение -->
-      <article class="feed-discussion island">
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Здоровье</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Обсуждают</span>
-        </nav>
-        <header class="header __size-xl">
-          <h2 class="header__title">Болит колено при приседании. Что это может быть?</h2>
-        </header>
-        <hr class="ds-divider">
-        <div class="comment __type-compact">
-          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=52" alt=""></div>
-          <div class="comment__body">
-            <div class="comment__header"><b>Борис Фрол</b>· 3 часа назад</div>
-            <p class="comment__text">У меня такое было после пробежки, помогло растирание медвежьим жиром</p>
-            <div class="comment__actions">
-              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
-              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span>
-            </div>
-          </div>
-        </div>
-        <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 35 ответов</span></button></span>
-        <div class="comment-input">
-          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
-          <input class="text-input __size-36" placeholder="Написать ответ…">
-        </div>
-      </article>
-
-      <!-- Карусель вопросов -->
-      <article class="feed-questions island">
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Санкт-Петербург</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Нужен совет</span>
-        </nav>
-        <header class="header __size-xl">
-          <h2 class="header__title">Помогите ответом в Санкт-Петербурге</h2>
-          <p class="header__subtitle">Соседи задают вопросы по ремонту, медицине и доставке</p>
-        </header>
-        <div class="feed-questions__list">
-          <div class="question-card">
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
-              <div class="uni-cell-additional-content"><div class="ds-body-m">Ирина Кузнецова</div></div>
-            </div></div></div>
-            <div class="question-card__title">Соседи, подскажите мастера по окнам</div>
-            <div class="question-card__category">Ремонт</div>
-          </div>
-          <div class="question-card">
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
-              <div class="uni-cell-additional-content"><div class="ds-body-m">Валентина Петрова</div></div>
-            </div></div></div>
-            <div class="question-card__title">Подскажите хорошего стоматолога в нашем районе</div>
-            <div class="question-card__category">Стоматолог</div>
-          </div>
-          <div class="question-card">
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/64?img=11" alt=""></div>
-              <div class="uni-cell-additional-content"><div class="ds-body-m">Олег Иванов</div></div>
-            </div></div></div>
-            <div class="question-card__title">Ищу собутыльника на выходные</div>
-            <div class="question-card__category">Знакомства</div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Клип 9:16 -->
+      <!-- 1. Текст + видео -->
       <article class="feed-base island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
+          <div class="avatar __size-36 __type-initials">АК</div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s">Рыбец 543</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+            <div class="ds-title-s">Анна Кузнецова</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">11:18</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Рыбалка</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Клипы</span>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Еда</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рецепты</span></span>
         </nav>
-        <div class="media __type-clip" style="background: linear-gradient(180deg, var(--base-blue-48), var(--base-ocean-64));">
-          <button class="media__mute" aria-label="Mute">🔇</button>
+        <div class="feed-text">
+          <p class="feed-text__body ds-body-m">Запеканка из тыквы с творогом — нашла наконец-то идеальный рецепт. Без манки, нежная и держит форму. Делюсь.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media __type-video" style="height: 220px; background: linear-gradient(135deg, var(--base-orange-saturated-48), var(--base-orange-saturated-64));">
+          <span class="media__tag tag __style-primary __size-24">Рецепт</span>
+          <div class="media__play button-circle-wrapper __size-56">
+            <button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button>
+          </div>
+          <span class="media__time">08:42</span>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 892;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;145</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;412</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
-      <!-- Текстовый пост (без медиа) -->
+      <!-- 2. Реклама -->
+      <article class="feed-ad island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-initials">Б15</div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Квартал бизнес-класса «Б15»</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Реклама 0+</div>
+          </div>
+        </div></div></div>
+        <div class="feed-text" style="--feed-text-clamp: 2;">
+          <p class="feed-text__body ds-body-m">От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до делового центра — каждый день в спокойствии и комфорте.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-asphalt-56), var(--base-asphalt-92));"></div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Перейти</span></button>
+        </div>
+      </article>
+
+      <!-- 3. Николай празднует свой День рождения! (congrats) -->
+      <article class="feed-congrats __birthday island __intro">
+        <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/144?img=68" alt=""></div>
+        <h2 class="nv-feed__title">Николай празднует свой День рождения!</h2>
+        <div class="avatars-view __size-36">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=32" alt=""></div>
+            <div class="avatars-view__more">+3</div>
+          </div>
+          <span class="avatars-view__text">12 друзей поздравило</span>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>&nbsp;Поздравить</span></button>
+        </div>
+      </article>
+
+      <!-- 4. Текст + 1 фото -->
+      <article class="feed-base island">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-initials">СИ</div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Светлана Иванова</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">09:35</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Семья</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Дети</span></span>
+        </nav>
+        <div class="feed-text">
+          <p class="feed-text__body ds-body-m">Сегодня сыну исполнилось 18. Помню, как привозила его из роддома — кажется, было вчера. А он уже выше меня на голову и собирается в институт.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64));"></div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1842;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;234</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;156</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 5. Вопрос -->
       <article class="feed-base island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=49" alt=""></div>
@@ -324,10 +284,9 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Санкт-Петербург</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Рядом живут</span>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Санкт-Петербург</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рядом живут</span></span>
         </nav>
         <div class="feed-text" style="--feed-text-clamp: 5;">
           <p class="feed-text__body ds-body-m">Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день — яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже больно. Подскажите, что не так?</p>
@@ -341,7 +300,206 @@
         </div>
       </article>
 
-      <!-- Альбом-пост с галереей (4 фото + «Ещё N») -->
+      <!-- 6. Группа: текст + картинка -->
+      <article class="feed-base island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=33" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Дача и огород 🌱</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество · 12:48</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сад</span></span>
+        </nav>
+        <div class="feed-text">
+          <p class="feed-text__body ds-body-m">5 правил полива в жару, которые спасут урожай: поливайте утром или вечером, под корень, тёплой водой. Мульчируйте грядки и не бойтесь рыхлить почву.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-jungle-48), var(--base-jungle-64));"></div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 642;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;58</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;39</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 7. Группа: видео + текст -->
+      <article class="feed-base island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Рыбаки России 🎣</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество · 10:05</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рыбалка</span></span>
+        </nav>
+        <div class="feed-text">
+          <p class="feed-text__body ds-body-m">Как вязать поводок без узлов за 30 секунд — короткое видео от подписчика. Сохраняйте, чтобы не потерять перед выходом на воду.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media __type-video" style="height: 220px; background: linear-gradient(135deg, var(--base-blue-48), var(--base-ocean-64));">
+          <div class="media__play button-circle-wrapper __size-56">
+            <button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button>
+          </div>
+          <span class="media__time">00:31</span>
+        </div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1203;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;96</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;233</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 8. Реклама -->
+      <article class="feed-ad island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-initials">МВ</div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">МегаМаркет</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Реклама 0+</div>
+          </div>
+        </div></div></div>
+        <div class="feed-text" style="--feed-text-clamp: 2;">
+          <p class="feed-text__body ds-body-m">Скидки до 70% на технику для дачи. Газонокосилки, мангалы, насосы — успейте до конца недели с бесплатной доставкой.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-violet-48), var(--base-violet-64));"></div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">В магазин</span></button>
+        </div>
+      </article>
+
+      <!-- 9. Дзен-пост -->
+      <article class="feed-base island">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><img class="nv-breadcrumbs__badge" src="../assets/new-vision/dzen-badge.png" alt=""><span class="nv-breadcrumbs__label">Дзен</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Здоровье</span></span>
+        </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=60" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m">Доктор Пирогов</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <h2 class="nv-feed__title">Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих</h2>
+        <p class="ds-body-m">Когда пациент видит в анализе крови сниженный гемоглобин, он чаще всего думает о слабости, бледности, железе и, возможно, питании. Кажется, что это история про кровь, но не про сердце.</p>
+        <div class="media __aspect-4-3"><img src="../assets/new-vision/dzen-heart.png" alt=""></div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 14;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;34</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 10. Нужен совет карточками (общий компонент feed-questions) -->
+      <article class="feed-questions island">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Санкт-Петербург</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Нужен совет</span></span>
+        </nav>
+        <h2 class="nv-feed__title">Помогите ответом в Санкт-Петербурге</h2>
+        <div class="feed-questions__list">
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/48?img=44" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Ирина Кузнецова</div></div>
+            </div></div></div>
+            <div class="question-card__title">Соседи, подскажите мастера по окнам</div>
+            <div class="question-card__category">Ремонт</div>
+          </div>
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/48?img=47" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Валентина Петрова</div></div>
+            </div></div></div>
+            <div class="question-card__title">Подскажите хорошего стоматолога в нашем районе</div>
+            <div class="question-card__category">Стоматолог</div>
+          </div>
+          <div class="question-card">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/48?img=11" alt=""></div>
+              <div class="uni-cell-additional-content"><div class="ds-body-m">Олег Иванов</div></div>
+            </div></div></div>
+            <div class="question-card__title">Кто возит воду в бутылях в Приморский район?</div>
+            <div class="question-card__category">Доставка</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 11. Клип -->
+      <article class="feed-base island">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Рыбец 543</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рыбалка</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Клипы</span></span>
+        </nav>
+        <div class="media __type-clip" style="background: linear-gradient(180deg, var(--base-blue-48), var(--base-ocean-64));">
+          <button class="media__mute" aria-label="Mute">🔇</button>
+        </div>
+        <div class="actions-bar">
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 12. Вступай в сообщество рыбаков -->
+      <article class="feed-group island">
+        <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/256?img=33" alt=""></div>
+        <h2 class="nv-feed__title">Вступай в сообщество рыбаков</h2>
+        <div class="avatars-view __size-36">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=11" alt=""></div>
+            <div class="avatars-view__more">+3</div>
+          </div>
+          <span class="avatars-view__text">5 друзей подписаны</span>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Подписаться</span></button>
+        </div>
+      </article>
+
+      <!-- 13. Реклама -->
+      <article class="feed-ad island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-initials">СБ</div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">СберСтрахование</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Реклама 0+</div>
+          </div>
+        </div></div></div>
+        <div class="feed-text" style="--feed-text-clamp: 2;">
+          <p class="feed-text__body ds-body-m">Застрахуйте дачу за 5 минут онлайн. От пожара, затопления и краж — выплаты до 3 млн ₽ без визита агента.</p>
+          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+        </div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-jungle-48), var(--base-jungle-64));"></div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Оформить</span></button>
+        </div>
+      </article>
+
+      <!-- 14. Юзер: текст + галерея фото -->
       <article class="feed-base island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
@@ -369,150 +527,128 @@
         </div>
       </article>
 
-      <!-- Сообщество — подписка -->
-      <article class="feed-group island">
-        <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/256?img=33" alt=""></div>
-        <h2 class="nv-feed__title">Вступай в сообщество рыбаков</h2>
-        <div class="avatars-view __size-36">
-          <div class="avatars-view__stack">
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=11" alt=""></div>
-            <div class="avatars-view__more">+3</div>
-          </div>
-          <span class="avatars-view__text">5 друзей подписаны</span>
-        </div>
-        <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Подписаться</span></button>
-        </div>
-      </article>
-
-      <!-- День рождения -->
-      <article class="feed-birthday island">
-        <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/256?img=68" alt=""></div>
-        <h2 style="margin: 0; font-family: var(--font-family); font-size: 24px; line-height: 30px; font-weight: 600;">Николай празднует свой День рождения!</h2>
-        <div class="avatars-view __size-36">
-          <div class="avatars-view__stack">
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
-            <div class="avatars-view__more">+3</div>
-          </div>
-          <span class="avatars-view__text">12 друзей поздравило</span>
-        </div>
-        <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">🎁 Поздравить</span></button>
-        </div>
-      </article>
-
-      <!-- Реклама -->
-      <article class="feed-ad island">
+      <!-- 15. Создал и подарил уникальный подарок (congrats) -->
+      <article class="feed-congrats __gift island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-44 __type-initials">Б15</div>
-          <div class="contents-view-container uni-cell-additional-content" data-entity="group">
-            <div class="ds-title-s">Квартал бизнес-класса «Б15»</div>
+          <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m">Александр Борщицкий</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+        </div></div></div>
+        <div class="nv-gift-card">
+          <p class="nv-gift-card__caption">Создал и подарил уникальный подарок</p>
+          <div class="nv-gift-card__reshare">
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/48?img=47" alt=""></div>
+            <span class="ds-title-s">Александра Москвичева</span>
+          </div>
+          <div class="media __aspect-1-1"><img src="../assets/new-vision/gift-jam.png" alt=""></div>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container nv-gift-btn __create" style="width: 100%;"><span class="button-content">✨&nbsp;Создать подарок</span></button>
+        </div>
+      </article>
+
+      <!-- 16. Обсуждают -->
+      <article class="feed-discussion island">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Здоровье</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Обсуждают</span></span>
+        </nav>
+        <header class="header __size-xl">
+          <h2 class="header__title">Болит колено при приседании. Что это может быть?</h2>
+        </header>
+        <hr class="ds-divider">
+        <div class="comment __type-compact">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=52" alt=""></div>
+          <div class="comment__body">
+            <div class="comment__header"><b>Борис Фрол</b>· 3 часа назад</div>
+            <p class="comment__text">У меня такое было после пробежки, помогло растирание медвежьим жиром</p>
+            <div class="comment__actions">
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span>
+            </div>
+          </div>
+        </div>
+        <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 35 ответов</span></button></span>
+        <div class="comment-input">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
+          <input class="text-input __size-36" placeholder="Написать ответ…">
+        </div>
+      </article>
+
+      <!-- 17. 12 людей рядом делятся моментом с дачи -->
+      <article class="feed-stories island">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рядом</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Моменты</span></span>
+        </nav>
+        <h2 class="nv-feed__title">12 людей рядом делятся моментом с дачи</h2>
+        <div class="feed-stories__list">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+            <img src="https://i.pravatar.cc/128?img=49" alt="">
+            <div class="avatar__caption">Елена</div>
+          </div>
+          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+            <img src="https://i.pravatar.cc/128?img=23" alt="">
+            <div class="avatar__caption">Евгения</div>
+          </div>
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+            <img src="https://i.pravatar.cc/128?img=52" alt="">
+            <div class="avatar__caption">Александр</div>
+          </div>
+          <div class="avatar __size-56 __type-image __ring-active __has-caption">
+            <img src="https://i.pravatar.cc/128?img=44" alt="">
+            <div class="avatar__caption">Ирина</div>
+          </div>
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
+            <img src="https://i.pravatar.cc/128?img=33" alt="">
+            <div class="avatar__caption">Михаил</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 18. Покажите свой урожай (конкурс) -->
+      <article class="feed-contest island">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Конкурс</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Урожай</span></span>
+        </nav>
+        <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
+        <div class="picture-stack">
+          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest1/200/200" alt=""></div>
+          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest2/200/200" alt=""></div>
+          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest3/200/200" alt=""></div>
+          <div class="picture __size-96"><img src="https://picsum.photos/seed/harvest4/200/200" alt=""></div>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">📷 Загрузить фото</span></button>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">🖼 Смотреть работы</span></button>
+        </div>
+      </article>
+
+      <!-- 19. Реклама -->
+      <article class="feed-ad island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-initials">OZ</div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">OZON</div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Реклама 0+</div>
           </div>
         </div></div></div>
         <div class="feed-text" style="--feed-text-clamp: 2;">
-          <p class="feed-text__body ds-body-m">От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до делового центра — каждый день в спокойствии и комфорте.</p>
+          <p class="feed-text__body ds-body-m">Семена и саженцы с доставкой за один день. Тысячи сортов, отзывы садоводов и кэшбэк баллами на следующий заказ.</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
-        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-asphalt-56), var(--base-asphalt-92));"></div>
+        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-blue-48), var(--base-blue-64));"></div>
         <div class="button-wrapper __size-44 __full-width" style="display: block;">
           <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Перейти</span></button>
         </div>
       </article>
 
-      <!-- Семья / личное -->
-      <article class="feed-base island">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-initials">СИ</div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s">Светлана Иванова</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">09:35</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Семья</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Дети</span>
-        </nav>
-        <div class="feed-text">
-          <p class="feed-text__body ds-body-m">Сегодня сыну исполнилось 18. Помню, как привозила его из роддома — кажется, было вчера. А он уже выше меня на голову и собирается в институт.</p>
-          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-        </div>
-        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64));"></div>
-        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1842;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;234</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;156</span></button></div>
-          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
-        </div>
-      </article>
-
-      <!-- Рецепт (видео) -->
-      <article class="feed-base island">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-initials">АК</div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s">Анна Кузнецова</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">11:18</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Еда</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Рецепты</span>
-        </nav>
-        <div class="feed-text">
-          <p class="feed-text__body ds-body-m">Запеканка из тыквы с творогом — нашла наконец-то идеальный рецепт. Без манки, нежная и держит форму. Делюсь.</p>
-          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-        </div>
-        <div class="media __type-video" style="height: 220px; background: linear-gradient(135deg, var(--base-orange-saturated-48), var(--base-orange-saturated-64));">
-          <span class="media__tag tag __style-primary __size-24">Рецепт</span>
-          <div class="media__play button-circle-wrapper __size-56">
-            <button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button>
-          </div>
-          <span class="media__time">08:42</span>
-        </div>
-        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 892;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;145</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;412</span></button></div>
-          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
-        </div>
-      </article>
-
-      <!-- Новость / технологии -->
-      <article class="feed-base island">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-initials">ОК</div>
-          <div class="contents-view-container uni-cell-additional-content" data-entity="group">
-            <div class="ds-title-s">ОК Новости</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">14:22</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Технологии</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Новости</span>
-        </nav>
-        <div class="feed-text">
-          <p class="feed-text__body ds-body-m">В Москве запустили первый полностью беспилотный трамвайный маршрут. Пассажиры пока с недоверием — стоят у кабины и заглядывают, есть ли там водитель.</p>
-          <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-        </div>
-        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-asphalt-48), var(--base-asphalt-64));"></div>
-        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 412;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;67</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;23</span></button></div>
-          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
-        </div>
-      </article>
-
-      <!-- Путешествие -->
+      <!-- 20. Юзер текст (без медиа) -->
       <article class="feed-base island">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-initials">МД</div>
@@ -522,16 +658,13 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Путешествия</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Россия</span>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Мысли вслух</span></span>
         </nav>
         <div class="feed-text">
-          <p class="feed-text__body ds-body-m">Третий день в Дагестане. Сулакский каньон оказался даже глубже Гранд-Каньона — стоял на краю и не мог отвести глаз. Завтра едем на Хунзахское плато.</p>
+          <p class="feed-text__body ds-body-m">Понял, что лучший отдых на даче — это не шашлык и не баня, а тишина в шесть утра, когда весь посёлок ещё спит, а ты с чашкой чая на крыльце.</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
-        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-jungle-48), var(--base-jungle-64));"></div>
         <div class="actions-bar">
           <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2401;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
           <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;312</span></button></div>
@@ -540,54 +673,81 @@
         </div>
       </article>
 
-      <!-- Питомец -->
-      <article class="feed-base island">
+      <!-- 21. Воспоминание -->
+      <article class="feed-memory island" data-entity="self">
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Воспоминания</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">В этот день</span></span>
+        </nav>
+        <h2 class="nv-feed__title">Дополните фотографию роз спустя 5 лет</h2>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-initials">ЕВ</div>
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s">Елена Воронцова</div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">16:08</div>
+            <div class="ds-title-s">Вы</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 лет назад</div>
+          </div>
+        </div></div></div>
+        <p class="ds-body-m">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут.</p>
+        <div class="media" style="background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64)); aspect-ratio: 4/3;"></div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Поделиться снова</span></button>
+        </div>
+      </article>
+
+      <!-- 22. Группа пост -->
+      <article class="feed-base island" data-entity="group">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=5" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-s">Соседи · Приморский</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество · 15:20</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="breadcrumbs ds-body-m">
-          <a class="breadcrumbs__item" href="#">Питомцы</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Кошки</span>
+        <nav class="nv-breadcrumbs">
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
+          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Объявления</span></span>
         </nav>
         <div class="feed-text">
-          <p class="feed-text__body ds-body-m">Мейн-кун Барсик отжал у меня лежак третий день подряд. Думаю смириться — кажется, я тут больше не главная.</p>
+          <p class="feed-text__body ds-body-m">В субботу субботник у пруда в 10:00. Берём перчатки и хорошее настроение — после уберёмся, будет чай с пирогами. Приходите семьями!</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
-        <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-yellow-48), var(--base-yellow-64));"></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5320;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;487</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;1100</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 156;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;42</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;9</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        </div>
+      </article>
+
+      <!-- 23. Получил подарок на День сельскохозяйственных строителей (congrats) -->
+      <article class="feed-congrats __gift island __intro">
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m">Александр Борщицкий</div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+        </div></div></div>
+        <div class="nv-gift-card">
+          <p class="nv-gift-card__caption">Получил подарок на День сельскохозяйственных строителей от</p>
+          <div class="nv-gift-card__reshare">
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/48?img=47" alt=""></div>
+            <span class="ds-title-s">Александра Москвичева</span>
+          </div>
+          <div class="media __aspect-1-1"><img src="../assets/new-vision/gift-bonsai.png" alt=""></div>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>&nbsp;Отправить подарок</span></button>
         </div>
       </article>
 
       </div>
 
-
-      <!-- Group recommendation -->
-      <div class="island">
-        <div class="island__header">Вступите в сообщество</div>
-        <div class="media" style="height: 100px; background: linear-gradient(135deg, var(--base-blue-48), var(--base-blue-64));"></div>
-        <div class="contents-view-container" style="--contents-view-padding-top: 12px; --contents-view-padding-right: 16px; --contents-view-padding-left: 16px;">
-          <div class="ds-title-s">Любители рыбалки — Петербург</div>
-          <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary); margin-top: 3px;">48 320 участников · Закрытая группа</div>
-        </div>
-        <div class="button-wrapper __size-36 __full-width" style="display: block; margin-top: 10px; padding: 0 16px;">
-          <button class="button-container __style-primary" style="width: 100%;"><span class="button-content">Вступить</span></button>
-        </div>
-      </div>
-
       <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же).
            Пока картинки нет, фон — фирменный оранжевый (перекроется, когда ляжет jpg). -->
       <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
-        <p class="promo-banner__title">Народный день подарков!</p>
+        <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
         <div class="promo-banner__actions">
           <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
           <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
@@ -596,14 +756,17 @@
 
     </div>
 
+    <!-- Слот под полноэкранный вьюер моментов — MomentViewer.create() заменит его -->
+    <div id="nv-moment-slot"></div>
+
     <div class="phone-frame__tabbar">
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          <button class="tabbar-icon __slot-tribune" data-href="#" aria-label="Трибуна"></button>
+          <button class="tabbar-icon __slot-message" data-href="#" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu" data-href="menu.html" aria-label="Меню"></button>
         </div>
         <div class="tabbar__handle"></div>
       </div>
@@ -613,6 +776,34 @@
 
 <!-- навигация по таббару (feed → лента, message → сообщения) -->
 <script src="../components/tab-bar.js"></script>
+
+<!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
+<script>
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest ? e.target.closest('.tabs-tab[data-href]') : null;
+    if (tab) location.href = tab.getAttribute('data-href');
+  });
+</script>
+
+<!-- Моменты → полноэкранный вьюер (DS-компонент stories-row + moment.js) -->
+<script src="../components/moment.js"></script>
+<script>
+  (function () {
+    var row  = document.getElementById('nv-stories-row');
+    var slot = document.getElementById('nv-moment-slot');
+    if (!row || !slot || !window.MomentViewer) return;
+
+    var viewer = MomentViewer.create({ duration: '4s' });
+    // moment.js хардкодит assets/… (document-relative). NV-страницы лежат в
+    // new-vision/, поэтому префиксуем пути иконок вьюера на ../.
+    Array.prototype.forEach.call(viewer.querySelectorAll('img[src^="assets/"]'), function (img) {
+      img.setAttribute('src', '../' + img.getAttribute('src'));
+    });
+    slot.replaceWith(viewer);
+
+    MomentViewer.bindRow(row, viewer);
+  })();
+</script>
 
 <!-- Тап по человеку в ленте → его профиль.
      Флаг data-entity: user (по умолчанию) | self | group.
@@ -662,6 +853,81 @@
     sessionStorage.setItem('nav-tab', '1');
     location.href = (entity === 'self') ? PROFILE_SELF : PROFILE_USER;
   });
+})();
+
+</script>
+
+<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху и
+     раскрывается, стопка сдвигается, нижняя сжимается к центру и исчезает. -->
+<script>
+(function () {
+  var conv = document.getElementById('activityConveyor');
+  if (!conv) return;
+  var track = conv.querySelector('.ds-activity-conveyor__track');
+  if (!track) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function cssNum(name, dflt) {
+    var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
+    return isNaN(v) ? dflt : v;
+  }
+  var animating = false;
+
+  function step() {
+    var rows = Math.round(cssNum('--conv-rows', 3));
+    if (animating || track.children.length < rows + 1) return;
+    animating = true;
+
+    // следующую скрытую (первую под видимой зоной) поднимаем наверх — «падает сверху»
+    var entering = track.children[rows];
+    track.insertBefore(entering, track.firstElementChild);
+    void entering.offsetWidth;                 // reflow → enter стартует с height:0
+    entering.classList.add('__conv-enter');
+
+    // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
+    var leaving = track.children[rows];
+    leaving.classList.add('__conv-leave');
+
+    setTimeout(function () {
+      leaving.classList.remove('__conv-leave');
+      entering.classList.remove('__conv-enter');
+      track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
+      animating = false;
+    }, cssNum('--conv-dur', 0.5) * 1000 + 60);
+  }
+
+  setInterval(step, 3000);
+})();
+</script>
+
+<!-- Поздравительные фиды (ДР / подарок / ИИ-подарок): при первом появлении
+     в зоне видимости фиолетовая подложка плавно сменяется на белую.
+     Срабатывает один раз на фид. Подложка задана классом .__intro в разметке. -->
+<script>
+(function () {
+  var feeds = document.querySelectorAll('.feed-congrats.__intro');
+  if (!feeds.length) return;
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Без анимаций или без IntersectionObserver — сразу показываем белую карточку.
+  if (reduce || !('IntersectionObserver' in window)) {
+    feeds.forEach(function (f) { f.classList.remove('__intro'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries, observer) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var feed = entry.target;
+      observer.unobserve(feed);
+      // Небольшая задержка, чтобы пользователь успел увидеть фиолетовую подложку,
+      // прежде чем она сменится на белую.
+      setTimeout(function () { feed.classList.remove('__intro'); }, 550);
+    });
+  }, { threshold: 0.35 });
+
+  feeds.forEach(function (f) { io.observe(f); });
 })();
 </script>
 
