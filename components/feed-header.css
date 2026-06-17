@@ -40,6 +40,13 @@
   --uni-cell-padding-bottom: 0;
 }
 
+/* База .uni-cell идёт без gap (его задаёт контекст). Задаём здесь, чтобы
+   ава не прилипала к имени в любой карточке-обёртке (не только feed-base). */
+.feed-header .uni-cell {
+  align-items: center;
+  gap: 10px;
+}
+
 /* имя ↔ время */
 .feed-header .uni-cell-additional-content {
   gap: 2px;
