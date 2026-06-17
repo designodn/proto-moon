@@ -148,15 +148,16 @@
 }
 @keyframes nv-congrats-reveal {
   /* state 1 — ядро снизу-слева (-44%, 105%), держим до 500мс */
-  0%   { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0); }
+  0%   { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; }
   /* перетекание едет линейно (равномерно) — ядро доезжает до state2 ровно
      к 1700мс, а не залипает раньше из-за ease-in-out */
-  19%  { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0);
-         animation-timing-function: linear; }
+  19%  { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; animation-timing-function: linear; }
   /* state 2 — перетекание ядра в верх-право (90%, -19%), длительность ≈1200мс */
-  65%  { --nv-gx: 90%;  --nv-gy: -19%; opacity: 1; transform: translateY(0); }
-  /* state 3 — в прозрачность + уход вниз, длительность ≈900мс */
-  100% { --nv-gx: 90%;  --nv-gy: -19%; opacity: 0; transform: translateY(36px); }
+  65%  { --nv-gx: 90%;  --nv-gy: -19%; opacity: 1; }
+  /* state 3 — ядро уходит вниз (низ-центр, по матрице Figma) и в прозрачность.
+     Двигаем ЦЕНТР градиента, а не весь ::before — иначе сдвиг бокса оголял бы
+     белый верх карточки чёткой границей. Длительность ≈900мс. */
+  100% { --nv-gx: 54%;  --nv-gy: 130%; opacity: 0; }
 }
 
 /* Текст шапки/заголовка на подложке — белый. Переход в тёмный при снятии .__intro. */
