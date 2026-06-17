@@ -387,9 +387,9 @@
   animation: ai-bump 550ms cubic-bezier(0.34, 1.4, 0.5, 1);
 }
 @keyframes ai-bump {
-  0%   { transform: scale(1);    }
-  35%  { transform: scale(1.14); }
-  100% { transform: scale(1);    }
+  0%   { transform: scale(1);   }
+  35%  { transform: scale(1.1); }
+  100% { transform: scale(1);   }
 }
 
 /* Окно переката цифры: клипает по высоте строки, цифра въезжает/уезжает по Y.
@@ -413,17 +413,17 @@
 .activity-indicator__digit.__enter {
   animation: ai-digit-in 550ms cubic-bezier(0.65, 0, 0.2, 1) both;
 }
-/* Старая цифра падает вниз и исчезает */
+/* Старая цифра уезжает вниз (без затухания — каунтер не «пропадает») */
 .activity-indicator__digit.__leave {
   animation: ai-digit-out 550ms cubic-bezier(0.65, 0, 0.2, 1) both;
 }
 @keyframes ai-digit-in {
-  from { transform: translateY(-100%); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0);     }
 }
 @keyframes ai-digit-out {
-  from { transform: translateY(0);    opacity: 1; }
-  to   { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(0);    }
+  to   { transform: translateY(100%); }
 }
 /* Слово «новых» — только в раскрытом состоянии (плавно проявляется) */
 .activity-indicator__word {
