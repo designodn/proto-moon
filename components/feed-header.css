@@ -44,7 +44,7 @@
    gap 12 между авой и текстом справа (самодостаточно для любой обёртки). */
 .feed-header .uni-cell {
   align-items: center;
-  gap: 12px;
+  gap: 12px !important;
 }
 
 /* имя ↔ время */
