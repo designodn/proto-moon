@@ -91,6 +91,29 @@
 }
 .stories-row__add img { filter: brightness(0) invert(1); }
 
+/* Аватар-бейдж: мини-аватарка друга в той же позиции и геометрии, что «+».
+   Круг 32px в белой обводке 3px, фото заполняет по object-fit:cover. */
+.stories-row__friend {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--dynamic-surface-base-secondary);
+  overflow: hidden;
+  background: var(--dynamic-surface-contrast-low);
+}
+.stories-row__friend img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__friend {
+  top: auto;
+  bottom: -6px;
+  right: -9px;
+}
+
 /* Позиция бейджа — относительно кольцевой «коробки» (ава + орбита 3 + штрих 3 = 6px):
    торчит на 3px за правую границу кольца, снизу — заподлицо с кольцом. */
 .stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__add {
