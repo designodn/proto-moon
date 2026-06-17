@@ -18,7 +18,6 @@
 
 /* 2. NV-специфичные компоненты и оверрайды (форк только расходящегося).
    Раскомментируй/добавляй по мере появления дивергентных компонентов: */
-@import url('./components/nv-breadcrumbs.css');  /* обновлённые хлебные крошки (tag line) */
 /* @import url('./components/nv-profile.css'); */
 @import url('../components/nv-tabbar.css');       /* NV-таб-бар: свой пак иконок */
 @import url('./components/nv-gift-sheet.css');    /* шторка «Живой подарок» (+ chrome .nv-sheet*) */
