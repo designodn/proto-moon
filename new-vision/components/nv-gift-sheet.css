@@ -161,6 +161,6 @@
    ячейки без паддингов) ──────────────────────────────────────────────────── */
 .nv-gift-watered { display: flex; flex-direction: column; gap: var(--space-2); }
 .nv-gift-watered__head { margin: 0 0 var(--space-1); }
-.nv-gift-watered .uni-cell-container { padding: 0; }
+.nv-gift-watered .uni-cell-wrapper { padding: 0; }
 /* DS-uni-cell сам не задаёт выравнивание/гэп — добавляем для строки человека */
 .nv-gift-watered .uni-cell { align-items: center; gap: var(--space-3); }
