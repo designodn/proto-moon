@@ -8,8 +8,11 @@
 
    Схема одного пуша (передаётся в setItems / fire):
      {
-       sender:   'Сергей Федоров',     // bold имя в шапке
+       sender:   'Сергей Федоров',     // bold имя/приложение в шапке
        time:     '15 мин назад',       // правая часть шапки
+       title:    'Это было легендарно!', // optional — жирный заголовок
+                                       //   строкой над body (для системных
+                                       //   пушей ОК)
        body:     'Добавил...',         // основной текст
        delay:    2000,                 // optional — через сколько ms
                                        //   появиться (от start() или
@@ -40,9 +43,9 @@
     // DailyPhotoPageNotification — кто-то из друзей опубликовал фото
     { sender: 'Антон Семенов',          time: '5 мин назад', body: 'Опубликовал фото после долгого перерыва',                                            delay: 2000 },
     // MemoriesRetention — воспоминание о прошлогодней заметке
-    { sender: 'Это было легендарно!',   time: 'сейчас',      body: 'Вы поделились этой заметкой в ОК 1 год назад и получили 7 комментариев и 48 классов.', delay: 6000 },
+    { sender: 'Одноклассники', time: 'сейчас', title: 'Это было легендарно!',   body: 'Вы поделились этой заметкой в ОК 1 год назад и получили 7 комментариев и 48 классов.', delay: 6000 },
     // GuestVisit — новые гости профиля
-    { sender: 'Алена, у вас новые гости', time: 'сейчас',    body: 'Давайте проверим, кто это',                                                          delay: 6000 }
+    { sender: 'Одноклассники', time: 'сейчас', title: 'Алена, у вас новые гости', body: 'Давайте проверим, кто это',                                                          delay: 6000 }
   ];
   var NOTIF_GAP      = 6000;   // дефолт между пушами, если у элемента не задан delay
   var NOTIF_LIFETIME = 30000;  // дефолт времени жизни карточки
@@ -199,6 +202,7 @@
           '<span class="notif__sep">·</span>' +
           '<span class="notif__time"></span>' +
         '</div>' +
+        (data.title ? '<div class="notif__title"></div>' : '') +
         '<div class="notif__body"></div>' +
       '</div>' +
       (data.image ? '<div class="notif__thumb"><img alt=""></div>' : '')
@@ -212,6 +216,7 @@
     el.innerHTML = renderCardHTML(data);
     el.querySelector('.notif__app').textContent  = data.sender;
     el.querySelector('.notif__time').textContent = data.time;
+    if (data.title) el.querySelector('.notif__title').textContent = data.title;
     el.querySelector('.notif__body').textContent = data.body;
     if (data.image) el.querySelector('.notif__thumb img').src = data.image;
     b.appendChild(el);
