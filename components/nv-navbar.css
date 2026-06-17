@@ -1,38 +1,34 @@
 /**
  * New Vision — Navbar (шапка ленты)
  *
- * Форкаем у общего .nav-bar.__type-publish (components/meshok-up.css) ТОЛЬКО то,
- * что расходится с Q3: пак иконок (NV, 32px) и вид кнопки «Опубликовать».
- * Структура разметки и раскладка __type-publish — из общей DS.
+ * Форкаем у общего .nav-bar.__type-feed (components/meshok-up.css) ТОЛЬКО то, что
+ * расходится с Q3: пак иконок (NV, 32px), промежуток справа и размер аватара.
+ * Структура и раскладка __type-feed — из общей DS.
  *
- * Применяется только на NV-страницах: файл грузится через new-vision.css, поэтому
- * правила можно нацеливать прямо на .nav-bar.__type-publish, не задевая Q3-ленту
- * (где тот же тип навбара, но свои иконки).
+ * Применяется только на NV-странице ленты: правила заскоплены на маркер-класс
+ * .nv-feed-nav (на .nav-bar в new-vision/lenta.html). Через тип __type-feed
+ * скоупить нельзя — он же у okruzhenie.html (там навбар back + тайтл, иконки 24px).
  *
  * Отрисовка иконок — как везде в DS: маска + currentColor (база — icon.css).
  * Поэтому NV-иконки в assets/new-vision-icons/ должны быть одноцветными силуэтами.
+ * Фон навбара белый по умолчанию (база .nav-bar = surface-base-secondary).
+ *
+ * Источник: Figma node 3001:178823 (аватар слева + plus/bell/search справа).
  */
 
-/* ── Навбар на белом фоне (в DS __type-publish прозрачный) ── */
-.nav-bar.__type-publish {
-  background-color: var(--dynamic-surface-base-secondary) !important;
+/* ── Промежуток между иконками справа: 24px (у базового __type-feed — 16) ── */
+.nav-bar.nv-feed-nav .nav-bar__trailing {
+  gap: 24px;
 }
 
 /* ── Иконки навбара: NV-пак, 32px ── */
-.nav-bar.__type-publish .icon {
+.nav-bar.nv-feed-nav .icon {
   width: 32px;
   height: 32px;
 }
-.nav-bar.__type-publish .icon.__slot-plus     { --icon-src: url('../assets/new-vision-icons/plus.svg'); }
-.nav-bar.__type-publish .icon.__slot-bell     { --icon-src: url('../assets/new-vision-icons/bell.svg'); }
-.nav-bar.__type-publish .icon.__slot-search   { --icon-src: url('../assets/new-vision-icons/search.svg'); }
-.nav-bar.__type-publish .icon.__slot-calendar { --icon-src: url('../assets/new-vision-icons/calendar.svg'); }
+.nav-bar.nv-feed-nav .icon.__slot-plus   { --icon-src: url('../assets/new-vision-icons/plus.svg'); }
+.nav-bar.nv-feed-nav .icon.__slot-bell   { --icon-src: url('../assets/new-vision-icons/bell.svg'); }
+.nav-bar.nv-feed-nav .icon.__slot-search { --icon-src: url('../assets/new-vision-icons/search.svg'); }
 
-/* ── Кнопка «Опубликовать»: pill 48px, радиус 16, фон surface-contrast-low
-      (даёт __style-secondary), иконка-плюс 32px + текст ── */
-.nv-publish-btn { --button-border-radius: 16px; }
-.nv-publish-btn .button-container {
-  height: 48px;
-  padding: 0 12px;
-  --button-content-gap: 8px;
-}
+/* ── Аватар слева: 48px (в DS нет __size-48, задаём через --avatar-size) ── */
+.nav-bar.nv-feed-nav .nv-nav-avatar { --avatar-size: 48px; }
