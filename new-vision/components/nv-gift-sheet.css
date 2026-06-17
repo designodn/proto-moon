@@ -25,8 +25,10 @@
   display: flex; align-items: flex-end; justify-content: center;
   visibility: hidden;
   pointer-events: none;
+  /* при закрытии прячем visibility только ПОСЛЕ съезда дока (зеркально открытию) */
+  transition: visibility 0s linear 300ms;
 }
-.nv-sheet.__open { visibility: visible; pointer-events: auto; }
+.nv-sheet.__open { visibility: visible; pointer-events: auto; transition-delay: 0s; }
 
 .nv-sheet__overlay {
   position: absolute; inset: 0;

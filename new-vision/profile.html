@@ -106,6 +106,18 @@
   }
   .nv-pr-stat:active { transform: scale(0.95); }
   .nv-pr-stat__num { white-space: nowrap; }
+  /* «1000 фото» — стопка из двух фоток 36×36 внахлёст (Figma 3190:197324):
+     задняя наклонена −7.2°, передняя +11.6°, белый бордер, тень elevate-3. */
+  .nv-pr-photostack { position: relative; width: 40px; height: 40px; }
+  .nv-pr-photostack__item {
+    position: absolute; top: 50%; left: 50%;
+    width: 36px; height: 36px; border-radius: 8px; object-fit: cover;
+    border: 1.5px solid #fff;
+    box-shadow: 0 7px 22px -7px rgba(0, 0, 0, 0.12);
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .nv-pr-photostack__item.__back  { transform: translate(-50%, -50%) translate(-3px, -1px) rotate(-7.2deg); }
+  .nv-pr-photostack__item.__front { transform: translate(-50%, -50%) translate(4px, 3px) rotate(11.6deg); }
   /* Панель «Бонсай» → компонент new-vision/components/nv-bonsai.css */
 
   /* лёгкий разделитель-зазор между белыми блоками и лентой */
@@ -144,14 +156,14 @@
           </span>
           <!-- свой профиль: создать запись + редактировать обложку -->
           <div class="nv-pr-cover__nav-actions" data-nav="self" hidden>
-            <span class="button-inline-wrapper __size-24">
-              <button class="button-inline __size-24" aria-label="Создать">
-                <span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/icons/add_square_24.svg')"></span></span>
+            <span class="button-inline-wrapper __size-32">
+              <button class="button-inline __size-32" aria-label="Создать запись">
+                <span class="button-inline__content"><span class="button-inline__icon icon __size-32 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpost_24.svg')"></span></span>
               </button>
             </span>
-            <span class="button-inline-wrapper __size-24">
-              <button class="button-inline __size-24" aria-label="Редактировать обложку">
-                <span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/icons/photo_cover_install_24.svg')"></span></span>
+            <span class="button-inline-wrapper __size-32">
+              <button class="button-inline __size-32" aria-label="Добавить фото">
+                <span class="button-inline__content"><span class="button-inline__icon icon __size-32 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpic_24.svg')"></span></span>
               </button>
             </span>
           </div>
@@ -249,11 +261,10 @@
 
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">1000 фото</span>
-          <div class="avatars-view __size-36"><div class="avatars-view__stack">
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto1/72/72" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto2/72/72" alt=""></div>
-            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto3/72/72" alt=""></div>
-          </div></div>
+          <div class="nv-pr-photostack">
+            <img class="nv-pr-photostack__item __back"  src="https://picsum.photos/seed/olgaphoto1/72/72" alt="">
+            <img class="nv-pr-photostack__item __front" src="https://picsum.photos/seed/olgaphoto2/72/72" alt="">
+          </div>
         </button>
 
         <button class="nv-pr-stat">
