@@ -50,9 +50,8 @@
 :root,
 .__ui-theme_enabled,
 .__font-roboto {
-  /* База UI (кнопки, ячейки, инпуты) — OK Sans Text: текстовый оптический
-     кат, оптимизирован под мелкий UI/контролы. */
-  --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* База — текст без явного ds-стиля (фолбэк-ветка) рендерится на Roboto. */
+  --font-family: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Заголовки — OK Sans Display: дисплейный кат под крупный текст. */
   --font-family-display: "OK Sans Display", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
