@@ -981,9 +981,21 @@
     if (forced) el.setAttribute('data-entity', forced);
   }
 
-  // 1) Шапки постов (аватар + имя + время)
-  document.querySelectorAll('.uni-cell').forEach(function (cell) {
-    if (cell.querySelector('.contents-view-container .ds-title-s')) mark(cell);
+  // id человека из помеченного элемента (он сам или его потомок).
+  function personIdOf(el) {
+    var src = el.matches('[data-person-name], [data-person-avatar]')
+      ? el : el.querySelector('[data-person-name], [data-person-avatar]');
+    if (!src) return null;
+    return src.getAttribute('data-person-name') || src.getAttribute('data-person-avatar');
+  }
+
+  // 1) Шапки постов (ава + имя + время) — строка автора внутри .feed-header.
+  //    Сообщества/реклама (data-entity="group") профиль не открывают, их не
+  //    помечаем, иначе на шапке появляется нажимной вид (opacity) без действия.
+  //    Реклама вообще без .feed-header, поэтому сюда не попадает.
+  document.querySelectorAll('.feed-header .uni-cell').forEach(function (cell) {
+    if (entityOf(cell) === 'group') return;
+    mark(cell);
   });
   // 2) Активности виджета «Вокруг вас сейчас»
   document.querySelectorAll('.uni-cell-wrapper.__type-activity').forEach(function (w) { mark(w); });
@@ -1003,7 +1015,12 @@
     if (entity === 'group') return;             // сообщество/реклама — профиль не открываем
     e.preventDefault();
     sessionStorage.setItem('nav-tab', '1');
-    location.href = (entity === 'self') ? PROFILE_SELF : PROFILE_USER;
+    if (entity === 'self') { location.href = PROFILE_SELF; return; }
+    // конкретный человек по id (вид «Гость»); иначе — дефолтный профиль
+    var id = personIdOf(hit);
+    location.href = (id && /^\d+$/.test(id))
+      ? 'profile.html?person=' + encodeURIComponent(id) + '&view=stranger'
+      : PROFILE_USER;
   });
 })();
 
@@ -1201,31 +1218,6 @@
 <script src="../components/actions-bar.js"></script>
 <!-- Прячет «Раскрыть/Свернуть», если текст карточки виден целиком -->
 <script src="../components/feed-text.js"></script>
-
-<!-- Тап по автору карточки (ава или имя) → профиль этого человека.
-     Кликабельны только реальные люди: id у них числовой, у сообществ —
-     префикс group-, у рекламы — ad-. Группы/реклама перехода не дают. -->
-<script>
-(function () {
-  function userIdFromHeader(header) {
-    var el = header.querySelector('[data-person-name], [data-person-avatar]');
-    if (!el) return null;
-    var id = el.getAttribute('data-person-name') || el.getAttribute('data-person-avatar');
-    return /^\d+$/.test(id) ? id : null;   // group-*/ad-*/my_profile отсекаются
-  }
-
-  document.addEventListener('click', function (e) {
-    var hit = e.target.closest('.feed-header .avatar, .feed-header__name');
-    if (!hit) return;
-    var header = hit.closest('.feed-header');
-    if (!header) return;
-    var id = userIdFromHeader(header);
-    if (!id) return;                        // сообщество/реклама — не переходим
-    e.preventDefault();
-    location.href = 'profile.html?person=' + encodeURIComponent(id) + '&view=stranger';
-  });
-})();
-</script>
 
 </body>
 </html>
