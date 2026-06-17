@@ -908,15 +908,13 @@
     });
     return lottieLoading;
   }
-  // Проигрывает Lottie-оверлей по центру anchorEl (один раз, с самоудалением).
-  function playLottie(path, anchorEl, size) {
+  // Проигрывает Lottie-оверлей в заданных координатах (fixed), один раз,
+  // с самоудалением. Координаты — left/top левого-верхнего угла, бокс size×size.
+  function playLottie(path, left, top, size) {
     ensureLottie().then(function (lottie) {
-      var rect = anchorEl.getBoundingClientRect();
       var host = document.createElement('div');
       host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
-        'width:' + size + 'px;height:' + size + 'px;' +
-        'left:' + (rect.left + rect.width / 2 - size / 2) + 'px;' +
-        'top:' + (rect.top + rect.height / 2 - size / 2) + 'px;';
+        'width:' + size + 'px;height:' + size + 'px;left:' + left + 'px;top:' + top + 'px;';
       document.body.appendChild(host);
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: false, autoplay: true, path: path
@@ -925,16 +923,30 @@
     }).catch(function () {});
   }
 
-  // Вспышка подложки категории + Lottie по категории:
-  //   «Праздник» — конфетти на всю ячейку; «1 место» — трофей над аватаром.
-  function appear(cell) {
-    cell.classList.add('__conv-appear');
+  // Lottie-эффект по категории ячейки. Вызывать, КОГДА ячейка уже раскрыта
+  // (иначе getBoundingClientRect отдаёт схлопнутый rect → эффект «уезжает»).
+  //   «Праздник» — конфетти по центру ячейки; «1 место» — трофей справа от аватара.
+  function playCellLottie(cell) {
     if (cell.classList.contains('__cat-holiday')) {
-      playLottie('../assets/lottie/confetti.json', cell, Math.max(cell.offsetWidth, 200));
+      var cr = cell.getBoundingClientRect();
+      var size = 220;
+      playLottie('../assets/lottie/confetti.json',
+        cr.left + cr.width / 2 - size / 2, cr.top + cr.height / 2 - size / 2, size);
     } else if (cell.classList.contains('__cat-win')) {
       var ava = cell.querySelector('.avatar');
-      playLottie('../assets/lottie/trophy.json', ava || cell, 80);
+      if (!ava) return;
+      var ar = ava.getBoundingClientRect();
+      var tsize = 52;
+      playLottie('../assets/lottie/trophy.json',
+        ar.right - 10,                          // справа от аватара (с лёгким нахлёстом)
+        ar.top + ar.height / 2 - tsize / 2,     // по вертикали — по центру аватара
+        tsize);
     }
+  }
+
+  // Вспышка категорийной подложки (Lottie запускается отдельно, после раскрытия).
+  function appear(cell) {
+    cell.classList.add('__conv-appear');
     setTimeout(function () { cell.classList.remove('__conv-appear'); }, APPEAR_MS);
   }
 
@@ -950,7 +962,7 @@
     track.insertBefore(entering, track.firstElementChild);
     void entering.offsetWidth;                 // reflow → enter стартует с height:0
     entering.classList.add('__conv-enter');    // возникает из точки (animations.css)
-    appear(entering);                          // + вспышка подложки/конфетти
+    appear(entering);                          // + вспышка категорийной подложки
 
     // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
     var leaving = track.children[rows];
@@ -961,6 +973,7 @@
       entering.classList.remove('__conv-enter');
       track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
       animating = false;
+      playCellLottie(entering);               // эффект — после раскрытия (rect стабилен)
     }, cssNum('--conv-dur', 0.5) * 1000 + 60);
   }
 
@@ -968,7 +981,11 @@
   // цветной подложки — иначе категории видны только на сменяемой верхней ячейке.
   (function introVisibleRows() {
     var rows = Math.round(cssNum('--conv-rows', 3));
-    for (var i = 0; i < rows && i < track.children.length; i++) appear(track.children[i]);
+    for (var i = 0; i < rows && i < track.children.length; i++) {
+      var cell = track.children[i];
+      appear(cell);
+      requestAnimationFrame(playCellLottie.bind(null, cell)); // ряды статичны → rect готов
+    }
   })();
 
   setInterval(step, 3000);
