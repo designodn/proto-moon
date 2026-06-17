@@ -27,7 +27,6 @@
       platform: 'android',
       wrapper: 'phone-frame__tabbar',
       home: 'start.html',
-      menuSlot: 'menu',
       tabs: [
         { slot: 'feed',    href: 'lenta.html',       label: 'Лента' },
         { slot: 'tribune', href: '../tribune.html',  label: 'Трибуна' },
@@ -69,15 +68,8 @@
       var btn = e.target.closest ? e.target.closest('.tabbar-icon') : null;
       if (!btn) return;
 
-      if (btn.classList.contains('__state-on')) {
-        // повторный тап по активной вкладке меню → меню (паритет с tab-bar.js)
-        if (btn.classList.contains('__slot-' + variant.menuSlot)) {
-          var menu = variant.tabs.filter(function (t) { return t.slot === variant.menuSlot; })[0];
-          if (menu) { sessionStorage.setItem('nav-tab', '1'); location.href = menu.href; }
-        }
-        return;
-      }
-
+      // Тап по вкладке всегда ведёт на её href — в т.ч. по активной
+      // (напр. «Лента» на NV-ленте → остаёмся/возвращаемся в NV-ленту).
       var href = btn.getAttribute('data-href');
       if (href && href !== '#') {
         sessionStorage.setItem('nav-tab', '1');
