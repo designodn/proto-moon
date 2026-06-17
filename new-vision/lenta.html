@@ -6,6 +6,7 @@
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -37,14 +38,18 @@
             <span class="icon __slot-status-battery" style="width:25px;height:12px"></span>
           </span>
         </div>
-        <div class="nav-bar __type-feed">
+        <div class="nav-bar __type-publish">
           <div class="nav-bar__leading">
-            <a class="avatar __size-36 __type-initials" href="profile.html?view=self" aria-label="Мой профиль">АК</a>
+            <div class="button-wrapper nv-publish-btn">
+              <button class="button-container __style-secondary"><span class="button-content">
+                <span class="icon __slot-plus"></span>Опубликовать
+              </span></button>
+            </div>
           </div>
           <div class="nav-bar__trailing">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Создать"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpost_24.svg')"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Уведомления"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_notifications_24.svg')"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_search_24.svg')"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Календарь событий"><span class="button-inline__content"><span class="icon __slot-calendar"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" data-href="../notifications.html" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Поиск"><span class="button-inline__content"><span class="icon __slot-search"></span></span></button></span>
           </div>
         </div>
         <div class="tabs">
@@ -148,41 +153,43 @@
       <div class="feed-container">
 
       <!-- Сториз-карусель «Сейчас на даче» -->
+      <!-- МОМЕНТЫ (истории) в island-карточке.
+           data-stories — сколько сториз у автора (= столько палочек прогресса
+           в viewer'е). data-name — заголовок viewer'а. -->
       <article class="feed-stories island">
-        <nav class="breadcrumbs">
-          <a class="breadcrumbs__item" href="#">Дача</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Сейчас на даче</span>
-        </nav>
-        <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
-          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption" data-skip-viewer>
-            <img src="https://i.pravatar.cc/128?img=15" alt="">
-            <div class="avatar__addon __pos-br">
-              <div class="button-circle-wrapper __size-20 __style-primary"><button class="button-circle" aria-label="Добавить момент"><span class="icon __slot-plus"></span></button></div>
-            </div>
-            <div class="avatar__caption">Ваш момент</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="3" data-name="Елена">
-            <img src="https://i.pravatar.cc/128?img=49" alt="">
-            <div class="avatar__caption">Елена</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="2" data-name="Евгения">
-            <img src="https://i.pravatar.cc/128?img=23" alt="">
-            <div class="avatar__caption">Евгения</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="4" data-name="Александр">
-            <img src="https://i.pravatar.cc/128?img=52" alt="">
-            <div class="avatar__caption">Александр</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="1" data-name="Ирина">
-            <img src="https://i.pravatar.cc/128?img=44" alt="">
-            <div class="avatar__caption">Ирина</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="2" data-name="Михаил">
-            <img src="https://i.pravatar.cc/128?img=33" alt="">
-            <div class="avatar__caption">Михаил</div>
+      <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
+        <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
+             не открывает viewer (data-skip-viewer). -->
+        <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
+          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
+          <div class="avatar__addon __pos-br stories-row__add">
+            <img src="../assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
         </div>
+        <!-- Не просмотренные (оранжевое кольцо). -->
+        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
+        <div class="avatar __size-56 __type-image __ring-active __has-addon"
+             data-bday data-stories="1" data-name="Лиза">
+          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
+          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
+        </div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+
+        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
+             CTA-кнопка снизу — только у ВВЗ. -->
+        <div class="avatar __size-56 __type-image __ring-active"
+             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
+             aria-label="Возможно, вы знакомы">
+          <img src="../assets/icons/vvz_stories.png" alt="">
+        </div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
+
+        <!-- Просмотренные (серое кольцо) -->
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
+      </div>
       </article>
 
       <!-- 1. Текст + видео -->
@@ -764,13 +771,12 @@
 
       </div>
 
-      <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же).
-           Пока картинки нет, фон — фирменный оранжевый (перекроется, когда ляжет jpg). -->
-      <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
+      <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же). -->
+      <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.png')">
         <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
         <div class="promo-banner__actions">
-          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color" data-href="../gifts.html"><span class="button-content">Подарить</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color" data-promo-hide><span class="button-content">Скрыть</span></button></div>
         </div>
       </div>
 
@@ -779,23 +785,9 @@
     <!-- Слот под полноэкранный вьюер моментов — MomentViewer.create() заменит его -->
     <div id="nv-moment-slot"></div>
 
-    <div class="phone-frame__tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" data-href="../tribune.html" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" data-href="../messages.html" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" data-href="menu.html" aria-label="Меню"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
 
   </div>
-
-<!-- навигация по таббару (feed → лента, message → сообщения) -->
-<script src="../components/tab-bar.js"></script>
 
 <!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
 <script>
@@ -805,7 +797,24 @@
   });
 </script>
 
+<!-- Промо-баннер: «Подарить» → подарки, «Скрыть» → убрать баннер.
+     Навбар: колокольчик → уведомления (через data-href на кнопке). -->
+<script>
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var hide = e.target.closest('[data-promo-hide]');
+    if (hide) {
+      var banner = hide.closest('.promo-banner');
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+    var go = e.target.closest('.promo-banner [data-href], .nav-bar [data-href]');
+    if (go) location.href = go.getAttribute('data-href');
+  });
+</script>
+
 <!-- Моменты → полноэкранный вьюер (DS-компонент stories-row + moment.js) -->
+<script src="../components/vvz-card.js"></script>
 <script src="../components/moment.js"></script>
 <script>
   (function () {
@@ -821,7 +830,55 @@
     });
     slot.replaceWith(viewer);
 
-    MomentViewer.bindRow(row, viewer);
+    var VVZ_PEOPLE = [
+      { name: 'Карина Затонская', sub: '28 лет, Рига, Латвия',  img: 'https://i.pravatar.cc/192?img=47', mutuals: 18, m: [44, 12, 5] },
+      { name: 'Илья Воронов',     sub: '31 год, Москва',         img: 'https://i.pravatar.cc/192?img=33' },
+      { name: 'Анна Соколова',    sub: '25 лет, Санкт-Петербург',img: 'https://i.pravatar.cc/192?img=44', mutuals: 12, m: [12, 5, 23] },
+      { name: 'Мария Лебедева',   sub: '29 лет, Казань',         img: 'https://i.pravatar.cc/192?img=45' }
+    ];
+
+    function makeVvzSlide() {
+      return MomentViewer.vvzSlide({
+        title:  'Возможно, вы знакомы',
+        people: VVZ_PEOPLE,
+        cta:    { label: 'Показать всех', onClick: function () { location.href = '../vvz.html'; } }
+      });
+    }
+
+    MomentViewer.bindRow(row, viewer, {
+      slides: function (ava) {
+        // ВВЗ-сториз — собирается из готового хелпера.
+        if (ava.hasAttribute('data-vvz')) {
+          return [makeVvzSlide()];
+        }
+        // Именинная сториз — фото-фон именинника + блюр снизу + текст.
+        if (ava.hasAttribute('data-bday')) {
+          var img = ava.querySelector('img');
+          var name = ava.getAttribute('data-name') || '';
+          var FULL = { 'Лиза': ['Лизы', 'Михайловой'], 'Алексей': ['Алексея', 'Орлова'], 'Дима': ['Димы', 'Соколова'] };
+          var pair = FULL[name] || [name, ''];
+          var firstGen = pair[0];
+          var fullGen = (pair[0] + ' ' + pair[1]).trim();
+          var slide = MomentViewer.bdaySlide({
+            photo:          img ? img.src : '',
+            name:           fullGen,
+            headerTitle:    'День рождения ' + firstGen,
+            headerSubtitle: '3 часа назад',
+            cta:            'Поздравить'
+          });
+          slide.cta.onClick = function () { location.href = '../gifts-catalog.html'; };
+          return [slide];
+        }
+        // Обычная сториз с цветной заливкой.
+        var count = parseInt(ava.getAttribute('data-stories'), 10) || 1;
+        var palette = MomentViewer.palette;
+        var slides = [];
+        for (var i = 0; i < count; i++) {
+          slides.push({ color: palette[i % palette.length] });
+        }
+        return slides;
+      }
+    });
   })();
 </script>
 

@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="new-vision.css">
 <!-- синхронно в <head>: пометить направление перехода до первой отрисовки -->
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   .phone-frame {
@@ -308,23 +309,9 @@
 
     </div>
 
-    <div class="phone-frame__tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Feed"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Book"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Message"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Clip"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Menu"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
 
   </div>
-
-<script src="../components/tab-bar.js"></script>
 
 <!-- Трофей «1 место» — Lottie в пустом контейнере .lead-trophy.
      Подключение как у конфетти: autoplay, без emoji и без data_ready.
