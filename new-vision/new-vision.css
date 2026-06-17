@@ -5,17 +5,13 @@
  * то, что расходится с q3 (фид-карточки, профиль). NV-оверрайды и новые
  * компоненты подключаются ПОСЛЕ общей DS, чтобы перебивать её каскадом.
  *
- * ВАЖНО: все @import обязаны идти подряд в начале файла (после @charset).
- * Любое обычное правило перед @import делает последующие @import невалидными —
- * браузер их молча игнорирует. Поэтому override --font-family — в самом конце.
+ * Файл состоит только из @import. Шрифтовая карта вынесена в nv-fonts.css
+ * и подключается последним импортом — так она перебивает tokens.css каскадом
+ * и переиспользуется на общих q3-страницах (через screen-transition.js).
  *
  * Usage:
  *   <link rel="stylesheet" href="new-vision.css">   (со страниц внутри new-vision/)
  */
-
-/* 0. Roboto — шрифт для текстов публикаций (пост, комментарий).
-   Заголовки, кнопки и весь UI остаются на OK Sans (см. оверрайды ниже). */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap');
 
 /* 1. Общая дизайн-система (токены, примитивы, базовые компоненты) */
 @import url('../index.css');
@@ -41,68 +37,8 @@
 /* 4. «Вокруг вас сейчас» — лид-визуалы ячеек, список-страница, анимации. */
 @import url('./around-you.css');
 
-/* ── Оверрайды (после всех @import) ────────────────────────────────────── */
-
-/* OK Sans — принудительно первым в очереди на всех NV-страницах.
-   Перебивает --font-family из tokens.css, поэтому весь UI рендерится
-   брендовым шрифтом, а Onest/системные остаются как фолбэк.
-   .__font-roboto тоже перекрываем — на NV-страницах OK Sans приоритетнее. */
-:root,
-.__ui-theme_enabled,
-.__font-roboto {
-  /* База — текст без явного ds-стиля (фолбэк-ветка) рендерится на Roboto. */
-  --font-family: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  /* Заголовки — OK Sans Display: дисплейный кат под крупный текст. */
-  --font-family-display: "OK Sans Display", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  /* Тексты публикаций (body/caption стили) — Roboto. */
-  --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-
-/* Шрифтовая карта текстовых стилей — только для New Vision.
-   Прод-прототипы (.__font-roboto в tokens.css) не затрагиваются: там всё
-   остаётся Roboto-first.
-
-   Привязка идёт к ds-* стилям (а не к компонентам):
-   - title/display  → OK Sans Display (--font-family-display)
-   - body/caption   → Roboto         (--font-family-content)
-   - кнопки своих ds-классов не несут, но метрически это title-стили,
-     поэтому их тоже переводим на Display (см. отдельный блок ниже). */
-.ds-display-xl,
-.ds-display-m,
-.ds-title-xl,
-.ds-title-l,
-.ds-title-m,
-.ds-title-s {
-  font-family: var(--font-family-display);
-}
-
-/* Кнопки — на OK Sans Display, как заголовки (button-container шарит
-   title-стили в tokens.css). Зеркалим те же size-селекторы, чтобы перебить
-   специфичность .button-wrapper.__size-N .button-container (0-3-0). */
-.button-wrapper.__size-56 .button-container,
-.button-wrapper.__size-44 .button-container,
-.button-wrapper.__size-36 .button-container,
-.button-wrapper.__size-28 .button-container,
-.ll-publish-btn .button-container {
-  font-family: var(--font-family-display);
-}
-
-.ds-body-l,
-.ds-body-m,
-.ds-caption-m,
-.ds-caption-m-accent,
-.ds-caption-s,
-.ds-caption-s-accent {
-  font-family: var(--font-family-content);
-}
-
-/* Инлайн-кнопки (текстовые ссылки) метрически = body/caption, поэтому идут
-   на Roboto заодно с текстами. Зеркалим size-селекторы из tokens.css. */
-.button-inline.__size-32,
-.button-inline.__size-24,
-.button-inline.__size-20,
-.button-inline.__size-16 {
-  font-family: var(--font-family-content);
-}
+/* 5. Шрифтовая карта NV (ds-* стили + кнопки). Последним импортом, чтобы
+   перебить --font-family и ds-* правила из tokens.css.
+   Тот же файл подмешивается на общие q3-страницы через screen-transition.js
+   при навигации с ?nv=1 — см. components/screen-transition.js. */
+@import url('./nv-fonts.css');
