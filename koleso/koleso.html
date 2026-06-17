@@ -37,7 +37,7 @@
 
   /* ── Хром: статус-бар + навбар ─────────────────────────────────── */
   .rl-status {
-    position: relative; z-index: 20;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
     display: flex; align-items: flex-end; justify-content: space-between;
     height: 44px; padding: 8px 24px;
     color: #fff;
@@ -46,7 +46,7 @@
   .rl-status__ind { display:flex; align-items:center; gap: 7px; }
 
   .rl-nav {
-    position: relative; z-index: 20;
+    position: absolute; top: 44px; left: 0; right: 0; z-index: 20;
     display: flex; align-items: center; justify-content: space-between;
     height: 56px; padding: 0 16px;
   }
