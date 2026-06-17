@@ -42,9 +42,9 @@
             <a class="avatar __size-36 __type-initials" href="profile.html?view=self" aria-label="Мой профиль">АК</a>
           </div>
           <div class="nav-bar__trailing">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Создать"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __slot-plus"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Уведомления"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __slot-bell"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __slot-search"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Создать"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpost_24.svg')"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Уведомления"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_notifications_24.svg')"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_search_24.svg')"></span></span></button></span>
           </div>
         </div>
         <div class="tabs">
@@ -63,7 +63,8 @@
           <span class="pulse-dot"></span>
           <span class="activity-header__chevron" aria-hidden="true"></span>
         </a>
-        <div class="ds-activity-slot">
+        <div class="ds-activity-conveyor" id="activityConveyor">
+          <div class="ds-activity-conveyor__track">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -97,9 +98,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="ds-activity-slot">
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
@@ -132,6 +130,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -206,9 +205,9 @@
           <span class="media__time">08:42</span>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 892;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;145</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;412</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 892;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>145</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>412</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -233,7 +232,7 @@
       </article>
 
       <!-- 3. Николай празднует свой День рождения! (congrats) -->
-      <article class="feed-congrats __birthday island">
+      <article class="feed-congrats __birthday island __intro">
         <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/144?img=68" alt=""></div>
         <h2 class="nv-feed__title">Николай празднует свой День рождения!</h2>
         <div class="avatars-view __size-36">
@@ -245,7 +244,7 @@
           <span class="avatars-view__text">12 друзей поздравило</span>
         </div>
         <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>&nbsp;Поздравить</span></button>
+          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>Поздравить</span></button>
         </div>
       </article>
 
@@ -270,9 +269,9 @@
         </div>
         <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-pink-48), var(--base-pink-64));"></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1842;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;234</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;156</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1842;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>234</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>156</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -297,9 +296,9 @@
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>14</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>5</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -325,9 +324,9 @@
         </div>
         <div class="media" style="height: 220px; background: linear-gradient(135deg, var(--base-jungle-48), var(--base-jungle-64));"></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 642;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;58</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;39</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 642;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>58</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>39</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -358,9 +357,9 @@
           <span class="media__time">00:31</span>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1203;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;96</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;233</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1203;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>96</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>233</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -403,9 +402,9 @@
         <p class="ds-body-m">Когда пациент видит в анализе крови сниженный гемоглобин, он чаще всего думает о слабости, бледности, железе и, возможно, питании. Кажется, что это история про кровь, но не про сердце.</p>
         <div class="media __aspect-4-3"><img src="../assets/new-vision/dzen-heart.png" alt=""></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 14;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;34</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 14;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>34</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>5</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -465,9 +464,9 @@
           <button class="media__mute" aria-label="Mute">🔇</button>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;14</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;5</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>14</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>5</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -529,15 +528,15 @@
           <div class="media__cell __more" data-more="5"><img src="https://picsum.photos/seed/fish4/400/400" alt=""></div>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;48</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;15</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>48</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>15</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <!-- 15. Создал и подарил уникальный подарок (congrats) -->
-      <article class="feed-congrats __gift island">
+      <article class="feed-congrats __gift island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -678,9 +677,9 @@
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2401;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;312</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;78</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2401;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>312</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>78</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -727,15 +726,15 @@
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 156;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span>&nbsp;<span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>&nbsp;42</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>&nbsp;9</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 156;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>42</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>9</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <!-- 23. Получил подарок на День сельскохозяйственных строителей (congrats) -->
-      <article class="feed-congrats __gift island">
+      <article class="feed-congrats __gift island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=53" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -752,7 +751,7 @@
           <div class="media __aspect-1-1"><img src="../assets/new-vision/gift-bonsai.png" alt=""></div>
         </div>
         <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>&nbsp;Отправить подарок</span></button>
+          <button class="button-container nv-gift-btn" style="width: 100%;"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span>Отправить подарок</span></button>
         </div>
       </article>
 
@@ -761,7 +760,7 @@
       <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же).
            Пока картинки нет, фон — фирменный оранжевый (перекроется, когда ляжет jpg). -->
       <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
-        <p class="promo-banner__title">Народный день подарков!</p>
+        <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
         <div class="promo-banner__actions">
           <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
           <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
@@ -777,10 +776,10 @@
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          <button class="tabbar-icon __slot-tribune" data-href="../tribune.html" aria-label="Трибуна"></button>
+          <button class="tabbar-icon __slot-message" data-href="../messages.html" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu" data-href="menu.html" aria-label="Меню"></button>
         </div>
         <div class="tabbar__handle"></div>
       </div>
@@ -869,6 +868,80 @@
   });
 })();
 
+</script>
+
+<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху и
+     раскрывается, стопка сдвигается, нижняя сжимается к центру и исчезает. -->
+<script>
+(function () {
+  var conv = document.getElementById('activityConveyor');
+  if (!conv) return;
+  var track = conv.querySelector('.ds-activity-conveyor__track');
+  if (!track) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function cssNum(name, dflt) {
+    var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
+    return isNaN(v) ? dflt : v;
+  }
+  var animating = false;
+
+  function step() {
+    var rows = Math.round(cssNum('--conv-rows', 3));
+    if (animating || track.children.length < rows + 1) return;
+    animating = true;
+
+    // следующую скрытую (первую под видимой зоной) поднимаем наверх — «падает сверху»
+    var entering = track.children[rows];
+    track.insertBefore(entering, track.firstElementChild);
+    void entering.offsetWidth;                 // reflow → enter стартует с height:0
+    entering.classList.add('__conv-enter');
+
+    // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
+    var leaving = track.children[rows];
+    leaving.classList.add('__conv-leave');
+
+    setTimeout(function () {
+      leaving.classList.remove('__conv-leave');
+      entering.classList.remove('__conv-enter');
+      track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
+      animating = false;
+    }, cssNum('--conv-dur', 0.5) * 1000 + 60);
+  }
+
+  setInterval(step, 3000);
+})();
+</script>
+
+<!-- Поздравительные фиды (ДР / подарок / ИИ-подарок): при первом появлении
+     в зоне видимости фиолетовая подложка плавно сменяется на белую.
+     Срабатывает один раз на фид. Подложка задана классом .__intro в разметке. -->
+<script>
+(function () {
+  var feeds = document.querySelectorAll('.feed-congrats.__intro');
+  if (!feeds.length) return;
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Без анимаций или без IntersectionObserver — сразу показываем белую карточку.
+  if (reduce || !('IntersectionObserver' in window)) {
+    feeds.forEach(function (f) { f.classList.remove('__intro'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries, observer) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var feed = entry.target;
+      observer.unobserve(feed);
+      // Небольшая задержка, чтобы пользователь успел увидеть фиолетовую подложку,
+      // прежде чем она сменится на белую.
+      setTimeout(function () { feed.classList.remove('__intro'); }, 550);
+    });
+  }, { threshold: 0.35 });
+
+  feeds.forEach(function (f) { io.observe(f); });
+})();
 </script>
 
 </body>

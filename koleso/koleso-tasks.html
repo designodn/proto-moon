@@ -45,6 +45,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 34px; line-height: 1;
   }
+  .rt-task__icon img { width: 48px; height: 48px; object-fit: contain; display: block; }
   /* кнопка-задания во всю ширину */
   .rt-task .button-wrapper { width: 100%; }
   .rt-task .button-container { width: 100%; }
@@ -74,6 +75,7 @@
   .rt-sheet__handle { display:flex; justify-content:center; padding: 0 0 16px; }
   .rt-sheet__handle span { width: 36px; height: 4px; border-radius: 999px; background: var(--dynamic-surface-contrast-low); }
   .rt-sheet__emoji { font-size: 64px; line-height: 1; text-align: center; }
+  .rt-sheet__emoji img { width: 96px; height: 96px; object-fit: contain; display: block; margin: 0 auto; }
   .rt-sheet__title { text-align: center; margin: 16px 0 8px; color: var(--dynamic-text-and-icons-base-primary); }
   .rt-sheet__text { text-align: center; color: var(--dynamic-text-and-icons-base-secondary); margin: 0 0 24px; padding: 0 8px; }
   .rt-sheet__btns { display: flex; flex-direction: column; gap: var(--space-3); }
@@ -114,7 +116,7 @@
               <div class="ds-title-s rt-task__title">Пригласи друга</div>
               <div class="ds-caption-m rt-task__reward">+1 билетик</div>
             </div>
-            <div class="rt-task__icon">👫</div>
+            <div class="rt-task__icon"><img src="../assets/koleso/ruletka-lyudi.png" alt=""></div>
           </div>
           <div class="button-wrapper __size-44 __full-width">
             <button class="button-container __style-primary" id="open-invite"><span class="button-content">Выполнить</span></button>
@@ -128,7 +130,7 @@
               <div class="ds-title-s rt-task__title">Посмотреть короткий ролик</div>
               <div class="ds-caption-m rt-task__reward">+1 билетик</div>
             </div>
-            <div class="rt-task__icon">🎬</div>
+            <div class="rt-task__icon"><img src="../assets/koleso/ruletka-kino.png" alt=""></div>
           </div>
           <div class="button-wrapper __size-44 __full-width">
             <button class="button-container __style-primary"><span class="button-content">Выполнить</span></button>
@@ -142,7 +144,7 @@
               <div class="ds-title-s rt-task__title">Посмотреть короткий ролик</div>
               <div class="ds-caption-m rt-task__reward">+1 билетик</div>
             </div>
-            <div class="rt-task__icon">🍿</div>
+            <div class="rt-task__icon"><img src="../assets/koleso/ruletka-kino.png" alt=""></div>
           </div>
           <div class="button-wrapper __size-44 __full-width">
             <button class="button-container __style-secondary __icon" disabled>
@@ -159,7 +161,7 @@
     <div class="rt-sheet__scrim" data-sheet-close></div>
     <div class="rt-sheet__panel" role="dialog" aria-label="Пригласи друга">
       <div class="rt-sheet__handle"><span></span></div>
-      <div class="rt-sheet__emoji">👫</div>
+      <div class="rt-sheet__emoji"><img src="../assets/koleso/ruletka-lyudi.png" alt=""></div>
       <div class="ds-title-l rt-sheet__title">Пригласи друга</div>
       <p class="ds-body-m rt-sheet__text">Пригласи друга и за каждого получи 1 билетик в подарок</p>
       <div class="rt-sheet__btns">

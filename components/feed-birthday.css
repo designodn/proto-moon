@@ -1,115 +1,105 @@
 /**
- * OK Design System — FeedBirthday / FeedGroup (shared layout)
+ * OK Design System — FeedBirthday (карточка-поздравление «Годовщина дружбы»)
  *
- * Карточка-«спотлайт»: большая аватарка + крупный тайтл +
- * стек друзей (avatars-view) + полноширинная кнопка.
+ * Карточка ленты по макету figma 2767-134392: праздничная цветная «шапка»
+ * (декор пока однотонная заглушка — ждёт растровый/видео-ассет) высотой 144
+ * с фигурной нижней кромкой (см. __deco), два круглых аватара Ø120 на стыке,
+ * заголовок и подзаголовок по центру, ряд кнопок (основная на всю ширину +
+ * иконочная «…»).
  *
- *   <article class="feed-birthday island"> …поздравить…   </article>
- *   <article class="feed-group island">    …подписаться… </article>
+ *   <article class="feed-birthday island">
+ *     <div class="feed-birthday__deco"></div>
+ *     <div class="feed-birthday__avatars">
+ *       <div class="avatar __size-120 __type-image __border"><img src="…"></div>
+ *       <div class="avatar __size-120 __type-image __border"><img src="…"></div>
+ *     </div>
+ *     <div class="feed-birthday__title ds-title-l">Анна, поздравляем с годовщиной дружбы</div>
+ *     <div class="feed-birthday__text ds-body-m">Ровно 3 года назад вы добавили Ольгу в друзья OK</div>
+ *     <div class="actions-bar">
+ *       <div class="button-wrapper __size-44 __full-width"><button class="button-container __style-primary" data-href="gifts-catalog.html">…Поздравить друга…</button></div>
+ *       <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё">…more…</button></div>
+ *     </div>
+ *   </article>
  */
 
-.feed-birthday,
-.feed-group,
-.feed-contest {
-  position: relative;
+.feed-birthday {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  padding-top: 0;            /* шапка прижата к верхним скруглениям острова */
+}
+
+/* Горизонтальный паддинг — всем секциям, кроме декоративной шапки (full-bleed). */
+.feed-birthday > :not(.feed-birthday__deco) {
   padding-left: var(--space-4);
   padding-right: var(--space-4);
 }
 
-/* В feed-contest картинки в picture-stack наезжают сильнее (~16px overlap) */
-.feed-contest .picture-stack {
-  gap: 0;
-}
-.feed-contest .picture-stack > .picture + .picture {
-  margin-left: calc(-1 * var(--space-4));
+/* actions-bar внутри карточки — gap 8 (как в figma), отступ от подзаголовка 20. */
+.feed-birthday .actions-bar {
+  gap: var(--space-2);
+  margin-top: var(--space-5);
 }
 
-/* Контент над декоративными слоями */
-.feed-birthday > *,
-.feed-group > *,
-.feed-contest > * {
+/* Иконки кнопок — маска через .icon.__src (currentColor: белая в primary,
+   обычная в secondary). URL держим в компоненте: относительный путь
+   резолвится относительно этого файла (components/ → ../assets). */
+.feed-birthday__icon-gift { --icon-src: url('../assets/icons/gift_16_20.svg'); }
+.feed-birthday__icon-more { --icon-src: url('../assets/icons/more_16_20.svg'); }
+
+/* ============================================================
+   DECO — праздничная «шапка», прибита к верху острова. Высота 144.
+   Заливка — картинка (шарики/градиент), обрезанная по фигурной кромке
+   из макета (path: бока ниже, центр приподнят) через CSS-маску.
+   ============================================================ */
+.feed-birthday__deco {
   position: relative;
-  z-index: 1;
+  height: 144px;
+  background-image: url('../assets/feed-anniversary-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 147' preserveAspectRatio='none'%3E%3Cpath d='M0 0H360V147C241.161 123.391 118.839 123.391 0 147V0Z' fill='%23000'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 147' preserveAspectRatio='none'%3E%3Cpath d='M0 0H360V147C241.161 123.391 118.839 123.391 0 147V0Z' fill='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 144px;
+          mask-size: 100% 144px;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: top center;
+          mask-position: top center;
 }
 
 /* ============================================================
-   BALLOONS — декорация в правой верхней зоне; вылетают вверх,
-   когда карточка въезжает в видимую область (scroll-driven).
+   AVATARS — два круглых аватара Ø120 на стыке (нахлёст 12px),
+   верх аватаров — 64px от верха карточки (144 шапка − 80 подъём).
+   Обводка — модификатор .avatar.__border (3px, в компоненте avatar).
    ============================================================ */
-.feed-birthday__balloons {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  border-radius: inherit;
-  z-index: 0;
-}
-
-.feed-birthday__balloon {
-  position: absolute;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
-  opacity: 0;
-  transform: translateY(120px) rotate(-12deg);
-  animation: feed-birthday-balloon 1.2s cubic-bezier(0.22, 0.78, 0.36, 1) both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 60%;
-}
-/* верёвочка */
-.feed-birthday__balloon::after {
-  content: '';
-  position: absolute;
-  top: 98%;
-  left: 50%;
-  width: 1px;
-  height: 28px;
-  background-color: var(--dynamic-stroke-contrast-high);
-  transform: translateX(-50%);
-}
-
-.feed-birthday__balloon.__pink {
-  background: radial-gradient(circle at 30% 30%, #ff9ec0, #d8488b 70%);
-  top: -8px; right: 140px;
-  animation-delay: 0s;
-}
-.feed-birthday__balloon.__orange {
-  background: radial-gradient(circle at 30% 30%, #ffc079, #f07a17 70%);
-  top: -20px; right: 30px;
-  animation-delay: 0.1s;
+.feed-birthday__avatars {
   display: flex;
-  align-items: center;
   justify-content: center;
+  margin-top: -80px;
+  position: relative;
+  z-index: 1;
 }
-/* ОК-логотип на оранжевом */
-.feed-birthday__balloon.__orange::before {
-  content: 'OK';
-  font-family: var(--font-family);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--static-text-and-icons-base-inverse-primary);
-  background-color: var(--static-surface-base-inverse-primary);
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-.feed-birthday__balloon.__blue {
-  background: radial-gradient(circle at 30% 30%, #8ad4ff, #2196dd 70%);
-  top: 90px; right: 80px;
-  animation-delay: 0.2s;
+.feed-birthday__avatars .avatar + .avatar {
+  margin-left: -12px;
 }
 
-@keyframes feed-birthday-balloon {
-  to {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg);
-  }
+/* ============================================================
+   TEXT — заголовок и подзаголовок по центру. Макс. ширина
+   заголовка 320, подзаголовка 240; между ними 8.
+   ============================================================ */
+.feed-birthday__title,
+.feed-birthday__text {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.feed-birthday__title {
+  max-width: 320px;
+  margin-top: var(--space-4);   /* аватары → заголовок */
+}
+.feed-birthday__text {
+  max-width: 240px;
+  margin-top: var(--space-2);   /* заголовок → подзаголовок: 8 */
+  color: var(--dynamic-text-and-icons-base-primary);
 }

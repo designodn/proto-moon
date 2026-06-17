@@ -7,7 +7,7 @@
  * картинка проставлена, виден тёмный фолбэк (как контейнер в макете).
  *
  *   <div class="promo-banner __sticky" style="--promo-banner-image:url('...')">
- *     <p class="promo-banner__title">Народный день подарков!</p>
+ *     <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
  *     <div class="promo-banner__actions">
  *       <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
  *       <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
@@ -16,6 +16,13 @@
  *
  * MODIFIERS:
  *   .__sticky — приклеивает баннер ко дну ленты, над таб-баром (см. ниже).
+ *   .__view-kr — компактная вариация-ссылка (Figma 2946:173051): персиковая
+ *                плашка, заголовок 17/2 строки, шеврон справа, без кнопок.
+ *
+ *   <a class="promo-banner __view-kr" href="#">
+ *     <p class="promo-banner__title">Копите народные билеты</p>
+ *     <span class="promo-banner__chevron" aria-hidden="true"></span>
+ *   </a>
  */
 
 .promo-banner {
@@ -35,13 +42,10 @@
   color: var(--static-text-and-icons-base-inverse-primary);
 }
 
+/* Типографика — DS-класс .ds-title-xl на самом элементе (как у табов). */
 .promo-banner__title {
   max-width: 268px;
   margin: 0;
-  font-family: var(--font-family);
-  font-size: 26px;
-  line-height: 1.1;
-  font-weight: 700;
   color: var(--whitelabel, #fff);
 }
 
@@ -62,3 +66,40 @@
   z-index: 35;
   margin: var(--space-2) var(--space-2) 0;
 }
+
+/* ============================================================
+   VIEW-KR — компактная вариация-ссылка (Figma «kr» 2946:173051).
+   Персиковая плашка: заголовок 17/2 строки слева + шеврон справа.
+   Перебивает тёмную/высокую базу: row, без min-height, radius 20.
+   ============================================================ */
+.promo-banner.__view-kr {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 0;
+  padding: 13px 16px;
+  border-radius: 20px;
+  background-color: #ffd6c4;
+  background-image: none;
+  color: var(--static-text-and-icons-base-primary);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.promo-banner.__view-kr .promo-banner__title {
+  max-width: 178px;   /* как в макете — заголовок в 2 строки */
+  font-size: 17px;
+  line-height: 1.1;
+  color: var(--static-text-and-icons-base-primary);
+}
+.promo-banner.__view-kr .promo-banner__chevron {
+  flex-shrink: 0;
+  width: 10px;
+  height: 16px;
+  background-color: var(--static-text-and-icons-base-primary);
+  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  transition: transform 200ms ease;
+}
+.promo-banner.__view-kr:active { transform: scale(0.995); }
+.promo-banner.__view-kr:active .promo-banner__chevron { transform: translateX(2px); }
