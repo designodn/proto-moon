@@ -179,18 +179,21 @@
   color: #fff;
 }
 
-/* Кнопка-подарок на подложке — белая «primaryOnColor» (тёмный лейбл/иконка) */
+/* Кнопка-подарок на подложке — белая «primaryOnColor» (тёмный лейбл/иконка).
+   Отвязана от .__intro (текста): держится белой по .__btnhold и возвращает
+   фирменный градиент только ПОСЛЕ ухода подложки (скрипт снимает .__btnhold в
+   конце анимации) — backdrop как будто «перетекает» в кнопку. */
 .feed-congrats .nv-gift-btn.button-container {
   transition:
-    background-color 900ms cubic-bezier(0.4, 0, 0.2, 1),
-    color 900ms cubic-bezier(0.4, 0, 0.2, 1);
+    background-color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.feed-congrats.__intro .nv-gift-btn.button-container {
+.feed-congrats.__btnhold .nv-gift-btn.button-container {
   background-image: none;
   background-color: #fff;
   color: var(--dynamic-text-and-icons-base-primary);
 }
-.feed-congrats.__intro .nv-gift-btn .button-content { color: var(--dynamic-text-and-icons-base-primary); }
+.feed-congrats.__btnhold .nv-gift-btn .button-content { color: var(--dynamic-text-and-icons-base-primary); }
 
 /* Без анимации (системная настройка) — подложку и переходы не играем вовсе
    (скрипт сразу снимает .__intro/.__play → карточка в дефолтном белом виде). */
