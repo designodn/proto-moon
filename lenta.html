@@ -253,15 +253,15 @@
     border-radius: 50%;
   }
 
-  /* Аватары на стыке оранжевого и белого (поднимаем на половину Ø96). */
+  /* Аватары на стыке оранжевого и белого (Ø120, нахлёст 12px по макету). */
   .ll-anniv__avatars {
     display: flex;
     justify-content: center;
-    gap: var(--space-2);
-    margin-top: -48px;
+    margin-top: -60px;
     position: relative;
     z-index: 1;
   }
+  .ll-anniv__avatars .avatar + .avatar { margin-left: -12px; }
   .ll-anniv__avatars .avatar {
     box-shadow: 0 0 0 3px var(--dynamic-surface-base-secondary);
   }
@@ -830,8 +830,8 @@
           <div class="text-feed__media ll-anniv__deco"></div>
 
           <div class="ll-anniv__avatars">
-            <div class="avatar __size-96 __type-image"><img src="https://i.pravatar.cc/192?img=49" alt=""></div>
-            <div class="avatar __size-96 __type-image"><img src="https://i.pravatar.cc/192?img=23" alt=""></div>
+            <div class="avatar __size-120 __type-image"><img src="https://i.pravatar.cc/240?img=49" alt=""></div>
+            <div class="avatar __size-120 __type-image"><img src="https://i.pravatar.cc/240?img=23" alt=""></div>
           </div>
 
           <div class="ds-title-l ll-anniv__title">Анна, поздравляем с годовщиной дружбы</div>
@@ -839,7 +839,7 @@
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">&nbsp;Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="gifts-catalog.html"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">&nbsp;Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
@@ -1158,6 +1158,16 @@
         }
       });
     })();
+  </script>
+
+  <!-- Делегированный переход по data-href (напр. «Поздравить друга» → каталог). -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('button[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
   </script>
 
 </body>
