@@ -49,6 +49,15 @@
 /* ds-title-xl НЕ переопределяем: берём дс-ный 27 / 36 / 600 из tokens.css
    (только font-family выше → OK Sans Display). */
 
+/* ds-title-l в NV: размер 19, line-height 110% (вес/кат — как в базе: 600,
+   OK Sans Display). Скоупится самим фактом загрузки nv-fonts только на
+   NV-страницах; режим __type-scale-2xl на них не используется, поэтому
+   доп.override под 2xl не нужен. */
+.ds-title-l {
+  font-size: 19px;
+  line-height: 110%;
+}
+
 /* Кнопки → OK Sans Display, как заголовки (button-container шарит title-стили
    в tokens.css). Зеркалим size-селекторы, чтобы перебить специфичность
    .button-wrapper.__size-N .button-container (0-3-0). */
