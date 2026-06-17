@@ -152,6 +152,14 @@
   --button-background-color: var(--static-surface-special-layer-tertiary);
 }
 
+/* В on-image текст и mask-иконки (.icon) белые через currentColor, но
+   растровые/SVG-иконки в <img class="ll-icon"> несут свой fill (обычно
+   чёрный) и не наследуют color — из-за этого иконка не совпадает по
+   цвету с текстом. Форсим их в белый, чтобы пилюля смотрелась цельно. */
+.button-container.__style-on-image .ll-icon {
+  filter: brightness(0) invert(1);
+}
+
 /* Negative — red tint bg, red text */
 .button-container.__style-negative {
   --button-color: var(--dynamic-text-and-icons-status-negative);
