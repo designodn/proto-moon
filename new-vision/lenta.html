@@ -371,10 +371,10 @@
         <p class="ds-body-m feed-discussion__lead">Поставили новый счётчик, а расход стал больше обычного.</p>
         <hr class="ds-divider">
         <div class="comment __type-compact">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="2" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img data-person-avatar="2" alt=""></div>
           <div class="comment__body">
-            <div class="comment__header"><b data-person-name="2"></b>· 3 часа назад</div>
-            <p class="comment__text">Это не просто «фяк», это — полноценный «пошли вон, а то порву на тряпки!» и ты…</p>
+            <div class="comment__header"><b class="ds-title-s" data-person-name="2"></b><span class="comment__meta ds-body-m">· 3 часа назад</span></div>
+            <p class="comment__text ds-body-m">Это не просто «фяк», это — полноценный «пошли вон, а то порву на тряпки!» и ты…</p>
             <div class="comment__actions">
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span>
@@ -383,8 +383,14 @@
         </div>
         <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 35 ответов</span></button></span>
         <div class="comment-input">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="my_profile" alt=""></div>
-          <input class="text-input __size-36" placeholder="Написать ответ…">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="my_profile" alt=""></div>
+          <div class="comment-input__field">
+            <input class="text-input __size-44" placeholder="Написать ответ…">
+            <div class="comment-input__actions">
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/attach_24.svg')"></span>
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/smile_24.svg')"></span>
+            </div>
+          </div>
         </div>
       </article>
 
@@ -470,7 +476,7 @@
       <article class="feed-base island" data-entity="group">
         <header class="feed-header">
         <nav class="breadcrumbs">
-          <span class="breadcrumbs__item"><img class="breadcrumbs__badge" src="../assets/icons/zen_badge.png" alt="">Дзен</span>
+          <span class="breadcrumbs__item"><img class="breadcrumbs__badge" src="../assets/new-vision/dzen-badge.png" alt="">Дзен</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Здоровье</span>
         </nav>
@@ -532,7 +538,7 @@
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
         </header>
-        <div class="media __type-clip"><img src="https://iv.okcdn.ru/videoPreview?id=16833467124412&amp;type=39&amp;idx=1&amp;tkn=GzF9Fz5eDAm_5wP4YvQWhn7WRN8" alt="">
+        <div class="media __type-clip"><iframe class="media__yt" src="https://www.youtube.com/embed/H6a4slOz3QY?autoplay=1&mute=1&loop=1&playlist=H6a4slOz3QY&controls=0&playsinline=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           <button class="media__mute" aria-label="Mute">🔇</button>
         </div>
         <div class="actions-bar">
@@ -615,10 +621,12 @@
           </div>
         </div></div></div>
         <div class="nv-gift-card">
-          <p class="nv-gift-card__caption">Создал и подарил уникальный подарок</p>
+          <div class="nv-gift-card__head">
+            <p class="nv-gift-card__caption">Создал и подарил уникальный подарок</p>
           <div class="nv-gift-card__reshare">
             <div class="avatar __size-24 __type-image"><img data-person-avatar="1" alt=""></div>
             <span class="ds-title-s" data-person-name="1"></span>
+          </div>
           </div>
           <div class="media __aspect-1-1"><img src="https://i.pinimg.com/originals/24/f0/0b/24f00b8520e0657c89891bb6f1d815d8.gif" alt=""></div>
         </div>
@@ -627,7 +635,7 @@
         </div>
       </article>
 
-      <article class="feed-base island">
+      <article class="feed-discussion island">
         <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Здоровье</span>
@@ -643,12 +651,30 @@
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
         </header>
-        <h2 class="nv-feed__title ds-title-xl">Болит колено при приседании. Что это может быть?</h2>
-        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
-          <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+        <h2 class="nv-feed__title ds-title-xl feed-discussion__title">Болит колено при приседании. Что это может быть?</h2>
+
+        <hr class="ds-divider">
+        <div class="comment __type-compact">
+          <div class="avatar __size-24 __type-image"><img data-person-avatar="8" alt=""></div>
+          <div class="comment__body">
+            <div class="comment__header"><b class="ds-title-s" data-person-name="8"></b><span class="comment__meta ds-body-m">· 2 часа назад</span></div>
+            <p class="comment__text ds-body-m">У меня похожее было после бега — помогли разминка и наколенник.</p>
+            <div class="comment__actions">
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
+              <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>4</span></button></span>
+            </div>
+          </div>
+        </div>
+        <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 18 ответов</span></button></span>
+        <div class="comment-input">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="my_profile" alt=""></div>
+          <div class="comment-input__field">
+            <input class="text-input __size-44" placeholder="Написать ответ…">
+            <div class="comment-input__actions">
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/attach_24.svg')"></span>
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/smile_24.svg')"></span>
+            </div>
+          </div>
         </div>
       </article>
 
@@ -685,30 +711,11 @@
             <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="7" alt=""></div>
             <div class="avatar__caption">Галина</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
-            <img data-person-avatar="1" alt="">
-            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="1" alt=""></div>
-            <div class="avatar__caption">Александра</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
-            <img data-person-avatar="2" alt="">
-            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="2" alt=""></div>
-            <div class="avatar__caption">Сергей</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
-            <img data-person-avatar="3" alt="">
-            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="3" alt=""></div>
-            <div class="avatar__caption">Зинаида</div>
-          </div>
         </div>
       </article>
 
       <article class="feed-contest island">
-        <nav class="breadcrumbs">
-          <span class="breadcrumbs__item">Дача</span>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Сезонные советы</span>
-        </nav>
+
         <h2 class="nv-feed__title ds-title-xl">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
         <div class="picture-stack">
           <div class="picture __size-96"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KjV2NH5_kLPuwpkP3gbMHxichSOQKZ7bQSEW_xwOTzsrPch5jw-Yn1hW3KLUx7A9rYBta8F1sjZ7dbqQTlUVLXrdtQRaPl0NL9vC-3Mz0AAAAp&amp;dpr=2" alt=""></div>
@@ -717,7 +724,10 @@
           <div class="picture __size-96"><img src="https://cdn2.botanichka.ru/wp-content/uploads/2015/06/sryivat-srezat-otshhipyivat-kak-pravilno-sobirat-urozhay-01.jpg" alt=""></div>
         </div>
         <div class="button-wrapper __size-44 __full-width" style="display: block;">
-          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content"><img class="ll-icon" src="../assets/icons/camera_24.svg" width="24" height="24" alt="">Загрузить фото</span></button>
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">📷 Загрузить фото</span></button>
+        </div>
+        <div class="button-wrapper __size-44 __full-width" style="display: block;">
+          <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">🖼 Смотреть работы</span></button>
         </div>
       </article>
 
@@ -774,15 +784,19 @@
           <span class="breadcrumbs__item __state-on">В этот день</span>
         </nav>
         <h2 class="nv-feed__title ds-title-xl">Поделитесь с друзьями вашим днем 5 лет назад</h2>
+        <div class="feed-memory__reply">
+        <header class="feed-header">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="4" alt=""></div>
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="4" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="4"></div>
+            <div class="ds-title-m feed-header__name" data-person-name="4"></div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 лет назад</div>
           </div>
         </div></div></div>
-        <p class="ds-body-m">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут</p>
+        </header>
+          <p class="ds-body-m feed-memory__text">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут</p>
         <div class="media __aspect-4-3"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1ICakGWpz7m4rQhn3b47R4Yf14tfKrfNTLMBkCY6Z_xmEU6RdFqYQtsXy_c5b9tyaohaxfCeghidwi-dqbZiU27Cue-Y_HhAAAAKQ&amp;dpr=2" alt=""></div>
+        </div>
         <div class="button-wrapper __size-44 __full-width" style="display: block;">
           <button class="button-container __style-secondary" style="width: 100%;"><span class="button-content">Поделиться снова</span></button>
         </div>
@@ -826,10 +840,12 @@
           </div>
         </div></div></div>
         <div class="nv-gift-card">
-          <p class="nv-gift-card__caption">Получил подарок на День сельскохозяйственных строителей от</p>
+          <div class="nv-gift-card__head">
+            <p class="nv-gift-card__caption">Получил подарок на День сельскохозяйственных строителей от</p>
           <div class="nv-gift-card__reshare">
             <div class="avatar __size-24 __type-image"><img data-person-avatar="3" alt=""></div>
             <span class="ds-title-s" data-person-name="3"></span>
+          </div>
           </div>
           <div class="media __aspect-1-1"><img src="https://hislav.admin-smolensk.ru/files/gallery/6453/med/4ab427c9-769e-54fe-878a-2_1728381416.jpg" alt=""></div>
         </div>

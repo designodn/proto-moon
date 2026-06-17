@@ -69,6 +69,31 @@
 }
 
 /* ============================================================
+   MEMORY REPLY — блок воспоминания «в обводке»: автор (feed-header) +
+   текст + фото лежат в одном bordered-контейнере (как цитата/реплай).
+   ============================================================ */
+/* Селектор повышенной специфичности — перебивает .feed-memory > :not(.media)
+   (padding 0 16). Бордер-блок отступает от краёв карточки на 16 (margin),
+   а внутри — собственный padding 12. */
+.feed-memory > .feed-memory__reply {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-left: var(--space-4);
+  margin-right: var(--space-4);
+  padding: var(--space-4) var(--space-4) 0;
+  border: 2px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 20px;
+  overflow: hidden;
+}
+/* Фото внутри реплая — во всю ширину (edge-to-edge), упирается в края блока. */
+.feed-memory__reply .media {
+  width: calc(100% + 2 * var(--space-4));
+  margin: 0 calc(-1 * var(--space-4));
+  border-radius: 0;
+}
+
+/* ============================================================
    SUBSCRIBE BUTTON — toggle между "Подписаться" (secondary)
    и "Подписан" (tertiary).
    Структура:
