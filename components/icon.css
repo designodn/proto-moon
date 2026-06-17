@@ -78,7 +78,7 @@
    ============================================================ */
 .icon.__slot-arrow-left    { --icon-src: url('../assets/icons/arrow-left.svg'); }
 .icon.__slot-attach        { --icon-src: url('../assets/icons/attach_24.svg'); }
-.icon.__slot-back          { --icon-src: url('../assets/new-vision-icons/glyph_arrow_24.svg'); }
+.icon.__slot-back          { --icon-src: url('../assets/icons/back_24.svg'); }
 .icon.__slot-bell          { --icon-src: url('../assets/icons/bell.svg'); }
 .icon.__slot-close         { --icon-src: url('../assets/icons/close_24.svg'); }
 .icon.__slot-comment       { --icon-src: url('../assets/icons/comment_24.svg'); }
