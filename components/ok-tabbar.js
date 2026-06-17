@@ -61,6 +61,19 @@
     bind(el, variant);
   }
 
+  /* Дописать ?nv=1 к локальной .html-ссылке, чтобы NV-режим (шрифты/оформление,
+     см. screen-transition.js) сохранялся на Q3-страницах вроде трибуны/сообщений.
+     Логика совпадает с propagateNV в screen-transition.js, но применяется прямо
+     при навигации — без зависимости от тайминга (кнопки ok-tabbar рендерятся JS-ом). */
+  function withNV(url) {
+    if (!url || url.charAt(0) === '#') return url;
+    if (!/\.html(?:[?#]|$)/.test(url)) return url;
+    if (/[?&]nv=1(?:[&#]|$)/.test(url)) return url;
+    var hash = '', base = url, h = url.indexOf('#');
+    if (h !== -1) { hash = url.slice(h); base = url.slice(0, h); }
+    return base + (base.indexOf('?') !== -1 ? '&' : '?') + 'nv=1' + hash;
+  }
+
   /* Поведение вешаем на узлы самого компонента (а не глобально на document),
      потому что разметка появляется только после рендера элемента. */
   function bind(el, variant) {
@@ -73,7 +86,7 @@
       var href = btn.getAttribute('data-href');
       if (href && href !== '#') {
         sessionStorage.setItem('nav-tab', '1');
-        location.href = href;
+        location.href = withNV(href);
       }
     });
 
