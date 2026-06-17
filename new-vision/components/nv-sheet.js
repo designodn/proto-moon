@@ -43,17 +43,19 @@
     panel.setAttribute('aria-modal', 'true');
     if (title) panel.setAttribute('aria-label', title);
 
-    // navbar: заголовок слева, крестик справа
-    var nav = el('header', 'nv-sheet__navbar');
+    // navbar: DS-компонент nav-bar — заголовок слева (leading), крестик справа (trailing)
+    var nav = el('header', 'nav-bar nv-sheet__navbar');
     nav.innerHTML =
-      '<h2 class="ds-title-l nv-sheet__title">' + title + '</h2>' +
-      '<span class="button-inline-wrapper __size-24 __view-secondary">' +
-        '<button class="button-inline __size-24" data-sheet-close aria-label="Закрыть">' +
-          '<span class="button-inline__content">' +
-            '<span class="button-inline__icon icon __size-24 __src" style="--icon-src:url(\'' + icon + '\')"></span>' +
-          '</span>' +
-        '</button>' +
-      '</span>';
+      '<div class="nav-bar__leading"><h2 class="ds-title-l nv-sheet__title">' + title + '</h2></div>' +
+      '<div class="nav-bar__trailing">' +
+        '<span class="button-inline-wrapper __size-24 __view-secondary">' +
+          '<button class="button-inline __size-24" data-sheet-close aria-label="Закрыть">' +
+            '<span class="button-inline__content">' +
+              '<span class="button-inline__icon icon __size-24 __src" style="--icon-src:url(\'' + icon + '\')"></span>' +
+            '</span>' +
+          '</button>' +
+        '</span>' +
+      '</div>';
     panel.appendChild(nav);
 
     authored.forEach(function (c) { panel.appendChild(c); });

@@ -30,13 +30,6 @@
     padding-bottom: var(--space-4);
     overflow: hidden;
   }
-  /* «Не мой» профиль (друг/гость) — оранжевая обложка из макета, белый текст */
-  body:not([data-view="self"]) .nv-pr-cover {
-    color: var(--static-text-and-icons-base-inverse-primary);
-    background:
-      radial-gradient(116% 78% at 50% 24%,
-        #FA8D69 0%, #F86F4F 28%, #F55020 62%, #F2480D 84%, #F23C00 100%);
-  }
   /* статус-бар: переиспользуем разметку .status-bar, но без светлого фона */
   .nv-pr-cover .status-bar {
     position: static;
@@ -52,7 +45,7 @@
   }
 
   /* реальные действия навбара (свой профиль): создать + редактировать обложку */
-  .nv-pr-cover__nav-actions { display: flex; align-items: center; gap: var(--space-2); }
+  .nv-pr-cover__nav-actions { display: flex; align-items: center; gap: var(--space-5); }
   .nv-pr-cover__nav-actions[hidden] { display: none; }
 
   /* dev-переключатель состояний — плавающая пилюля над таб-баром.
@@ -182,48 +175,48 @@
             </div>
           </div>
 
-          <!-- CTA: чужой профиль друга (вариант из макета) -->
+          <!-- CTA: чужой профиль друга — структура как у self, отличие в тексте -->
           <div class="nv-pr-cta" data-cta="friend">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-secondary-on-color">
+              <button class="button-container __style-secondary">
                 <span class="button-content">
                   <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_added_16_20.svg')"></span>
                   У вас в друзьях
                 </span>
               </button>
             </div>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-circle" aria-label="Позвонить">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/phone_24.svg')"></span>
+            <div class="button-wrapper __size-44">
+              <button class="button-container __style-secondary" style="width:44px;" aria-label="Позвонить">
+                <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/phone_24.svg')"></span></span>
               </button>
-            </span>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-circle" aria-label="Ещё">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
+            </div>
+            <div class="button-wrapper __size-44">
+              <button class="button-container __style-secondary" style="width:44px;" aria-label="Ещё">
+                <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
               </button>
-            </span>
+            </div>
           </div>
 
-          <!-- CTA: чужой профиль (не в друзьях) -->
+          <!-- CTA: чужой профиль (не в друзьях) — «Дружить» primary -->
           <div class="nv-pr-cta" data-cta="stranger" hidden>
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary-on-color">
+              <button class="button-container __style-primary">
                 <span class="button-content">
                   <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
                   Дружить
                 </span>
               </button>
             </div>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-circle" aria-label="Подписаться">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/follow_24.svg')"></span>
+            <div class="button-wrapper __size-44">
+              <button class="button-container __style-secondary" style="width:44px;" aria-label="Подписаться">
+                <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/follow_24.svg')"></span></span>
               </button>
-            </span>
-            <span class="button-circle-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-circle" aria-label="Ещё">
-                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span>
+            </div>
+            <div class="button-wrapper __size-44">
+              <button class="button-container __style-secondary" style="width:44px;" aria-label="Ещё">
+                <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
               </button>
-            </span>
+            </div>
           </div>
 
           <!-- CTA: свой профиль (светлая обложка → обычный secondary) -->
@@ -231,7 +224,7 @@
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-secondary">
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/notifications_24.svg')"></span>
+                  <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/notifications_24.svg')"></span>
                   Уведомления
                 </span>
               </button>
@@ -508,9 +501,8 @@
     var savedBg   = sessionStorage.getItem('nv-cover-bg');
     var savedDark = sessionStorage.getItem('nv-cover-bg-dark') === '1';
 
-    // Красим обложку только в self-виде; иначе фон задаёт CSS (оранжевый/белый).
+    // Красим обложку выбранным фоном (во всех видах — профили отличаются только текстом).
     function paintCover(bg, dark) {
-      if (document.body.getAttribute('data-view') !== 'self') return;
       coverEl.style.background = (!bg || bg === 'none') ? '' : bg;
       coverEl.classList.toggle('__bg-dark', !!dark && !!bg && bg !== 'none');
     }
@@ -548,7 +540,7 @@
         b.classList.toggle('__active', b.getAttribute('data-set-view') === view);
       });
 
-      // фон обложки: в self — сохранённый, иначе отдаём управление CSS
+      // фон обложки: только self (у друга/гостя фича выбора фона не нужна)
       if (view === 'self') {
         applySavedBg();
       } else {
@@ -608,7 +600,7 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openS(bonsaiSheet); }
     });
 
-    // открыть «Фон» — тап по обложке (только self), кроме интерактива
+    // открыть «Фон» — тап по обложке только в self (для друга/гостя фича не нужна)
     document.addEventListener('click', function (e) {
       if (document.body.getAttribute('data-view') !== 'self') return;
       if (!e.target.closest('.nv-pr-cover')) return;
