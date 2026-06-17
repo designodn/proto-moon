@@ -2,7 +2,8 @@
  * OK Design System — shared user data
  *
  * Единый источник данных о текущем пользователе для прототипа.
- * Элементы с data-user-name получают имя, data-user-avatar — src аватара.
+ * Элементы с data-user-name / data-pr-name получают имя,
+ * data-user-avatar / data-pr-avatar — src аватара (data-pr-* — в NV-профиле).
  */
 (function () {
   var USER = {
@@ -18,10 +19,10 @@
   }
 
   function apply() {
-    document.querySelectorAll('[data-user-name]').forEach(function (el) {
+    document.querySelectorAll('[data-user-name], [data-pr-name]').forEach(function (el) {
       el.textContent = USER.name;
     });
-    document.querySelectorAll('[data-user-avatar]').forEach(function (el) {
+    document.querySelectorAll('[data-user-avatar], [data-pr-avatar]').forEach(function (el) {
       el.src = USER.avatarSrc;
       el.alt = USER.name;
     });

@@ -109,5 +109,45 @@ window.DS_PEOPLE_DATA = [
     "age": 47,
     "city": "Янаул",
     "bio": ""
+  },
+  {
+    "id": "vvz-1",
+    "name": "Карасев Дмитрий",
+    "photo": "https://vki9.okcdn.ru/i?r=CHFAm_VFBkioSGBqh1KHSkufhK9gKtLD5R1OaqCTGtaii43TDYLK6Xho4HCWziPYDnMakrjZb4lKohPRvQf2sfeHB5-hia1t6b5GWcyW2T0i53z2hk422DqZ6SMv6zRUBBmRQ7aghTJZy5Yi1jMvGsVcAAAAKQ&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 55,
+    "city": "Нижний Новгород",
+    "bio": ""
+  },
+  {
+    "id": "vvz-2",
+    "name": "Лидия Артемьева (Фёдорова)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J8s8x_f1BC-7P3v7tlkr_F6Bbbkc4Dhk0M5Xrkbsb0WkEVxPU7jFvmvycToJFt03gVCJie8SXeHU6kT1xjePo58EVEd-Op6GwRGDu2FrYAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 88,
+    "city": "Уфа",
+    "bio": ""
+  },
+  {
+    "id": "vvz-3",
+    "name": "Ксения Лысенко",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JNpBzacIh9w85MyWJ8lr9JG2DYXMREFeVQuOByMQp9nIOv_bjNm8VKQWtME8GPcKQvd9bJHra8d0060hQ0k2ierkYIpuYSAKfl_nXTzIMAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 44,
+    "city": "Москва",
+    "bio": ""
+  },
+  {
+    "id": "vvz-4",
+    "name": "Елена Саблина (Бивол)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I8PxDOr4TDbrut9puH377YOS4hEp8yKDNEbRYX5vR85r_XH-61ekx2bKPsQ2kt6lwYSiF7hM7V4fUJfmfaIzYqLRo3ZAj6iRih-CihU4kAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 53,
+    "city": "Бийск",
+    "bio": ""
   }
 ];

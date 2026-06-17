@@ -90,10 +90,22 @@ node scripts/fetch-people.mjs
 
 `media: "video"` (живое фото) аппликатор сам подменяет `<img>` на зацикленное
 `<video>`. Спец-`id` **`my_profile`** — текущий пользователь: его подхватывает
-`components/user-data.js` (`data-user-name` / `data-user-avatar`).
+`components/user-data.js` (`data-user-*`, а также `data-pr-*` в NV-профиле).
 
-Примеры в коде: `friends.html` (блок «Возможно, вы знакомы»), `profile.html`,
-`menu.html`.
+**Блоки «Возможно, вы знакомы»** размечены людьми с id `vvz-1`…`vvz-4` (отдельные
+строки в листе «Люди»). Раскатка по всем ВВЗ-блокам — разовым скриптом:
+
+```sh
+node scripts/wire-vvz.mjs
+```
+
+Он проставляет `data-person-*` на карточки `.vvz-card` / `.friend-card` (в колодах
+длиннее 4 — по кругу) и подключает скрипты people. Блок «Давно не общались»
+(`dnoBlock`) пропускается — это существующие контакты, а не подсказки знакомств.
+
+Примеры в коде: `friends.html`, `profile.html`, `guests.html`, `lenta.html`,
+`lenta-q3.html`, `messages.html` (блок «Возможно, вы знакомы»), `menu.html`,
+`new-vision/profile.html` (профиль владельца).
 
 ---
 
