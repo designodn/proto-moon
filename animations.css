@@ -51,22 +51,37 @@
    Высота строки — --conv-row-h. Управление: инлайн-скрипт в lenta.html.
    ============================================================ */
 .ds-activity-conveyor {
-  --conv-row-h: 72px;
+  --conv-row-h: 54px;          /* фикс высота ячейки */
+  --conv-gap: 12px;            /* промежуток между ячейками */
   --conv-rows: 2;
   --conv-dur: 0.5s;
   position: relative;
   overflow: hidden;
-  height: calc(var(--conv-row-h) * var(--conv-rows));
+  height: calc(var(--conv-row-h) * var(--conv-rows) + var(--conv-gap) * (var(--conv-rows) - 1));
 }
 .ds-activity-conveyor__track {
   display: flex;
   flex-direction: column;
+  gap: var(--conv-gap);
 }
 .ds-activity-conveyor__track > .uni-cell-wrapper {
+  /* вертикальные паддинги убираем — высоту держит --conv-row-h, контент
+     центрируем (появление растёт из центра, а не от верха). */
+  --uni-cell-padding-top: 0;
+  --uni-cell-padding-bottom: 0;
   flex: 0 0 auto;
   height: var(--conv-row-h);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;     /* центрируем появление внутри ячейки */
   overflow: hidden;            /* контент клипается при коллапсе высоты */
+}
+/* В конвейере отключаем «выпирающую» подложку контейнера (margin -8 / padding 8),
+   иначе аватар 44 не помещается в ячейку 54 и клипается. */
+.ds-activity-conveyor .uni-cell-container {
+  margin: 0;
+  padding: 0;
 }
 /* Текст — максимум 2 строки, чтобы строки были одинаковой высоты */
 .ds-activity-conveyor .uni-cell-additional-content {
