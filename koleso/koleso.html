@@ -25,9 +25,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background:
-      radial-gradient(120% 70% at 50% 8%, rgba(255,255,255,0.18), rgba(255,255,255,0) 55%),
-      linear-gradient(180deg, #ff8a2b 0%, #ff7a14 38%, #f56b00 72%, #e56300 100%);
+    /* верхняя зона (статус-бар + навбар) — плоский цвет без градиента, дальше переход */
+    background: linear-gradient(180deg, #ff8a2b 0%, #ff8a2b 14%, #ff7a14 38%, #f56b00 72%, #e56300 100%);
     color: #fff;
     font-family: var(--font-family);
   }
@@ -100,7 +99,7 @@
   }
   .rl-prize__emoji { font-size: 96px; line-height: 1; filter: drop-shadow(0 10px 14px rgba(120,40,0,0.35)); }
   /* картинка приза в подиуме (README: 140×140, object-fit:contain) */
-  .rl-prize__img { width: 140px; height: 140px; object-fit: contain; display: block; }
+  .rl-prize__img { width: 220px; height: 220px; object-fit: contain; display: block; }
   .rl-prize__cap { font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(120,40,0,0.4); }
 
   /* анимация прокрутки: -1 копия из двух (см. JS дублирование) */
@@ -121,17 +120,16 @@
   .rl-action {
     position: relative;
     width: 106px; height: 110px;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 10px 24px rgba(120,40,0,0.18);
     cursor: pointer;
   }
-  /* лёгкий наклон «подложки» как в макете */
+  /* белая «подложка» с наклоном — размеры/угол из макета: 99.66×96.9, −6.73° */
   .rl-action::before {
-    content: ''; position: absolute; inset: 0;
+    content: ''; position: absolute;
+    left: 50%; top: 50%;
+    width: 100px; height: 97px;
     background: #fff; border-radius: 20px;
-    transform: rotate(-4deg); z-index: -1;
-    box-shadow: 0 10px 24px rgba(120,40,0,0.12);
+    transform: translate(-50%, -50%) rotate(-6.73deg); z-index: -1;
+    box-shadow: 0 10px 24px rgba(120,40,0,0.18);
   }
   .rl-action__emoji {
     position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
@@ -140,21 +138,21 @@
   }
   /* иконка-картинка кнопки (README: ~84px, «вылет» над карточкой) */
   .rl-action__img {
-    position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
-    width: 84px; height: 84px; object-fit: contain;
+    position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+    width: 88px; height: 88px; object-fit: contain;
     filter: drop-shadow(0 8px 10px rgba(120,40,0,0.28));
   }
   .rl-action__label {
-    position: absolute; left: 6px; right: 6px; bottom: 22px;
-    text-align: center; font-size: 15px; font-weight: 600; color: #000;
+    position: absolute; left: 6px; right: 6px; bottom: 16px;
+    text-align: center; font-size: 15px; line-height: 20px; font-weight: 500; color: #2e2f33;
   }
   .rl-action__badge {
-    position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
     min-width: 24px; height: 24px; box-sizing: border-box;
     padding: 0 6px; border: 3px solid #fff; border-radius: 999px;
     background: #2fb675; color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600;
+    font-size: 15px; line-height: 20px; font-weight: 500;
   }
   /* счётчик билетов — пилюля */
   .rl-coin {
@@ -267,8 +265,8 @@
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
-      el.innerHTML = '<div class="rl-prize__pod"><img class="rl-prize__img" src="../assets/koleso/' +
-                     p.img + '" alt=""></div><div class="rl-prize__cap">' + p.c + '</div>';
+      el.innerHTML = '<img class="rl-prize__img" src="../assets/koleso/' +
+                     p.img + '" alt="' + p.c + '">';
       return el;
     }
 
@@ -308,12 +306,16 @@
         location.href = 'koleso-tasks.html';
         return;
       }
-      // короткий разгон барабана, затем списываем билет
+      // защита от повторного тапа во время прокрута
       if (wheel.classList.contains('__fast')) return;
+      // списываем 1 билет за прокрут и сразу показываем новый счётчик
+      tickets = Math.max(0, tickets - 1);
+      coin.textContent = tickets;
+      if (tickets > 0) ctaText.textContent = 'Крутить колесо за ' + tickets;
+      // короткий разгон барабана; режим CTA (в т.ч. переход в invite при 0) — после остановки
       wheel.classList.add('__fast');
       setTimeout(function () {
         wheel.classList.remove('__fast');
-        tickets = Math.max(0, tickets - 1);
         render();
       }, 2600);
     });
