@@ -1,0 +1,31 @@
+/**
+ * New Vision — ActionsBar (модификатор иконок)
+ *
+ * Форкаем у общей .actions-bar (components/actions-bar.css) ТОЛЬКО иконки:
+ * у NV для экшенов в карточках ленты свой визуальный язык (другой пак глифов).
+ * Структура разметки, раскладка и поведение (klass-тоггл, счётчик) — из общей DS.
+ *
+ * Опт-ин через модификатор `.actions-bar.__vision` (как у таб-бара `.tabbar.__vision`):
+ * вешаем класс на нужные ряды экшенов в new-vision/lenta.html, чтобы общие DS-иконки
+ * не задеть на остальных страницах.
+ *
+ * Отрисовка — маска + currentColor (база icon.css), поэтому глифы NV должны быть
+ * одноцветными силуэтами. Иконки — пак assets/new-vision-icons/ (см. README там же).
+ *
+ * Пути к иконкам резолвятся относительно ЭТОГО файла (new-vision/components/),
+ * поэтому до корневого assets/ поднимаемся на два уровня: `../../assets/...`.
+ *
+ * NB: в NV-паке нет отдельного filled-глифа «класса» — для :checked-состояния
+ * переиспользуем тот же glyph_like_24 (тоггл по-прежнему работает: счётчик +1).
+ */
+
+.actions-bar.__vision .icon.__slot-comment {
+  --icon-src: url('../../assets/new-vision-icons/glyph_comment_24.svg');
+}
+.actions-bar.__vision .icon.__slot-reshare {
+  --icon-src: url('../../assets/new-vision-icons/glyph_reshare_24.svg');
+}
+.actions-bar.__vision .icon.__slot-klass-outline,
+.actions-bar.__vision .icon.__slot-klass-filled {
+  --icon-src: url('../../assets/new-vision-icons/glyph_like_24.svg');
+}
