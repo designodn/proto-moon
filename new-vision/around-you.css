@@ -103,6 +103,20 @@
   pointer-events: none;
   user-select: none;
 }
+/* Lottie-вариант лид-стикера (трофей в ячейке конкурса).
+   До загрузки/при ошибке виден emoji-фолбэк (текст внутри span);
+   когда Lottie проигрался — emoji прячем (.__lottie-on), показываем SVG. */
+.lead-lottie {
+  width: 34px;
+  height: 34px;
+  right: -8px;
+  bottom: -6px;
+  font-size: 26px;          /* размер emoji-фолбэка */
+  line-height: 34px;
+  text-align: center;
+}
+.lead-lottie.__lottie-on { font-size: 0; }   /* убираем emoji, остаётся SVG */
+.lead-lottie svg { display: block; width: 100%; height: 100%; }
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
