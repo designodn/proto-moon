@@ -252,7 +252,7 @@ function renderPost(p, idx) {
       const parts = [];
       if (type === 'article') {
         parts.push(feedHeader(author, { tema, rubrika, time }));
-        parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
+        parts.push(`        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`);
         if (text) parts.push(`        <p class="ds-body-m">${esc(text)}</p>`);
         parts.push(mediaPhoto(photos));
       } else {
@@ -291,7 +291,7 @@ function renderPost(p, idx) {
     case 'birthday': {
       const parts = [
         `        <div class="avatar __size-72 __type-image"><img data-person-avatar="${esc(author)}" alt=""></div>`,
-        `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
+        `        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`,
         avatarsView(x.friends),
         ctaButton('<span class="icon __size-20 __src" style="--icon-src:url(\'../assets/icons/gift_24.svg\')"></span>Поздравить', { extraClass: 'nv-gift-btn' }),
       ];
@@ -347,7 +347,7 @@ ${btn}
       }).join('\n');
       return `      <article class="feed-questions island">
 ${breadcrumbs(tema, rubrika)}
-        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
+        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>
         <div class="feed-questions__list">
 ${cards}
         </div>
