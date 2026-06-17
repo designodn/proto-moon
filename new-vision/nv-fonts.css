@@ -112,6 +112,7 @@
 .feed-header .ds-title-m,
 .feed-header .ds-caption-m,
 .feed-header__name,
-.media__time {
+.media__time,
+.feed-discussion__lead {
   font-family: var(--font-family-display);
 }

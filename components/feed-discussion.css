@@ -32,9 +32,11 @@
   padding: 0;
 }
 
-/* Header — без нижнего gap до следующего элемента (divider/comment) */
-.feed-discussion > .header {
-  margin-bottom: calc(-1 * var(--space-3));
+/* Заголовок вопроса (ds-title-xl) и лид (ds-body-m) — без собственных
+   вертикальных отступов, расстояния задаёт flex-gap карточки. */
+.feed-discussion__title,
+.feed-discussion__lead {
+  margin: 0;
 }
 
 /* Тонкая линия-сепаратор */
