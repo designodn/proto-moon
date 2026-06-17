@@ -228,49 +228,6 @@
     width: 100%; height: 100%; object-fit: cover; display: block;
   }
 
-  /* «Годовщина дружбы» — карточка-поздравление (figma 2767-134392).
-     Праздничная оранжевая «шапка» (декор пока CSS-заглушка: тёплый градиент
-     + шарики), плавный переход к белому телу острова через светлую «волну»,
-     два круглых аватара на стыке, заголовок/подзаголовок по центру и бар
-     кнопок. Не паттерн — оставляем локально. */
-  .ll-anniv { padding-top: 0; }          /* шапка прижата к верху острова */
-
-  .ll-anniv__deco {
-    height: 168px;
-    overflow: hidden;
-    /* Однотонная заглушка цветного фона (ждёт растровый декор). */
-    background: #ff5a1f;
-  }
-  /* Светлая «волна» — выпуклый белый эллипс по центру низа шапки. */
-  .ll-anniv__deco::after {
-    content: '';
-    position: absolute;
-    left: 50%; bottom: 0;
-    width: 150%;
-    aspect-ratio: 2 / 1;
-    transform: translate(-50%, 42%);
-    background: var(--dynamic-surface-base-secondary);
-    border-radius: 50%;
-  }
-
-  /* Аватары на стыке оранжевого и белого (Ø120, нахлёст 12px по макету). */
-  .ll-anniv__avatars {
-    display: flex;
-    justify-content: center;
-    margin-top: -60px;
-    position: relative;
-    z-index: 1;
-  }
-  .ll-anniv__avatars .avatar + .avatar { margin-left: -12px; }
-  .ll-anniv__avatars .avatar {
-    box-shadow: 0 0 0 3px var(--dynamic-surface-base-secondary);
-  }
-
-  /* Заголовок и подзаголовок — по центру. */
-  .ll-anniv__title,
-  .ll-anniv__text { text-align: center; }
-  .ll-anniv__text { color: var(--dynamic-text-and-icons-base-primary); }
-
 
 </style>
 </head>
@@ -826,16 +783,16 @@
         </article>
 
         <!-- Годовщина дружбы — карточка-поздравление (figma 2767-134392) ---- -->
-        <article class="text-feed island ll-anniv">
-          <div class="text-feed__media ll-anniv__deco"></div>
+        <article class="feed-birthday island">
+          <div class="feed-birthday__deco"></div>
 
-          <div class="ll-anniv__avatars">
+          <div class="feed-birthday__avatars">
             <div class="avatar __size-120 __type-image"><img src="https://i.pravatar.cc/240?img=49" alt=""></div>
             <div class="avatar __size-120 __type-image"><img src="https://i.pravatar.cc/240?img=23" alt=""></div>
           </div>
 
-          <div class="ds-title-l ll-anniv__title">Анна, поздравляем с годовщиной дружбы</div>
-          <div class="ds-body-m ll-anniv__text">Ровно 3 года назад вы добавили Ольгу в друзья OK</div>
+          <div class="ds-title-l feed-birthday__title">Анна, поздравляем с годовщиной дружбы</div>
+          <div class="ds-body-m feed-birthday__text">Ровно 3 года назад вы добавили Ольгу в друзья OK</div>
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
