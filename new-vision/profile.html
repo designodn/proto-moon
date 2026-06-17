@@ -691,22 +691,30 @@
       }
     })();
 
-    // ── «Дружить» → «Запрос отправлен» (чужой профиль, не в друзьях) ─────────
-    // Тап по primary-кнопке отправляет запрос: она становится secondary с
-    // иконкой user_request. Повторный тап — отмена запроса (возврат к «Дружить»).
+    // ── «Дружить» → «Запрос отправлен» → «У вас в друзьях» ───────────────────
+    // Тап по primary-кнопке отправляет запрос (secondary, иконка user_request),
+    // через 3 сек запрос «принимается» — становится «У вас в друзьях» (галочка,
+    // иконка user_added). Поток в одну сторону.
     (function () {
       var btn = document.querySelector('[data-friend-request]');
       if (!btn) return;
       var icon  = btn.querySelector('[data-fr-icon]');
       var label = btn.querySelector('[data-fr-label]');
-      var sent  = false;
+
+      function setState(style, iconName, text) {
+        btn.classList.toggle('__style-primary', style === 'primary');
+        btn.classList.toggle('__style-secondary', style === 'secondary');
+        icon.style.setProperty('--icon-src', "url('../assets/icons/" + iconName + ".svg')");
+        label.textContent = text;
+      }
+
       btn.addEventListener('click', function () {
-        sent = !sent;
-        btn.classList.toggle('__style-primary', !sent);
-        btn.classList.toggle('__style-secondary', sent);
-        icon.style.setProperty('--icon-src',
-          "url('../assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
-        label.textContent = sent ? 'Запрос отправлен' : 'Дружить';
+        if (btn.dataset.frBusy) return;       // запрос уже отправлен — не повторяем
+        btn.dataset.frBusy = '1';
+        setState('secondary', 'user_request_16_20', 'Запрос отправлен');
+        setTimeout(function () {
+          setState('secondary', 'user_added_16_20', 'У вас в друзьях');
+        }, 3000);
       });
     })();
 
