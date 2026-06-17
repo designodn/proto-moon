@@ -33,16 +33,20 @@ const csvUrl =
   `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 /* ── Компаньон-данные (то, чего нет в основном листе) ─────────────────────── */
-const EXTRAS = {
+/* Этих данных нет в листе «Посты» (вложенные куски не лезут в плоские колонки),
+ * поэтому держим их здесь и вешаем на ТИП карточки. main() сам разложит их по
+ * актуальным id постов — перенумерация/перестановки строк в листе ничего не ломают.
+ * Моменты сюда не входят: их авторы берутся из колонки «автор» поста. */
+const COMPANION = {
   // questions: подписи и категории карточек (авторы берутся из листа, по порядку)
-  'post-19': {
+  questions: {
     questions: [
       { title: 'Соседи, подскажите мастера по окнам',            category: 'Ремонт' },
       { title: 'Подскажите хорошего стоматолога в нашем районе', category: 'Стоматолог' },
     ],
   },
   // discussion: топ-комментарий
-  'post-21': {
+  discussion: {
     topComment: {
       authorId: 2,
       time: '3 часа назад',
@@ -52,15 +56,16 @@ const EXTRAS = {
     moreReplies: 'Посмотреть 35 ответов',
   },
   // birthday: друзья, поздравившие именинника
-  'post-18': { friends: { ids: [1, 3], more: 3, text: '12 друзей поздравило' } },
+  birthday: { friends: { ids: [1, 3], more: 3, text: '12 друзей поздравило' } },
   // group-invite: друзья-подписчики
-  'post-20': { friends: { ids: [1, 4], more: 3, text: '5 друзей подписаны' } },
-  // stories-moments: какие кольца «просмотрено» (по индексу аватарки)
-  'post-22': { viewed: [false, false, true, false] },
-  // gift: получатель/даритель (показывается под подписью)
-  'post-15': { reshareId: 1 },
-  'post-8':  { reshareId: 3 },
+  'group-invite': { friends: { ids: [1, 4], more: 3, text: '5 друзей подписаны' } },
 };
+
+// gift: получатель/даритель (аватар под подписью) — по порядку появления подарков
+const GIFT_RESHARE = [1, 3];
+
+// Заполняется в main(): EXTRAS[post.id] = COMPANION[post.type] (привязка к типу).
+const EXTRAS = {};
 
 /* Дефолтное время поста (время убрали из таблицы — это «реквизит» шаблона). */
 const TIMES = ['08:15', '09:35', '11:18', '12:48', '14:02', '15:20', '17:46', '18:42', '20:10', '21:33'];
@@ -125,6 +130,21 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
         </div></div></div>`;
 }
 
+/** Верхушка фида (feed-header): крошки СВЕРХУ + строка автора.
+ *  Ава 44, имя через ds-title-m в 1 строку (feed-header__name), под именем —
+ *  ВРЕМЯ всегда (не «Сообщество»). */
+function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null } = {}) {
+  const crumbs = breadcrumbs(tema, rubrika);
+  const cell = authorHeader(id, {
+    size,
+    nameClass: `${nameClass} feed-header__name`,
+    subtitle: time,
+    subscribe,
+    literalName,
+  });
+  return `        <header class="feed-header">${crumbs ? '\n' + crumbs : ''}\n${cell}\n        </header>`;
+}
+
 /** Хлебные крошки из темы/рубрики. */
 function breadcrumbs(tema, rubrika) {
   const items = [];
@@ -180,6 +200,7 @@ function mediaVideo(photos)  {
   const poster = photos[0] ? img(photos[0]) : '';
   return `        <div class="media __aspect-4-3 __type-video">${poster}
           <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
+          <span class="media__time">0:45</span>
         </div>`;
 }
 function mediaClip(photos) {
@@ -223,11 +244,6 @@ function renderPost(p, idx) {
   const time = TIMES[idx % TIMES.length];
   const x = EXTRAS[id] || {};
 
-  const head = (size, opts = {}) => {
-    const subtitle = opts.subtitle !== undefined ? opts.subtitle : (grp ? 'Сообщество' : time);
-    return authorHeader(author, { size, subtitle, ...opts });
-  };
-
   switch (type) {
     /* ── feed-base: text / photo / gallery / clip / video / article / question ── */
     case 'text': case 'photo': case 'gallery': case 'clip': case 'video':
@@ -235,14 +251,12 @@ function renderPost(p, idx) {
       const entity = grp ? ' data-entity="group"' : '';
       const parts = [];
       if (type === 'article') {
-        parts.push(breadcrumbs(tema, rubrika));
-        parts.push(head(44, { nameClass: 'ds-title-m' }));
+        parts.push(feedHeader(author, { tema, rubrika, time }));
         parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
         if (text) parts.push(`        <p class="ds-body-m">${esc(text)}</p>`);
         parts.push(mediaPhoto(photos));
       } else {
-        parts.push(head(36));
-        parts.push(breadcrumbs(tema, rubrika));
+        parts.push(feedHeader(author, { tema, rubrika, time }));
         if (title) parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
         parts.push(feedText(text));
         if (type === 'video')   parts.push(mediaVideo(photos));
@@ -398,19 +412,32 @@ ${ctaButton('🖼 Смотреть работы', { style: 'secondary' })}
 
     /* ── моменты (сториз в ленте) ── */
     case 'stories-moments': {
-      const ids = String(author).split(',').map(s => s.trim()).filter(Boolean);
-      const viewed = x.viewed || [];
-      const avas = ids.map((aid, i) => {
-        const ring = viewed[i] ? '__ring-viewed' : '__ring-active';
-        return `          <div class="avatar __size-56 __type-image ${ring} __has-caption">
-            <img data-person-avatar="${esc(aid)}" alt="">
-            <div class="avatar__caption">${esc(firstName(aid))}</div>
+      // Первый кружок — «Поделиться» (свой момент, «+»-бейдж, не открывает viewer)
+      const share = `          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon" data-skip-viewer>
+            <img data-person-avatar="my_profile" alt="">
+            <div class="avatar__addon __pos-br stories-row__add"><img src="../assets/icons/add_24.svg" width="20" height="20" alt=""></div>
+            <div class="avatar__caption">Поделиться</div>
+          </div>`;
+      // Кружки моментов: большой круг = cover (фото момента), бейдж = author
+      // (кто выложил), подпись = имя автора. Источник — EXTRAS[id].moments;
+      // фолбэк на старый формат (author = список id, без бейджей).
+      const items = x.moments || String(author).split(',').map(s => s.trim()).filter(Boolean)
+        .map(aid => ({ cover: aid, author: aid }));
+      const avas = items.map(it => {
+        const ring = it.viewed ? '__ring-viewed' : '__ring-active';
+        const badge = it.author != null
+          ? `\n            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="${esc(it.author)}" alt=""></div>`
+          : '';
+        return `          <div class="avatar __size-56 __type-image ${ring} __has-caption __has-addon">
+            <img data-person-avatar="${esc(it.cover)}" alt="">${badge}
+            <div class="avatar__caption">${esc(firstName(it.author != null ? it.author : it.cover))}</div>
           </div>`;
       }).join('\n');
       return `      <article class="feed-stories island">
 ${breadcrumbs(tema, rubrika)}
         <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
         <div class="feed-stories__list">
+${share}
 ${avas}
         </div>
       </article>`;
@@ -447,33 +474,49 @@ const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /* ── main ───────────────────────────────────────────────────────────────────── */
 async function main() {
-  console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
-  const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
-  if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-  const rows = parseCsv(await res.text());
-  const [, ...body] = rows;
+  // --offline: перегенерить разметку из уже сохранённого data/feed.json,
+  // не обращаясь к таблице (полезно, когда нет сети или меняли только шаблон).
+  const offline = process.argv.includes('--offline');
+  let posts;
 
-  const posts = [];
-  for (const c of body) {
-    const id = (c[0] || '').trim();
-    const type = (c[1] || '').trim();
-    if (!id || !type) continue;
-    posts.push({
-      id, type,
-      author: (c[2] || '').trim(),
-      title: (c[3] || '').trim(),
-      text: (c[4] || '').trim(),
-      photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
-      likes: (c[6] || '').trim(),
-      comments: (c[7] || '').trim(),
-      reshares: (c[8] || '').trim(),
-      tema: (c[9] || '').trim(),
-      rubrika: (c[10] || '').trim(),
-    });
+  if (offline) {
+    console.log('→ Офлайн-реген из data/feed.json (таблицу не тяну)…');
+    posts = JSON.parse(readFileSync(resolve(ROOT, 'data/feed.json'), 'utf8')).posts || [];
+  } else {
+    console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
+    const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
+    const rows = parseCsv(await res.text());
+    const [, ...body] = rows;
+
+    posts = [];
+    for (const c of body) {
+      const id = (c[0] || '').trim();
+      const type = (c[1] || '').trim();
+      if (!id || !type) continue;
+      posts.push({
+        id, type,
+        author: (c[2] || '').trim(),
+        title: (c[3] || '').trim(),
+        text: (c[4] || '').trim(),
+        photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        likes: (c[6] || '').trim(),
+        comments: (c[7] || '').trim(),
+        reshares: (c[8] || '').trim(),
+        tema: (c[9] || '').trim(),
+        rubrika: (c[10] || '').trim(),
+      });
+    }
+
+    writeFileSync(resolve(ROOT, 'data/feed.json'),
+      JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
   }
 
-  writeFileSync(resolve(ROOT, 'data/feed.json'),
-    JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
+  // Разложить компаньон-данные по актуальным id (привязка к ТИПУ, не к id).
+  for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
+  posts.filter(p => p.type === 'gift').forEach((p, i) => {
+    EXTRAS[p.id] = { ...(EXTRAS[p.id] || {}), reshareId: GIFT_RESHARE[i] ?? GIFT_RESHARE[GIFT_RESHARE.length - 1] };
+  });
 
   const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
   splice(cards);

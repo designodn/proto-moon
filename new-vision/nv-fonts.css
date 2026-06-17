@@ -104,3 +104,14 @@
 .button-inline.__size-16 {
   font-family: var(--font-family-content);
 }
+
+/* NV-лента: верхушка фида (feed-header) и таймер видео — принудительно
+   OK Sans Display. Имя уже Display; время/подзаголовок (caption-m) и таймер
+   медиа перекрываем с Roboto на дисплейный кат. */
+.feed-header,
+.feed-header .ds-title-m,
+.feed-header .ds-caption-m,
+.feed-header__name,
+.media__time {
+  font-family: var(--font-family-display);
+}
