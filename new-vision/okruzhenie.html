@@ -333,6 +333,7 @@
     }
 
     var current = countEl.querySelector('.activity-indicator__digit');
+    var isChange = !!current;                   // была цифра → это смена, а не первое появление
     if (current) {                              // старая цифра — падает вниз и исчезает
       current.classList.add('__leave');
       current.addEventListener('animationend', function () { current.remove(); }, { once: true });
@@ -344,9 +345,12 @@
     countEl.appendChild(incoming);
     countEl.dataset.value = text;
 
-    badge.classList.remove('__pop');            // перезапуск «пыха» кружка
+    // Первое появление из пульса — «поп» (рост из центра).
+    // Смена цифры — мягкий мини-бамп всего каунтера.
+    var bumpClass = isChange ? '__bump' : '__pop';
+    badge.classList.remove('__pop', '__bump');  // перезапуск анимации
     void badge.offsetWidth;
-    badge.classList.add('__pop');
+    badge.classList.add(bumpClass);
   }
 
   // Уважение к prefers-reduced-motion: без таймеров — сразу финальное состояние.
