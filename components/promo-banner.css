@@ -96,9 +96,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 .promo-banner.__view-kr .promo-banner__title {
-  max-width: 178px;   /* как в макете — заголовок в 2 строки */
-  font-size: 17px;
-  line-height: 1.1;
+  max-width: 178px;   /* ограничиваем ширину — заголовок встаёт в 2 строки;
+                         типографику задаёт класс ds-title-m на элементе */
   color: var(--static-text-and-icons-base-primary);
 }
 .promo-banner.__view-kr .promo-banner__chevron {

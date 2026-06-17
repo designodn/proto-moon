@@ -86,6 +86,14 @@
   padding: 0;
   overflow: visible;
 }
+/* Ховер/тап-оверлей ячейки в конвейере отключаем — подложка появления
+   (__conv-appear) уже даёт визуальный слой, второй оверлей лишний. */
+.ds-activity-conveyor .uni-cell-container::after { display: none; }
+/* И press-feedback (scale 0.95) тоже убираем. !important — у штатного правила
+   высокая специфичность; transform у контейнера больше нигде не используется
+   (enter/leave-анимации висят на .uni-cell-wrapper, не на контейнере). */
+.ds-activity-conveyor .uni-cell-container:active,
+.ds-activity-conveyor .uni-cell-container.__clicked { transform: none !important; }
 /* Текст — максимум 2 строки, чтобы строки были одинаковой высоты */
 .ds-activity-conveyor .uni-cell-additional-content {
   display: -webkit-box;
