@@ -3,36 +3,40 @@ window.DS_PEOPLE_DATA = [
   {
     "id": 1,
     "name": "Александра Бачурина (Душка)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
     "age": 58,
     "city": "Санкт-Петербург",
-    "bio": "Люблю сад и внуков"
+    "bio": ""
   },
   {
     "id": 2,
     "name": "Сергей Чернышов",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&dpr=2",
     "media": "image",
     "gender": "м",
     "age": 66,
     "city": "Улан-Удэ",
-    "bio": "сад"
+    "bio": ""
   },
   {
     "id": 3,
     "name": "Зинаида Халина(Стребкова)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
-    "age": 70,
+    "age": null,
     "city": "",
-    "bio": "сад внуки"
+    "bio": ""
   },
   {
     "id": 4,
     "name": "Виктор Бондарев",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&dpr=2",
     "media": "image",
     "gender": "м",
@@ -43,6 +47,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": 5,
     "name": "Антонида Чекалова (Гахова)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -53,26 +58,29 @@ window.DS_PEOPLE_DATA = [
   {
     "id": 6,
     "name": "Александр Кириевич",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&dpr=2",
     "media": "image",
     "gender": "м",
-    "age": 46,
+    "age": null,
     "city": "",
     "bio": ""
   },
   {
     "id": 7,
     "name": "Галина Гаджикулиева",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
-    "age": 69,
+    "age": null,
     "city": "Тверь",
     "bio": ""
   },
   {
     "id": 8,
     "name": "Александр Мещеряков",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&dpr=2",
     "media": "image",
     "gender": "м",
@@ -83,6 +91,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": 9,
     "name": "Екатерина )))))",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -93,6 +102,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": 10,
     "name": "Александр Попов",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&dpr=2",
     "media": "image",
     "gender": "м",
@@ -103,6 +113,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "my_profile",
     "name": "Анфиса Тимирбаева(Абдуллина)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -113,6 +124,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "vvz-1",
     "name": "Карасев Дмитрий",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CHFAm_VFBkioSGBqh1KHSkufhK9gKtLD5R1OaqCTGtaii43TDYLK6Xho4HCWziPYDnMakrjZb4lKohPRvQf2sfeHB5-hia1t6b5GWcyW2T0i53z2hk422DqZ6SMv6zRUBBmRQ7aghTJZy5Yi1jMvGsVcAAAAKQ&dpr=2",
     "media": "image",
     "gender": "м",
@@ -123,6 +135,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "vvz-2",
     "name": "Лидия Артемьева (Фёдорова)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J8s8x_f1BC-7P3v7tlkr_F6Bbbkc4Dhk0M5Xrkbsb0WkEVxPU7jFvmvycToJFt03gVCJie8SXeHU6kT1xjePo58EVEd-Op6GwRGDu2FrYAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -133,6 +146,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "vvz-3",
     "name": "Ксения Лысенко",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JNpBzacIh9w85MyWJ8lr9JG2DYXMREFeVQuOByMQp9nIOv_bjNm8VKQWtME8GPcKQvd9bJHra8d0060hQ0k2ierkYIpuYSAKfl_nXTzIMAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -143,6 +157,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "vvz-4",
     "name": "Елена Саблина (Бивол)",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I8PxDOr4TDbrut9puH377YOS4hEp8yKDNEbRYX5vR85r_XH-61ekx2bKPsQ2kt6lwYSiF7hM7V4fUJfmfaIzYqLRo3ZAj6iRih-CihU4kAAAAp&dpr=2",
     "media": "image",
     "gender": "ж",
@@ -153,6 +168,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "group-1",
     "name": "Наталья Атаманюк | Рецепты",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1L4AGIpaJqmXBqZF5Jg5v6nSXQvFI-QmLlFmjaw9Z-c0442kX3cD9AR8knQYoSKDM7ZREk0nSHyafKVgfIidnFuLC615ccnAAAAKQ&dpr=2",
     "media": "image",
     "gender": "",
@@ -163,6 +179,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "group-2",
     "name": "Доктор Мясников",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LDgqkTIy8evV5-Cu096as6sS5ESXjenLwagcd7_plDLBwG_m44RmmxuRXww7C1h0LTOlIWF7aQhBkPdtPWdrC-u-nBCFGyTGBN4143G-sAAAAp&dpr=2",
     "media": "image",
     "gender": "",
@@ -173,6 +190,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "group-3",
     "name": "Рыбалка и Охота",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRXwtU424YNhdd0EdU6dg0Cp51K1-5m4FS7w4i_Z7uqh4jpOPIb-KCsDlnXcjSJJvUwsQ7B6WyBwPBQUC79fx-5ye0qeEM9gwTsqgzEUAAAAp&dpr=2",
     "media": "image",
     "gender": "",
@@ -183,6 +201,7 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "group-4",
     "name": "Идеи для сада и огорода своими руками с фото",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&dpr=2",
     "media": "image",
     "gender": "",
@@ -193,8 +212,53 @@ window.DS_PEOPLE_DATA = [
   {
     "id": "group-5",
     "name": "Игорь Черняков",
+    "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1K3ZfIUJ2wQoa2mZ3cfO0RXX0hbFm3WyaSYZH-GZkyTe8xUwVTWOF-mQePtegmiCs2yTwd_JqaTz1HLT8Uv1yly8ZMlqo8ADaSxIyxvPMUAAAAp&dpr=2",
     "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "ad-1",
+    "name": "Квартал бизнес-класса «Б15»",
+    "subtitle": "Покупки • Реклама 0+",
+    "photo": "https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "ad-2",
+    "name": "Магазин снастей",
+    "subtitle": "Покупки • Реклама 0+",
+    "photo": "https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "ad-3",
+    "name": "Магазин цветов",
+    "subtitle": "Покупки • Реклама 0+",
+    "photo": "https://avatars.mds.yandex.net/get-altay/910613/2a00000160da5a5d8010b004bcd9a09d2f99/L_height",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "ad-4",
+    "name": "Магазин цветов Фантазия",
+    "subtitle": "Покупки • Реклама 0+",
+    "photo": null,
+    "media": null,
     "gender": "",
     "age": null,
     "city": "",

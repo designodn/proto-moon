@@ -270,8 +270,16 @@ function renderPost(p, idx) {
 
     /* ── реклама ── */
     case 'ad': {
+      // Аватар/имя — из «Люди», если автор это id (напр. ad-1); иначе инициалы по тексту.
+      const inRoster = !!PEOPLE[String(author)];
+      const subtitle = (inRoster && PEOPLE[String(author)].subtitle) || 'Реклама 0+';
+      const header = authorHeader(inRoster ? author : null, {
+        size: 44, subtitle, subscribe: false,
+        literalName: inRoster ? null : author,
+      });
       const parts = [
-        authorHeader(null, { size: 44, literalName: author, subtitle: 'Реклама 0+', subscribe: false }),
+        header,
+        title ? `        <div class="ds-title-m">${esc(title)}</div>` : '',
         feedText(text, 2),
         mediaPhoto(photos),
         ctaButton('Перейти'),
