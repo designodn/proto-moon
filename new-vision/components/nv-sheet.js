@@ -10,7 +10,8 @@
  *   </div>
  *
  * На загрузке скрипт оборачивает это общим chrome: overlay (тап закрывает) +
- * panel (handle + navbar с заголовком и крестиком) вокруг авторских body/footer.
+ * dock (ручка над листом + panel). В panel — navbar (заголовок слева, крестик
+ * справа) и авторские body/footer.
  * Открытие/закрытие — класс `.__open` (логика на странице; крестик/overlay
  * помечены [data-sheet-close], их ловит делегированный обработчик страницы).
  *
@@ -33,28 +34,32 @@
     var overlay = el('div', 'nv-sheet__overlay');
     overlay.setAttribute('data-sheet-close', '');
 
+    // Док: ручка (над листом) + панель — едут вместе.
+    var dock = el('div', 'nv-sheet__dock');
+    dock.appendChild(el('div', 'nv-sheet__handle'));
+
     var panel = el('div', 'nv-sheet__panel');
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
     if (title) panel.setAttribute('aria-label', title);
 
-    panel.appendChild(el('div', 'nv-sheet__handle'));
-
+    // navbar: заголовок слева, крестик справа
     var nav = el('header', 'nv-sheet__navbar');
     nav.innerHTML =
+      '<h2 class="ds-title-l nv-sheet__title">' + title + '</h2>' +
       '<span class="button-inline-wrapper __size-24 __view-secondary">' +
         '<button class="button-inline __size-24" data-sheet-close aria-label="Закрыть">' +
           '<span class="button-inline__content">' +
             '<span class="button-inline__icon icon __size-24 __src" style="--icon-src:url(\'' + icon + '\')"></span>' +
           '</span>' +
         '</button>' +
-      '</span>' +
-      '<h2 class="ds-title-l nv-sheet__title">' + title + '</h2>';
+      '</span>';
     panel.appendChild(nav);
 
     authored.forEach(function (c) { panel.appendChild(c); });
 
+    dock.appendChild(panel);
     sheet.appendChild(overlay);
-    sheet.appendChild(panel);
+    sheet.appendChild(dock);
   });
 })();
