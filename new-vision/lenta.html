@@ -48,7 +48,7 @@
           </div>
           <div class="nav-bar__trailing">
             <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Календарь событий"><span class="button-inline__content"><span class="icon __slot-calendar"></span></span></button></span>
-            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" data-href="../notifications.html" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
             <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Поиск"><span class="button-inline__content"><span class="icon __slot-search"></span></span></button></span>
           </div>
         </div>
@@ -771,8 +771,8 @@
       <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.png')">
         <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
         <div class="promo-banner__actions">
-          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color" data-href="../gifts.html"><span class="button-content">Подарить</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color" data-promo-hide><span class="button-content">Скрыть</span></button></div>
         </div>
       </div>
 
@@ -790,6 +790,22 @@
   document.addEventListener('click', function (e) {
     var tab = e.target.closest ? e.target.closest('.tabs-tab[data-href]') : null;
     if (tab) location.href = tab.getAttribute('data-href');
+  });
+</script>
+
+<!-- Промо-баннер: «Подарить» → подарки, «Скрыть» → убрать баннер.
+     Навбар: колокольчик → уведомления (через data-href на кнопке). -->
+<script>
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var hide = e.target.closest('[data-promo-hide]');
+    if (hide) {
+      var banner = hide.closest('.promo-banner');
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+    var go = e.target.closest('.promo-banner [data-href], .nav-bar [data-href]');
+    if (go) location.href = go.getAttribute('data-href');
   });
 </script>
 
