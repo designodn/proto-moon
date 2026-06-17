@@ -32,3 +32,9 @@
 
 /* ── Аватар слева: 48px (в DS нет __size-48, задаём через --avatar-size) ── */
 .nav-bar.nv-feed-nav .nv-nav-avatar { --avatar-size: 48px; }
+
+/* ── Кнопка «назад»: NV-глиф вместо DS-чеврона ──
+   Файл подключается только на NV-страницах (через new-vision.css) и после
+   базового icon.css, поэтому глиф возвращается лишь в New Vision, не задевая
+   q3-страницы. Базовый слот __slot-back в icon.css остаётся DS-чевроном. */
+.icon.__slot-back { --icon-src: url('../assets/new-vision-icons/glyph_arrow_24.svg'); }
