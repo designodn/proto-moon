@@ -1141,32 +1141,6 @@
           return slides;
         }
       });
-
-      // Сториз годовщины дружбы убрана из карусели — единственная точка входа
-      // теперь тап по постеру «Годовщина дружбы» в фиде. Открываем её как
-      // «виртуального автора» (элемент-аватарка с нужными data-*, но НЕ в стаке)
-      // через публичный momentApi.open — флоу слайдов/шапки переиспользуется.
-      var friendshipAuthor = document.createElement('div');
-      friendshipAuthor.className = 'avatar __size-56 __ring-active stories-row__couple';
-      friendshipAuthor.setAttribute('data-stories', '2');
-      friendshipAuthor.setAttribute('data-name', 'Анна и Кристина');
-      friendshipAuthor.setAttribute('data-friendship', '');
-      friendshipAuthor.setAttribute('aria-label', 'Анна и Кристина');
-      friendshipAuthor.innerHTML =
-        '<span class="stories-row__face" style="background-image: url(\'https://i.pravatar.cc/96?img=47\');"></span>' +
-        '<span class="stories-row__face" style="background-image: url(\'https://i.pravatar.cc/96?img=49\');"></span>';
-
-      var annivPoster = document.querySelector('.feed-birthday__deco');
-      if (annivPoster && momentApi) {
-        annivPoster.style.cursor = 'pointer';
-        annivPoster.setAttribute('role', 'button');
-        annivPoster.setAttribute('tabindex', '0');
-        annivPoster.setAttribute('aria-label', 'Открыть сториз годовщины дружбы');
-        annivPoster.addEventListener('click', function () { momentApi.open(friendshipAuthor); });
-        annivPoster.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); momentApi.open(friendshipAuthor); }
-        });
-      }
     })();
   </script>
 
