@@ -48,7 +48,7 @@
           </div>
           <div class="nav-bar__trailing">
             <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Календарь событий"><span class="button-inline__content"><span class="icon __slot-calendar"></span></span></button></span>
-            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" data-href="../notifications.html" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
             <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Поиск"><span class="button-inline__content"><span class="icon __slot-search"></span></span></button></span>
           </div>
         </div>
@@ -73,7 +73,10 @@
           <div class="uni-cell-wrapper __type-activity __cat-win">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ТБ</div>
+                <div class="activity-lead">
+                  <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=45" alt=""></div>
+                  <span class="lead-trophy" data-lottie="../assets/lottie/trophy.json" aria-hidden="true"></span>
+                </div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> заняла 1 место в фотоконкурсе</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -84,7 +87,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">АК</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Алёна Курская</b> добавила альбом «Море-2024»</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -95,7 +98,7 @@
           <div class="uni-cell-wrapper __type-activity __cat-neuro">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">МК</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=33" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Миша Колесников</b> сделал нейро-обзор кофеварки</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -106,7 +109,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ЮМ</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=68" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Юрий Макиненко</b> задаёт вопрос про счётчики воды</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
@@ -117,10 +120,14 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ИВ</div>
-                <div class="uni-cell-additional-content ds-body-m"><b>Ирина Власова</b> ищет советы по выбору школы</div>
+                <div class="ava-cluster">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=5" alt=""></div>
+                </div>
+                <div class="uni-cell-additional-content ds-body-m">В Санкт-Петербурге обсуждают новую остановку</div>
                 <div class="button-wrapper __size-36">
-                  <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
+                  <button class="button-container __style-secondary"><span class="button-content">Открыть</span></button>
                 </div>
               </div>
             </div>
@@ -128,7 +135,7 @@
           <div class="uni-cell-wrapper __type-activity __cat-holiday">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">НП</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=12" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Никита Першин</b> поздравляет всех с Днём города</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Поздравить</span></button>
@@ -764,13 +771,12 @@
 
       </div>
 
-      <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же).
-           Пока картинки нет, фон — фирменный оранжевый (перекроется, когда ляжет jpg). -->
-      <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
+      <!-- Промо-баннер — sticky над таб-баром. Фон — assets/promo-banner/ (см. README там же). -->
+      <div class="promo-banner __sticky" style="background-color: var(--static-surface-status-accent); --promo-banner-image:url('../assets/promo-banner/day-of-gifts.png')">
         <p class="promo-banner__title ds-title-xl">Народный день подарков!</p>
         <div class="promo-banner__actions">
-          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color"><span class="button-content">Подарить</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color"><span class="button-content">Скрыть</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-primary-on-color" data-href="../gifts.html"><span class="button-content">Подарить</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary-on-color" data-promo-hide><span class="button-content">Скрыть</span></button></div>
         </div>
       </div>
 
@@ -788,6 +794,22 @@
   document.addEventListener('click', function (e) {
     var tab = e.target.closest ? e.target.closest('.tabs-tab[data-href]') : null;
     if (tab) location.href = tab.getAttribute('data-href');
+  });
+</script>
+
+<!-- Промо-баннер: «Подарить» → подарки, «Скрыть» → убрать баннер.
+     Навбар: колокольчик → уведомления (через data-href на кнопке). -->
+<script>
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var hide = e.target.closest('[data-promo-hide]');
+    if (hide) {
+      var banner = hide.closest('.promo-banner');
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+    var go = e.target.closest('.promo-banner [data-href], .nav-bar [data-href]');
+    if (go) location.href = go.getAttribute('data-href');
   });
 </script>
 
@@ -965,24 +987,16 @@
     }).catch(function () {});
   }
 
-  // Lottie-эффект по категории ячейки. Вызывать, КОГДА ячейка уже раскрыта
-  // (иначе getBoundingClientRect отдаёт схлопнутый rect → эффект «уезжает»).
-  //   «Праздник» — конфетти по центру ячейки; «1 место» — трофей справа от аватара.
+  // Конфетти «Праздника» — разовый бёрст по центру ячейки (body-оверлей, т.к.
+  // должен выходить за overflow:hidden ряда). Вызывать после раскрытия ячейки.
+  // Трофей «1 место» — НЕ здесь: он прибит к ячейке как in-cell бейдж (.lead-trophy),
+  // поэтому едет вместе с ячейкой при сдвиге конвейера (см. загрузчик ниже).
   function playCellLottie(cell) {
     if (cell.classList.contains('__cat-holiday')) {
       var cr = cell.getBoundingClientRect();
       var size = 220;
       playLottie('../assets/lottie/confetti.json',
         cr.left + cr.width / 2 - size / 2, cr.top + cr.height / 2 - size / 2, size);
-    } else if (cell.classList.contains('__cat-win')) {
-      var ava = cell.querySelector('.avatar');
-      if (!ava) return;
-      var ar = ava.getBoundingClientRect();
-      var tsize = 52;
-      playLottie('../assets/lottie/trophy.json',
-        ar.right - 10,                          // справа от аватара (с лёгким нахлёстом)
-        ar.top + ar.height / 2 - tsize / 2,     // по вертикали — по центру аватара
-        tsize);
     }
   }
 
@@ -1031,6 +1045,45 @@
   })();
 
   setInterval(step, 3000);
+})();
+</script>
+
+<!-- Трофей «1 место» — Lottie в пустом контейнере .lead-trophy внутри ячейки
+     (едет с ней при сдвиге). Подключение как у конфетти: autoplay, без emoji
+     и без data_ready. ОТДЕЛЬНО от скрипта конвейера (тот делает return при
+     prefers-reduced-motion). Нет сети/CDN — контейнер просто пустой. -->
+<script>
+(function () {
+  var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
+  if (!hosts.length) return;
+
+  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+  var lottieLoading = null;
+  function ensureLottie() {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoading) return lottieLoading;
+    lottieLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOTTIE_CDN; s.async = true;
+      s.onload = function () { resolve(window.lottie); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return lottieLoading;
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  hosts.forEach(function (host) {
+    ensureLottie().then(function (lottie) {
+      var anim = lottie.loadAnimation({
+        container: host, renderer: 'svg', loop: !still, autoplay: !still,
+        path: host.getAttribute('data-lottie')
+      });
+      if (still) anim.addEventListener('DOMLoaded', function () {
+        anim.goToAndStop(anim.totalFrames - 1, true);   // reduced-motion → статичный кадр
+      });
+    }).catch(function () { /* нет сети — контейнер пустой */ });
+  });
 })();
 </script>
 

@@ -36,6 +36,10 @@
 .activity-header .pulse-dot { margin-left: auto; }
 .activity-header:active .activity-header__chevron { transform: translateX(2px); }
 
+/* Отступ от заголовка острова до первой ячейки конвейера = 16 по макету.
+   Заголовок уже даёт 6px снизу → добавляем 10. */
+.activity-header + .ds-activity-conveyor { margin-top: 10px; }
+
 /* Промо-баннер «Копите народные билеты» — вариация DS-компонента
    .promo-banner.__view-kr (см. components/promo-banner.css).
    В списке: отступ сверху 8, бока 16, до первой ячейки 12. */
@@ -104,21 +108,35 @@
   pointer-events: none;
   user-select: none;
 }
-/* Lottie-вариант лид-стикера (трофей в ячейке конкурса).
-   До загрузки/при ошибке виден emoji-фолбэк (текст внутри span);
-   когда Lottie проигрался — emoji прячем (.__lottie-on), показываем SVG. */
-.lead-lottie {
+/* Lottie-трофей — отдельный пустой контейнер (БЕЗ emoji-гибрида).
+   Lottie грузится в него скриптом, как у конфетти. Лежит в .activity-lead
+   (position:relative), поэтому едет вместе с ячейкой. */
+.lead-trophy {
+  position: absolute;
+  pointer-events: none;
+}
+.lead-trophy svg { display: block; width: 100%; height: 100%; }
+
+/* На okruzhenie (лид с фото): 52×52 с нахлёстом на нижне-правую часть авы. */
+.lead-trophy {
   width: 52px;
   height: 52px;
-  /* нахлёст на нижне-правую часть аватарки 44×44: верх-левый угол бокса ≈ центр авы */
   right: -24px;
   bottom: -24px;
-  font-size: 30px;          /* размер emoji-фолбэка */
-  line-height: 52px;
-  text-align: center;
 }
-.lead-lottie.__lottie-on { font-size: 0; }   /* убираем emoji, остаётся SVG */
-.lead-lottie svg { display: block; width: 100%; height: 100%; }
+
+/* В конвейере ленты ячейка фикс-высотой 54 и клипается — большой нахлёст
+   снизу обрезался бы. Поэтому трофей ставим СПРАВА от аватара, по центру
+   по вертикали, размером под ячейку (без вертикального спилла). */
+.ds-activity-conveyor .lead-trophy {
+  width: 44px;
+  height: 44px;
+  right: auto;
+  bottom: auto;
+  left: 100%;                        /* от правого края аватара */
+  top: 50%;
+  transform: translate(-40%, -50%);  /* лёгкий нахлёст на аву, по центру */
+}
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
@@ -284,8 +302,8 @@
 .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 12px;
+  inset: -6px -8px;            /* подложка за ячейкой: +8px по бокам, +6px сверху/снизу */
+  border-radius: 16px;
   background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
   animation: au-fade 1.3s ease-out both;
   pointer-events: none;
