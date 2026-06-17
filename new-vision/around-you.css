@@ -36,6 +36,10 @@
 .activity-header .pulse-dot { margin-left: auto; }
 .activity-header:active .activity-header__chevron { transform: translateX(2px); }
 
+/* Отступ от заголовка острова до первой ячейки конвейера = 16 по макету.
+   Заголовок уже даёт 6px снизу → добавляем 10. */
+.activity-header + .ds-activity-conveyor { margin-top: 10px; }
+
 /* Промо-баннер «Копите народные билеты» — вариация DS-компонента
    .promo-banner.__view-kr (см. components/promo-banner.css).
    В списке: отступ сверху 8, бока 16, до первой ячейки 12. */

@@ -74,7 +74,7 @@
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
                 <div class="activity-lead">
-                  <div class="avatar __size-44 __type-initials">ТБ</div>
+                  <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=45" alt=""></div>
                   <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
                 </div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> заняла 1 место в фотоконкурсе</div>
@@ -87,7 +87,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">АК</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Алёна Курская</b> добавила альбом «Море-2024»</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -98,7 +98,7 @@
           <div class="uni-cell-wrapper __type-activity __cat-neuro">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">МК</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=33" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Миша Колесников</b> сделал нейро-обзор кофеварки</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -109,7 +109,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ЮМ</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=68" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Юрий Макиненко</b> задаёт вопрос про счётчики воды</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
@@ -120,10 +120,14 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">ИВ</div>
-                <div class="uni-cell-additional-content ds-body-m"><b>Ирина Власова</b> ищет советы по выбору школы</div>
+                <div class="ava-cluster">
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=5" alt=""></div>
+                </div>
+                <div class="uni-cell-additional-content ds-body-m">В Санкт-Петербурге обсуждают новую остановку</div>
                 <div class="button-wrapper __size-36">
-                  <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
+                  <button class="button-container __style-secondary"><span class="button-content">Открыть</span></button>
                 </div>
               </div>
             </div>
@@ -131,7 +135,7 @@
           <div class="uni-cell-wrapper __type-activity __cat-holiday">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-44 __type-initials">НП</div>
+                <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=12" alt=""></div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Никита Першин</b> поздравляет всех с Днём города</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Поздравить</span></button>
@@ -1073,15 +1077,20 @@
   hosts.forEach(function (host) {
     ensureLottie().then(function (lottie) {
       var fb = host.textContent;
+      // Прячем emoji СРАЗУ (не ждём data_ready — оно капризное и может не
+      // выстрелить, тогда 🥇 перекрывает трофей). SVG отрисуется в span.
+      host.classList.add('__lottie-on');
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: !still, autoplay: !still,
         path: host.getAttribute('data-lottie')
       });
-      anim.addEventListener('data_ready', function () {
-        host.classList.add('__lottie-on');
-        if (still) anim.goToAndStop(anim.totalFrames - 1, true); // последний кадр статикой
+      if (still) anim.addEventListener('DOMLoaded', function () {
+        anim.goToAndStop(anim.totalFrames - 1, true);          // статичный последний кадр
       });
-      anim.addEventListener('data_failed', function () { anim.destroy(); host.textContent = fb; });
+      // Реально упало (нет файла/битый JSON) — возвращаем emoji.
+      anim.addEventListener('data_failed', function () {
+        anim.destroy(); host.classList.remove('__lottie-on'); host.textContent = fb;
+      });
     }).catch(function () { /* нет сети — остаётся emoji */ });
   });
 })();
