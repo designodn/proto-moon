@@ -55,8 +55,15 @@ const EXTRAS = {
   'post-18': { friends: { ids: [1, 3], more: 3, text: '12 друзей поздравило' } },
   // group-invite: друзья-подписчики
   'post-20': { friends: { ids: [1, 4], more: 3, text: '5 друзей подписаны' } },
-  // stories-moments: какие кольца «просмотрено» (по индексу аватарки)
-  'post-22': { viewed: [false, false, true, false] },
+  // stories-moments: кружки моментов. cover — фото момента (пока плейсхолдер,
+  // person id), author — кто выложил (аватар-бейдж в углу + подпись), viewed —
+  // серое кольцо. Первый кружок «Поделиться» добавляется шаблоном.
+  'post-22': { moments: [
+    { cover: 1, author: 4, viewed: false },
+    { cover: 2, author: 5, viewed: false },
+    { cover: 3, author: 6, viewed: true  },
+    { cover: 9, author: 7, viewed: false },
+  ] },
   // gift: получатель/даритель (показывается под подписью)
   'post-15': { reshareId: 1 },
   'post-8':  { reshareId: 3 },
@@ -239,11 +246,6 @@ function renderPost(p, idx) {
   const time = TIMES[idx % TIMES.length];
   const x = EXTRAS[id] || {};
 
-  const head = (size, opts = {}) => {
-    const subtitle = opts.subtitle !== undefined ? opts.subtitle : (grp ? 'Сообщество' : time);
-    return authorHeader(author, { size, subtitle, ...opts });
-  };
-
   switch (type) {
     /* ── feed-base: text / photo / gallery / clip / video / article / question ── */
     case 'text': case 'photo': case 'gallery': case 'clip': case 'video':
@@ -251,8 +253,7 @@ function renderPost(p, idx) {
       const entity = grp ? ' data-entity="group"' : '';
       const parts = [];
       if (type === 'article') {
-        parts.push(breadcrumbs(tema, rubrika));
-        parts.push(head(44, { nameClass: 'ds-title-m' }));
+        parts.push(feedHeader(author, { tema, rubrika, time }));
         parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
         if (text) parts.push(`        <p class="ds-body-m">${esc(text)}</p>`);
         parts.push(mediaPhoto(photos));
@@ -413,19 +414,32 @@ ${ctaButton('🖼 Смотреть работы', { style: 'secondary' })}
 
     /* ── моменты (сториз в ленте) ── */
     case 'stories-moments': {
-      const ids = String(author).split(',').map(s => s.trim()).filter(Boolean);
-      const viewed = x.viewed || [];
-      const avas = ids.map((aid, i) => {
-        const ring = viewed[i] ? '__ring-viewed' : '__ring-active';
-        return `          <div class="avatar __size-56 __type-image ${ring} __has-caption">
-            <img data-person-avatar="${esc(aid)}" alt="">
-            <div class="avatar__caption">${esc(firstName(aid))}</div>
+      // Первый кружок — «Поделиться» (свой момент, «+»-бейдж, не открывает viewer)
+      const share = `          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon" data-skip-viewer>
+            <img data-person-avatar="my_profile" alt="">
+            <div class="avatar__addon __pos-br stories-row__add"><img src="../assets/icons/add_24.svg" width="20" height="20" alt=""></div>
+            <div class="avatar__caption">Поделиться</div>
+          </div>`;
+      // Кружки моментов: большой круг = cover (фото момента), бейдж = author
+      // (кто выложил), подпись = имя автора. Источник — EXTRAS[id].moments;
+      // фолбэк на старый формат (author = список id, без бейджей).
+      const items = x.moments || String(author).split(',').map(s => s.trim()).filter(Boolean)
+        .map(aid => ({ cover: aid, author: aid }));
+      const avas = items.map(it => {
+        const ring = it.viewed ? '__ring-viewed' : '__ring-active';
+        const badge = it.author != null
+          ? `\n            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="${esc(it.author)}" alt=""></div>`
+          : '';
+        return `          <div class="avatar __size-56 __type-image ${ring} __has-caption __has-addon">
+            <img data-person-avatar="${esc(it.cover)}" alt="">${badge}
+            <div class="avatar__caption">${esc(firstName(it.author != null ? it.author : it.cover))}</div>
           </div>`;
       }).join('\n');
       return `      <article class="feed-stories island">
 ${breadcrumbs(tema, rubrika)}
         <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
         <div class="feed-stories__list">
+${share}
 ${avas}
         </div>
       </article>`;
