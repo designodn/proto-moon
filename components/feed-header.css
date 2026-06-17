@@ -58,3 +58,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Автор-человек кликабелен → профиль (JS-навигация в lenta.html).
+   У сообществ обёртка несёт data-entity="group" — для них перехода нет. */
+:not([data-entity="group"]) > .feed-header .avatar,
+:not([data-entity="group"]) > .feed-header .feed-header__name {
+  cursor: pointer;
+}

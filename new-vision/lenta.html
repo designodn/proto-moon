@@ -1187,5 +1187,30 @@
 <!-- Прячет «Раскрыть/Свернуть», если текст карточки виден целиком -->
 <script src="../components/feed-text.js"></script>
 
+<!-- Тап по автору карточки (ава или имя) → профиль этого человека.
+     Кликабельны только реальные люди: id у них числовой, у сообществ —
+     префикс group-, у рекламы — ad-. Группы/реклама перехода не дают. -->
+<script>
+(function () {
+  function userIdFromHeader(header) {
+    var el = header.querySelector('[data-person-name], [data-person-avatar]');
+    if (!el) return null;
+    var id = el.getAttribute('data-person-name') || el.getAttribute('data-person-avatar');
+    return /^\d+$/.test(id) ? id : null;   // group-*/ad-*/my_profile отсекаются
+  }
+
+  document.addEventListener('click', function (e) {
+    var hit = e.target.closest('.feed-header .avatar, .feed-header__name');
+    if (!hit) return;
+    var header = hit.closest('.feed-header');
+    if (!header) return;
+    var id = userIdFromHeader(header);
+    if (!id) return;                        // сообщество/реклама — не переходим
+    e.preventDefault();
+    location.href = 'profile.html?person=' + encodeURIComponent(id) + '&view=stranger';
+  });
+})();
+</script>
+
 </body>
 </html>
