@@ -366,13 +366,6 @@
 
     </div>
 
-    <!-- dev-переключатель состояний профиля (в макете отсутствует) -->
-    <div class="nv-pr-switch" role="tablist" aria-label="Состояние профиля">
-      <button type="button" data-set-view="self">Я</button>
-      <button type="button" data-set-view="friend">Друг</button>
-      <button type="button" data-set-view="stranger">Гость</button>
-    </div>
-
     <!-- TABBAR — профиль открывается из «Меню» -->
     <ok-tabbar data-variant="nv" data-active="menu"></ok-tabbar>
   </div>
@@ -549,8 +542,10 @@
     var initial = new URLSearchParams(location.search).get('view') || 'friend';
     applyView(initial);
 
-    // клики по переключателю — меняем состояние + ?view= без перезагрузки
-    document.querySelector('.nv-pr-switch').addEventListener('click', function (e) {
+    // клики по переключателю — меняем состояние + ?view= без перезагрузки.
+    // dev-пилюля убрана из разметки; обработчик оставлен под защитой, если её вернут.
+    var switchEl = document.querySelector('.nv-pr-switch');
+    if (switchEl) switchEl.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-set-view]');
       if (!btn) return;
       var view = btn.getAttribute('data-set-view');
