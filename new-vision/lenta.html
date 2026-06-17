@@ -1016,15 +1016,20 @@
   hosts.forEach(function (host) {
     ensureLottie().then(function (lottie) {
       var fb = host.textContent;
+      // Прячем emoji СРАЗУ (не ждём data_ready — оно капризное и может не
+      // выстрелить, тогда 🥇 перекрывает трофей). SVG отрисуется в span.
+      host.classList.add('__lottie-on');
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: !still, autoplay: !still,
         path: host.getAttribute('data-lottie')
       });
-      anim.addEventListener('data_ready', function () {
-        host.classList.add('__lottie-on');
-        if (still) anim.goToAndStop(anim.totalFrames - 1, true); // последний кадр статикой
+      if (still) anim.addEventListener('DOMLoaded', function () {
+        anim.goToAndStop(anim.totalFrames - 1, true);          // статичный последний кадр
       });
-      anim.addEventListener('data_failed', function () { anim.destroy(); host.textContent = fb; });
+      // Реально упало (нет файла/битый JSON) — возвращаем emoji.
+      anim.addEventListener('data_failed', function () {
+        anim.destroy(); host.classList.remove('__lottie-on'); host.textContent = fb;
+      });
     }).catch(function () { /* нет сети — остаётся emoji */ });
   });
 })();
