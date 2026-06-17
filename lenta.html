@@ -401,12 +401,12 @@
 
             <div class="friend-card" data-dismiss-target>
               <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=47')"></div>
-                <img src="https://i.pravatar.cc/240?img=47" alt="">
+                <div class="friend-card__blur" data-person-bg="vvz-1"></div>
+                <img data-person-avatar="vvz-1" alt="">
                 <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Алёна Ящук</div>
+                <div class="friend-card__title ds-title-s" data-person-name="vvz-1">Алёна Ящук</div>
                 <div class="friend-card__subtitle ds-caption-m">20 общих друзей</div>
                 <div class="friend-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -416,12 +416,12 @@
 
             <div class="friend-card" data-dismiss-target>
               <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=44')"></div>
-                <img src="https://i.pravatar.cc/240?img=44" alt="">
+                <div class="friend-card__blur" data-person-bg="vvz-2"></div>
+                <img data-person-avatar="vvz-2" alt="">
                 <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Анна Смирнова</div>
+                <div class="friend-card__title ds-title-s" data-person-name="vvz-2">Анна Смирнова</div>
                 <div class="friend-card__subtitle ds-caption-m">12 общих друзей</div>
                 <div class="friend-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -431,12 +431,12 @@
 
             <div class="friend-card" data-dismiss-target>
               <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
-                <img src="https://i.pravatar.cc/240?img=52" alt="">
+                <div class="friend-card__blur" data-person-bg="vvz-3"></div>
+                <img data-person-avatar="vvz-3" alt="">
                 <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Александр Фёдоров</div>
+                <div class="friend-card__title ds-title-s" data-person-name="vvz-3">Александр Фёдоров</div>
                 <div class="friend-card__subtitle ds-caption-m">12 общих друзей</div>
                 <div class="friend-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -446,12 +446,12 @@
 
             <div class="friend-card" data-dismiss-target>
               <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=45')"></div>
-                <img src="https://i.pravatar.cc/240?img=45" alt="">
+                <div class="friend-card__blur" data-person-bg="vvz-4"></div>
+                <img data-person-avatar="vvz-4" alt="">
                 <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Мария Иванова</div>
+                <div class="friend-card__title ds-title-s" data-person-name="vvz-4">Мария Иванова</div>
                 <div class="friend-card__subtitle ds-caption-m">10 общих друзей</div>
                 <div class="friend-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -461,12 +461,12 @@
 
             <div class="friend-card" data-dismiss-target>
               <div class="friend-card__media">
-                <div class="friend-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
-                <img src="https://i.pravatar.cc/240?img=33" alt="">
+                <div class="friend-card__blur" data-person-bg="vvz-1"></div>
+                <img data-person-avatar="vvz-1" alt="">
                 <span class="friend-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="friend-card__content">
-                <div class="friend-card__title ds-title-s">Олег Зайцев</div>
+                <div class="friend-card__title ds-title-s" data-person-name="vvz-1">Олег Зайцев</div>
                 <div class="friend-card__subtitle ds-caption-m">8 общих друзей</div>
                 <div class="friend-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -1127,5 +1127,8 @@
     });
   </script>
 
+  <!-- Реальные люди из Google-таблицы (data-person-*) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
 </body>
 </html>

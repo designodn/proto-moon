@@ -91,10 +91,11 @@ async function main() {
 
   const people = [];
   for (const cols of body) {
-    const idRaw = (cols[0] || '').trim();
+    let idRaw = (cols[0] || '').trim();
     const name = (cols[1] || '').trim();
     if (!idRaw || !name) continue; // пропускаем пустые болванки
-    const id = /^\d+$/.test(idRaw) ? Number(idRaw) : idRaw; // числовой или строковый (my_profile)
+    idRaw = idRaw.replace(/^vv+z-(\d+)$/i, 'vvz-$1'); // чиним опечатки vvvz-N → vvz-N
+    const id = /^\d+$/.test(idRaw) ? Number(idRaw) : idRaw; // числовой или строковый (my_profile, vvz-N)
     const photo = (cols[2] || '').trim() || null;
     const media = await detectMedia(photo);
     people.push({
