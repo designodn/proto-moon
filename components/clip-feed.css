@@ -60,6 +60,21 @@
   height: 100%;
   object-fit: cover;
 }
+.clip-feed__media iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Шапка автора — общий feed-header поверх видео (белый __on-media). */
+.clip-feed > .feed-header {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+}
 
 /* Шапка автора — верхний оверлей, текст в инверсном (белом) цвете. */
 .clip-feed__header {
@@ -94,14 +109,19 @@
   gap: var(--space-2);
 }
 
-/* Mute-индикатор справа у нижнего края, чуть выше actions-bar. */
+/* Mute-кнопка справа у нижнего края, чуть выше actions-bar: иконка 32 с тенью. */
 .clip-feed__mute {
   position: absolute;
   right: var(--space-4);
   bottom: 68px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   color: var(--static-text-and-icons-base-inverse-primary);
-  font-size: 18px;
-  line-height: 1;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.32));
 }

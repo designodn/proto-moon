@@ -59,6 +59,13 @@
   text-overflow: ellipsis;
 }
 
+/* Оверлей на медиа (клип) — весь текст шапки белый (имя + время). */
+.feed-header.__on-media,
+.feed-header.__on-media .feed-header__name,
+.feed-header.__on-media .ds-caption-m {
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+
 /* Автор-человек кликабелен → профиль (JS-навигация в lenta.html).
    У сообществ обёртка несёт data-entity="group" — для них перехода нет. */
 :not([data-entity="group"]) > .feed-header .avatar,
