@@ -68,14 +68,25 @@
    Привязка идёт к ds-* стилям (а не к компонентам):
    - title/display  → OK Sans Display (--font-family-display)
    - body/caption   → Roboto         (--font-family-content)
-   - кнопки своих ds-классов не несут (стилизуются через .button-container),
-     поэтому остаются на базовом --font-family = OK Sans Text. */
+   - кнопки своих ds-классов не несут, но метрически это title-стили,
+     поэтому их тоже переводим на Display (см. отдельный блок ниже). */
 .ds-display-xl,
 .ds-display-m,
 .ds-title-xl,
 .ds-title-l,
 .ds-title-m,
 .ds-title-s {
+  font-family: var(--font-family-display);
+}
+
+/* Кнопки — на OK Sans Display, как заголовки (button-container шарит
+   title-стили в tokens.css). Зеркалим те же size-селекторы, чтобы перебить
+   специфичность .button-wrapper.__size-N .button-container (0-3-0). */
+.button-wrapper.__size-56 .button-container,
+.button-wrapper.__size-44 .button-container,
+.button-wrapper.__size-36 .button-container,
+.button-wrapper.__size-28 .button-container,
+.ll-publish-btn .button-container {
   font-family: var(--font-family-display);
 }
 
