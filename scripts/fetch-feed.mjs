@@ -45,6 +45,16 @@ const COMPANION = {
       { title: 'Подскажите хорошего стоматолога в нашем районе', category: 'Стоматолог' },
     ],
   },
+  // question: тот же Q&A-визуал, что и discussion — топ-коммент + «ответы»
+  question: {
+    topComment: {
+      authorId: 8,
+      time: '2 часа назад',
+      text: 'У меня похожее было после бега — помогли разминка и наколенник.',
+      likes: 4,
+    },
+    moreReplies: 'Посмотреть 18 ответов',
+  },
   // discussion: топ-комментарий
   discussion: {
     topComment: {
@@ -247,7 +257,7 @@ function renderPost(p, idx) {
   switch (type) {
     /* ── feed-base: text / photo / gallery / clip / video / article / question ── */
     case 'text': case 'photo': case 'gallery': case 'clip': case 'video':
-    case 'article': case 'question': {
+    case 'article': {
       const entity = grp ? ' data-entity="group"' : '';
       const parts = [];
       if (type === 'article') {
@@ -325,7 +335,9 @@ function renderPost(p, idx) {
       return `      <article class="feed-congrats __gift island __intro">
 ${authorHeader(author, { size: 44, nameClass: 'ds-title-m', subtitle: time, subscribe: false })}
         <div class="nv-gift-card">
-          <p class="nv-gift-card__caption">${esc(text)}</p>${reshare}${media}
+          <div class="nv-gift-card__head">
+            <p class="nv-gift-card__caption">${esc(text)}</p>${reshare}
+          </div>${media}
         </div>
 ${btn}
       </article>`;
@@ -354,14 +366,15 @@ ${cards}
       </article>`;
     }
 
-    /* ── обсуждают ── */
+    /* ── обсуждают / вопрос (одинаковый Q&A-визуал) ── */
+    case 'question':
     case 'discussion': {
       const c = x.topComment;
       const comment = c ? `        <div class="comment __type-compact">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="${esc(c.authorId)}" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img data-person-avatar="${esc(c.authorId)}" alt=""></div>
           <div class="comment__body">
-            <div class="comment__header"><b data-person-name="${esc(c.authorId)}"></b>· ${esc(c.time)}</div>
-            <p class="comment__text">${esc(c.text)}</p>
+            <div class="comment__header"><b class="ds-title-s" data-person-name="${esc(c.authorId)}"></b><span class="comment__meta ds-body-m">· ${esc(c.time)}</span></div>
+            <p class="comment__text ds-body-m">${esc(c.text)}</p>
             <div class="comment__actions">
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>${esc(c.likes)}</span></button></span>
@@ -380,8 +393,14 @@ ${body}
 ${comment}
 ${more}
         <div class="comment-input">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="my_profile" alt=""></div>
-          <input class="text-input __size-36" placeholder="Написать ответ…">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="my_profile" alt=""></div>
+          <div class="comment-input__field">
+            <input class="text-input __size-44" placeholder="Написать ответ…">
+            <div class="comment-input__actions">
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/attach_24.svg')"></span>
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/smile_24.svg')"></span>
+            </div>
+          </div>
         </div>
       </article>`;
     }
@@ -389,12 +408,16 @@ ${more}
     /* ── воспоминание ── */
     case 'memory': {
       const self = String(author) === 'my_profile';
+      // Реплай-блок с обводкой: автор (как в feed-header) + текст + фото.
+      const reply = [
+        feedHeader(author, { time: '5 лет назад', subscribe: false }),
+        text ? `          <p class="ds-body-m feed-memory__text">${esc(text)}</p>` : '',
+        mediaPhoto(photos),
+      ].filter(Boolean).join('\n');
       const parts = [
         breadcrumbs(tema, rubrika),
         `        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`,
-        authorHeader(author, { size: 36, subtitle: '5 лет назад', subscribe: false }),
-        text ? `        <p class="ds-body-m">${esc(text)}</p>` : '',
-        mediaPhoto(photos),
+        `        <div class="feed-memory__reply">\n${reply}\n        </div>`,
         ctaButton('Поделиться снова', { style: 'secondary' }),
       ];
       return `      <article class="feed-memory island" data-entity="${self ? 'self' : 'user'}">\n${parts.filter(Boolean).join('\n')}\n      </article>`;

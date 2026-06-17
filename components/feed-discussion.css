@@ -32,11 +32,20 @@
   padding: 0;
 }
 
-/* Заголовок вопроса (ds-title-xl) и лид (ds-body-m) — без собственных
-   вертикальных отступов, расстояния задаёт flex-gap карточки. */
+/* Заголовок вопроса и лид (ds-body-m) — без собственных вертикальных
+   отступов, расстояния задаёт flex-gap карточки. */
 .feed-discussion__title,
 .feed-discussion__lead {
   margin: 0;
+}
+
+/* Заголовок — ОБЩИЙ DS-токен title-xl (27/36/600 из tokens.css), а не
+   NV-оверрайд .ds-title-xl (29/29/700 из nv-fonts.css). Перебиваем NV-значение
+   повышенной специфичностью; шрифт (OK Sans Display) остаётся от ds-title-xl. */
+.feed-discussion .feed-discussion__title {
+  font-size: 27px;
+  line-height: 36px;
+  font-weight: 600;
 }
 
 /* Тонкая линия-сепаратор */
