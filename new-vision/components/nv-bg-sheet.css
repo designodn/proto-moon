@@ -89,9 +89,9 @@
   pointer-events: none;
   --nv-reveal-r: 0%;
   -webkit-mask: radial-gradient(circle at var(--nv-cx, 50%) var(--nv-cy, 42%),
-                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 30%));
+                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 80%));
           mask: radial-gradient(circle at var(--nv-cx, 50%) var(--nv-cy, 42%),
-                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 30%));
+                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 80%));
 }
 .nv-pr-cover__reveal.__play {
   animation: nv-bg-reveal 1000ms cubic-bezier(0.4, 0, 0.2, 1) both;
