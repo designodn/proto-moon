@@ -86,6 +86,17 @@
   font-family: var(--font-family-display);
 }
 
+/* Хлебные крошки — типографика title-s (OK Sans Display, 15 / 20 / 600).
+   Компонент breadcrumbs.css задаёт типографику прямо на .breadcrumbs (без
+   ds-класса, было 15/20/700 Roboto), поэтому переопределяем тем же селектором —
+   nv-fonts грузится последним. */
+.breadcrumbs {
+  font-family: var(--font-family-display);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
 /* Инлайн-кнопки (текстовые ссылки) метрически = body/caption → Roboto. */
 .button-inline.__size-32,
 .button-inline.__size-24,
