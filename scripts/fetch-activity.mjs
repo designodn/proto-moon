@@ -35,7 +35,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
-const SHEET_NAME = 'Активности';
+const SHEET_NAME = 'Вокруг нас';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -105,7 +105,7 @@ function leadFor(a) {
     case 'section':
       return a.image
         ? `<div class="avatar __size-44 __type-image"><img src="${esc(a.image)}" alt=""></div>`
-        : `<div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">${esc(a.who)}</div>`;
+        : `<div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">${esc(a.who || '👥')}</div>`;
     case 'photo':
       return `<div class="picture __size-44 __type-image"><img src="${esc(a.image)}" alt=""></div>`;
     case 'photo-pair': {
@@ -176,35 +176,44 @@ async function getCsv() {
   return res.text();
 }
 
-function colMap(header) {
-  const map = {};
-  header.forEach((h, i) => { map[h.trim().toLowerCase()] = i; });
-  const need = ['id', 'лид', 'кто', 'изображение', 'бейдж', 'текст', 'кнопка', 'категория'];
-  const missing = need.filter(k => !(k in map));
-  if (missing.includes('id') || missing.includes('лид'))
-    throw new Error(`В листе «${SHEET_NAME}» не найдены колонки: ${missing.join(', ')}. Это точно лист активностей?`);
-  return map;
+// Колонки ищем ПО КЛЮЧЕВОМУ СЛОВУ (заголовки в листе бывают с уточнениями,
+// напр. «изображение (если есть)»; id может отсутствовать — тогда генерим).
+function colIndex(header) {
+  const norm = header.map(h => h.trim().toLowerCase());
+  const find = kw => norm.findIndex(h => h.includes(kw));
+  const idx = {
+    id: find('id'), lead: find('лид'), who: find('кто'), image: find('изображ'),
+    badge: find('бейдж'), text: find('текст'), button: find('кнопк'), category: find('категори'),
+  };
+  if (idx.lead < 0)
+    throw new Error(`В листе «${SHEET_NAME}» нет колонки «лид». Это точно лист активностей?`);
+  return idx;
 }
 
 async function main() {
   console.log(`→ Тяну «${SHEET_NAME}»…`);
   const rows = parseCsv(await getCsv());
   const [header, ...body] = rows;
-  const m = colMap(header);
-  const get = (r, k) => (m[k] != null ? (r[m[k]] || '').trim() : '');
+  const idx = colIndex(header);
+  const at = (r, i) => (i >= 0 ? (r[i] || '').trim() : '');
 
   const acts = [];
+  let n = 0;
   for (const r of body) {
-    const id = get(r, 'id'), lead = get(r, 'лид');
-    if (!id || !lead) continue;
+    const lead = at(r, idx.lead);
+    if (!lead) continue;            // пустой/мусорный ряд
+    n++;
+    let category = at(r, idx.category).toLowerCase();
+    if (category === 'пусто') category = '';   // в листе пусто помечают словом «пусто»
     acts.push({
-      id, lead,
-      who: get(r, 'кто'),
-      image: get(r, 'изображение'),
-      online: get(r, 'бейдж').toLowerCase() === 'онлайн',
-      text: get(r, 'текст'),
-      button: get(r, 'кнопка'),
-      category: get(r, 'категория').toLowerCase(),
+      id: at(r, idx.id) || `a${n}`,
+      lead,
+      who: at(r, idx.who),
+      image: at(r, idx.image),
+      online: at(r, idx.badge).toLowerCase() === 'онлайн',
+      text: at(r, idx.text),
+      button: at(r, idx.button),
+      category,
     });
   }
 
