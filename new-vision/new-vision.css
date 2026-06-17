@@ -25,7 +25,6 @@
 @import url('./components/nv-bg-sheet.css');      /* шторка «Фон» (фон обложки) */
 @import url('./components/nv-toast.css');         /* тост (positive) */
 @import url('./components/nv-bonsai.css');        /* виджет «Бонсай» + анимация роста */
-@import url('./components/nv-actions-bar.css');   /* экшены карточек ленты: NV-пак иконок (модификатор .__vision) */
 
 /* 3. Уникальные для вижн-ленты фид-карточки — папка new-vision/feeds/.
    Только то, чего НЕТ в q3 и в общей DS (feed-ad общий, feed-memory — в
