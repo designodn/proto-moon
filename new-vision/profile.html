@@ -488,7 +488,7 @@
         <div class="nv-bg-grid" data-pick-group="bg-cover">
           <button class="nv-pick __none __selected" data-bg="none" aria-label="Без фона" aria-pressed="true"><span class="nv-pick__union" aria-hidden="true"></span></button>
           <button class="nv-pick" data-bg="#FAEAFF" style="background:#FAEAFF" aria-label="Лиловый"></button>
-          <button class="nv-pick __illus" data-bg="url('../assets/new-vision/bg/sakura.png') center/cover no-repeat, linear-gradient(135deg,#FBE3E8,#F7D9C4)" style="background:url('../assets/new-vision/bg/sakura.png') center/cover no-repeat, linear-gradient(135deg,#FBE3E8,#F7D9C4)" aria-label="Сакура"></button>
+          <button class="nv-pick __illus" data-bg="url('../assets/new-vision/bg/sakura.png') center/cover no-repeat, linear-gradient(135deg,#FBE3E8,#F7D9C4)" style="background:url('../assets/new-vision/bg/sakura.png') center/cover no-repeat, linear-gradient(135deg,#FBE3E8,#F7D9C4)" aria-label="Сакура"><span class="nv-pick__badge" aria-hidden="true"><img src="../assets/new-vision/bonsai-stage-5.png" alt=""></span></button>
           <button class="nv-pick" data-bg="#6B2507" data-dark="1" style="background:#6B2507" aria-label="Тёмный"></button>
 
           <button class="nv-pick" data-bg="#AF7AC1" data-dark="1" style="background:#AF7AC1" aria-label="Фиолетовый"></button>
@@ -616,11 +616,15 @@
 
     var pendingBg = null, pendingDark = false;
 
+    // выделяем только ОДИН свотч (первый с совпадающим data-bg — значения
+    // могут дублироваться, напр. два лиловых, активным должен быть один).
     function syncBgSelection(bg) {
+      var target = bg || 'none', matched = false;
       bgSheet.querySelectorAll('.nv-pick').forEach(function (p) {
-        var on = p.getAttribute('data-bg') === (bg || 'none');
+        var on = !matched && p.getAttribute('data-bg') === target;
         p.classList.toggle('__selected', on);
-        if (on) p.setAttribute('aria-pressed', 'true'); else p.removeAttribute('aria-pressed');
+        if (on) { p.setAttribute('aria-pressed', 'true'); matched = true; }
+        else p.removeAttribute('aria-pressed');
       });
     }
 
@@ -652,7 +656,11 @@
       if (!sw) return;
       pendingBg = sw.getAttribute('data-bg');
       pendingDark = sw.getAttribute('data-dark') === '1';
-      syncBgSelection(pendingBg);
+      // активен только один — снимаем выделение со всех, ставим на нажатый (п.1)
+      bgSheet.querySelectorAll('.nv-pick').forEach(function (p) {
+        p.classList.remove('__selected'); p.removeAttribute('aria-pressed');
+      });
+      sw.classList.add('__selected'); sw.setAttribute('aria-pressed', 'true');
       paintCover(pendingBg, pendingDark);
     });
 
