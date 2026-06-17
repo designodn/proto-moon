@@ -32,6 +32,10 @@
   var hasNVParam = /[?&]nv=1(?:&|$)/.test(location.search);
   if (!onNVPage && !hasNVParam) return;
 
+  // Маркер NV-режима на <html> — хук для точечных NV-оверрайдов в CSS страниц
+  // (например .__nv .gp__title на gifts.html, где текст не на ds-* классах).
+  document.documentElement.classList.add('__nv');
+
   // Корень сайта относительно текущего документа (учитывает суб-путь деплоя):
   // на NV-странице это всё до '/new-vision/', иначе — папка текущей страницы.
   var p = location.pathname;

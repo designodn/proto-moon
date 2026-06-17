@@ -63,6 +63,10 @@
   .gp.__state-3 .gp__title,
   .gp.__state-4 .gp__title { top: 130px; }
 
+  /* NV-режим: заголовок не на ds-* классе, поэтому nv-fonts его не ловит —
+     форсим NV-дисплейный кат через маркер .__nv (ставит screen-transition.js). */
+  .__nv .gp__title { font-family: var(--font-family-display, var(--font-family)); }
+
   /* Карточка — DS-компонент .gift-card 300×350. Позиция/размер/угол
      задаются исключительно через transform (JS-спринг). */
   .gp .gift-card {
