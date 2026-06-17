@@ -339,8 +339,21 @@
   /* красим и пульс-точку этого индикатора в тот же красный */
   --pulse-dot-custom-color: var(--activity-indicator-color);
   margin-left: auto;          /* прижать к правому краю навбара */
+  position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  /* резервируем круг каунтера — дот и бейдж делят одну центральную точку,
+     поэтому каунтер «вырастает» из центра пульса, а не уезжает влево */
+  min-width: 26px;
+  min-height: 26px;
+}
+/* Пульс центрируется абсолютно — не влияет на ширину/центр контейнера. */
+.activity-indicator .pulse-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 /* В состоянии pulse виден только пульс, бейдж скрыт; и наоборот. */
 .activity-indicator[data-state="pulse"] .activity-indicator__badge { display: none; }
@@ -408,13 +421,15 @@
   overflow: hidden;
   opacity: 0;
   /* зазор между цифрой и словом — отступом, а не пробелом в тексте
-     (ведущий пробел схлопывается при обрезке по max-width) */
-  padding-left: 0.28em;
-  transition: max-width 240ms ease, opacity 200ms ease;
+     (ведущий пробел схлопывается при обрезке по max-width).
+     В свёрнутом состоянии отступ 0, иначе он смещает цифру из центра круга. */
+  padding-left: 0;
+  transition: max-width 240ms ease, opacity 200ms ease, padding-left 240ms ease;
 }
 .activity-indicator[data-state="expanded"] .activity-indicator__word {
   max-width: 120px;
   opacity: 1;
+  padding-left: 0.28em;
 }
 
 @keyframes ai-pop {
