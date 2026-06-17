@@ -25,20 +25,15 @@
   flex-direction: column;
   gap: var(--space-3);
 }
-/* Горизонтальные паддинги — на детях, кроме скроллера (он сам кладёт 16) */
-.feed-stories > :not(.feed-stories__list) {
-  padding-left: var(--space-4);
-  padding-right: var(--space-4);
-}
-
-/* Горизонтальный скроллер аватаров — edge-to-edge внутри острова,
-   с внутренним padding-left 16 для первой стори. */
+/* Горизонтальный скроллер аватаров. Гор. отступ 16 даёт сам остров
+   (.feed-stories.island ниже), поэтому здесь только вертикальный запас
+   под кольца/бейджи. */
 .feed-stories__list {
   display: flex;
-  gap: var(--space-1);
+  gap: var(--space-2);
   overflow-x: auto;
   scroll-snap-type: x proximity;
-  padding: 4px var(--space-4);
+  padding: 8px 0;
 }
 .feed-stories__list::-webkit-scrollbar { display: none; }
 
@@ -47,15 +42,21 @@
   flex-shrink: 0;
   width: 72px;
 }
+/* Кружок с подписью — ширина колонки минимум 88px (под более длинные имена) */
+.feed-stories__list > .avatar.__has-caption {
+  width: auto;
+  min-width: 88px;
+}
 
 /* Аватар-бейдж / «+» в позиции bottom-right у кружка С ПОДПИСЬЮ.
-   Фото 56px отцентровано в колонке шириной 72px (слева 8px), бейдж 32px
-   торчит за круг вправо-вниз — повторяет посадку «плюса» из stories-row,
-   но отсчитывается от верха колонки (caption снизу плавающей высоты). */
+   Фото 56px отцентровано в колонке, бейдж 32px торчит за круг вправо-вниз —
+   повторяет посадку «плюса» из stories-row. Отсчёт от центра колонки
+   (left:50% + 8px), чтобы посадка не зависела от ширины колонки;
+   по вертикали — от верха (фото вверху, caption снизу плавающей высоты). */
 .feed-stories__list > .avatar.__size-56.__has-caption .avatar__addon.__pos-br {
   top: 31px;
   bottom: auto;
-  left: 44px;
+  left: calc(50% + 8px);
   right: auto;
 }
 
@@ -69,6 +70,10 @@
    ============================================================ */
 .feed-stories.island {
   overflow: visible;
+  /* Горизонтальный отступ 16 для всего содержимого (крошки, заголовок,
+     ряд сторис) задаёт сам остров — дети его не дублируют. */
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
 }
 .feed-stories .stories-row {
   padding: 6px var(--space-4);

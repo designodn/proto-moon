@@ -148,46 +148,6 @@
            Дача-сториз — первый фид в стопке, поэтому внутри feed-container. -->
       <div class="feed-container">
 
-      <!-- Сториз-карусель «Сейчас на даче» -->
-      <!-- МОМЕНТЫ (истории) в island-карточке.
-           data-stories — сколько сториз у автора (= столько палочек прогресса
-           в viewer'е). data-name — заголовок viewer'а. -->
-      <article class="feed-stories island">
-      <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
-        <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
-             не открывает viewer (data-skip-viewer). -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
-          <div class="avatar__addon __pos-br stories-row__add">
-            <img src="../assets/icons/add_24.svg" width="20" height="20" alt="">
-          </div>
-        </div>
-        <!-- Не просмотренные (оранжевое кольцо). -->
-        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Лиза">
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
-          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
-
-        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
-             CTA-кнопка снизу — только у ВВЗ. -->
-        <div class="avatar __size-56 __type-image __ring-active"
-             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
-             aria-label="Возможно, вы знакомы">
-          <img src="../assets/icons/vvz_stories.png" alt="">
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
-
-        <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
-      </div>
-      </article>
-
       <!-- FEED:START (генерится scripts/fetch-feed.mjs — не редактировать вручную) -->
       <article class="feed-base island" data-entity="group">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
@@ -325,7 +285,7 @@
 
       <article class="feed-contest island">
 
-        <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
+        <h2 class="nv-feed__title ds-title-l">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
         <div class="picture-stack">
           <div class="picture __size-96"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KjV2NH5_kLPuwpkP3gbMHxichSOQKZ7bQSEW_xwOTzsrPch5jw-Yn1hW3KLUx7A9rYBta8F1sjZ7dbqQTlUVLXrdtQRaPl0NL9vC-3Mz0AAAAp&amp;dpr=2" alt=""></div>
           <div class="picture __size-96"><img src="https://cheb-live.ru/userfiles/article/cmeYk_0OWZ_3g1scGqsvoQp5Qs6ygJuC.png" alt=""></div>
@@ -354,7 +314,7 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <h2 class="nv-feed__title">Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих</h2>
+        <h2 class="nv-feed__title ds-title-l">Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих</h2>
         <p class="ds-body-m">Когда пациент видит в анализе крови сниженный гемоглобин, он чаще всего думает о слабости, бледности, железе и, возможно, питании. Кажется, что это история про кровь, но не про сердце.</p>
         <div class="media __aspect-4-3"><img src="https://www.ckbran.ru/upload/medialibrary/e96/xt08ybjsifywqg113cx499j70so4hxjs.jpg" alt=""></div>
         <div class="actions-bar">
@@ -392,7 +352,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">В этот день</span>
         </nav>
-        <h2 class="nv-feed__title">Поделитесь с друзьями вашим днем 5 лет назад</h2>
+        <h2 class="nv-feed__title ds-title-l">Поделитесь с друзьями вашим днем 5 лет назад</h2>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-image"><img data-person-avatar="4" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -561,7 +521,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Обсуждают</span>
         </nav>
-        <h2 class="nv-feed__title">Болит колено при приседании. Что это может быть?</h2>
+        <h2 class="nv-feed__title ds-title-l">Болит колено при приседании. Что это может быть?</h2>
         <div class="actions-bar">
           <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
           <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
@@ -572,7 +532,7 @@
 
       <article class="feed-congrats __birthday island __intro">
         <div class="avatar __size-72 __type-image"><img data-person-avatar="10" alt=""></div>
-        <h2 class="nv-feed__title">Николай празднует свой День рождения!</h2>
+        <h2 class="nv-feed__title ds-title-l">Николай празднует свой День рождения!</h2>
         <div class="avatars-view __size-36">
           <div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img data-person-avatar="1" alt=""></div>
@@ -592,7 +552,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Нужен совет</span>
         </nav>
-        <h2 class="nv-feed__title">Помогите ответом в Санкт-Петербурге</h2>
+        <h2 class="nv-feed__title ds-title-l">Помогите ответом в Санкт-Петербурге</h2>
         <div class="feed-questions__list">
           <div class="question-card">
             <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
@@ -615,7 +575,7 @@
 
       <article class="feed-group island">
         <div class="avatar __size-72 __type-image"><img data-person-avatar="group-3" alt=""></div>
-        <h2 class="nv-feed__title">Вступай в сообщество рыбаков</h2>
+        <h2 class="nv-feed__title ds-title-l">Вступай в сообщество рыбаков</h2>
         <div class="avatars-view __size-36">
           <div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img data-person-avatar="1" alt=""></div>
@@ -667,8 +627,12 @@
       </article>
 
       <article class="feed-stories island">
-
-        <h2 class="nv-feed__title">12 людей рядом делятся моментом с дачи</h2>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Рядом</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Дача</span>
+        </nav>
+        <h2 class="nv-feed__title ds-title-l">12 людей рядом делятся моментом с дачи</h2>
         <div class="feed-stories__list">
           <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon" data-skip-viewer>
             <img data-person-avatar="my_profile" alt="">
