@@ -43,7 +43,7 @@
 .nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); box-shadow: none; }
 .nv-sheet__footer.__stack .button-wrapper { width: 100%; }
 
-/* Обложка self с тёмным выбранным фоном — текст/иконки светлые */
-body[data-view="self"] .nv-pr-cover.__bg-dark {
+/* Обложка с тёмным выбранным фоном — текст/иконки светлые */
+.nv-pr-cover.__bg-dark {
   color: var(--static-text-and-icons-base-inverse-primary);
 }
