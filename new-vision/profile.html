@@ -203,10 +203,10 @@
           <!-- CTA: чужой профиль (не в друзьях) — «Дружить» primary -->
           <div class="nv-pr-cta" data-cta="stranger" hidden>
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary">
+              <button class="button-container __style-primary" data-friend-request>
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
-                  Дружить
+                  <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
+                  <span data-fr-label>Дружить</span>
                 </span>
               </button>
             </div>
@@ -689,6 +689,25 @@
       } else {
         applyPerson();
       }
+    })();
+
+    // ── «Дружить» → «Запрос отправлен» (чужой профиль, не в друзьях) ─────────
+    // Тап по primary-кнопке отправляет запрос: она становится secondary с
+    // иконкой user_request. Повторный тап — отмена запроса (возврат к «Дружить»).
+    (function () {
+      var btn = document.querySelector('[data-friend-request]');
+      if (!btn) return;
+      var icon  = btn.querySelector('[data-fr-icon]');
+      var label = btn.querySelector('[data-fr-label]');
+      var sent  = false;
+      btn.addEventListener('click', function () {
+        sent = !sent;
+        btn.classList.toggle('__style-primary', !sent);
+        btn.classList.toggle('__style-secondary', sent);
+        icon.style.setProperty('--icon-src',
+          "url('../assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
+        label.textContent = sent ? 'Запрос отправлен' : 'Дружить';
+      });
     })();
 
     // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
