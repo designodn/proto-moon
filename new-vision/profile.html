@@ -708,13 +708,25 @@
         label.textContent = text;
       }
 
+      var state = 'default';   // default → sent → friends
+      var timer = null;
+
       btn.addEventListener('click', function () {
-        if (btn.dataset.frBusy) return;       // запрос уже отправлен — не повторяем
-        btn.dataset.frBusy = '1';
-        setState('secondary', 'user_request_16_20', 'Запрос отправлен');
-        setTimeout(function () {
-          setState('secondary', 'user_added_16_20', 'У вас в друзьях');
-        }, 3000);
+        if (state === 'default') {
+          // отправляем запрос; через 3 сек он «принимается»
+          state = 'sent';
+          setState('secondary', 'user_request_16_20', 'Запрос отправлен');
+          timer = setTimeout(function () {
+            state = 'friends';
+            setState('secondary', 'user_added_16_20', 'У вас в друзьях');
+          }, 3000);
+        } else if (state === 'sent') {
+          // отмена запроса — возврат к «Дружить»
+          clearTimeout(timer);
+          state = 'default';
+          setState('primary', 'user_add_16_20', 'Дружить');
+        }
+        // state === 'friends' — уже в друзьях, тап ничего не меняет
       });
     })();
 
