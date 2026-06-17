@@ -58,6 +58,10 @@
   height: 100%;
   display: block;
   object-fit: cover;
+  /* Хайрлайн-обводка фото 1px, чтобы светлые снимки не сливались с фоном. */
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1px solid var(--dynamic-stroke-contrast-low);
 }
 
 /* Size variants — keep visual rhythm with the 4px grid */
