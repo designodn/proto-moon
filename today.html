@@ -97,11 +97,11 @@
      «Друзья на сайте» — аватар + имя + online-точка.
      ============================================================ */
   .tg-friend {
-    width: 72px;
+    width: 88px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     cursor: pointer;
   }
   .tg-friend:active { transform: scale(0.95); }
@@ -358,7 +358,7 @@
 
         <!-- 3. Колесо призов -->
         <section class="tg-island">
-          <article class="cover-card __on-image __size-220 __fill" id="rouletteWidget"
+          <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
                    style="--cover-card-bg: url('assets/today/рулетка-сегодня-фон.png'); cursor: pointer;">
             <div class="cover-card__body">
@@ -375,48 +375,12 @@
           </article>
         </section>
 
-        <!-- 4. Друзья на сайте -->
-        <div class="tg-sec-head">
-          <header class="header"><div class="header__title ds-title-l">Друзья на сайте</div></header>
-          <button class="tg-all ds-body-m">Все</button>
+        <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) -->
+        <div class="tg-sec-head" style="padding: var(--space-3) var(--space-4);">
+          <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
+          <button class="tg-all ds-body-l">Все</button>
         </div>
-        <div class="tg-carousel" style="gap: var(--space-4);">
-          <div class="tg-friend">
-            <div class="tg-friend__ava">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=45" alt=""></div>
-              <span class="tg-friend__dot"></span>
-            </div>
-            <div class="tg-friend__name ds-caption-m">Мария Баринова</div>
-          </div>
-          <div class="tg-friend">
-            <div class="tg-friend__ava">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=31" alt=""></div>
-              <span class="tg-friend__dot"></span>
-            </div>
-            <div class="tg-friend__name ds-caption-m">Елизавета Иванова</div>
-          </div>
-          <div class="tg-friend">
-            <div class="tg-friend__ava">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
-              <span class="tg-friend__dot"></span>
-            </div>
-            <div class="tg-friend__name ds-caption-m">Павел Петров</div>
-          </div>
-          <div class="tg-friend">
-            <div class="tg-friend__ava">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=47" alt=""></div>
-              <span class="tg-friend__dot"></span>
-            </div>
-            <div class="tg-friend__name ds-caption-m">Света Иванова</div>
-          </div>
-          <div class="tg-friend">
-            <div class="tg-friend__ava">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
-              <span class="tg-friend__dot"></span>
-            </div>
-            <div class="tg-friend__name ds-caption-m">Игорь Сомов</div>
-          </div>
-        </div>
+        <div class="tg-carousel" id="friendsRow"></div>
 
         <!-- 5. Какой сегодня день -->
         <div class="tg-sec-head">
@@ -836,6 +800,30 @@
 
   <script src="components/dismissible.js"></script>
   <script src="components/tab-bar.js"></script>
+  <script src="data/people.js"></script>
+
+  <script>
+    // «Друзья на сайте» — реальные люди из реестра people.js.
+    (function () {
+      var row = document.getElementById('friendsRow');
+      if (!row || !window.DS_PEOPLE_DATA) return;
+      var IDS = [7, 2, 4, 8, 10];
+      var byId = {};
+      window.DS_PEOPLE_DATA.forEach(function (p) { byId[p.id] = p; });
+      IDS.forEach(function (id) {
+        var p = byId[id];
+        if (!p) return;
+        var item = document.createElement('div');
+        item.className = 'tg-friend';
+        item.innerHTML =
+          '<div class="tg-friend__ava"><div class="avatar __size-56 __type-image"><img alt=""></div></div>' +
+          '<div class="tg-friend__name ds-title-m"></div>';
+        item.querySelector('img').src = p.photo;
+        item.querySelector('.tg-friend__name').textContent = p.name;
+        row.appendChild(item);
+      });
+    })();
+  </script>
 
   <script>
     // Виджет «Колесо призов» → открытие рулетки.
