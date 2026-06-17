@@ -238,20 +238,9 @@
   .ll-anniv__deco {
     height: 168px;
     overflow: hidden;
-    /* Заглушка декора: тёплый оранжевый градиент. */
-    background: radial-gradient(120% 90% at 50% 0%, #ff8a3d 0%, #ff5a1f 55%, #ff4d12 100%);
+    /* Однотонная заглушка цветного фона (ждёт растровый декор). */
+    background: #ff5a1f;
   }
-  /* Шарики — пока простые CSS-эллипсы (заглушка под растровый декор). */
-  .ll-anniv__balloon {
-    position: absolute;
-    width: 64px; height: 80px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ff8a5c, #e23c12);
-    box-shadow: inset -6px -8px 12px rgba(0,0,0,.18);
-  }
-  .ll-anniv__balloon.__b1 { top: -24px; left: -16px; transform: rotate(-12deg); }
-  .ll-anniv__balloon.__b2 { top: -34px; right: 30px; width: 84px; height: 104px; transform: rotate(10deg); }
-  .ll-anniv__balloon.__b3 { top: -6px;  right: -18px; width: 52px; height: 66px; transform: rotate(14deg); }
   /* Светлая «волна» — выпуклый белый эллипс по центру низа шапки. */
   .ll-anniv__deco::after {
     content: '';
@@ -838,11 +827,7 @@
 
         <!-- Годовщина дружбы — карточка-поздравление (figma 2767-134392) ---- -->
         <article class="text-feed island ll-anniv">
-          <div class="text-feed__media ll-anniv__deco">
-            <span class="ll-anniv__balloon __b1" aria-hidden="true"></span>
-            <span class="ll-anniv__balloon __b2" aria-hidden="true"></span>
-            <span class="ll-anniv__balloon __b3" aria-hidden="true"></span>
-          </div>
+          <div class="text-feed__media ll-anniv__deco"></div>
 
           <div class="ll-anniv__avatars">
             <div class="avatar __size-96 __type-image"><img src="https://i.pravatar.cc/192?img=49" alt=""></div>
