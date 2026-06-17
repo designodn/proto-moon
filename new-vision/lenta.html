@@ -612,7 +612,7 @@
         </div>
       </article>
 
-      <article class="feed-congrats __gift island __intro">
+      <article class="feed-congrats __gift __ai island __intro">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img data-person-avatar="6" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -1042,6 +1042,10 @@
 
 </script>
 
+<!-- Общий загрузчик/проигрыватель Lottie (window.nvLottie) — используют
+     конвейер «Вокруг вас», трофей «1 место» и поздравительные фиды. -->
+<script src="components/nv-lottie.js"></script>
+
 <!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка возникает из точки,
      стопка сдвигается, нижняя сжимается к центру и исчезает.
      При появлении ячейка вспыхивает подложкой цвета своей категории
@@ -1064,46 +1068,15 @@
   var APPEAR_MS = 1300;
 
   // ── Lottie-эффекты при появлении ячейки ─────────────────────────────────
-  // Лениво грузим lottie-web (как actions-bar.js), оверлей кладём на body —
-  // ряд конвейера overflow:hidden, эффект должен выходить за его пределы.
-  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
-  var lottieLoading = null;
-  function ensureLottie() {
-    if (window.lottie) return Promise.resolve(window.lottie);
-    if (lottieLoading) return lottieLoading;
-    lottieLoading = new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = LOTTIE_CDN; s.async = true;
-      s.onload = function () { resolve(window.lottie); };
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-    return lottieLoading;
-  }
-  // Проигрывает Lottie-оверлей в заданных координатах (fixed), один раз,
-  // с самоудалением. Координаты — left/top левого-верхнего угла, бокс size×size.
-  function playLottie(path, left, top, size) {
-    ensureLottie().then(function (lottie) {
-      var host = document.createElement('div');
-      host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
-        'width:' + size + 'px;height:' + size + 'px;left:' + left + 'px;top:' + top + 'px;';
-      document.body.appendChild(host);
-      var anim = lottie.loadAnimation({
-        container: host, renderer: 'svg', loop: false, autoplay: true, path: path
-      });
-      anim.addEventListener('complete', function () { anim.destroy(); host.remove(); });
-    }).catch(function () {});
-  }
-
   // Конфетти «Праздника» — разовый бёрст по центру ячейки (body-оверлей, т.к.
   // должен выходить за overflow:hidden ряда). Вызывать после раскрытия ячейки.
   // Трофей «1 место» — НЕ здесь: он прибит к ячейке как in-cell бейдж (.lead-trophy),
   // поэтому едет вместе с ячейкой при сдвиге конвейера (см. загрузчик ниже).
   function playCellLottie(cell) {
-    if (cell.classList.contains('__cat-holiday')) {
+    if (cell.classList.contains('__cat-holiday') && window.nvLottie) {
       var cr = cell.getBoundingClientRect();
       var size = 220;
-      playLottie('../assets/lottie/confetti.json',
+      window.nvLottie.play('../assets/lottie/confetti.json',
         cr.left + cr.width / 2 - size / 2, cr.top + cr.height / 2 - size / 2, size);
     }
   }
@@ -1163,26 +1136,12 @@
 <script>
 (function () {
   var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
-  if (!hosts.length) return;
+  if (!hosts.length || !window.nvLottie) return;
 
-  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
-  var lottieLoading = null;
-  function ensureLottie() {
-    if (window.lottie) return Promise.resolve(window.lottie);
-    if (lottieLoading) return lottieLoading;
-    lottieLoading = new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = LOTTIE_CDN; s.async = true;
-      s.onload = function () { resolve(window.lottie); };
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-    return lottieLoading;
-  }
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   hosts.forEach(function (host) {
-    ensureLottie().then(function (lottie) {
+    window.nvLottie.ensure().then(function (lottie) {
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: !still, autoplay: !still,
         path: host.getAttribute('data-lottie')
@@ -1196,8 +1155,11 @@
 </script>
 
 <!-- Поздравительные фиды (ДР / подарок / ИИ-подарок): при первом появлении
-     в зоне видимости фиолетовая подложка плавно сменяется на белую.
-     Срабатывает один раз на фид. Подложка задана классом .__intro в разметке. -->
+     во вьюпорте играет 3-фазная анимация (спека Figma node 2948:219874) —
+     фиолетовый mesh проявляется → перетекает → уходит вниз в прозрачность,
+     текст темнеет, кнопка возвращает фирменный градиент. Поверх стреляет
+     Lottie-конфетти. Срабатывает один раз на фид. Тайминги синхронны с
+     keyframe nv-congrats-reveal (см. nv-feed-congrats.css). -->
 <script>
 (function () {
   var feeds = document.querySelectorAll('.feed-congrats.__intro');
@@ -1211,14 +1173,31 @@
     return;
   }
 
+  // Фаза 3 (уход градиента) стартует на 1700мс таймлайна reveal — в этот же
+  // момент возвращаем тёмный текст и фирменную кнопку (переход 900мс в CSS).
+  var DARKEN_AT = 1700;
+  // Конфетти стреляем сразу с проявлением фона.
+  var CONFETTI_AT = 150;
+
+  function burstConfetti(feed) {
+    if (!window.nvLottie) return;
+    var r = feed.getBoundingClientRect();
+    var size = 280;
+    // Центр по горизонтали, по верхней трети карточки (зона аватара/заголовка).
+    window.nvLottie.play('../assets/lottie/confetti.json',
+      r.left + r.width / 2 - size / 2,
+      r.top + Math.min(r.height * 0.32, 120) - size / 2,
+      size);
+  }
+
   var io = new IntersectionObserver(function (entries, observer) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
       var feed = entry.target;
       observer.unobserve(feed);
-      // Небольшая задержка, чтобы пользователь успел увидеть фиолетовую подложку,
-      // прежде чем она сменится на белую.
-      setTimeout(function () { feed.classList.remove('__intro'); }, 550);
+      feed.classList.add('__play');                                  // запуск keyframe-фона
+      setTimeout(function () { burstConfetti(feed); }, CONFETTI_AT);  // конфетти поверх
+      setTimeout(function () { feed.classList.remove('__intro'); }, DARKEN_AT);
     });
   }, { threshold: 0.35 });
 

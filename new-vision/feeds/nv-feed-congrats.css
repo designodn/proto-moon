@@ -91,16 +91,25 @@
 }
 .nv-gift-card .media img { object-fit: cover; }
 
-/* ── Reveal-анимация: фиолетовая подложка → белая ────────────────────────
-   Из Figma node 2849:139940 (правая колонка). Когда фид впервые попадает в
-   зону видимости, он показывается с фиолетовой градиентной подложкой (белый
-   текст шапки, кнопка-подарок белая «primaryOnColor»). Затем подложка плавно
-   уходит в белую, текст темнеет, кнопка возвращает фирменный градиент.
+/* ── Reveal-анимация появления (спека Figma node 2948:219874) ─────────────
+   Когда фид впервые попадает во вьюпорт, играет 3-фазная анимация:
+     1. Фон — фиолетовый mesh-градиент проявляется как подложка карточки
+        (белый текст шапки + кнопка-подарок белая «primaryOnColor»).
+     2. Перетекание — градиент плавно «течёт» (background-position сдвигается).
+        Тайминг Figma: задержка 500мс, длительность 1200мс.
+     3. Уход — градиент уезжает вниз и гаснет в прозрачность; параллельно
+        текст темнеет, кнопка возвращает фирменный градиент.
+        Тайминг Figma: длительность 900мс.
+   Поверх в момент появления стреляет Lottie-конфетти (nv-lottie.js, см. lenta.html).
 
-   Кросс-фейд градиента невозможен напрямую (градиенты не интерполируются),
-   поэтому подложку держим в ::before и гасим её opacity, а белый фон острова
-   остаётся под ней. Снятие класса .__intro (см. скрипт в lenta.html) запускает
-   переход. */
+   Кросс-фейд градиента напрямую невозможен (градиенты не интерполируются),
+   поэтому подложку держим в ::before: положение анимируем background-position,
+   уход — translateY + opacity. Белый фон острова остаётся под ней.
+
+   Состояния:
+     .__intro — статичная подложка (до старта / fallback без анимации);
+     .__play  — запускает keyframe-анимацию (ставит скрипт в lenta.html);
+   снятие .__intro (синхронно с фазой 3) возвращает тёмный текст и кнопку. */
 .feed-congrats { position: relative; }
 .feed-congrats > * { position: relative; z-index: 1; }
 
@@ -111,24 +120,49 @@
   z-index: 0;
   opacity: 0;
   pointer-events: none;
-  /* Тёплый mesh: оранжевая база + малиново-пурпурный верх-право,
-     алый верх-центр, золотой низ-право, оранжевый низ-лево. */
+  /* Фиолетовый mesh из Figma: #8d41ff → #ae72ef → #cfa4de.
+     background-size > 100% — запас для «перетекания» по background-position. */
   background:
-    radial-gradient(70% 60% at 80% 4%, #a23a9a 0%, rgba(162, 58, 154, 0) 55%),
-    radial-gradient(78% 62% at 45% 6%, #d83f5f 0%, rgba(216, 63, 95, 0) 60%),
-    radial-gradient(90% 88% at 100% 100%, #f8c44a 0%, rgba(248, 196, 74, 0) 55%),
-    radial-gradient(95% 92% at 0% 100%, #ee823a 0%, rgba(238, 130, 58, 0) 60%),
-    linear-gradient(135deg, #f0813c 0%, #ef6f3d 45%, #f3a340 100%);
-  transition: opacity 600ms cubic-bezier(0, -0.3, 0.5, 1.3);
+    radial-gradient(80% 70% at 18% 12%, #cfa4de 0%, rgba(207, 164, 222, 0) 60%),
+    radial-gradient(90% 80% at 88% 28%, #ae72ef 0%, rgba(174, 114, 239, 0) 62%),
+    linear-gradient(158deg, #8d41ff 0%, #ae72ef 55%, #cfa4de 100%);
+  background-size: 165% 165%;
+  background-position: 0% 0%;
 }
-.feed-congrats.__intro::before { opacity: 1; }
+/* ИИ-подарок (.__ai) — тот же reveal, но тёплый mesh из Figma node 3155:202411:
+   малиново-розовый верх-центр, оранжевые бока, коралловая база, золотой низ. */
+.feed-congrats.__ai::before {
+  background:
+    radial-gradient(70% 55% at 50% 0%, #c93f8f 0%, rgba(201, 63, 143, 0) 55%),
+    radial-gradient(80% 70% at 100% 32%, #ef6a3d 0%, rgba(239, 106, 61, 0) 60%),
+    radial-gradient(90% 85% at 0% 100%, #f08a3a 0%, rgba(240, 138, 58, 0) 55%),
+    radial-gradient(95% 80% at 100% 100%, #f8c659 0%, rgba(248, 198, 89, 0) 55%),
+    linear-gradient(150deg, #f0813c 0%, #e85a55 45%, #f3a340 100%);
+  background-size: 165% 165%;
+}
 
-/* Текст шапки/заголовка на подложке — белый. Переход в тёмный при снятии. */
+/* Статичная подложка до старта анимации (и при reduced-motion не используется). */
+.feed-congrats.__intro::before { opacity: 1; }
+/* Запуск: проявление → перетекание → уход вниз в прозрачность. */
+.feed-congrats.__play::before {
+  animation: nv-congrats-reveal 2600ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes nv-congrats-reveal {
+  /* 0–500мс — фон проявлен, держим положение A */
+  0%   { opacity: 1; background-position: 0% 0%;     transform: translateY(0); }
+  19%  { opacity: 1; background-position: 0% 0%;     transform: translateY(0); }
+  /* 500–1700мс — перетекание A → B (длительность ≈1200мс) */
+  65%  { opacity: 1; background-position: 100% 100%; transform: translateY(0); }
+  /* 1700–2600мс — уход вниз + в прозрачность (длительность ≈900мс) */
+  100% { opacity: 0; background-position: 100% 130%; transform: translateY(36px); }
+}
+
+/* Текст шапки/заголовка на подложке — белый. Переход в тёмный при снятии .__intro. */
 .feed-congrats .nv-feed__title,
 .feed-congrats .avatars-view__text,
 .feed-congrats .uni-cell .ds-title-m,
 .feed-congrats .uni-cell .ds-caption-m {
-  transition: color 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+  transition: color 900ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .feed-congrats.__intro .nv-feed__title,
 .feed-congrats.__intro .avatars-view__text,
@@ -145,8 +179,8 @@
 /* Кнопка-подарок на подложке — белая «primaryOnColor» (тёмный лейбл/иконка) */
 .feed-congrats .nv-gift-btn.button-container {
   transition:
-    background-color 500ms cubic-bezier(0, -0.3, 0.5, 1.3),
-    color 500ms cubic-bezier(0, -0.3, 0.5, 1.3);
+    background-color 900ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 900ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .feed-congrats.__intro .nv-gift-btn.button-container {
   background-image: none;
@@ -155,9 +189,15 @@
 }
 .feed-congrats.__intro .nv-gift-btn .button-content { color: var(--dynamic-text-and-icons-base-primary); }
 
-/* Без анимации (системная настройка) — подложку не показываем вовсе. */
+/* Без анимации (системная настройка) — подложку и переходы не играем вовсе
+   (скрипт сразу снимает .__intro/.__play → карточка в дефолтном белом виде). */
 @media (prefers-reduced-motion: reduce) {
-  .feed-congrats::before { transition: none; }
+  .feed-congrats::before { animation: none; }
+  .feed-congrats .nv-feed__title,
+  .feed-congrats .avatars-view__text,
+  .feed-congrats .uni-cell .ds-title-m,
+  .feed-congrats .uni-cell .ds-caption-m,
+  .feed-congrats .nv-gift-btn.button-container { transition: none; }
 }
 
 /* ── Постовая открытка: горизонтальный скролл мини-карточек ──────────────── */
