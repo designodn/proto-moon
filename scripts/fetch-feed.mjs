@@ -149,15 +149,20 @@ function feedText(text, clamp) {
         </div>`;
 }
 
-/** Лайки / комменты / репосты. Пустые счётчики → иконка без числа (кроме класса). */
+/** Лайки / комменты / репосты. Пустые счётчики → иконка без числа (кроме класса).
+ *  Иконки экшенов — отдельный NV-пак (assets/new-vision-icons/), рендерятся как
+ *  обычные <img class="ll-icon"> (не CSS-маска): у глифов зашит fill, поэтому
+ *  они сразу видимы и совпадают по цвету с q3-лентой. «Троеточие» — общий слот. */
 function actionsBar(likes, comments, reshares) {
   const klassVar = likes ? ` style="--button-klass-count: ${likes};"` : '';
-  const num = (icon, n) =>
-    `<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-${icon}"></span>${n ? esc(n) : ''}</span></button></div>`;
+  const nvIcon = (file, extraClass = '') =>
+    `<img class="ll-icon${extraClass}" src="../assets/new-vision-icons/${file}" width="20" height="20" alt="">`;
+  const num = (file, n) =>
+    `<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">${nvIcon(file)}${n ? esc(n) : ''}</span></button></div>`;
   return `        <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"${klassVar}><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          ${num('comment', comments)}
-          ${num('reshare', reshares)}
+          <label class="button-wrapper __size-36 button-klass"${klassVar}><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content">${nvIcon('glyph_like_24.svg', ' button-klass__icon-outline')}${nvIcon('glyph_like_24.svg', ' button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>
+          ${num('glyph_comment_24.svg', comments)}
+          ${num('glyph_reshare_24.svg', reshares)}
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>`;
 }
