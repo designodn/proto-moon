@@ -82,7 +82,7 @@
   .nv-pr-cover__avatar { box-shadow: none; }
   .nv-pr-cover__texts { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; width: 100%; }
   .nv-pr-cover__name { margin: 0; }
-  .nv-pr-cover__sub  { margin: 0; opacity: 0.92; }
+  .nv-pr-cover__sub  { margin: 0; opacity: 0.92; font-family: var(--font-family-display); }
 
   /* CTA-ряд: лейбловая кнопка растягивается, две круглые — фикс */
   .nv-pr-cta { display: flex; align-items: stretch; gap: var(--space-2); width: 100%; }
@@ -106,22 +106,6 @@
   }
   .nv-pr-stat:active { transform: scale(0.95); }
   .nv-pr-stat__num { white-space: nowrap; }
-  /* квадратные превью (фото/заметка) — скруглённые, лёгкий наклон-стек */
-  /* фото-стопка из макета: 2 наклонённые карточки ~30×29, белый бордер,
-     радиус 7, тень elevate-3. __a — задняя (−7.2°, вверх-влево),
-     __b — передняя (+11.6°, вниз-вправо). */
-  .nv-pr-thumbs { position: relative; width: 44px; height: 44px; }
-  .nv-pr-thumb {
-    position: absolute; top: 50%; left: 50%; width: 30px; height: 29px;
-    border-radius: 7px; object-fit: cover;
-    border: 1.2px solid #fff;
-    box-shadow: 0 8px 24px -8px rgba(0,0,0,0.12);
-    background: var(--dynamic-surface-contrast-low);
-  }
-  .nv-pr-thumb.__a { transform: translate(-50%,-50%) translate(-3px,-2px) rotate(-7.2deg); }
-  .nv-pr-thumb.__b { transform: translate(-50%,-50%) translate(4px,3px) rotate(11.6deg); }
-  .nv-pr-thumb.__solo { width: 36px; height: 34px; transform: translate(-50%,-50%) rotate(6deg); }
-
   /* Панель «Бонсай» → компонент new-vision/components/nv-bonsai.css */
 
   /* лёгкий разделитель-зазор между белыми блоками и лентой */
@@ -189,12 +173,12 @@
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Позвонить">
+              <button class="button-container __style-secondary" aria-label="Позвонить">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/phone_24.svg')"></span></span>
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Ещё">
+              <button class="button-container __style-secondary" aria-label="Ещё">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
               </button>
             </div>
@@ -211,12 +195,12 @@
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Подписаться">
+              <button class="button-container __style-secondary" aria-label="Подписаться">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/follow_24.svg')"></span></span>
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Ещё">
+              <button class="button-container __style-secondary" aria-label="Ещё">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
               </button>
             </div>
@@ -233,12 +217,12 @@
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Настройки">
+              <button class="button-container __style-secondary" aria-label="Настройки">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/settings_24.svg')"></span></span>
               </button>
             </div>
             <div class="button-wrapper __size-44">
-              <button class="button-container __style-secondary" style="width:44px;" aria-label="Ещё">
+              <button class="button-container __style-secondary" aria-label="Ещё">
                 <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
               </button>
             </div>
@@ -250,7 +234,7 @@
       <section class="nv-pr-stats" aria-label="Статистика профиля">
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">244 друга</span>
-          <div class="avatars-view __size-36"><div class="avatars-view__stack">
+          <div class="avatars-view __size-36" data-people-ids="1,2,3"><div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=47" alt=""></div>
             <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=44" alt=""></div>
             <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/64?img=12" alt=""></div>
@@ -259,15 +243,16 @@
 
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">1000 фото</span>
-          <div class="nv-pr-thumbs">
-            <img class="nv-pr-thumb __a" src="https://picsum.photos/seed/olgaphoto1/80/80" alt="">
-            <img class="nv-pr-thumb __b" src="https://picsum.photos/seed/olgaphoto2/80/80" alt="">
-          </div>
+          <div class="avatars-view __size-36"><div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto1/72/72" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto2/72/72" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olgaphoto3/72/72" alt=""></div>
+          </div></div>
         </button>
 
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">15 групп</span>
-          <div class="avatars-view __size-36"><div class="avatars-view__stack">
+          <div class="avatars-view __size-36" data-people-ids="group-1,group-2,group-3"><div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/grp1/64/64" alt=""></div>
             <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/grp2/64/64" alt=""></div>
             <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/grp3/64/64" alt=""></div>
@@ -276,9 +261,7 @@
 
         <button class="nv-pr-stat">
           <span class="nv-pr-stat__num ds-title-s">1 заметка</span>
-          <div class="nv-pr-thumbs">
-            <img class="nv-pr-thumb __solo" src="https://picsum.photos/seed/olganote/80/80" alt="">
-          </div>
+          <div class="avatar __size-36 __type-image"><img src="https://picsum.photos/seed/olganote/72/72" alt=""></div>
         </button>
 
         <button class="nv-pr-stat">
@@ -299,17 +282,79 @@
           <div class="button-wrapper __size-44 nv-bonsai__water">
             <button class="button-container __style-secondary" data-bonsai-water>
               <span class="button-content">
-                <span class="icon __size-24 __src nv-bonsai__water-icon" style="--icon-src:url('../assets/icons/flower_24.svg')"></span>
+                <span class="icon __size-24 __src nv-bonsai__water-icon" style="--icon-src:url('../assets/new-vision-icons/glyph_drop_24.svg')"></span>
                 <span class="nv-bonsai__water-label">Полить</span>
               </span>
             </button>
           </div>
         </div>
-        <div class="nv-bonsai__art" aria-hidden="true" data-pr-bonsai-art>💐</div>
+        <div class="nv-bonsai__art" aria-hidden="true" data-pr-bonsai-art>
+          <img class="nv-bonsai__art-img" src="../assets/new-vision/bonsai-stage-5.png" alt="">
+        </div>
       </section>
 
       <!-- ЛЕНТА АВТОРА -->
       <div class="feed-container">
+
+        <!-- Текстовый пост 1 — про семью за столом -->
+        <article class="feed-base island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=45" data-pr-avatar alt=""></div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Ольга Вайнер</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Вчера, 19:30</div>
+            </div>
+          </div></div></div>
+          <div class="feed-text">
+            <p class="feed-text__body ds-body-m">Сегодня вся семья собралась за одним столом — дети, внуки и даже младшая правнучка приехала. Смотрю на них и понимаю: вот оно, главное богатство. Дом снова полон смеха и детского топота. Сердце радуется ❤️</p>
+          </div>
+          <div class="actions-bar">
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 87;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>23</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>4</span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          </div>
+        </article>
+
+        <!-- Текстовый пост 2 — внук закончил школу -->
+        <article class="feed-base island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=45" data-pr-avatar alt=""></div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Ольга Вайнер</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">2 дня назад</div>
+            </div>
+          </div></div></div>
+          <div class="feed-text">
+            <p class="feed-text__body ds-body-m">Мой внук Миша закончил школу с золотой медалью! Так горжусь, что слов не хватает. Кажется, только вчера вела его за руку в первый класс, а теперь он совсем взрослый и собирается поступать в институт. Расти большим и счастливым, родной 🎓</p>
+          </div>
+          <div class="actions-bar">
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 142;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>56</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>8</span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          </div>
+        </article>
+
+        <!-- Текстовый пост 3 — про близких -->
+        <article class="feed-base island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=45" data-pr-avatar alt=""></div>
+            <div class="contents-view-container uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Ольга Вайнер</div>
+              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 дней назад</div>
+            </div>
+          </div></div></div>
+          <div class="feed-text">
+            <p class="feed-text__body ds-body-m">Люблю эти тихие вечера, когда созваниваюсь со всеми детьми по очереди. У каждого своя жизнь, свои заботы, но слышать родные голоса — настоящее счастье. Берегите своих близких и почаще говорите им тёплые слова. Время летит так быстро.</p>
+          </div>
+          <div class="actions-bar">
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 64;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>19</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>11</span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+          </div>
+        </article>
 
         <!-- Пост 1 — одно фото -->
         <article class="feed-base island">
@@ -724,6 +769,19 @@
         // state === 'friends' — уже в друзьях, тап ничего не меняет
       });
     })();
+
+    // ── Реальные люди/группы в статистике (data-people-ids → people.js) ──────
+    // Друзья → id 1,2,3; группы → group-1..3. Имена/фото из реестра people.js.
+    document.querySelectorAll('[data-people-ids]').forEach(function (stack) {
+      var ids  = stack.getAttribute('data-people-ids').split(',');
+      var imgs = stack.querySelectorAll('.avatar img');
+      ids.forEach(function (id, i) {
+        var p = (window.DS_PEOPLE_DATA || []).filter(function (x) {
+          return String(x.id) === id.trim();
+        })[0];
+        if (p && imgs[i]) { if (p.photo) imgs[i].src = p.photo; imgs[i].alt = p.name || ''; }
+      });
+    });
 
     // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
     document.querySelectorAll('#bonsaiSheet .nv-gift-pick').forEach(function (group) {

@@ -8,8 +8,8 @@
  *
  * Состояние живёт в data-bonsai-level / data-bonsai-poured на `.nv-bonsai`.
  * Профиль сидит сверху: window.NVBonsai.setState(level, poured) — переустановка
- * под текущий вид (self/friend/stranger). Иллюстрации — эмодзи-плейсхолдеры
- * по стадиям (заменим на ассеты из assets/new-vision/bonsai/).
+ * под текущий вид (self/friend/stranger). Иллюстрации — 5 кадров-стадий
+ * assets/new-vision/bonsai-stage-1..5.png (росток → цветущий бонсай).
  */
 (function () {
   var root = document.querySelector('.nv-bonsai');
@@ -17,13 +17,15 @@
 
   var subEl   = root.querySelector('[data-pr-bonsai-sub]');
   var artEl   = root.querySelector('[data-pr-bonsai-art]');
+  var artImg  = root.querySelector('.nv-bonsai__art-img');
   var labelEl = root.querySelector('.nv-bonsai__water-label');
   var iconEl  = root.querySelector('.nv-bonsai__water-icon');
   var btn     = root.querySelector('[data-bonsai-water]');
 
-  // стадии роста по уровню (плейсхолдеры)
-  var STAGES = { 1: '🌱', 2: '🌿', 3: '🌳', 4: '🌷', 5: '💐', 6: '🌸' };
-  function artFor(level) { return STAGES[Math.min(6, Math.max(1, level))] || '🌱'; }
+  // стадии роста по уровню — 5 кадров (assets/new-vision/bonsai-stage-1..5.png)
+  function artSrc(level) {
+    return '../assets/new-vision/bonsai-stage-' + Math.min(5, Math.max(1, level)) + '.png';
+  }
 
   // склонение «полив / полива / поливов»
   function plural(n) {
@@ -40,7 +42,7 @@
   function render() {
     var p = pour();
     subEl.textContent = p + ' ' + plural(p) + ' · ' + lvl() + ' уровень';
-    artEl.textContent = artFor(lvl());
+    if (artImg) artImg.src = artSrc(lvl());
   }
 
   function setState(level, poured) {
