@@ -42,12 +42,20 @@
 
   /* .ll-tabbar → components/app-shell.css */
 
-  /* Механика «Давно не общались» — два чередующихся состояния (A/B).
+  /* Механика «Давно не общались» — чередуется с ВВЗ при перезаходе (A/B).
      Состояние задаёт [data-dno] на .phone-frame (messages-dno.js):
-       A — карусель #dnoBlock сверху, тег-ячейки скрыты;
-       B — карусели нет, диалоги с тегом-чипом подняты наверх списка. */
+       A — ВВЗ «Возможно, вы знакомы»;
+       B — блок «Давно не общались» + диалоги с тегом-чипом наверху списка. */
+  [data-dno="a"] #dnoBlock,
   [data-dno="a"] [data-dno-item] { display: none; }
-  [data-dno="b"] #dnoBlock       { display: none; }
+  [data-dno="b"] #vvzBlock       { display: none; }
+
+  /* Кнопка «Написать» в блоке «Давно не общались» — primary (оранжевая),
+     перебивает on-color-override модификатора .vvz-card.__message. */
+  #dnoBlock .vvz-card__btn .button-container {
+    --button-color: var(--static-text-and-icons-base-inverse-primary);
+    --button-background-color: var(--static-surface-status-accent);
+  }
 </style>
 </head>
 <body>
@@ -81,8 +89,104 @@
         </div>
       </div>
 
-      <!-- Давно не общались (состояние A) — карусель vvz-card с кнопкой
-           «Написать». Заменяет ВВЗ. Скрывается в состоянии B (см. data-dno).
+      <!-- Возможно, вы знакомы (состояние A) — ВВЗ-стек vvz-card. Чередуется
+           с блоком «Давно не общались» при перезаходе (см. data-dno). -->
+      <section class="vvz-portlet __messages" id="vvzBlock" data-dismiss-row aria-label="Возможно, вы знакомы">
+        <header class="vvz-portlet__header">
+          <header class="header __size-m"><div class="header__title">Возможно, вы знакомы</div></header>
+          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" data-dismiss="row"><span class="button-inline__content">Скрыть</span></button></span>
+        </header>
+        <div class="vvz-portlet__row">
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=47" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Алёна Ящук</div>
+              <div class="vvz-card__subtitle ds-body-m">20 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=44" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Анна Смирнова</div>
+              <div class="vvz-card__subtitle ds-body-m">12 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=45" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Мария Иванова</div>
+              <div class="vvz-card__subtitle ds-body-m">10 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=52" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>
+              <div class="vvz-card__subtitle ds-body-m">12 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=33" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
+              <div class="vvz-card__subtitle ds-body-m">8 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="vvz-card __message" data-dismiss-target>
+            <div class="vvz-card__media">
+              <img src="https://i.pravatar.cc/240?img=31" alt="">
+              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
+            </div>
+            <div class="vvz-card__content">
+              <div class="vvz-card__title ds-title-s">Светлана Орлова</div>
+              <div class="vvz-card__subtitle ds-body-m">6 общих друзей</div>
+              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Давно не общались (состояние B) — карусель vvz-card с кнопкой
+           «Написать» (primary). Показывается вместе с тег-диалогами ниже.
            Механика «давно не общались»: components/messages-dno.js -->
       <section class="vvz-portlet __messages" id="dnoBlock" data-dismiss-row aria-label="Давно не общались">
         <header class="vvz-portlet__header">
@@ -97,9 +201,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Алёна Ящук</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Алёна Ящук</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -111,9 +213,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Анна Смирнова</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Анна Смирнова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -125,9 +225,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Мария Иванова</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Мария Иванова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -139,9 +237,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Александр Фёдоров</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -153,9 +249,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Олег Зайцев</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -167,9 +261,7 @@
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Светлана Орлова</div>
-              <div class="vvz-card__subtitle ds-body-m">Вы давно не общались</div>
-              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+              <div class="vvz-card__title ds-title-s">Светлана Орлова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
               </div>
             </div>
@@ -182,7 +274,8 @@
       <div class="ll-messages">
 
         <!-- Давно не общались (состояние B) — диалоги с тегом-чипом, подняты
-             наверх списка. Скрыты в состоянии A (см. data-dno + #dnoBlock). -->
+             наверх списка. Показываются вместе с блоком #dnoBlock; скрыты в
+             состоянии A (ВВЗ). См. data-dno. -->
         <div class="uni-cell-wrapper" data-dno-item>
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell message-cell __read">
