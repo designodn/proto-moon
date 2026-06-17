@@ -310,7 +310,8 @@
       // списываем 1 билет за прокрут и сразу показываем новый счётчик
       tickets = Math.max(0, tickets - 1);
       coin.textContent = tickets;
-      // короткий разгон барабана; режим CTA обновляем после остановки
+      if (tickets > 0) ctaText.textContent = 'Крутить колесо за ' + tickets;
+      // короткий разгон барабана; режим CTA (в т.ч. переход в invite при 0) — после остановки
       wheel.classList.add('__fast');
       setTimeout(function () {
         wheel.classList.remove('__fast');
