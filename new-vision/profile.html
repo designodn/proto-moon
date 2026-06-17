@@ -121,6 +121,12 @@
 
       <!-- ОБЛОЖКА: статус + навбар + аватар + имя + CTA -->
       <header class="nv-pr-cover">
+        <!-- Интерактивный фон «Сакура»: ветки по углам, встряхиваются при заходе.
+             Показывается только при сохранённом фоне «Сакура» (см. JS). -->
+        <div class="nv-pr-sakura" aria-hidden="true" hidden>
+          <img class="nv-pr-sakura__branch __left"  src="../assets/new-vision/sakura%20left.png"  alt="">
+          <img class="nv-pr-sakura__branch __right" src="../assets/new-vision/sakura%20right.png" alt="">
+        </div>
         <div class="status-bar">
           <span class="status-bar__time">9:41</span>
           <span class="status-bar__indicators">
@@ -531,16 +537,34 @@
   <script src="../components/feed-text.js"></script>
   <script>
     // ── Фон обложки (фича «Выбор фона», только self) ────────────────────────
-    var coverEl   = document.querySelector('.nv-pr-cover');
-    var savedBg   = sessionStorage.getItem('nv-cover-bg');
-    var savedDark = sessionStorage.getItem('nv-cover-bg-dark') === '1';
+    var coverEl     = document.querySelector('.nv-pr-cover');
+    var sakuraLayer = document.querySelector('.nv-pr-sakura');
+    var savedBg     = sessionStorage.getItem('nv-cover-bg');
+    var savedDark   = sessionStorage.getItem('nv-cover-bg-dark') === '1';
 
-    // Красим обложку выбранным фоном (во всех видах — профили отличаются только текстом).
+    function isSakura(bg) { return !!bg && bg.indexOf('sakura') !== -1; }
+
+    // Красим обложку выбранным фоном. «Сакура» — особый интерактивный фон:
+    // персиковая обложка (#FFE8E0) + ветки по углам (Figma 3160:204566).
     function paintCover(bg, dark) {
-      coverEl.style.background = (!bg || bg === 'none') ? '' : bg;
-      coverEl.classList.toggle('__bg-dark', !!dark && !!bg && bg !== 'none');
+      var sak = isSakura(bg);
+      coverEl.style.background = (!bg || bg === 'none') ? '' : (sak ? '#FFE8E0' : bg);
+      coverEl.classList.toggle('__bg-dark', !!dark && !!bg && bg !== 'none' && !sak);
+      coverEl.classList.toggle('__bg-sakura', sak);
+      if (sakuraLayer) sakuraLayer.hidden = !sak;
     }
     function applySavedBg() { paintCover(savedBg, savedDark); }
+
+    // «Встряхивание» веток сакуры — проигрывается при заходе/обновлении и
+    // после «Сохранить». Рестарт анимации через снятие класса + reflow.
+    function shakeSakura() {
+      if (!sakuraLayer || sakuraLayer.hidden) return;
+      sakuraLayer.querySelectorAll('.nv-pr-sakura__branch').forEach(function (b) {
+        b.classList.remove('__shake');
+        void b.offsetWidth;
+        b.classList.add('__shake');
+      });
+    }
 
     // ── Состояния профиля: self | friend | stranger ────────────────────────
     // Источник истины — ?view= в URL; переключатель его же и меняет.
@@ -579,13 +603,16 @@
         applySavedBg();
       } else {
         coverEl.style.background = '';
-        coverEl.classList.remove('__bg-dark');
+        coverEl.classList.remove('__bg-dark', '__bg-sakura');
+        if (sakuraLayer) sakuraLayer.hidden = true;
       }
     }
 
     // init из URL
     var initial = new URLSearchParams(location.search).get('view') || 'friend';
     applyView(initial);
+    // при заходе/обновлении на свой профиль с фоном «Сакура» — встряхнуть ветки
+    if (document.body.getAttribute('data-view') === 'self') shakeSakura();
 
     // клики по переключателю — меняем состояние + ?view= без перезагрузки.
     // dev-пилюля убрана из разметки; обработчик оставлен под защитой, если её вернут.
@@ -650,21 +677,20 @@
       openS(bgSheet);
     });
 
-    // выбор свотча → живое превью обложки
+    // выбор свотча → только подсветка выбора (без превью обложки;
+    // фон применяется лишь по «Сохранить»). Активен всегда один свотч.
     bgSheet.addEventListener('click', function (e) {
       var sw = e.target.closest('.nv-pick');
       if (!sw) return;
       pendingBg = sw.getAttribute('data-bg');
       pendingDark = sw.getAttribute('data-dark') === '1';
-      // активен только один — снимаем выделение со всех, ставим на нажатый (п.1)
       bgSheet.querySelectorAll('.nv-pick').forEach(function (p) {
         p.classList.remove('__selected'); p.removeAttribute('aria-pressed');
       });
       sw.classList.add('__selected'); sw.setAttribute('aria-pressed', 'true');
-      paintCover(pendingBg, pendingDark);
     });
 
-    // «Сохранить» — применить + запомнить
+    // «Сохранить» — применить + запомнить + (для сакуры) встряхнуть ветки
     bgSheet.querySelector('[data-bg-save]').addEventListener('click', function () {
       savedBg = pendingBg; savedDark = pendingDark;
       if (savedBg && savedBg !== 'none') {
@@ -674,6 +700,8 @@
         sessionStorage.removeItem('nv-cover-bg');
         sessionStorage.removeItem('nv-cover-bg-dark');
       }
+      applySavedBg();
+      shakeSakura();
       closeS(bgSheet);
     });
 

@@ -78,3 +78,38 @@
 .nv-pr-cover.__bg-dark {
   color: var(--static-text-and-icons-base-inverse-primary);
 }
+
+/* ── Интерактивный фон «Сакура» (Figma 3160:204566) ──────────────────────────
+   На своём профиле с сохранённым фоном «Сакура» обложка становится персиковой,
+   а по углам появляются две ветки сакуры; при заходе/обновлении и после
+   «Сохранить» они слегка «встряхиваются». */
+.nv-pr-cover.__bg-sakura { background: #FFE8E0 !important; }
+
+.nv-pr-sakura {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none; z-index: 0;
+}
+.nv-pr-sakura[hidden] { display: none; }
+/* контент обложки — над ветками */
+.nv-pr-cover .status-bar,
+.nv-pr-cover__nav,
+.nv-pr-cover__body { position: relative; z-index: 1; }
+
+.nv-pr-sakura__branch { position: absolute; height: auto; will-change: transform; }
+.nv-pr-sakura__branch.__left  { left: -19%;  top: 60px; width: 70%; transform-origin: 0% 0%; }
+.nv-pr-sakura__branch.__right { right: -19%; top: 68px; width: 52%; transform-origin: 100% 0%; }
+
+/* встряхивание — играется один раз при добавлении класса .__shake */
+.nv-pr-sakura__branch.__shake.__left  { animation: nv-sakura-shake 1200ms cubic-bezier(.36,.07,.19,.97) both; }
+.nv-pr-sakura__branch.__shake.__right { animation: nv-sakura-shake 1200ms cubic-bezier(.36,.07,.19,.97) 120ms both; }
+@keyframes nv-sakura-shake {
+  0%   { transform: rotate(0deg); }
+  18%  { transform: rotate(2.6deg); }
+  36%  { transform: rotate(-1.9deg); }
+  54%  { transform: rotate(1.3deg); }
+  72%  { transform: rotate(-0.7deg); }
+  100% { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-pr-sakura__branch.__shake { animation: none; }
+}
