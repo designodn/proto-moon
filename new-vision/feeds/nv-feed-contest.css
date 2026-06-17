@@ -27,25 +27,28 @@
 }
 
 /* Галерея превью работ — «веер» из перекрывающихся повёрнутых фото с белой
-   рамкой и мягкой тенью (по макету). Стопка тянется на 100% ширины родителя:
-   каждое фото — доля ширины с фикс-пропорцией (aspect-ratio), наезд в %. */
+   рамкой и мягкой тенью (по макету). Колода центрируется внутри острова;
+   по бокам оставлен запас под вынос от поворота крайних фото, чтобы рамки
+   не вылезали за край острова. */
 .feed-contest .picture-stack {
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 .feed-contest .picture-stack > .picture {
   box-sizing: border-box;
-  width: 32%;
+  width: 28%;
   height: auto;
   aspect-ratio: 1;
   border: 3px solid #fff;
   box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
 }
-/* Лёгкий наклон каждого снимка + наезд друг на друга (значения с макета).
-   3 наезда по 9.3% поверх 4×32% дают суммарно 100% ширины. */
+/* Лёгкий наклон каждого снимка + равномерный наезд друг на друга.
+   4×28% − 3×7% ≈ 91% ширины → центрированная колода с симметричным
+   запасом ~16px по бокам под вынос от поворота. */
 .feed-contest .picture-stack > .picture:nth-child(1) { transform: rotate(-2.2deg); }
-.feed-contest .picture-stack > .picture:nth-child(2) { transform: rotate(8.8deg);  margin-left: -9.3%; }
-.feed-contest .picture-stack > .picture:nth-child(3) { transform: rotate(2.9deg);  margin-left: -9.3%; }
-.feed-contest .picture-stack > .picture:nth-child(4) { transform: rotate(-4.4deg); margin-left: -9.3%; }
+.feed-contest .picture-stack > .picture:nth-child(2) { transform: rotate(8.8deg);  margin-left: -7%; }
+.feed-contest .picture-stack > .picture:nth-child(3) { transform: rotate(2.9deg);  margin-left: -7%; }
+.feed-contest .picture-stack > .picture:nth-child(4) { transform: rotate(-4.4deg); margin-left: -7%; }
