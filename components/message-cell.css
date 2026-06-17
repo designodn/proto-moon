@@ -92,9 +92,7 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: 16px;
-  /* surface-tint-asphalt объявлен только в скоупе .theme-cocktail; на light-теме
-     messages.html он не резолвится, поэтому берём базовый токен той же палитры. */
-  background-color: var(--base-asphalt-12);
+  background-color: var(--static-surface-tint-asphalt);
   color: var(--static-text-and-icons-base-primary);
   white-space: nowrap;
 }
