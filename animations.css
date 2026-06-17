@@ -52,7 +52,7 @@
    ============================================================ */
 .ds-activity-conveyor {
   --conv-row-h: 72px;
-  --conv-rows: 3;
+  --conv-rows: 2;
   --conv-dur: 0.5s;
   position: relative;
   overflow: hidden;
