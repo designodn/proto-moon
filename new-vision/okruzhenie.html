@@ -46,7 +46,7 @@
             <span class="activity-indicator" data-state="pulse" aria-live="polite" aria-label="Новые события вокруг вас">
               <span class="pulse-dot __view-custom"></span>
               <span class="activity-indicator__badge">
-                <span class="activity-indicator__count">1</span><span class="activity-indicator__word">новых</span>
+                <span class="activity-indicator__count"><span class="activity-indicator__digit">1</span></span><span class="activity-indicator__word">новых</span>
               </span>
             </span>
           </div>
@@ -302,7 +302,9 @@
   var ind = document.querySelector('.activity-indicator');
   if (!ind) return;
 
+  var badge   = ind.querySelector('.activity-indicator__badge');
   var countEl = ind.querySelector('.activity-indicator__count');
+  var wordEl  = ind.querySelector('.activity-indicator__word');
   var MAX = 9;                                  // потолок: дальше показываем «9+»
   var SILENCE = 2500;                           // (n) сек тишины до раскрытия
 
@@ -315,28 +317,59 @@
   var FINAL = SCRIPT[SCRIPT.length - 1].count;   // на чём раскрываемся в «N новых»
 
   function word(n) { return n === 1 ? 'новое' : 'новых'; }
-  function render(n) {
-    countEl.textContent = n > MAX ? MAX + '+' : String(n);
-    ind.querySelector('.activity-indicator__word').textContent = word(n);
+  function fmt(n)  { return n > MAX ? MAX + '+' : String(n); }
+
+  // Смена значения: старая цифра падает вниз, новая въезжает сверху,
+  // а кружок «пыхает» к 26×26 из центра (перезапуск ai-pop).
+  function setCount(n, animate) {
+    var text = fmt(n);
+    wordEl.textContent = word(n);
+    if (countEl.dataset.value === text) return;
+
+    if (!animate) {
+      countEl.innerHTML = '<span class="activity-indicator__digit">' + text + '</span>';
+      countEl.dataset.value = text;
+      return;
+    }
+
+    var current = countEl.querySelector('.activity-indicator__digit');
+    if (current) {                              // старая цифра — падает вниз и исчезает
+      current.classList.add('__leave');
+      current.addEventListener('animationend', function () { current.remove(); }, { once: true });
+    }
+    var incoming = document.createElement('span'); // новая — въезжает сверху
+    incoming.className = 'activity-indicator__digit __enter';
+    incoming.textContent = text;
+    incoming.addEventListener('animationend', function () { incoming.classList.remove('__enter'); }, { once: true });
+    countEl.appendChild(incoming);
+    countEl.dataset.value = text;
+
+    badge.classList.remove('__pop');            // перезапуск «пыха» кружка
+    void badge.offsetWidth;
+    badge.classList.add('__pop');
   }
 
   // Уважение к prefers-reduced-motion: без таймеров — сразу финальное состояние.
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (still) {
-    render(FINAL);
+    setCount(FINAL, false);
     ind.dataset.state = 'expanded';
     return;
   }
 
+  // Старт: пульс ищет новых — бейдж пуст, перекатываем уже от первого события.
+  countEl.innerHTML = '';
+  countEl.dataset.value = '';
+
   var timers = [];
   function step(i) {
     if (i >= SCRIPT.length) {
-      // тишина → раскрываем кружок в пилюлю «N новых»
+      // дошли до финала (3) → через тишину раскрываем «N новых»
       timers.push(setTimeout(function () { ind.dataset.state = 'expanded'; }, SILENCE));
       return;
     }
     timers.push(setTimeout(function () {
-      render(SCRIPT[i].count);
+      setCount(SCRIPT[i].count, true);
       ind.dataset.state = 'count';
       step(i + 1);
     }, SCRIPT[i].at));
