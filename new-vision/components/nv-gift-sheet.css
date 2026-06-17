@@ -121,6 +121,9 @@
   background: transparent;
   box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low);
 }
+/* чипсы «Подарок»/«Фон» — без overflow hidden (чтобы не обрезалась обводка) */
+.nv-gift-pick .nv-pick { overflow: visible; }
+
 /* обводка активного — 3px с оффсетом 2px (визуал как в шторке выбора цвета) */
 .nv-pick.__selected {
   box-shadow: 0 0 0 2px var(--dynamic-surface-base-quaternary),
