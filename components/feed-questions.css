@@ -51,19 +51,34 @@
   border-radius: 16px;
   box-sizing: border-box;
 }
+/* Описание вопроса — title-s (15/20/600). Шрифт форсим на OK Sans Display:
+   титулы по правилам ДС идут дисплейным катом, а в NV база (--font-family)
+   переключена на Roboto, поэтому через --font-family-display явно тянем Display
+   (фолбэк на --font-family — для прод-страниц без NV-шрифтовой карты). */
 .question-card__title {
-  font-family: var(--font-family);
-  font-size: var(--font-size-300);
-  line-height: var(--line-height-300);
+  font-family: var(--font-family-display, var(--font-family));
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
   font-weight: 600;
   color: var(--dynamic-text-and-icons-base-primary);
   flex: 1;
 }
+/* Раздел — body-m (15/20/400), имя автора — caption-m (13/16/400).
+   В этих карточках текстовые стили форсим на OK Sans Text (в NV body/caption
+   по умолчанию рендерятся на Roboto — здесь хотим брендовый текстовый кат). */
 .question-card__category {
-  font-family: var(--font-family);
+  font-family: "OK Sans Text", var(--font-family);
   font-size: var(--font-size-200);
   line-height: var(--line-height-200);
+  font-weight: 400;
   color: var(--dynamic-text-and-icons-base-secondary);
+}
+.question-card__author {
+  font-family: "OK Sans Text", var(--font-family);
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  font-weight: 400;
+  color: var(--dynamic-text-and-icons-base-primary);
 }
 
 /* uni-cell внутри question-card — без своих паддингов */
