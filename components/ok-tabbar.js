@@ -44,7 +44,11 @@
 
     var btns = variant.tabs.map(function (t) {
       var cls = 'tabbar-icon __slot-' + t.slot + (t.slot === active ? ' __state-on' : '');
-      return '<button class="' + cls + '" data-href="' + t.href + '" aria-label="' + t.label + '"></button>';
+      // Каждая иконка в своей ячейке .tabbar__cell — она тянется на равную долю
+      // ширины (flex:1) и центрирует кнопку, чтобы таб-бар растягивался по экрану.
+      return '<div class="tabbar__cell">' +
+               '<button class="' + cls + '" data-href="' + t.href + '" aria-label="' + t.label + '"></button>' +
+             '</div>';
     }).join('');
 
     el.innerHTML =
