@@ -47,17 +47,25 @@
 .feed-birthday__icon-more { --icon-src: url('../assets/icons/more_16_20.svg'); }
 
 /* ============================================================
-   DECO — праздничная «шапка», прибита к верху острова. Высота 144,
-   фигурная нижняя кромка (path figma: бока ниже, центр приподнят).
-   Декор пока однотонная заглушка цветного фона (fill #ff5a1f).
+   DECO — праздничная «шапка», прибита к верху острова. Высота 144.
+   Заливка — картинка (шарики/градиент), обрезанная по фигурной кромке
+   из макета (path: бока ниже, центр приподнят) через CSS-маску.
    ============================================================ */
 .feed-birthday__deco {
   position: relative;
   height: 144px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 147' preserveAspectRatio='none'%3E%3Cpath d='M0 0H360V147C241.161 123.391 118.839 123.391 0 147V0Z' fill='%23ff5a1f'/%3E%3C/svg%3E");
-  background-size: 100% 144px;
+  background-image: url('../assets/feed-anniversary-bg.png');
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  background-position: top center;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 147' preserveAspectRatio='none'%3E%3Cpath d='M0 0H360V147C241.161 123.391 118.839 123.391 0 147V0Z' fill='%23000'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 147' preserveAspectRatio='none'%3E%3Cpath d='M0 0H360V147C241.161 123.391 118.839 123.391 0 147V0Z' fill='%23000'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 144px;
+          mask-size: 100% 144px;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: top center;
+          mask-position: top center;
 }
 
 /* ============================================================
