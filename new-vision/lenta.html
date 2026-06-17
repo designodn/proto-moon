@@ -20,10 +20,6 @@
   /* Кликабельный автор/человек в ленте → переход в профиль (см. скрипт внизу). */
   .nv-person-link { cursor: pointer; }
   .nv-person-link:active { opacity: 0.6; }
-  /* Полноэкранный вьюер моментов: .phone-frame сам скроллится, поэтому
-     position:absolute уезжал в верх контента. Фиксируем к вьюпорту, чтобы
-     оверлей держался на экране при любом скролле. z-index выше sticky-шапки. */
-  .phone-frame .moment.__fullscreen { position: fixed; z-index: 100; }
 </style>
 </head>
 <body>
