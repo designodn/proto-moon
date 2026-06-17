@@ -158,23 +158,20 @@
   left: 10px;
 }
 
-/* Mute pill (bottom-right) — для clip */
+/* Mute control (bottom-right) — для clip: иконка звука 32px с тенью */
 .media__mute {
   position: absolute;
   bottom: 12px;
   right: 12px;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   border: 0;
-  border-radius: 50%;
-  background-color: var(--base-black-lena-translucent-48);
+  background: transparent;
   color: var(--static-text-and-icons-base-inverse-primary);
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
 }
 
 /* ============================================================

@@ -236,7 +236,7 @@ function mediaClip(photos) {
     visual = img(src);
   }
   return `        <div class="media __type-clip">${visual}
-          <button class="media__mute" aria-label="Mute">🔇</button>
+          <button class="media__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('../assets/icons/sound_off_24.svg')"></span></button>
         </div>`;
 }
 function mediaGallery(photos) {
