@@ -33,16 +33,20 @@ const csvUrl =
   `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
 /* ── Компаньон-данные (то, чего нет в основном листе) ─────────────────────── */
-const EXTRAS = {
+/* Этих данных нет в листе «Посты» (вложенные куски не лезут в плоские колонки),
+ * поэтому держим их здесь и вешаем на ТИП карточки. main() сам разложит их по
+ * актуальным id постов — перенумерация/перестановки строк в листе ничего не ломают.
+ * Моменты сюда не входят: их авторы берутся из колонки «автор» поста. */
+const COMPANION = {
   // questions: подписи и категории карточек (авторы берутся из листа, по порядку)
-  'post-19': {
+  questions: {
     questions: [
       { title: 'Соседи, подскажите мастера по окнам',            category: 'Ремонт' },
       { title: 'Подскажите хорошего стоматолога в нашем районе', category: 'Стоматолог' },
     ],
   },
   // discussion: топ-комментарий
-  'post-21': {
+  discussion: {
     topComment: {
       authorId: 2,
       time: '3 часа назад',
@@ -52,22 +56,16 @@ const EXTRAS = {
     moreReplies: 'Посмотреть 35 ответов',
   },
   // birthday: друзья, поздравившие именинника
-  'post-18': { friends: { ids: [1, 3], more: 3, text: '12 друзей поздравило' } },
+  birthday: { friends: { ids: [1, 3], more: 3, text: '12 друзей поздравило' } },
   // group-invite: друзья-подписчики
-  'post-20': { friends: { ids: [1, 4], more: 3, text: '5 друзей подписаны' } },
-  // stories-moments: кружки моментов. cover — фото момента (пока плейсхолдер,
-  // person id), author — кто выложил (аватар-бейдж в углу + подпись), viewed —
-  // серое кольцо. Первый кружок «Поделиться» добавляется шаблоном.
-  'post-22': { moments: [
-    { cover: 1, author: 4, viewed: false },
-    { cover: 2, author: 5, viewed: false },
-    { cover: 3, author: 6, viewed: true  },
-    { cover: 9, author: 7, viewed: false },
-  ] },
-  // gift: получатель/даритель (показывается под подписью)
-  'post-15': { reshareId: 1 },
-  'post-8':  { reshareId: 3 },
+  'group-invite': { friends: { ids: [1, 4], more: 3, text: '5 друзей подписаны' } },
 };
+
+// gift: получатель/даритель (аватар под подписью) — по порядку появления подарков
+const GIFT_RESHARE = [1, 3];
+
+// Заполняется в main(): EXTRAS[post.id] = COMPANION[post.type] (привязка к типу).
+const EXTRAS = {};
 
 /* Дефолтное время поста (время убрали из таблицы — это «реквизит» шаблона). */
 const TIMES = ['08:15', '09:35', '11:18', '12:48', '14:02', '15:20', '17:46', '18:42', '20:10', '21:33'];
@@ -513,6 +511,12 @@ async function main() {
     writeFileSync(resolve(ROOT, 'data/feed.json'),
       JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
   }
+
+  // Разложить компаньон-данные по актуальным id (привязка к ТИПУ, не к id).
+  for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
+  posts.filter(p => p.type === 'gift').forEach((p, i) => {
+    EXTRAS[p.id] = { ...(EXTRAS[p.id] || {}), reshareId: GIFT_RESHARE[i] ?? GIFT_RESHARE[GIFT_RESHARE.length - 1] };
+  });
 
   const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
   splice(cards);
