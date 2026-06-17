@@ -6,8 +6,8 @@
  * с тёмными пилюлями (__style-on-image) внизу.
  *
  * Используется в lenta-light и других облегчённых лентах. В отличие
- * от text-feed не оборачивается в .island — у клипа свой radius и
- * фон, а padding обнуляется в пользу absolute-позиционирования
+ * от text-feed не оборачивается в .island — клип full-bleed (без
+ * скругления), а padding обнуляется в пользу absolute-позиционирования
  * оверлеев.
  *
  * Структура:
@@ -43,7 +43,7 @@
   position: relative;
   aspect-ratio: 9 / 16;
   background-color: var(--dynamic-surface-base-secondary);
-  border-radius: 20px;
+  border-radius: 0;
   overflow: hidden;
 }
 
