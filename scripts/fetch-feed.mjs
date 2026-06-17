@@ -45,6 +45,16 @@ const COMPANION = {
       { title: 'Подскажите хорошего стоматолога в нашем районе', category: 'Стоматолог' },
     ],
   },
+  // question: тот же Q&A-визуал, что и discussion — топ-коммент + «ответы»
+  question: {
+    topComment: {
+      authorId: 8,
+      time: '2 часа назад',
+      text: 'У меня похожее было после бега — помогли разминка и наколенник.',
+      likes: 4,
+    },
+    moreReplies: 'Посмотреть 18 ответов',
+  },
   // discussion: топ-комментарий
   discussion: {
     topComment: {
@@ -247,7 +257,7 @@ function renderPost(p, idx) {
   switch (type) {
     /* ── feed-base: text / photo / gallery / clip / video / article / question ── */
     case 'text': case 'photo': case 'gallery': case 'clip': case 'video':
-    case 'article': case 'question': {
+    case 'article': {
       const entity = grp ? ' data-entity="group"' : '';
       const parts = [];
       if (type === 'article') {
@@ -356,7 +366,8 @@ ${cards}
       </article>`;
     }
 
-    /* ── обсуждают ── */
+    /* ── обсуждают / вопрос (одинаковый Q&A-визуал) ── */
+    case 'question':
     case 'discussion': {
       const c = x.topComment;
       const comment = c ? `        <div class="comment __type-compact">
