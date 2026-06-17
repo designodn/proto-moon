@@ -104,6 +104,20 @@
   pointer-events: none;
   user-select: none;
 }
+/* Lottie-вариант лид-стикера (трофей в ячейке конкурса).
+   До загрузки/при ошибке виден emoji-фолбэк (текст внутри span);
+   когда Lottie проигрался — emoji прячем (.__lottie-on), показываем SVG. */
+.lead-lottie {
+  width: 34px;
+  height: 34px;
+  right: -8px;
+  bottom: -6px;
+  font-size: 26px;          /* размер emoji-фолбэка */
+  line-height: 34px;
+  text-align: center;
+}
+.lead-lottie.__lottie-on { font-size: 0; }   /* убираем emoji, остаётся SVG */
+.lead-lottie svg { display: block; width: 100%; height: 100%; }
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
@@ -251,6 +265,47 @@
     animation: none !important;
   }
   .activity-list.play .uni-cell-container::before { display: none; }
+}
+
+/* ============================================================
+   ПОЯВЛЕНИЕ В КОНВЕЙЕРЕ (виджет «Вокруг вас» в ленте).
+   Та же палитра категорий, что и в списке-странице, но триггер —
+   класс .__conv-appear, который JS вешает на входящую ячейку
+   (см. инлайн-скрипт конвейера в lenta.html). Высоту/scale-из-точки
+   делает .__conv-enter (animations.css); здесь — только цвет подложки.
+   Подложка вспыхивает (au-fade) и гаснет → ячейка приходит к дефолту.
+   Конфетти у .__cat-holiday — Lottie-оверлей на body (clip ряда мешает),
+   тоже из скрипта конвейера.
+   ============================================================ */
+.ds-activity-conveyor__track > .__conv-appear {
+  isolation: isolate; /* свой стек-контекст: подложка ::before (z-index:-1) ляжет под текст */
+}
+.ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
+  animation: au-fade 1.3s ease-out both;
+  pointer-events: none;
+  z-index: -1;
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-win .uni-cell-container::before {
+  background-color: rgba(255, 196, 61, 0.30); /* «1 место» — золото */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-holiday .uni-cell-container::before {
+  background-color: rgba(150, 120, 255, 0.20); /* «Праздник» — лаванда */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-container::before {
+  background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%); /* «Нейро» */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content {
+  /* backwards: после анимации цвет возвращается в каскад (dynamic-токен) */
+  animation: au-neuro-text 1.3s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before { display: none; }
+  .ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content { animation: none; }
 }
 
 /* ============================================================
