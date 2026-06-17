@@ -10,6 +10,13 @@
     avatarSrc: 'https://i.pravatar.cc/144?img=68'
   };
 
+  // Если подключён реестр людей (data/people.js) — берём профиль из строки my_profile.
+  var me = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0];
+  if (me) {
+    USER.name = me.name;
+    if (me.photo) USER.avatarSrc = me.photo;
+  }
+
   function apply() {
     document.querySelectorAll('[data-user-name]').forEach(function (el) {
       el.textContent = USER.name;

@@ -60,6 +60,43 @@ ds-design/
 
 ---
 
+## Реальные люди из Google-таблицы
+
+Аватарки и имена реальных людей берутся из Google-таблицы [«люди»](https://docs.google.com/spreadsheets/d/1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y/edit),
+лист **«Люди»**. Пайплайн — оффлайн: скрипт выкачивает таблицу в статический
+JSON, который коммитится в репо (интернет нужен только при обновлении данных).
+
+**Обновить данные** (таблица должна быть открыта «всем, у кого есть ссылка»):
+
+```sh
+node scripts/fetch-people.mjs
+# → перезапишет data/people.json и data/people.js
+```
+
+**Подключить на странице** (после разметки):
+
+```html
+<script src="data/people.js"></script>          <!-- window.DS_PEOPLE_DATA -->
+<script src="components/people-data.js"></script>
+```
+
+**Разметка** — человек подставляется по `id` из листа «Люди»:
+
+```html
+<img data-person-avatar="3" alt="">                  <!-- аватар -->
+<div data-person-name="3">…</div>                    <!-- имя -->
+<div class="vvz-card__blur" data-person-bg="3"></div> <!-- фон-блюр -->
+```
+
+`media: "video"` (живое фото) аппликатор сам подменяет `<img>` на зацикленное
+`<video>`. Спец-`id` **`my_profile`** — текущий пользователь: его подхватывает
+`components/user-data.js` (`data-user-name` / `data-user-avatar`).
+
+Примеры в коде: `friends.html` (блок «Возможно, вы знакомы»), `profile.html`,
+`menu.html`.
+
+---
+
 ## Конвенция именования
 
 Все интерактивные компоненты следуют паттерну `wrapper → container`:
