@@ -112,6 +112,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+/* .media__play сам является .button-circle-wrapper, который на :active ставит
+   transform: scale(0.95). Без translate это сбрасывает центровку и кнопка
+   «уезжает» по диагонали — поэтому сохраняем translate и в нажатом состоянии. */
+.media__play.button-circle-wrapper:not(.__state-loading):not(.__state-disabled):active,
+.media__play.button-circle-wrapper:not(.__state-loading):not(.__state-disabled).__clicked {
+  transform: translate(-50%, -50%) scale(0.95);
+}
 .media__play .button-circle {
   --button-circle-bg:    var(--static-surface-special-layer-tertiary);
   --button-circle-color: var(--static-text-and-icons-base-inverse-primary);

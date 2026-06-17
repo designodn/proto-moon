@@ -2,15 +2,13 @@
  * New Vision — FeedContest (фид «Конкурс»)
  *
  * Уникален для вижн-ленты (нет в q3, нет в общей DS).
- * Карточный визуал даёт общий .island; здесь — только раскладка контента
- * и заголовок. Layout повторяет логику .feed-base: вертикальная стопка с
- * gap, горизонтальный паддинг 16 на всех детях кроме full-bleed-медиа.
+ * Карточный визуал даёт общий .island; здесь — только раскладка контента.
  *
  *   <article class="feed-contest island">
  *     <nav class="breadcrumbs">…</nav>
- *     <h2 class="nv-feed__title">…</h2>
- *     <div class="picture-stack">…</div>
- *     <div class="button-wrapper __full-width">…</div>
+ *     <h2 class="nv-feed__title ds-title-xl">…</h2>
+ *     <div class="picture-stack">…4×.picture…</div>
+ *     <div class="button-wrapper __full-width">… Загрузить фото …</div>
  *   </article>
  */
 
@@ -19,36 +17,30 @@
   flex-direction: column;
   gap: var(--space-3);
 }
-.feed-contest > * {
-  padding-top: 0;
-  padding-bottom: 0;
+/* Паддинги задаёт сам остров (16 со всех сторон); у детей собственных
+   паддингов нет — они выравниваются по контентной области острова. */
+.feed-contest.island {
+  padding: var(--space-4);
 }
-.feed-contest > :not(.media):not(.picture-stack) {
-  padding-left: var(--space-4);
-  padding-right: var(--space-4);
+.feed-contest > * {
+  padding: 0;
 }
 
-/* Стопка превью работ — горизонтальный скролл, паддинг внутри */
+/* Галерея превью работ — «веер» из перекрывающихся повёрнутых фото с белой
+   рамкой и мягкой тенью (по макету). Вертикальный запас 8 сверху/снизу. */
 .feed-contest .picture-stack {
   display: flex;
-  gap: var(--space-2);
-  overflow-x: auto;
-  padding-left: var(--space-4);
-  padding-right: var(--space-4);
-  scrollbar-width: none;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
 }
-.feed-contest .picture-stack::-webkit-scrollbar { display: none; }
-.feed-contest .picture-stack > * { flex: 0 0 auto; }
-
-/* ── Двойные паддинги вокруг фида-конкурса (выделяем промо-блок) ──
-   Вертикальные — на самом острове, горизонтальные — на детях (как в базовой
-   раскладке выше), всё ×2 от обычного --space-4. */
-.feed-contest.island {
-  padding-top: calc(var(--space-4) * 2);
-  padding-bottom: calc(var(--space-4) * 2);
+.feed-contest .picture-stack > .picture {
+  box-sizing: border-box;
+  border: 3px solid #fff;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
 }
-.feed-contest > :not(.media):not(.picture-stack),
-.feed-contest .picture-stack {
-  padding-left: calc(var(--space-4) * 2);
-  padding-right: calc(var(--space-4) * 2);
-}
+/* Лёгкий наклон каждого снимка + наезд друг на друга (значения с макета). */
+.feed-contest .picture-stack > .picture:nth-child(1) { transform: rotate(-2.2deg); }
+.feed-contest .picture-stack > .picture:nth-child(2) { transform: rotate(8.8deg);  margin-left: -24px; }
+.feed-contest .picture-stack > .picture:nth-child(3) { transform: rotate(2.9deg);  margin-left: -24px; }
+.feed-contest .picture-stack > .picture:nth-child(4) { transform: rotate(-4.4deg); margin-left: -24px; }
