@@ -6,6 +6,7 @@
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -759,23 +760,9 @@
     <!-- Слот под полноэкранный вьюер моментов — MomentViewer.create() заменит его -->
     <div id="nv-moment-slot"></div>
 
-    <div class="phone-frame__tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" data-href="../tribune.html" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" data-href="../messages.html" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" data-href="menu.html" aria-label="Меню"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
 
   </div>
-
-<!-- навигация по таббару (feed → лента, message → сообщения) -->
-<script src="../components/tab-bar.js"></script>
 
 <!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
 <script>
