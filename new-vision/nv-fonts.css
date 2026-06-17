@@ -78,6 +78,14 @@
   font-family: var(--font-family-content);
 }
 
+/* Жирные выделения внутри текста ячеек (имена/акценты) — OK Sans Display.
+   Текст ячейки (ds-body-m) остаётся Roboto, а выделенный <b>/<strong> —
+   брендовым дисплейным катом. */
+.uni-cell-additional-content b,
+.uni-cell-additional-content strong {
+  font-family: var(--font-family-display);
+}
+
 /* Инлайн-кнопки (текстовые ссылки) метрически = body/caption → Roboto. */
 .button-inline.__size-32,
 .button-inline.__size-24,
