@@ -1,0 +1,202 @@
+{
+  "_readme": {
+    "что_это": "КОНТРАКТ модели фидов NV-ленты (new-vision/lenta.html). «Расчерчены» все типы карточек по фактической разметке. По этому контракту строится лист «Посты» в гугл-таблице и применятор components/feed-data.js.",
+    "источник_разметки": "new-vision/lenta.html (карточки 1–23)",
+    "принцип": "Общая ОБЁРТКА (необязательные слоты шапки) + ТЕЛО по component/variant. Слот, которого нет в данных → применятор удаляет узел (а не оставляет пустым).",
+    "кнопки": "CTA-кнопки (Перейти / Подписаться / Поздравить / Загрузить фото …) НЕ хранятся в данных — они зашиты в шаблон карточки по типу.",
+    "обёртка_слоты": {
+      "id": "строковый ключ поста (p1, p2 …)",
+      "component": "тип карточки: feed-base | feed-ad | feed-congrats | feed-questions | feed-group | feed-discussion | feed-memory | feed-contest | feed-stories",
+      "variant": "подтип: feed-base → text|photo|gallery|clip|video|article; feed-congrats → birthday|gift",
+      "entity": "user | self | group (флаг data-entity; влияет на бейдж «Сообщество» и переход по автору)",
+      "breadcrumbs": "массив крошек; последний элемент — активная рубрика (__state-on). Элемент = строка ИЛИ {label, badge} (badge — напр. Дзен). null → крошек нет",
+      "title": "h2.nv-feed__title; null → нет заголовка",
+      "subtitle": "подзаголовок (в NV-классе пока нет, в данные кладём заране); null → нет",
+      "authorId": "ССЫЛКА на data/people.json (person|group). Аватар/имя/«Сообщество» берутся оттуда. null → см. author",
+      "author": "инлайн-автор, если НЕ из реестра (реклама, self «Вы»): {name, initials?, avatar?, subtitle?, role}",
+      "time": "строка времени поста (11:18, «5 лет назад», «Реклама 0+» — для рекламы кладём в author.subtitle)"
+    },
+    "тело_общее": {
+      "text": "{ value, clamp? } — clamp = число строк до «Раскрыть»",
+      "media": "kind: none|image|video|gallery|clip + ссылки. Длительность видео, тег, пропорция, «+N» у галереи — НЕ данные, это дефолты шаблона по типу / выводятся из числа фото",
+      "stats": "{ likes, comments, reshares } — actions-bar"
+    },
+    "разрешение_автора": "Если есть authorId — применятор берёт person/group из people.json (фото, имя, для group → подпись «Сообщество»). Иначе рендерит inline author. Так аватарки авторов не дублируются.",
+    "слот_матрица": {
+      "feed-base/text":     { "breadcrumbs": true, "title": false, "author": true,  "media": "none",    "stats": true },
+      "feed-base/photo":    { "breadcrumbs": true, "title": false, "author": true,  "media": "image",   "stats": true },
+      "feed-base/gallery":  { "breadcrumbs": false,"title": false, "author": true,  "media": "gallery", "stats": true },
+      "feed-base/clip":     { "breadcrumbs": true, "title": false, "author": true,  "media": "clip",    "stats": true },
+      "feed-base/video":    { "breadcrumbs": true, "title": false, "author": true,  "media": "video",   "stats": true },
+      "feed-base/article":  { "breadcrumbs": true, "title": true,  "author": true,  "media": "image",   "stats": true, "_note": "Дзен: бейдж в крошке, лид-текст без clamp" },
+      "feed-ad":            { "breadcrumbs": false,"title": false, "author": "inline","media": "image", "stats": false, "_note": "CTA зашит в шаблон" },
+      "feed-congrats/birthday": { "title": true, "author": false, "friends": true, "_note": "большой аватар героя сверху + CTA из шаблона" },
+      "feed-congrats/gift": { "title": false, "author": true, "giftCard": true },
+      "feed-questions":     { "breadcrumbs": true, "title": true, "questions": true },
+      "feed-group":         { "title": true, "friends": true, "_note": "аватар группы сверху + CTA «Подписаться» из шаблона" },
+      "feed-discussion":    { "breadcrumbs": true, "title": true, "topComment": true, "moreRepliesLabel": true, "commentInput": true },
+      "feed-memory":        { "breadcrumbs": true, "title": true, "author": "self", "media": "image" },
+      "feed-contest":       { "breadcrumbs": true, "title": true, "images": true },
+      "feed-stories":       { "_variants": "top (карусель сториз) | moments (крошки+title+аватарки с подписями)" }
+    }
+  },
+
+  "posts": [
+    {
+      "id": "stories-top", "component": "feed-stories", "variant": "top",
+      "items": [
+        { "authorId": "my_profile", "label": "Ваш момент", "kind": "add" },
+        { "authorId": 1, "viewed": false },
+        { "authorId": 2, "viewed": false },
+        { "authorId": 3, "viewed": true }
+      ]
+    },
+
+    {
+      "id": "p1", "component": "feed-base", "variant": "video", "entity": "user",
+      "authorId": 1, "time": "11:18",
+      "breadcrumbs": ["Еда", "Рецепты"],
+      "text": { "value": "Запеканка из тыквы с творогом — нашла идеальный рецепт. Без манки, нежная и держит форму." },
+      "media": { "kind": "video", "url": null },
+      "stats": { "likes": 892, "comments": 145, "reshares": 412 }
+    },
+
+    {
+      "id": "p2", "component": "feed-ad", "entity": "group",
+      "author": { "name": "Квартал бизнес-класса «Б15»", "initials": "Б15", "subtitle": "Реклама 0+", "role": "advertiser" },
+      "text": { "value": "От 7,6 млн ₽! 15 минут до исторического центра. 2 варианта отделки.", "clamp": 2 },
+      "media": { "kind": "image", "url": null }
+    },
+
+    {
+      "id": "p3", "component": "feed-congrats", "variant": "birthday",
+      "heroId": 4,
+      "title": "Николай празднует свой День рождения!",
+      "friends": { "ids": [2, 3], "more": 3, "text": "12 друзей поздравило" }
+    },
+
+    {
+      "id": "p4", "component": "feed-base", "variant": "photo", "entity": "user",
+      "authorId": 5, "time": "09:35",
+      "breadcrumbs": ["Семья", "Дети"],
+      "text": { "value": "Сегодня сыну исполнилось 18. Помню, как привозила его из роддома." },
+      "media": { "kind": "image", "url": null },
+      "stats": { "likes": 1842, "comments": 234, "reshares": 156 }
+    },
+
+    {
+      "id": "p5", "component": "feed-base", "variant": "gallery", "entity": "user",
+      "authorId": 8, "time": "12:48",
+      "text": { "value": "Открыли зимний сезон, поймал судака на 5 кг, ура товарищи!" },
+      "media": { "kind": "gallery", "images": [null, null, null, null] },
+      "stats": { "likes": 312, "comments": 48, "reshares": 15 }
+    },
+
+    {
+      "id": "p6", "component": "feed-base", "variant": "clip", "entity": "user",
+      "authorId": 10, "time": "12:48",
+      "breadcrumbs": ["Рыбалка", "Клипы"],
+      "media": { "kind": "clip", "url": null },
+      "stats": { "likes": 34, "comments": 14, "reshares": 5 }
+    },
+
+    {
+      "id": "p7", "component": "feed-base", "variant": "text", "entity": "user",
+      "authorId": 6, "time": "18:42",
+      "breadcrumbs": ["Мысли вслух"],
+      "text": { "value": "Лучший отдых на даче — тишина в шесть утра, когда весь посёлок ещё спит." },
+      "stats": { "likes": 2401, "comments": 312, "reshares": 78 }
+    },
+
+    {
+      "id": "p8", "component": "feed-base", "variant": "article", "entity": "group",
+      "authorId": "group-2", "time": "12:48",
+      "breadcrumbs": [{ "label": "Дзен", "badge": "dzen" }, "Здоровье"],
+      "title": "Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих",
+      "text": { "value": "Когда пациент видит сниженный гемоглобин, он думает о слабости и железе. Кажется, это про кровь, но не про сердце." },
+      "media": { "kind": "image", "url": null },
+      "stats": { "likes": 14, "comments": 34, "reshares": 5 }
+    },
+
+    {
+      "id": "p9", "component": "feed-base", "variant": "video", "entity": "group",
+      "authorId": "group-3", "time": "10:05",
+      "breadcrumbs": ["Сообщество", "Рыбалка"],
+      "text": { "value": "Как вязать поводок без узлов за 30 секунд — видео от подписчика." },
+      "media": { "kind": "video", "url": null },
+      "stats": { "likes": 1203, "comments": 96, "reshares": 233 }
+    },
+
+    {
+      "id": "p10", "component": "feed-questions",
+      "breadcrumbs": ["Санкт-Петербург", "Нужен совет"],
+      "title": "Помогите ответом в Санкт-Петербурге",
+      "questions": [
+        { "authorId": 7, "title": "Соседи, подскажите мастера по окнам", "category": "Ремонт" },
+        { "authorId": 9, "title": "Подскажите хорошего стоматолога в районе", "category": "Стоматолог" },
+        { "authorId": 2, "title": "Кто возит воду в бутылях в Приморский район?", "category": "Доставка" }
+      ]
+    },
+
+    {
+      "id": "p11", "component": "feed-group",
+      "groupId": "group-3",
+      "title": "Вступай в сообщество рыбаков",
+      "friends": { "ids": [1, 4], "more": 3, "text": "5 друзей подписаны" }
+    },
+
+    {
+      "id": "p12", "component": "feed-discussion",
+      "breadcrumbs": ["Здоровье", "Обсуждают"],
+      "title": "Болит колено при приседании. Что это может быть?",
+      "topComment": { "authorId": 8, "time": "3 часа назад", "text": "У меня такое было после пробежки, помогло растирание медвежьим жиром", "likes": 2 },
+      "moreRepliesLabel": "Посмотреть 35 ответов",
+      "commentInput": { "asId": "my_profile" }
+    },
+
+    {
+      "id": "p13", "component": "feed-stories", "variant": "moments",
+      "breadcrumbs": ["Рядом", "Моменты"],
+      "title": "12 людей рядом делятся моментом с дачи",
+      "items": [
+        { "authorId": 3, "viewed": false },
+        { "authorId": 5, "viewed": false },
+        { "authorId": 1, "viewed": true }
+      ]
+    },
+
+    {
+      "id": "p14", "component": "feed-contest",
+      "breadcrumbs": ["Конкурс", "Урожай"],
+      "title": "Покажите свой урожай! Лучшие фото попадут в подборку района",
+      "images": [null, null, null, null]
+    },
+
+    {
+      "id": "p15", "component": "feed-congrats", "variant": "gift", "entity": "user",
+      "authorId": 1, "time": "12:48",
+      "giftCard": { "caption": "Создал и подарил уникальный подарок", "reshareFromId": 5, "image": "../assets/new-vision/gift-jam.png" }
+    },
+
+    {
+      "id": "p16", "component": "feed-memory", "variant": "default", "entity": "self",
+      "authorId": "my_profile", "time": "5 лет назад",
+      "breadcrumbs": ["Воспоминания", "В этот день"],
+      "title": "Дополните фотографию роз спустя 5 лет",
+      "text": { "value": "Посадили розы на даче вместе с Ольгой. Казалось, не приживутся, а они до сих пор цветут." },
+      "media": { "kind": "image", "url": null }
+    },
+
+    {
+      "id": "p17", "component": "feed-base", "variant": "text", "entity": "group",
+      "authorId": "group-4", "time": "15:20",
+      "breadcrumbs": ["Сообщество", "Объявления"],
+      "text": { "value": "В субботу субботник у пруда в 10:00. Берём перчатки и хорошее настроение!" },
+      "stats": { "likes": 156, "comments": 42, "reshares": 9 }
+    }
+  ],
+
+  "feeds": {
+    "nv-lenta": ["stories-top", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17"]
+  }
+}

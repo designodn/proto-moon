@@ -1,0 +1,346 @@
+{
+  "_readme": {
+    "источник": "Google-таблица, лист «Посты»",
+    "как_обновить": "node scripts/fetch-feed.mjs"
+  },
+  "posts": [
+    {
+      "id": "post-1",
+      "type": "video",
+      "author": "group-5",
+      "title": "",
+      "text": "Шашлык как в детстве Это вкуснее, чем  я ожидал!",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/1901671/pub_5e7d003d16fa5012842479e5_5e820a69d4abfe57572f6291/scale_1200"
+      ],
+      "likes": "312",
+      "comments": "48",
+      "reshares": "15",
+      "tema": "Еда",
+      "rubrika": "Рецепты"
+    },
+    {
+      "id": "post-2",
+      "type": "photo",
+      "author": "9",
+      "title": "",
+      "text": "Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-3",
+      "type": "photo",
+      "author": "group-4",
+      "title": "",
+      "text": "Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&dpr=2"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Дача",
+      "rubrika": "Сезонные советы"
+    },
+    {
+      "id": "post-4",
+      "type": "video",
+      "author": "group-3",
+      "title": "",
+      "text": "Как привлечь удачу на рыбалке",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItQ78d_1sAmaVQ2TFGIpufPBJ7hIuvpy4kLXgxgzhO-O35B_tiCJp926IqupEmU9Du4E2K5esrB2eYxH7rP_Fw_xuPACL7b7uCiuVT1U4AAAAp&dpr=2"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Рыбалка",
+      "rubrika": "Рекомендации групп"
+    },
+    {
+      "id": "post-5",
+      "type": "gallery",
+      "author": "10",
+      "title": "",
+      "text": "6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1dXYFWACup8JRxzeCQOqt-LiOzIaU2mB4w49pHZEl-KYse8Nc12mfrKTKkuJ417XAI-EAUsMXxyni-Ff8_P9yzTR8mQ1-JA3B_A9TCqMAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9eEuh5Y2raEgDlsJx8Cl6m6EI3JgnPzdVSLdjcmQak7aSFf2N1VJz-eaEZPJPEQxH4n2whTxP_ry6b0HvmfetBFCgfjfihZcNDYnj0EMAAAAp&dpr=2"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-6",
+      "type": "contest",
+      "author": "group-4",
+      "title": "Покажите свой урожай! Лучшие фото попадут в подборку района",
+      "text": "",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KjV2NH5_kLPuwpkP3gbMHxichSOQKZ7bQSEW_xwOTzsrPch5jw-Yn1hW3KLUx7A9rYBta8F1sjZ7dbqQTlUVLXrdtQRaPl0NL9vC-3Mz0AAAAp&dpr=2",
+        "https://cheb-live.ru/userfiles/article/cmeYk_0OWZ_3g1scGqsvoQp5Qs6ygJuC.png",
+        "https://www.shkolazhizni.ru/img/content/i119/119898_or.jpg",
+        "https://cdn2.botanichka.ru/wp-content/uploads/2015/06/sryivat-srezat-otshhipyivat-kak-pravilno-sobirat-urozhay-01.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-7",
+      "type": "article",
+      "author": "group-2",
+      "title": "Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих",
+      "text": "Когда пациент видит в анализе крови сниженный гемоглобин, он чаще всего думает о слабости, бледности, железе и, возможно, питании. Кажется, что это история про кровь, но не про сердце.",
+      "photos": [
+        "https://www.ckbran.ru/upload/medialibrary/e96/xt08ybjsifywqg113cx499j70so4hxjs.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Дзен",
+      "rubrika": "Здоровье"
+    },
+    {
+      "id": "post-8",
+      "type": "gift",
+      "author": "8",
+      "title": "",
+      "text": "Получил подарок на День сельскохозяйственных строителей от",
+      "photos": [
+        "https://hislav.admin-smolensk.ru/files/gallery/6453/med/4ab427c9-769e-54fe-878a-2_1728381416.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-9",
+      "type": "memory",
+      "author": "4",
+      "title": "Поделитесь с друзьями вашим днем 5 лет назад",
+      "text": "Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1ICakGWpz7m4rQhn3b47R4Yf14tfKrfNTLMBkCY6Z_xmEU6RdFqYQtsXy_c5b9tyaohaxfCeghidwi-dqbZiU27Cue-Y_HhAAAAKQ&dpr=2"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Воспоминания",
+      "rubrika": "В этот день"
+    },
+    {
+      "id": "post-10",
+      "type": "photo",
+      "author": "group-1",
+      "title": "",
+      "text": "Забирайте идею подачи блинов. А если нужно еще и не наесть бочков, то готовьте по моему рецепту",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/8220767/pub_63e9ec741b468f22ef1e7232_63ee070c3398503757765481/scale_1200"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Еда",
+      "rubrika": "Рекомендации групп"
+    },
+    {
+      "id": "post-11",
+      "type": "ad",
+      "author": "Квартал бизнес-класса «Б15»",
+      "title": "",
+      "text": "От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 мину...",
+      "photos": [
+        "https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-12",
+      "type": "ad",
+      "author": "Магазин снастей",
+      "title": "",
+      "text": "Новые японские спининги Belleza UX уже в продаже",
+      "photos": [
+        "https://domopravitelnitsa.com/wp-content/uploads/2023/04/luchshie-spinningi.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-13",
+      "type": "ad",
+      "author": "Магазин цветов Фантазия",
+      "title": "",
+      "text": "Цветы оптом и в розницу",
+      "photos": [
+        "https://mnogo-cvetov63.ru/media/categories/images/avtorskie_1.webp"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-14",
+      "type": "ad",
+      "author": "Магазин цветов",
+      "title": "",
+      "text": "Порадуйте своих близких! Закажите им наши лучшие букеты, сейчас со скидкой до 50% ...",
+      "photos": [
+        "https://p0.zoon.ru/f/b/57d8ea4e40c08816228c91e7_65e8168adb58d7.06506374.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-15",
+      "type": "gift",
+      "author": "6",
+      "title": "",
+      "text": "Создал и подарил уникальный подарок",
+      "photos": [
+        "https://i.pinimg.com/originals/24/f0/0b/24f00b8520e0657c89891bb6f1d815d8.gif"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-16",
+      "type": "clip",
+      "author": "7",
+      "title": "",
+      "text": "",
+      "photos": [
+        "https://iv.okcdn.ru/videoPreview?id=16833467124412&type=39&idx=1&tkn=GzF9Fz5eDAm_5wP4YvQWhn7WRN8"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-17",
+      "type": "question",
+      "author": "2",
+      "title": "Болит колено при приседании. Что это может быть?",
+      "text": "",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Здоровье",
+      "rubrika": "Обсуждают"
+    },
+    {
+      "id": "post-18",
+      "type": "birthday",
+      "author": "10",
+      "title": "Николай празднует свой День рождения!",
+      "text": "",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-19",
+      "type": "questions",
+      "author": "7,5",
+      "title": "Помогите ответом в Санкт-Петербурге",
+      "text": "",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Санкт-Петербург",
+      "rubrika": "Нужен совет"
+    },
+    {
+      "id": "post-20",
+      "type": "group-invite",
+      "author": "group-3",
+      "title": "Вступай в сообщество рыбаков",
+      "text": "",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-21",
+      "type": "discussion",
+      "author": "8",
+      "title": "Кто разбирается в счётчиках воды?",
+      "text": "Поставили новый счётчик, а расход стал больше обычного.",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "Санкт-Петербург",
+      "rubrika": "Нужен совет"
+    },
+    {
+      "id": "post-22",
+      "type": "stories-moments",
+      "author": "4,5,6,7",
+      "title": "12 людей рядом делятся моментом с дачи",
+      "text": "",
+      "photos": [],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "tema": "",
+      "rubrika": ""
+    },
+    {
+      "id": "post-23",
+      "type": "text",
+      "author": "7",
+      "title": "",
+      "text": "Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.",
+      "photos": [],
+      "likes": "2",
+      "comments": "5",
+      "reshares": "1",
+      "tema": "Санкт-Петербург",
+      "rubrika": "Рядом живут"
+    }
+  ]
+}
