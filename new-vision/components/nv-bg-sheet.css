@@ -22,7 +22,8 @@
 /* «Нет фона»: белая плитка + ⊘ (union) */
 .nv-pick.__none {
   background: var(--dynamic-surface-base-quaternary);
-  box-shadow: inset 0 0 0 1px var(--dynamic-stroke-contrast-low, rgba(131, 102, 86, 0.12));
+  /* обводка плитки и значок ⊘ — один и тот же серый */
+  box-shadow: inset 0 0 0 1px var(--dynamic-text-and-icons-base-tertiary, #BDB7B2);
 }
 .nv-pick__union {
   position: relative; width: 30px; height: 30px;
@@ -38,8 +39,8 @@
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-/* Футер с двумя кнопками — вертикально (Сохранить + Закрыть) */
-.nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); }
+/* Футер с двумя кнопками — вертикально (Сохранить + Закрыть), без сепаратора */
+.nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); box-shadow: none; }
 .nv-sheet__footer.__stack .button-wrapper { width: 100%; }
 
 /* Обложка self с тёмным выбранным фоном — текст/иконки светлые */
