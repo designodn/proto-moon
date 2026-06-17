@@ -3,6 +3,7 @@
     "что_это": "КОНТРАКТ модели фидов NV-ленты (new-vision/lenta.html). «Расчерчены» все типы карточек по фактической разметке. По этому контракту строится лист «Посты» в гугл-таблице и применятор components/feed-data.js.",
     "источник_разметки": "new-vision/lenta.html (карточки 1–23)",
     "принцип": "Общая ОБЁРТКА (необязательные слоты шапки) + ТЕЛО по component/variant. Слот, которого нет в данных → применятор удаляет узел (а не оставляет пустым).",
+    "кнопки": "CTA-кнопки (Перейти / Подписаться / Поздравить / Загрузить фото …) НЕ хранятся в данных — они зашиты в шаблон карточки по типу.",
     "обёртка_слоты": {
       "id": "строковый ключ поста (p1, p2 …)",
       "component": "тип карточки: feed-base | feed-ad | feed-congrats | feed-questions | feed-group | feed-discussion | feed-memory | feed-contest | feed-stories",
@@ -17,9 +18,8 @@
     },
     "тело_общее": {
       "text": "{ value, clamp? } — clamp = число строк до «Раскрыть»",
-      "media": "kind: none|image|video|gallery|clip. Поля по kind — см. примеры. url с okcdn детектится на сборке (image/video)",
-      "stats": "{ likes, comments, reshares } — actions-bar",
-      "buttons": "массив CTA-кнопок { label, style } (secondary|primary|gift)"
+      "media": "kind: none|image|video|gallery|clip + ссылки. Длительность видео, тег, пропорция, «+N» у галереи — НЕ данные, это дефолты шаблона по типу / выводятся из числа фото",
+      "stats": "{ likes, comments, reshares } — actions-bar"
     },
     "разрешение_автора": "Если есть authorId — применятор берёт person/group из people.json (фото, имя, для group → подпись «Сообщество»). Иначе рендерит inline author. Так аватарки авторов не дублируются.",
     "слот_матрица": {
@@ -29,14 +29,14 @@
       "feed-base/clip":     { "breadcrumbs": true, "title": false, "author": true,  "media": "clip",    "stats": true },
       "feed-base/video":    { "breadcrumbs": true, "title": false, "author": true,  "media": "video",   "stats": true },
       "feed-base/article":  { "breadcrumbs": true, "title": true,  "author": true,  "media": "image",   "stats": true, "_note": "Дзен: бейдж в крошке, лид-текст без clamp" },
-      "feed-ad":            { "breadcrumbs": false,"title": false, "author": "inline","media": "image", "stats": false, "buttons": true },
-      "feed-congrats/birthday": { "title": true, "author": false, "friends": true, "buttons": true, "_note": "большой аватар героя сверху" },
-      "feed-congrats/gift": { "title": false, "author": true, "giftCard": true, "buttons": true },
+      "feed-ad":            { "breadcrumbs": false,"title": false, "author": "inline","media": "image", "stats": false, "_note": "CTA зашит в шаблон" },
+      "feed-congrats/birthday": { "title": true, "author": false, "friends": true, "_note": "большой аватар героя сверху + CTA из шаблона" },
+      "feed-congrats/gift": { "title": false, "author": true, "giftCard": true },
       "feed-questions":     { "breadcrumbs": true, "title": true, "questions": true },
-      "feed-group":         { "title": true, "friends": true, "buttons": true, "_note": "аватар группы сверху" },
+      "feed-group":         { "title": true, "friends": true, "_note": "аватар группы сверху + CTA «Подписаться» из шаблона" },
       "feed-discussion":    { "breadcrumbs": true, "title": true, "topComment": true, "moreRepliesLabel": true, "commentInput": true },
-      "feed-memory":        { "breadcrumbs": true, "title": true, "author": "self", "media": "image", "buttons": true },
-      "feed-contest":       { "breadcrumbs": true, "title": true, "images": true, "buttons": true },
+      "feed-memory":        { "breadcrumbs": true, "title": true, "author": "self", "media": "image" },
+      "feed-contest":       { "breadcrumbs": true, "title": true, "images": true },
       "feed-stories":       { "_variants": "top (карусель сториз) | moments (крошки+title+аватарки с подписями)" }
     }
   },
@@ -57,7 +57,7 @@
       "authorId": 1, "time": "11:18",
       "breadcrumbs": ["Еда", "Рецепты"],
       "text": { "value": "Запеканка из тыквы с творогом — нашла идеальный рецепт. Без манки, нежная и держит форму." },
-      "media": { "kind": "video", "url": null, "duration": "08:42", "tag": "Рецепт" },
+      "media": { "kind": "video", "url": null },
       "stats": { "likes": 892, "comments": 145, "reshares": 412 }
     },
 
@@ -65,16 +65,14 @@
       "id": "p2", "component": "feed-ad", "entity": "group",
       "author": { "name": "Квартал бизнес-класса «Б15»", "initials": "Б15", "subtitle": "Реклама 0+", "role": "advertiser" },
       "text": { "value": "От 7,6 млн ₽! 15 минут до исторического центра. 2 варианта отделки.", "clamp": 2 },
-      "media": { "kind": "image", "url": null },
-      "buttons": [{ "label": "Перейти", "style": "primary" }]
+      "media": { "kind": "image", "url": null }
     },
 
     {
       "id": "p3", "component": "feed-congrats", "variant": "birthday",
       "heroId": 4,
       "title": "Николай празднует свой День рождения!",
-      "friends": { "ids": [2, 3], "more": 3, "text": "12 друзей поздравило" },
-      "buttons": [{ "label": "Поздравить", "style": "gift", "icon": "gift_24" }]
+      "friends": { "ids": [2, 3], "more": 3, "text": "12 друзей поздравило" }
     },
 
     {
@@ -90,7 +88,7 @@
       "id": "p5", "component": "feed-base", "variant": "gallery", "entity": "user",
       "authorId": 8, "time": "12:48",
       "text": { "value": "Открыли зимний сезон, поймал судака на 5 кг, ура товарищи!" },
-      "media": { "kind": "gallery", "images": [null, null, null, null], "moreCount": 5 },
+      "media": { "kind": "gallery", "images": [null, null, null, null] },
       "stats": { "likes": 312, "comments": 48, "reshares": 15 }
     },
 
@@ -116,7 +114,7 @@
       "breadcrumbs": [{ "label": "Дзен", "badge": "dzen" }, "Здоровье"],
       "title": "Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих",
       "text": { "value": "Когда пациент видит сниженный гемоглобин, он думает о слабости и железе. Кажется, это про кровь, но не про сердце." },
-      "media": { "kind": "image", "url": null, "aspect": "4-3" },
+      "media": { "kind": "image", "url": null },
       "stats": { "likes": 14, "comments": 34, "reshares": 5 }
     },
 
@@ -125,7 +123,7 @@
       "authorId": "group-3", "time": "10:05",
       "breadcrumbs": ["Сообщество", "Рыбалка"],
       "text": { "value": "Как вязать поводок без узлов за 30 секунд — видео от подписчика." },
-      "media": { "kind": "video", "url": null, "duration": "00:31" },
+      "media": { "kind": "video", "url": null },
       "stats": { "likes": 1203, "comments": 96, "reshares": 233 }
     },
 
@@ -144,8 +142,7 @@
       "id": "p11", "component": "feed-group",
       "groupId": "group-3",
       "title": "Вступай в сообщество рыбаков",
-      "friends": { "ids": [1, 4], "more": 3, "text": "5 друзей подписаны" },
-      "buttons": [{ "label": "Подписаться", "style": "secondary" }]
+      "friends": { "ids": [1, 4], "more": 3, "text": "5 друзей подписаны" }
     },
 
     {
@@ -172,18 +169,13 @@
       "id": "p14", "component": "feed-contest",
       "breadcrumbs": ["Конкурс", "Урожай"],
       "title": "Покажите свой урожай! Лучшие фото попадут в подборку района",
-      "images": [null, null, null, null],
-      "buttons": [
-        { "label": "📷 Загрузить фото", "style": "secondary" },
-        { "label": "🖼 Смотреть работы", "style": "secondary" }
-      ]
+      "images": [null, null, null, null]
     },
 
     {
       "id": "p15", "component": "feed-congrats", "variant": "gift", "entity": "user",
       "authorId": 1, "time": "12:48",
-      "giftCard": { "caption": "Создал и подарил уникальный подарок", "reshareFromId": 5, "image": "../assets/new-vision/gift-jam.png" },
-      "buttons": [{ "label": "✨ Создать подарок", "style": "gift" }]
+      "giftCard": { "caption": "Создал и подарил уникальный подарок", "reshareFromId": 5, "image": "../assets/new-vision/gift-jam.png" }
     },
 
     {
@@ -192,8 +184,7 @@
       "breadcrumbs": ["Воспоминания", "В этот день"],
       "title": "Дополните фотографию роз спустя 5 лет",
       "text": { "value": "Посадили розы на даче вместе с Ольгой. Казалось, не приживутся, а они до сих пор цветут." },
-      "media": { "kind": "image", "url": null, "aspect": "4-3" },
-      "buttons": [{ "label": "Поделиться снова", "style": "secondary" }]
+      "media": { "kind": "image", "url": null }
     },
 
     {
