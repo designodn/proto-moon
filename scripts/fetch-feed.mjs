@@ -252,12 +252,12 @@ function renderPost(p, idx) {
       const parts = [];
       if (type === 'article') {
         parts.push(feedHeader(author, { tema, rubrika, time }));
-        parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
+        parts.push(`        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`);
         if (text) parts.push(`        <p class="ds-body-m">${esc(text)}</p>`);
         parts.push(mediaPhoto(photos));
       } else {
         parts.push(feedHeader(author, { tema, rubrika, time }));
-        if (title) parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
+        if (title) parts.push(`        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`);
         parts.push(feedText(text));
         if (type === 'video')   parts.push(mediaVideo(photos));
         if (type === 'clip')    parts.push(mediaClip(photos));
@@ -291,7 +291,7 @@ function renderPost(p, idx) {
     case 'birthday': {
       const parts = [
         `        <div class="avatar __size-72 __type-image"><img data-person-avatar="${esc(author)}" alt=""></div>`,
-        `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
+        `        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`,
         avatarsView(x.friends),
         ctaButton('<span class="icon __size-20 __src" style="--icon-src:url(\'../assets/icons/gift_24.svg\')"></span>Поздравить', { extraClass: 'nv-gift-btn' }),
       ];
@@ -302,7 +302,7 @@ function renderPost(p, idx) {
     case 'group-invite': {
       const parts = [
         `        <div class="avatar __size-72 __type-image"><img data-person-avatar="${esc(author)}" alt=""></div>`,
-        `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
+        `        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`,
         avatarsView(x.friends),
         ctaButton('Подписаться', { style: 'secondary' }),
       ];
@@ -347,7 +347,7 @@ ${btn}
       }).join('\n');
       return `      <article class="feed-questions island">
 ${breadcrumbs(tema, rubrika)}
-        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
+        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>
         <div class="feed-questions__list">
 ${cards}
         </div>
@@ -391,7 +391,7 @@ ${more}
       const self = String(author) === 'my_profile';
       const parts = [
         breadcrumbs(tema, rubrika),
-        `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
+        `        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>`,
         authorHeader(author, { size: 36, subtitle: '5 лет назад', subscribe: false }),
         text ? `        <p class="ds-body-m">${esc(text)}</p>` : '',
         mediaPhoto(photos),
@@ -406,7 +406,7 @@ ${more}
         `          <div class="picture __size-96">${img(u)}</div>`).join('\n');
       return `      <article class="feed-contest island">
 ${breadcrumbs(tema, rubrika)}
-        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
+        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>
         <div class="picture-stack">
 ${pics}
         </div>
@@ -440,7 +440,7 @@ ${ctaButton('🖼 Смотреть работы', { style: 'secondary' })}
       }).join('\n');
       return `      <article class="feed-stories island">
 ${breadcrumbs(tema, rubrika)}
-        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>
+        <h2 class="nv-feed__title ds-title-xl">${esc(title)}</h2>
         <div class="feed-stories__list">
 ${share}
 ${avas}
