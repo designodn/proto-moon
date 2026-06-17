@@ -29,17 +29,23 @@
     return loading;
   }
 
-  // Разовый Lottie-оверлей в координатах left/top (fixed), бокс size×size.
-  // Кладём на body — ряды/острова могут быть overflow:hidden, а эффект
-  // должен выходить за их пределы.
+  // Разовый Lottie-оверлей в координатах left/top (fixed).
+  // size — число (квадрат size×size) либо объект {w, h, par}, где par —
+  // preserveAspectRatio для rendererSettings ('none' = растянуть на бокс,
+  // по умолчанию 'xMidYMid meet'). Кладём на body — ряды/острова могут быть
+  // overflow:hidden, а эффект должен выходить за их пределы.
   function play(path, left, top, size) {
     return ensure().then(function (lottie) {
+      var w = typeof size === 'object' ? size.w : size;
+      var h = typeof size === 'object' ? size.h : size;
+      var par = (typeof size === 'object' && size.par) || 'xMidYMid meet';
       var host = document.createElement('div');
       host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
-        'width:' + size + 'px;height:' + size + 'px;left:' + left + 'px;top:' + top + 'px;';
+        'width:' + w + 'px;height:' + h + 'px;left:' + left + 'px;top:' + top + 'px;';
       document.body.appendChild(host);
       var anim = lottie.loadAnimation({
-        container: host, renderer: 'svg', loop: false, autoplay: true, path: path
+        container: host, renderer: 'svg', loop: false, autoplay: true, path: path,
+        rendererSettings: { preserveAspectRatio: par }
       });
       anim.addEventListener('complete', function () { anim.destroy(); host.remove(); });
     }).catch(function () {});

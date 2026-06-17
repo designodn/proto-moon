@@ -94,6 +94,21 @@
   color: var(--static-text-and-icons-base-primary);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
+  /* картинка-арт крупнее баннера и выступает за края */
+  overflow: visible;
+}
+
+/* Арт-картинка: слева от стрелки на 12px, по центру по вертикали, крупнее
+   баннера (выступает за края — overflow:visible выше). Абсолют, чтобы не
+   менять высоту баннера. right = padding 16 + ширина стрелки 10 + зазор 12. */
+.promo-banner.__view-kr .promo-banner__art {
+  position: absolute;
+  top: 50%;
+  right: 38px;
+  transform: translateY(-50%);
+  height: 84px;
+  width: auto;
+  pointer-events: none;
 }
 .promo-banner.__view-kr .promo-banner__title {
   max-width: 178px;   /* ограничиваем ширину — заголовок встаёт в 2 строки;
