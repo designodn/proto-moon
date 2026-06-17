@@ -203,10 +203,10 @@
           <!-- CTA: чужой профиль (не в друзьях) — «Дружить» primary -->
           <div class="nv-pr-cta" data-cta="stranger" hidden>
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary">
+              <button class="button-container __style-primary" data-friend-request>
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
-                  Дружить
+                  <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
+                  <span data-fr-label>Дружить</span>
                 </span>
               </button>
             </div>
@@ -644,6 +644,91 @@
       if (bgSheet.classList.contains('__open')) { applySavedBg(); closeS(bgSheet); }
       if (bonsaiSheet.classList.contains('__open')) closeS(bonsaiSheet);
     });
+
+    // ── Профиль конкретного человека (?person=<id>) ─────────────────────────
+    // Лента передаёт id автора-человека; подменяем имя/аватар/подпись данными
+    // из реестра people.js. Выполняется по DOMContentLoaded — гарантированно
+    // ПОСЛЕ user-data.js (он заполняет data-pr-* профилем my_profile).
+    (function () {
+      var pid = new URLSearchParams(location.search).get('person');
+      if (!pid) return;
+
+      function ageWord(n) {
+        var a = Math.abs(n) % 100, b = n % 10;
+        if (a > 10 && a < 20) return 'лет';
+        if (b === 1) return 'год';
+        if (b >= 2 && b <= 4) return 'года';
+        return 'лет';
+      }
+
+      function applyPerson() {
+        var p = (window.DS_PEOPLE_DATA || []).filter(function (x) {
+          return String(x.id) === pid;
+        })[0];
+        if (!p) return;
+
+        document.querySelectorAll('[data-pr-name]').forEach(function (el) {
+          el.textContent = p.name;
+        });
+        document.querySelectorAll('[data-pr-avatar]').forEach(function (el) {
+          if (p.photo) el.src = p.photo;
+          el.alt = p.name;
+        });
+
+        var sub = document.querySelector('[data-pr-sub]');
+        if (sub) {
+          var bits = [];
+          if (p.age)  bits.push(p.age + ' ' + ageWord(p.age));
+          if (p.city) bits.push(p.city);
+          if (bits.length) sub.textContent = bits.join(' · ');
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyPerson);
+      } else {
+        applyPerson();
+      }
+    })();
+
+    // ── «Дружить» → «Запрос отправлен» → «У вас в друзьях» ───────────────────
+    // Тап по primary-кнопке отправляет запрос (secondary, иконка user_request),
+    // через 3 сек запрос «принимается» — становится «У вас в друзьях» (галочка,
+    // иконка user_added). Поток в одну сторону.
+    (function () {
+      var btn = document.querySelector('[data-friend-request]');
+      if (!btn) return;
+      var icon  = btn.querySelector('[data-fr-icon]');
+      var label = btn.querySelector('[data-fr-label]');
+
+      function setState(style, iconName, text) {
+        btn.classList.toggle('__style-primary', style === 'primary');
+        btn.classList.toggle('__style-secondary', style === 'secondary');
+        icon.style.setProperty('--icon-src', "url('../assets/icons/" + iconName + ".svg')");
+        label.textContent = text;
+      }
+
+      var state = 'default';   // default → sent → friends
+      var timer = null;
+
+      btn.addEventListener('click', function () {
+        if (state === 'default') {
+          // отправляем запрос; через 3 сек он «принимается»
+          state = 'sent';
+          setState('secondary', 'user_request_16_20', 'Запрос отправлен');
+          timer = setTimeout(function () {
+            state = 'friends';
+            setState('secondary', 'user_added_16_20', 'У вас в друзьях');
+          }, 3000);
+        } else if (state === 'sent') {
+          // отмена запроса — возврат к «Дружить»
+          clearTimeout(timer);
+          state = 'default';
+          setState('primary', 'user_add_16_20', 'Дружить');
+        }
+        // state === 'friends' — уже в друзьях, тап ничего не меняет
+      });
+    })();
 
     // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
     document.querySelectorAll('#bonsaiSheet .nv-gift-pick').forEach(function (group) {

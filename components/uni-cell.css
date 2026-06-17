@@ -150,6 +150,13 @@
 .uni-cell-additional-content.__align-self-center { align-self: center; }
 .uni-cell-additional-content.__align-self-end    { align-self: flex-end; }
 
+/* Двустрочный блок автора (имя + сабтайтл/время) — между строками 2px по DS.
+   Раньше gap жил только под .feed-header, поэтому карточки без этой обёртки
+   (feed-ad / feed-congrats / feed-memory и т.п.) получали 0. */
+.contents-view-container.uni-cell-additional-content {
+  gap: 2px;
+}
+
 /* Middle right content */
 .uni-cell-middle-right-content {
   flex: 1;

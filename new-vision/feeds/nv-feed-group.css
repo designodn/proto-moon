@@ -24,14 +24,5 @@
 }
 .feed-group > * { padding-left: 0; padding-right: 0; }
 
-/* Заголовок — ОБЩИЙ DS-токен title-xl (27/36/600 из tokens.css), а не
-   NV-оверрайд .ds-title-xl (29/29/700). Перебиваем повышенной специфичностью;
-   шрифт OK Sans Display остаётся от ds-title-xl. */
-.feed-group .feed-group__title {
-  font-size: 27px;
-  line-height: 36px;
-  font-weight: 600;
-}
-
 /* CTA на всю ширину карточки */
 .feed-group .button-wrapper.__full-width { align-self: stretch; }

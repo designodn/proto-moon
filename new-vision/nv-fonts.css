@@ -46,15 +46,8 @@
   font-family: var(--font-family-display);
 }
 
-/* ds-title-xl в NV переопределён: Bold 700, 29 / 29 (line-height 100%),
-   letter-spacing 0 (в общей DS это 27 / 36 / 600). Перебивает tokens.css
-   тем же одноклассовым селектором + поздним подключением. */
-.ds-title-xl {
-  font-size: 29px;
-  line-height: 29px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
+/* ds-title-xl НЕ переопределяем: берём дс-ный 27 / 36 / 600 из tokens.css
+   (только font-family выше → OK Sans Display). */
 
 /* Кнопки → OK Sans Display, как заголовки (button-container шарит title-стили
    в tokens.css). Зеркалим size-селекторы, чтобы перебить специфичность
