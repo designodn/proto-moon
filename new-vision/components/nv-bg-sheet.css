@@ -78,6 +78,13 @@
 .nv-pr-cover.__bg-dark {
   color: var(--static-text-and-icons-base-inverse-primary);
 }
+/* На тёмном фоне secondary-кнопки CTA (тёмный текст на светлой подложке)
+   теряются — переключаем их на secondary-on-color (белый текст, белая
+   полупрозрачная подложка). primary остаётся читаемым (инверс-подложка). */
+.nv-pr-cover.__bg-dark .nv-pr-cta .button-container.__style-secondary {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  --button-background-color: rgba(255, 255, 255, 0.16);
+}
 
 /* ── Интерактивный фон «Сакура» (Figma 3160:204566) ──────────────────────────
    На своём профиле с сохранённым фоном «Сакура» обложка становится персиковой,
