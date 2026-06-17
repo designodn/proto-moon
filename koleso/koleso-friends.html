@@ -204,24 +204,29 @@
   <!-- Тост: превышен дневной лимит приглашений -->
   <div class="rf-toast" id="toast" role="status" aria-live="polite">Вы использовали все приглашения на сегодня, ждём вас завтра</div>
 
+  <!-- Реальные люди из реестра (data/people.js → window.DS_PEOPLE_DATA) -->
+  <script src="../data/people.js"></script>
   <script>
-    var FRIENDS = [
-      { n: 'Марина Миронова',    img: 47, sent: true },
-      { n: 'Алексей Отрыв',      img: 12 },
-      { n: 'Николай Валерьевич', img: 13 },
-      { n: 'Виктория Шульская',  img: 45 },
-      { n: 'Артем Андреев',      img: 33 },
-      { n: 'Семёныч',            img: 52 },
-      { n: 'Аня Фёдорова',       img: 49 }
-    ];
+    // Берём людей из таблицы с id 1–10; первого показываем как уже приглашённого.
+    var FRIENDS = (window.DS_PEOPLE_DATA || [])
+      .filter(function (p) { return p.id >= 1 && p.id <= 10; })
+      .sort(function (a, b) { return a.id - b.id; })
+      .map(function (p, i) {
+        return { n: p.name, photo: p.photo, sent: i === 0 };
+      });
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
     var list = document.getElementById('list');
     FRIENDS.forEach(function (f) {
       var cell = document.createElement('div');
       cell.className = 'user-cell';
       cell.innerHTML =
-        '<div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=' + f.img + '" alt=""></div>' +
-        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + f.n + '</div></div>' +
+        '<div class="avatar __size-56 __type-image"><img src="' + esc(f.photo) + '" alt=""></div>' +
+        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + esc(f.n) + '</div></div>' +
         '<div class="user-cell__actions"></div>';
       var actions = cell.querySelector('.user-cell__actions');
       if (f.sent) {
