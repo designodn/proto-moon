@@ -85,8 +85,12 @@
 .nv-sheet__footer .button-wrapper,
 .nv-sheet__footer .button-container { width: 100%; }
 
+/* Контейнер шторки «Живой подарок»: 16 со всех сторон, между блоками 24 (gap
+   наследуется от .nv-sheet__body = space-6) */
+#bonsaiSheet .nv-sheet__body { padding: var(--space-4); }
+
 /* ── Секция-селектор (Подарок / Фон) ─────────────────────────────────────── */
-.nv-gift-pick { display: flex; flex-direction: column; gap: var(--space-3); }
+.nv-gift-pick { display: flex; flex-direction: column; gap: var(--space-4); }
 .nv-gift-pick__head { margin: 0; }
 .nv-gift-pick__row {
   display: flex; gap: var(--space-3);
@@ -101,7 +105,7 @@
   width: 76px; height: 76px;
   display: flex; align-items: center; justify-content: center;
   padding: 0; border: 0; cursor: pointer;
-  border-radius: 18px;
+  border-radius: 20px;
   background: var(--dynamic-surface-contrast-low);
   font-size: 40px; line-height: 1;
   overflow: hidden;
@@ -111,47 +115,52 @@
 .nv-pick > img { width: 100%; height: 100%; object-fit: cover; }
 .nv-pick.__none {
   font-size: 26px;
-  color: var(--dynamic-text-and-icons-base-tertiary, rgba(0,0,0,0.35));
+  color: var(--dynamic-surface-contrast-low);
   background: transparent;
-  box-shadow: inset 0 0 0 1.5px var(--dynamic-surface-contrast-low);
+  box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low);
 }
+/* обводка вокруг активного — 3px (визуал как в шторке выбора цвета) */
 .nv-pick.__selected {
-  box-shadow: 0 0 0 2px var(--dynamic-surface-base-quaternary),
-              0 0 0 4px #F23C00;
+  box-shadow: 0 0 0 3px #F23C00;
 }
 
-/* ── Статус «Бонсай»: стадии + прогресс ──────────────────────────────────── */
-.nv-gift-status { display: flex; flex-direction: column; gap: var(--space-3); }
+/* ── Статус «Бонсай»: заголовок → подзаголовок → картинка → прогресс → текст
+   Вертикальный ритм задаём margin-top у детей (4 / 12 / 12 / 12). ──────────── */
+.nv-gift-status { display: flex; flex-direction: column; }
 .nv-gift-status__head { margin: 0; }
-.nv-gift-status__sub { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }
-
-.nv-gift-stages {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
+/* подзаголовок: 4px под заголовком, body-m, OK Sans Display, primary */
+.nv-gift-status__sub {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-family-display);
+  color: var(--dynamic-text-and-icons-base-primary);
 }
-.nv-gift-stages__item {
-  flex: 1; text-align: center;
-  font-size: 34px; line-height: 1;
-  filter: grayscale(0.1);
-}
-.nv-gift-stages__item.__done { filter: none; }
-.nv-gift-stages__item.__todo { opacity: 0.4; }
+/* картинка стадий: 12px под подзаголовком */
+.nv-gift-status__art { margin: var(--space-3) 0 0; }
+.nv-gift-status__art img { display: block; width: 100%; height: auto; }
 
+/* прогресс: под картинкой; заливка static/accent, подложка — тот же токен 60% */
 .nv-progress {
+  margin: var(--space-3) 0 0;
   height: 12px; border-radius: 999px;
-  background: var(--dynamic-surface-contrast-low);
+  background: color-mix(in srgb, var(--static-surface-status-accent) 60%, transparent);
   overflow: hidden;
 }
 .nv-progress__fill {
   height: 100%; border-radius: 999px;
-  background: #F23C00;
+  background: var(--static-surface-status-accent);
   transition: width 360ms ease;
 }
-.nv-gift-status__hint { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }
+/* нижний текст: 12px под прогрессом, body-m, OK Sans Display, primary */
+.nv-gift-status__text {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-family-display);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
 
-/* ── «Кто поливал» — люди на uni-cell (ава 44 + Title S) ─────────────────── */
+/* ── «Кто поливал» — люди на uni-cell (заголовок Title L, ава 44, текст body-m,
+   ячейки без паддингов) ──────────────────────────────────────────────────── */
 .nv-gift-watered { display: flex; flex-direction: column; gap: var(--space-2); }
 .nv-gift-watered__head { margin: 0 0 var(--space-1); }
+.nv-gift-watered .uni-cell-container { padding: 0; }
 /* DS-uni-cell сам не задаёт выравнивание/гэп — добавляем для строки человека */
 .nv-gift-watered .uni-cell { align-items: center; gap: var(--space-3); }

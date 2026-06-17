@@ -14,20 +14,34 @@
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-3);
 }
-/* свотч = та же плитка .nv-pick, но тянется по сетке (квадрат) */
+/* свотч = та же плитка .nv-pick, но тянется по сетке (квадрат);
+   радиус 20 (п.3); overflow visible — бейдж «живого подарка» торчит за угол */
 .nv-bg-grid .nv-pick {
   width: 100%; height: auto; aspect-ratio: 1;
   font-size: 26px;
+  border-radius: 20px;
+  overflow: visible;
 }
-/* «Нет фона»: белая плитка + ⊘ (union) */
-.nv-pick.__none {
+.nv-bg-grid .nv-pick > img { border-radius: 20px; }
+
+/* Активен только один свотч; обводка вокруг активного — 3px (п.2) */
+.nv-bg-grid .nv-pick.__selected {
+  box-shadow: 0 0 0 3px #F23C00;
+}
+
+/* «Нет фона»: белая плитка + ⊘ (union). Обводка плитки и значок ⊘ —
+   токен contrast-low (п.4). */
+.nv-bg-grid .nv-pick.__none {
   background: var(--dynamic-surface-base-quaternary);
-  /* обводка плитки и значок ⊘ — один и тот же серый */
-  box-shadow: inset 0 0 0 1px var(--dynamic-text-and-icons-base-tertiary, #BDB7B2);
+  box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low);
+}
+.nv-bg-grid .nv-pick.__none.__selected {
+  box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low),
+              0 0 0 3px #F23C00;
 }
 .nv-pick__union {
   position: relative; width: 30px; height: 30px;
-  color: var(--dynamic-text-and-icons-base-tertiary, #BDB7B2);
+  color: var(--dynamic-surface-contrast-low);
 }
 .nv-pick__union::before {
   content: ''; position: absolute; inset: 0;
@@ -39,6 +53,23 @@
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
+/* Бейдж «живого подарка» на свотче-иллюстрации (сакура): белый кружок 32×32
+   с обводкой contrast-low, по центру верхне-правого угла; внутри — стадия
+   бонсая (stage-5). Figma 3160:204558 (п.6). */
+.nv-pick__badge {
+  position: absolute; top: -16px; right: -16px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low),
+              0 4px 16px -4px rgba(0, 0, 0, 0.08);
+  overflow: hidden; pointer-events: none;
+}
+.nv-pick__badge img { width: 27px; height: 27px; object-fit: contain; }
+
+/* Контейнер выбора фона: 16 по бокам/сверху, 20 снизу (п.5) */
+#bgSheet .nv-sheet__body { padding: var(--space-4) var(--space-4) var(--space-5); }
+
 /* Футер с двумя кнопками — вертикально (Сохранить + Закрыть), без сепаратора */
 .nv-sheet__footer.__stack { display: flex; flex-direction: column; gap: var(--space-2); box-shadow: none; }
 .nv-sheet__footer.__stack .button-wrapper { width: 100%; }
@@ -46,4 +77,39 @@
 /* Обложка с тёмным выбранным фоном — текст/иконки светлые */
 .nv-pr-cover.__bg-dark {
   color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+/* ── Интерактивный фон «Сакура» (Figma 3160:204566) ──────────────────────────
+   На своём профиле с сохранённым фоном «Сакура» обложка становится персиковой,
+   а по углам появляются две ветки сакуры; при заходе/обновлении и после
+   «Сохранить» они слегка «встряхиваются». */
+.nv-pr-cover.__bg-sakura { background: #FFE8E0 !important; }
+
+.nv-pr-sakura {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none; z-index: 0;
+}
+.nv-pr-sakura[hidden] { display: none; }
+/* контент обложки — над ветками */
+.nv-pr-cover .status-bar,
+.nv-pr-cover__nav,
+.nv-pr-cover__body { position: relative; z-index: 1; }
+
+.nv-pr-sakura__branch { position: absolute; height: auto; will-change: transform; }
+.nv-pr-sakura__branch.__left  { left: -19%;  top: 60px; width: 70%; transform-origin: 0% 0%; }
+.nv-pr-sakura__branch.__right { right: -19%; top: 68px; width: 52%; transform-origin: 100% 0%; }
+
+/* встряхивание — играется один раз при добавлении класса .__shake */
+.nv-pr-sakura__branch.__shake.__left  { animation: nv-sakura-shake 1200ms cubic-bezier(.36,.07,.19,.97) both; }
+.nv-pr-sakura__branch.__shake.__right { animation: nv-sakura-shake 1200ms cubic-bezier(.36,.07,.19,.97) 120ms both; }
+@keyframes nv-sakura-shake {
+  0%   { transform: rotate(0deg); }
+  18%  { transform: rotate(2.6deg); }
+  36%  { transform: rotate(-1.9deg); }
+  54%  { transform: rotate(1.3deg); }
+  72%  { transform: rotate(-0.7deg); }
+  100% { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-pr-sakura__branch.__shake { animation: none; }
 }
