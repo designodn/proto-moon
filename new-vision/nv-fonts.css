@@ -1,0 +1,87 @@
+/**
+ * New Vision — шрифтовая карта (только текстовые стили ds-* и кнопки).
+ *
+ * Подключается двумя путями:
+ *  - из new-vision.css последним импортом — на родных NV-страницах;
+ *  - динамически из components/screen-transition.js на общих q3-страницах,
+ *    когда навигация идёт в рамках NV-прототипа (URL содержит ?nv=1) — чтобы
+ *    шрифты «протекали» на messages/tribune/notifications и т.д.
+ *
+ * Скоуп :root / .__ui-theme_enabled / .__font-roboto перекрывает базовые
+ * --font-family из tokens.css. Прод-прототипы без ?nv не затрагиваются.
+ *
+ * Зависит от уже загруженных index.css/tokens.css/fonts.css (определения
+ * ds-* утилит и @font-face OK Sans) — сама их не импортирует.
+ *
+ * Карта:
+ *  - title/display      → OK Sans Display (--font-family-display)
+ *  - body/caption       → Roboto          (--font-family-content)
+ *  - база без ds-стиля   → Roboto          (--font-family)
+ *  - кнопки (button-container)  → Display (метрически title-стили)
+ *  - инлайн-кнопки (button-inline) → Roboto (метрически body/caption)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap');
+
+:root,
+.__ui-theme_enabled,
+.__font-roboto {
+  /* База — текст без явного ds-стиля (фолбэк-ветка) рендерится на Roboto. */
+  --font-family: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Заголовки и основные кнопки — OK Sans Display (дисплейный кат). */
+  --font-family-display: "OK Sans Display", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Тексты публикаций (body/caption стили) и инлайн-кнопки — Roboto. */
+  --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Заголовки → OK Sans Display */
+.ds-display-xl,
+.ds-display-m,
+.ds-title-xl,
+.ds-title-l,
+.ds-title-m,
+.ds-title-s {
+  font-family: var(--font-family-display);
+}
+
+/* ds-title-xl в NV переопределён: Bold 700, 29 / 29 (line-height 100%),
+   letter-spacing 0 (в общей DS это 27 / 36 / 600). Перебивает tokens.css
+   тем же одноклассовым селектором + поздним подключением. */
+.ds-title-xl {
+  font-size: 29px;
+  line-height: 29px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Кнопки → OK Sans Display, как заголовки (button-container шарит title-стили
+   в tokens.css). Зеркалим size-селекторы, чтобы перебить специфичность
+   .button-wrapper.__size-N .button-container (0-3-0). */
+.button-wrapper.__size-56 .button-container,
+.button-wrapper.__size-44 .button-container,
+.button-wrapper.__size-36 .button-container,
+.button-wrapper.__size-28 .button-container,
+.ll-publish-btn .button-container,
+.nv-publish-btn .button-container {
+  font-family: var(--font-family-display);
+}
+
+/* Тексты публикаций (body/caption) → Roboto */
+.ds-body-l,
+.ds-body-m,
+.ds-caption-m,
+.ds-caption-m-accent,
+.ds-caption-s,
+.ds-caption-s-accent {
+  font-family: var(--font-family-content);
+}
+
+/* Инлайн-кнопки (текстовые ссылки) метрически = body/caption → Roboto. */
+.button-inline.__size-32,
+.button-inline.__size-24,
+.button-inline.__size-20,
+.button-inline.__size-16 {
+  font-family: var(--font-family-content);
+}
