@@ -25,8 +25,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    /* верхняя зона (статус-бар + навбар) — плоский цвет без градиента, дальше переход */
-    background: linear-gradient(180deg, #ff8a2b 0%, #ff8a2b 14%, #ff7a14 38%, #f56b00 72%, #e56300 100%);
+    /* без градиента — прозрачный слой поверх ровного оранжевого body (#f06a00) */
+    background: transparent;
     color: #fff;
     font-family: var(--font-family);
   }
@@ -65,9 +65,6 @@
     overflow: hidden;
     display: flex;
     justify-content: center;
-    /* плавное затухание призов у верх/низ окна */
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-            mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
   }
   .rl-reel {
     display: flex;
@@ -143,11 +140,11 @@
     filter: drop-shadow(0 8px 10px rgba(120,40,0,0.28));
   }
   .rl-action__label {
-    position: absolute; left: 6px; right: 6px; bottom: 16px;
+    position: absolute; left: 6px; right: 6px; bottom: 22px;
     text-align: center; font-size: 15px; line-height: 20px; font-weight: 500; color: #2e2f33;
   }
   .rl-action__badge {
-    position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
     min-width: 24px; height: 24px; box-sizing: border-box;
     padding: 0 6px; border: 3px solid #fff; border-radius: 999px;
     background: #2fb675; color: #fff;
