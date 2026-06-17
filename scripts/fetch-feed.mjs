@@ -312,7 +312,7 @@ function renderPost(p, idx) {
     case 'group-invite': {
       const parts = [
         `        <div class="avatar __size-72 __type-image"><img data-person-avatar="${esc(author)}" alt=""></div>`,
-        `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
+        `        <h2 class="nv-feed__title ds-title-xl feed-group__title">${esc(title)}</h2>`,
         avatarsView(x.friends),
         ctaButton('Подписаться', { style: 'secondary' }),
       ];
