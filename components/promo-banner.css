@@ -97,8 +97,8 @@
   width: 10px;
   height: 16px;
   background-color: var(--static-text-and-icons-base-primary);
-  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
-          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  -webkit-mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+          mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
   transition: transform 200ms ease;
 }
 .promo-banner.__view-kr:active { transform: scale(0.995); }

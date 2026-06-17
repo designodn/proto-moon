@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="new-vision.css">
 <!-- синхронно в <head>: пометить направление перехода до первой отрисовки -->
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   .phone-frame {
@@ -14,6 +15,7 @@
     max-width: none;
     height: 100dvh;
     min-height: 100dvh;
+    background: var(--dynamic-surface-base-secondary); /* белый, без серого под ячейками */
   }
 </style>
 </head>
@@ -225,7 +227,7 @@
             <div class="uni-cell">
               <div class="activity-lead">
                 <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/winuchastok/128/128" alt=""></div>
-                <span class="lead-sticker">🥇</span>
+                <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
               </div>
               <div class="uni-cell-additional-content ds-body-m"><b>Пётр Иванов</b> занял 1 место в конкурсе «Лучший участок»</div>
               <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
@@ -307,23 +309,49 @@
 
     </div>
 
-    <div class="phone-frame__tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Feed"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Book"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Message"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Clip"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Menu"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
 
   </div>
 
-<script src="../components/tab-bar.js"></script>
+<!-- Lottie-стикеры в лид-визуале (трофей в ячейке конкурса).
+     Лениво грузим lottie-web (как actions-bar.js). До загрузки и при ошибке
+     (нет файла / нет сети) остаётся emoji-фолбэк внутри span. -->
+<script>
+(function () {
+  var hosts = document.querySelectorAll('.lead-lottie[data-lottie]');
+  if (!hosts.length) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; // оставляем статичный emoji
+
+  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+  var lottieLoading = null;
+  function ensureLottie() {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoading) return lottieLoading;
+    lottieLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOTTIE_CDN; s.async = true;
+      s.onload = function () { resolve(window.lottie); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return lottieLoading;
+  }
+
+  hosts.forEach(function (host) {
+    ensureLottie().then(function (lottie) {
+      var fallback = host.textContent;
+      var anim = lottie.loadAnimation({
+        container: host, renderer: 'svg', loop: true, autoplay: true,
+        path: host.getAttribute('data-lottie')
+      });
+      // emoji прячем только когда JSON реально подгрузился
+      anim.addEventListener('data_ready', function () { host.classList.add('__lottie-on'); });
+      // нет файла/битый JSON — сносим пустой SVG, возвращаем emoji
+      anim.addEventListener('data_failed', function () { anim.destroy(); host.textContent = fallback; });
+    }).catch(function () { /* нет сети — остаётся emoji */ });
+  });
+})();
+</script>
 
 </body>
 </html>

@@ -75,13 +75,15 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/* Новая ячейка падает сверху и раскрывается (своя анимашка появления) */
+/* Новая ячейка ВОЗНИКАЕТ ИЗ ТОЧКИ — зеркало исчезновения (.__conv-leave):
+   вырастает из центра scale(0.2)→scale(1) с раскрытием высоты. */
 .ds-activity-conveyor__track > .__conv-enter {
+  transform-origin: center;
   animation: ds-conv-enter var(--conv-dur) cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 @keyframes ds-conv-enter {
-  from { height: 0; opacity: 0; transform: translateY(-6px); }
-  to   { height: var(--conv-row-h); opacity: 1; transform: none; }
+  from { height: 0; opacity: 0; transform: scale(0.2); }
+  to   { height: var(--conv-row-h); opacity: 1; transform: scale(1); }
 }
 /* Нижняя ячейка НЕ уходит под таббар — сжимается к центру и исчезает на месте */
 .ds-activity-conveyor__track > .__conv-leave {

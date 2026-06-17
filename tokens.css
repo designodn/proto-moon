@@ -86,6 +86,7 @@
 .header.__size-m .header__title,
 .button-wrapper.__size-56 .button-container,
 .button-wrapper.__size-44 .button-container,
+.nv-publish-btn .button-container,
 .nav-bar__title { font-family: var(--font-family); font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: 0; }
 
 /* ds-title-s — также используется кнопкой 36 и локальной ll-publish-btn */

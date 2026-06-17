@@ -6,6 +6,7 @@
 <title>Лента — New Vision</title>
 <link rel="stylesheet" href="new-vision.css">
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   /* fill-container: phone-frame на всю ширину окна и на всю высоту,
@@ -37,14 +38,18 @@
             <span class="icon __slot-status-battery" style="width:25px;height:12px"></span>
           </span>
         </div>
-        <div class="nav-bar __type-feed">
+        <div class="nav-bar __type-publish">
           <div class="nav-bar__leading">
-            <a class="avatar __size-36 __type-initials" href="profile.html?view=self" aria-label="Мой профиль">АК</a>
+            <div class="button-wrapper nv-publish-btn">
+              <button class="button-container __style-secondary"><span class="button-content">
+                <span class="icon __slot-plus"></span>Опубликовать
+              </span></button>
+            </div>
           </div>
           <div class="nav-bar__trailing">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Создать"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_addpost_24.svg')"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Уведомления"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_notifications_24.svg')"></span></span></button></span>
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/new-vision-icons/glyph_search_24.svg')"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Календарь событий"><span class="button-inline__content"><span class="icon __slot-calendar"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Уведомления"><span class="button-inline__content"><span class="icon __slot-bell"></span></span></button></span>
+            <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Поиск"><span class="button-inline__content"><span class="icon __slot-search"></span></span></button></span>
           </div>
         </div>
         <div class="tabs">
@@ -60,16 +65,16 @@
       <div class="island">
         <a class="activity-header" href="okruzhenie.html">
           <span class="ds-title-l">Вокруг вас сейчас</span>
-          <span class="pulse-dot"></span>
           <span class="activity-header__chevron" aria-hidden="true"></span>
+          <span class="pulse-dot"></span>
         </a>
         <div class="ds-activity-conveyor" id="activityConveyor">
           <div class="ds-activity-conveyor__track">
-          <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-wrapper __type-activity __cat-win">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">ТБ</div>
-                <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> опубликовала фото — набрало 247 классов</div>
+                <div class="avatar __size-44 __type-initials">ТБ</div>
+                <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> заняла 1 место в фотоконкурсе</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
                 </div>
@@ -79,7 +84,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">АК</div>
+                <div class="avatar __size-44 __type-initials">АК</div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Алёна Курская</b> добавила альбом «Море-2024»</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
@@ -87,11 +92,11 @@
               </div>
             </div>
           </div>
-          <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-wrapper __type-activity __cat-neuro">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">МК</div>
-                <div class="uni-cell-additional-content ds-body-m"><b>Миша Колесников</b> опубликовал видео-обзор кофеварки</div>
+                <div class="avatar __size-44 __type-initials">МК</div>
+                <div class="uni-cell-additional-content ds-body-m"><b>Миша Колесников</b> сделал нейро-обзор кофеварки</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button>
                 </div>
@@ -101,7 +106,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">ЮМ</div>
+                <div class="avatar __size-44 __type-initials">ЮМ</div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Юрий Макиненко</b> задаёт вопрос про счётчики воды</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
@@ -112,7 +117,7 @@
           <div class="uni-cell-wrapper __type-activity">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">ИВ</div>
+                <div class="avatar __size-44 __type-initials">ИВ</div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Ирина Власова</b> ищет советы по выбору школы</div>
                 <div class="button-wrapper __size-36">
                   <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
@@ -120,13 +125,13 @@
               </div>
             </div>
           </div>
-          <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-wrapper __type-activity __cat-holiday">
             <div class="uni-cell-container __state-enabled">
               <div class="uni-cell">
-                <div class="avatar __size-56 __type-initials">НП</div>
-                <div class="uni-cell-additional-content ds-body-m"><b>Никита Першин</b> создал опрос «Кофе или чай?»</div>
+                <div class="avatar __size-44 __type-initials">НП</div>
+                <div class="uni-cell-additional-content ds-body-m"><b>Никита Першин</b> поздравляет всех с Днём города</div>
                 <div class="button-wrapper __size-36">
-                  <button class="button-container __style-secondary"><span class="button-content">Ответить</span></button>
+                  <button class="button-container __style-secondary"><span class="button-content">Поздравить</span></button>
                 </div>
               </div>
             </div>
@@ -188,9 +193,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Еда</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рецепты</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Еда</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Рецепты</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Запеканка из тыквы с творогом — нашла наконец-то идеальный рецепт. Без манки, нежная и держит форму. Делюсь.</p>
@@ -257,9 +263,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Семья</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Дети</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Семья</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Дети</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Сегодня сыну исполнилось 18. Помню, как привозила его из роддома — кажется, было вчера. А он уже выше меня на голову и собирается в институт.</p>
@@ -284,9 +291,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Санкт-Петербург</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рядом живут</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Санкт-Петербург</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Рядом живут</span>
         </nav>
         <div class="feed-text" style="--feed-text-clamp: 5;">
           <p class="feed-text__body ds-body-m">Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день — яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже больно. Подскажите, что не так?</p>
@@ -310,9 +318,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сад</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Сообщество</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Сад</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">5 правил полива в жару, которые спасут урожай: поливайте утром или вечером, под корень, тёплой водой. Мульчируйте грядки и не бойтесь рыхлить почву.</p>
@@ -337,9 +346,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рыбалка</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Сообщество</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Рыбалка</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Как вязать поводок без узлов за 30 секунд — короткое видео от подписчика. Сохраняйте, чтобы не потерять перед выходом на воду.</p>
@@ -380,9 +390,10 @@
 
       <!-- 9. Дзен-пост -->
       <article class="feed-base island">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><img class="nv-breadcrumbs__badge" src="../assets/new-vision/dzen-badge.png" alt=""><span class="nv-breadcrumbs__label">Дзен</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Здоровье</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item"><img class="breadcrumbs__badge" src="../assets/new-vision/dzen-badge.png" alt="">Дзен</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Здоровье</span>
         </nav>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=60" alt=""></div>
@@ -405,9 +416,10 @@
 
       <!-- 10. Нужен совет карточками (общий компонент feed-questions) -->
       <article class="feed-questions island">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Санкт-Петербург</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Нужен совет</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Санкт-Петербург</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Нужен совет</span>
         </nav>
         <h2 class="nv-feed__title">Помогите ответом в Санкт-Петербурге</h2>
         <div class="feed-questions__list">
@@ -448,9 +460,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рыбалка</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Клипы</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Рыбалка</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Клипы</span>
         </nav>
         <div class="media __type-clip" style="background: linear-gradient(180deg, var(--base-blue-48), var(--base-ocean-64));">
           <button class="media__mute" aria-label="Mute">🔇</button>
@@ -551,9 +564,10 @@
 
       <!-- 16. Обсуждают -->
       <article class="feed-discussion island">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Здоровье</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Обсуждают</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Здоровье</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Обсуждают</span>
         </nav>
         <header class="header __size-xl">
           <h2 class="header__title">Болит колено при приседании. Что это может быть?</h2>
@@ -579,9 +593,10 @@
 
       <!-- 17. 12 людей рядом делятся моментом с дачи -->
       <article class="feed-stories island">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Рядом</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Моменты</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Рядом</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Моменты</span>
         </nav>
         <h2 class="nv-feed__title">12 людей рядом делятся моментом с дачи</h2>
         <div class="feed-stories__list">
@@ -610,9 +625,10 @@
 
       <!-- 18. Покажите свой урожай (конкурс) -->
       <article class="feed-contest island">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Конкурс</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Урожай</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Конкурс</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Урожай</span>
         </nav>
         <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
         <div class="picture-stack">
@@ -658,8 +674,8 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Мысли вслух</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item __state-on">Мысли вслух</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Понял, что лучший отдых на даче — это не шашлык и не баня, а тишина в шесть утра, когда весь посёлок ещё спит, а ты с чашкой чая на крыльце.</p>
@@ -675,9 +691,10 @@
 
       <!-- 21. Воспоминание -->
       <article class="feed-memory island" data-entity="self">
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Воспоминания</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">В этот день</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Воспоминания</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">В этот день</span>
         </nav>
         <h2 class="nv-feed__title">Дополните фотографию роз спустя 5 лет</h2>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
@@ -704,9 +721,10 @@
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <nav class="nv-breadcrumbs">
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Сообщество</span></span>
-          <span class="nv-breadcrumbs__tag"><span class="nv-breadcrumbs__label">Объявления</span></span>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Сообщество</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Объявления</span>
         </nav>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">В субботу субботник у пруда в 10:00. Берём перчатки и хорошее настроение — после уберёмся, будет чай с пирогами. Приходите семьями!</p>
@@ -759,23 +777,9 @@
     <!-- Слот под полноэкранный вьюер моментов — MomentViewer.create() заменит его -->
     <div id="nv-moment-slot"></div>
 
-    <div class="phone-frame__tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" data-href="../tribune.html" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" data-href="../messages.html" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" data-href="menu.html" aria-label="Меню"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
 
   </div>
-
-<!-- навигация по таббару (feed → лента, message → сообщения) -->
-<script src="../components/tab-bar.js"></script>
 
 <!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
 <script>
@@ -857,8 +861,11 @@
 
 </script>
 
-<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка падает сверху и
-     раскрывается, стопка сдвигается, нижняя сжимается к центру и исчезает. -->
+<!-- Конвейер виджета «Вокруг вас сейчас»: новая ячейка возникает из точки,
+     стопка сдвигается, нижняя сжимается к центру и исчезает.
+     При появлении ячейка вспыхивает подложкой цвета своей категории
+     (.__conv-appear, палитра в around-you.css) и оседает в дефолт;
+     у «Праздника» (.__cat-holiday) поверх играет Lottie-конфетти. -->
 <script>
 (function () {
   var conv = document.getElementById('activityConveyor');
@@ -871,6 +878,69 @@
     var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
     return isNaN(v) ? dflt : v;
   }
+
+  // Длительность жизни подложки (синхронно с au-fade 1.3s в around-you.css).
+  var APPEAR_MS = 1300;
+
+  // ── Lottie-эффекты при появлении ячейки ─────────────────────────────────
+  // Лениво грузим lottie-web (как actions-bar.js), оверлей кладём на body —
+  // ряд конвейера overflow:hidden, эффект должен выходить за его пределы.
+  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+  var lottieLoading = null;
+  function ensureLottie() {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoading) return lottieLoading;
+    lottieLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOTTIE_CDN; s.async = true;
+      s.onload = function () { resolve(window.lottie); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return lottieLoading;
+  }
+  // Проигрывает Lottie-оверлей в заданных координатах (fixed), один раз,
+  // с самоудалением. Координаты — left/top левого-верхнего угла, бокс size×size.
+  function playLottie(path, left, top, size) {
+    ensureLottie().then(function (lottie) {
+      var host = document.createElement('div');
+      host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
+        'width:' + size + 'px;height:' + size + 'px;left:' + left + 'px;top:' + top + 'px;';
+      document.body.appendChild(host);
+      var anim = lottie.loadAnimation({
+        container: host, renderer: 'svg', loop: false, autoplay: true, path: path
+      });
+      anim.addEventListener('complete', function () { anim.destroy(); host.remove(); });
+    }).catch(function () {});
+  }
+
+  // Lottie-эффект по категории ячейки. Вызывать, КОГДА ячейка уже раскрыта
+  // (иначе getBoundingClientRect отдаёт схлопнутый rect → эффект «уезжает»).
+  //   «Праздник» — конфетти по центру ячейки; «1 место» — трофей справа от аватара.
+  function playCellLottie(cell) {
+    if (cell.classList.contains('__cat-holiday')) {
+      var cr = cell.getBoundingClientRect();
+      var size = 220;
+      playLottie('../assets/lottie/confetti.json',
+        cr.left + cr.width / 2 - size / 2, cr.top + cr.height / 2 - size / 2, size);
+    } else if (cell.classList.contains('__cat-win')) {
+      var ava = cell.querySelector('.avatar');
+      if (!ava) return;
+      var ar = ava.getBoundingClientRect();
+      var tsize = 52;
+      playLottie('../assets/lottie/trophy.json',
+        ar.right - 10,                          // справа от аватара (с лёгким нахлёстом)
+        ar.top + ar.height / 2 - tsize / 2,     // по вертикали — по центру аватара
+        tsize);
+    }
+  }
+
+  // Вспышка категорийной подложки (Lottie запускается отдельно, после раскрытия).
+  function appear(cell) {
+    cell.classList.add('__conv-appear');
+    setTimeout(function () { cell.classList.remove('__conv-appear'); }, APPEAR_MS);
+  }
+
   var animating = false;
 
   function step() {
@@ -878,11 +948,12 @@
     if (animating || track.children.length < rows + 1) return;
     animating = true;
 
-    // следующую скрытую (первую под видимой зоной) поднимаем наверх — «падает сверху»
+    // следующую скрытую (первую под видимой зоной) поднимаем наверх
     var entering = track.children[rows];
     track.insertBefore(entering, track.firstElementChild);
     void entering.offsetWidth;                 // reflow → enter стартует с height:0
-    entering.classList.add('__conv-enter');
+    entering.classList.add('__conv-enter');    // возникает из точки (animations.css)
+    appear(entering);                          // + вспышка категорийной подложки
 
     // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
     var leaving = track.children[rows];
@@ -893,8 +964,20 @@
       entering.classList.remove('__conv-enter');
       track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
       animating = false;
+      playCellLottie(entering);               // эффект — после раскрытия (rect стабилен)
     }, cssNum('--conv-dur', 0.5) * 1000 + 60);
   }
+
+  // Первый показ виджета в ленте: видимые ряды тоже «приходят к дефолту» из
+  // цветной подложки — иначе категории видны только на сменяемой верхней ячейке.
+  (function introVisibleRows() {
+    var rows = Math.round(cssNum('--conv-rows', 3));
+    for (var i = 0; i < rows && i < track.children.length; i++) {
+      var cell = track.children[i];
+      appear(cell);
+      requestAnimationFrame(playCellLottie.bind(null, cell)); // ряды статичны → rect готов
+    }
+  })();
 
   setInterval(step, 3000);
 })();
