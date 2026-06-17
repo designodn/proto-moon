@@ -146,12 +146,8 @@
     );
   }
 
-  /* В тёмных пилюлях __style-on-image иконки должны быть белыми.
-     В DS это решается через .icon.__src + currentColor (mask), но в
-     lenta-light мы используем <img>, поэтому форсим белый CSS-фильтром. */
-  .button-container.__style-on-image .ll-icon {
-    filter: brightness(0) invert(1);
-  }
+  /* Бел-форс для <img>-иконок в __style-on-image теперь живёт в DS-кнопке
+     (components/button.css), здесь дублировать не нужно. */
 </style>
 </head>
 <body>
