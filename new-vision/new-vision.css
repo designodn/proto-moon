@@ -43,21 +43,18 @@
 
 /* ── Оверрайды (после всех @import) ────────────────────────────────────── */
 
-/* OK Sans — принудительно первым в очереди на всех NV-страницах.
-   Перебивает --font-family из tokens.css, поэтому весь UI рендерится
-   брендовым шрифтом, а Onest/системные остаются как фолбэк.
-   .__font-roboto тоже перекрываем — на NV-страницах OK Sans приоритетнее. */
+/* Шрифтовые токены NV (перекрывают tokens.css на всех NV-страницах,
+   включая .__font-roboto). Три ката: */
 :root,
 .__ui-theme_enabled,
 .__font-roboto {
-  /* База UI (кнопки, ячейки, инпуты) — OK Sans Text: текстовый оптический
-     кат, оптимизирован под мелкий UI/контролы. */
-  --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* База UI без явного текстового стиля — Roboto. */
+  --font-family: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Заголовки — OK Sans Display: дисплейный кат под крупный текст. */
+  /* Заголовки и основные кнопки — OK Sans Display (дисплейный кат). */
   --font-family-display: "OK Sans Display", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Тексты публикаций (body/caption стили) — Roboto. */
+  /* Тексты публикаций (body/caption стили) и инлайн-кнопки — Roboto. */
   --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -68,14 +65,23 @@
    Привязка идёт к ds-* стилям (а не к компонентам):
    - title/display  → OK Sans Display (--font-family-display)
    - body/caption   → Roboto         (--font-family-content)
+   - база UI без стиля → Roboto (--font-family)
    - кнопки своих ds-классов не несут, но метрически это title-стили,
-     поэтому их тоже переводим на Display (см. отдельный блок ниже). */
+     поэтому их тоже переводим на Display (см. отдельный блок ниже).
+
+   header__title / nav-bar__title берут шрифт из --font-family (база теперь
+   Roboto), но это заголовки — поэтому явно держим их на Display. */
 .ds-display-xl,
 .ds-display-m,
 .ds-title-xl,
 .ds-title-l,
 .ds-title-m,
-.ds-title-s {
+.ds-title-s,
+.header.__size-xl .header__title,
+.header.__size-l .header__title,
+.header.__size-m .header__title,
+.header.__size-s .header__title,
+.nav-bar__title {
   font-family: var(--font-family-display);
 }
 
