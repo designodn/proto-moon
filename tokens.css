@@ -102,12 +102,13 @@
 .button-inline.__size-32,
 .text-input.__size-56 { font-family: var(--font-family); font-size: 17px; line-height: 24px; font-weight: 400; letter-spacing: 0; }
 
-/* ds-body-m — также используется button-inline 20 и text-input 36 */
+/* ds-body-m — также используется button-inline 20 и text-input 36/44 */
 .ds-body-m,
 .header.__size-m .header__subtitle,
 .header.__size-s .header__subtitle,
 .button-inline.__size-20,
-.text-input.__size-36 { font-family: var(--font-family); font-size: 15px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
+.text-input.__size-36,
+.text-input.__size-44 { font-family: var(--font-family); font-size: 15px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
 
 /* ds-caption-m — также используется button-inline 16 */
 .ds-caption-m,

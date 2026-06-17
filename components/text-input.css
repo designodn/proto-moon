@@ -5,6 +5,7 @@
  * so it works the same inside the comment bar, a search row, or a form.
  *
  * SIZES:   .__size-36  — body-m (15/20)
+ *          .__size-44  — body-m (15/20)
  *          .__size-56  — body-l (17/24)
  *          (border-radius = height / 4)
  *
@@ -31,6 +32,11 @@
 .text-input.__size-36 {
   height: 36px;
   border-radius: 9px;
+}
+
+.text-input.__size-44 {
+  height: 44px;
+  border-radius: 11px;
 }
 
 .text-input.__size-56 {

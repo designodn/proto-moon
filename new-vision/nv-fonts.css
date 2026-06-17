@@ -97,12 +97,12 @@
   font-weight: 600;
 }
 
-/* Инлайн-кнопки (текстовые ссылки) метрически = body/caption → Roboto. */
+/* Инлайн-кнопки (текстовые ссылки) в NV — OK Sans Display. */
 .button-inline.__size-32,
 .button-inline.__size-24,
 .button-inline.__size-20,
 .button-inline.__size-16 {
-  font-family: var(--font-family-content);
+  font-family: var(--font-family-display);
 }
 
 /* NV-лента: верхушка фида (feed-header) и таймер видео — принудительно
@@ -113,6 +113,8 @@
 .feed-header .ds-caption-m,
 .feed-header__name,
 .media__time,
-.feed-discussion__lead {
+.feed-discussion__lead,
+.comment__meta,
+.comment-input .text-input {
   font-family: var(--font-family-display);
 }

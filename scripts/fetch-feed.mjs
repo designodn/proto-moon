@@ -358,10 +358,10 @@ ${cards}
     case 'discussion': {
       const c = x.topComment;
       const comment = c ? `        <div class="comment __type-compact">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="${esc(c.authorId)}" alt=""></div>
+          <div class="avatar __size-24 __type-image"><img data-person-avatar="${esc(c.authorId)}" alt=""></div>
           <div class="comment__body">
-            <div class="comment__header"><b data-person-name="${esc(c.authorId)}"></b>· ${esc(c.time)}</div>
-            <p class="comment__text">${esc(c.text)}</p>
+            <div class="comment__header"><b class="ds-title-s" data-person-name="${esc(c.authorId)}"></b><span class="comment__meta ds-body-m">· ${esc(c.time)}</span></div>
+            <p class="comment__text ds-body-m">${esc(c.text)}</p>
             <div class="comment__actions">
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-arrow-left"></span>Ответить</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>${esc(c.likes)}</span></button></span>
@@ -380,8 +380,14 @@ ${body}
 ${comment}
 ${more}
         <div class="comment-input">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="my_profile" alt=""></div>
-          <input class="text-input __size-36" placeholder="Написать ответ…">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="my_profile" alt=""></div>
+          <div class="comment-input__field">
+            <input class="text-input __size-44" placeholder="Написать ответ…">
+            <div class="comment-input__actions">
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/attach_24.svg')"></span>
+              <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('../assets/icons/smile_24.svg')"></span>
+            </div>
+          </div>
         </div>
       </article>`;
     }
