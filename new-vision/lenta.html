@@ -805,7 +805,12 @@
     var hide = e.target.closest('[data-promo-hide]');
     if (hide) {
       var banner = hide.closest('.promo-banner');
-      if (banner) banner.style.display = 'none';
+      if (banner) {
+        banner.classList.add('__hiding');                 // съезжает вниз + гаснет
+        banner.addEventListener('transitionend', function () {
+          banner.style.display = 'none';                  // убрать из потока после анимации
+        }, { once: true });
+      }
       return;
     }
     var go = e.target.closest('.promo-banner [data-href], .nav-bar [data-href]');
