@@ -326,6 +326,71 @@
 }
 
 /* ============================================================
+   ИНДИКАТОР «НОВЫХ» в навбаре «Вокруг вас сейчас»
+   Цифровой вариант (только на этой странице). Жизненный цикл —
+   фиксированный сценарий из инлайн-скрипта okruzhenie.html:
+     pulse    — пульсирующая точка (idle, «ищем новые»);
+     count    — красный кружок-счётчик с цифрой (1…9, потолок «9+»);
+     expanded — после паузы кружок раскрывается в пилюлю «N новых».
+   Цвета из макета «Логика каунтера»: красный #f55 + белый жирный текст.
+   ============================================================ */
+.activity-indicator {
+  --activity-indicator-color: #f55;
+  /* красим и пульс-точку этого индикатора в тот же красный */
+  --pulse-dot-custom-color: var(--activity-indicator-color);
+  margin-left: auto;          /* прижать к правому краю навбара */
+  display: inline-flex;
+  align-items: center;
+}
+/* В состоянии pulse виден только пульс, бейдж скрыт; и наоборот. */
+.activity-indicator[data-state="pulse"] .activity-indicator__badge { display: none; }
+.activity-indicator:not([data-state="pulse"]) .pulse-dot { display: none; }
+
+.activity-indicator__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: var(--activity-indicator-color);
+  color: var(--static-text-and-icons-base-inverse-primary, #fff);
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+  /* мягкое «всплытие» при появлении цифры и раскрытии в пилюлю */
+  animation: ai-pop 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+/* Слово «новых» — только в раскрытом состоянии (плавно проявляется) */
+.activity-indicator__word {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  /* зазор между цифрой и словом — отступом, а не пробелом в тексте
+     (ведущий пробел схлопывается при обрезке по max-width) */
+  padding-left: 0.28em;
+  transition: max-width 240ms ease, opacity 200ms ease;
+}
+.activity-indicator[data-state="expanded"] .activity-indicator__word {
+  max-width: 120px;
+  opacity: 1;
+}
+
+@keyframes ai-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-indicator__badge { animation: none; }
+  .activity-indicator__word  { transition: none; }
+}
+
+/* ============================================================
    КНОПКА «↻ Проиграть» — пере-запуск появления без перезагрузки
    ============================================================ */
 .activity-replay {
