@@ -53,7 +53,8 @@
 .button-wrapper.__size-44 .button-container,
 .button-wrapper.__size-36 .button-container,
 .button-wrapper.__size-28 .button-container,
-.ll-publish-btn .button-container {
+.ll-publish-btn .button-container,
+.nv-publish-btn .button-container {
   font-family: var(--font-family-display);
 }
 
