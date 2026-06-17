@@ -32,11 +32,16 @@
   padding: 0;
 }
 
-/* Заголовок вопроса (ds-title-xl) и лид (ds-body-m) — без собственных
-   вертикальных отступов, расстояния задаёт flex-gap карточки. */
-.feed-discussion__title,
+/* Заголовок вопроса (ds-title-xl) — без собственных отступов. */
+.feed-discussion__title {
+  margin: 0;
+}
+
+/* Лид (ds-body-m) — вертикальные паддинги 8, без браузерных margin'ов. */
 .feed-discussion__lead {
   margin: 0;
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
 }
 
 /* Тонкая линия-сепаратор */
