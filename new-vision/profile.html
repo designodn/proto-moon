@@ -425,57 +425,53 @@
        Каркас (overlay/handle/navbar) генерит nv-sheet.js — тут только контент. -->
   <div class="nv-sheet" id="bonsaiSheet" data-sheet-title="Живой подарок">
       <div class="nv-sheet__body">
-        <!-- Подарок -->
+        <!-- Подарок (только на своём профиле) -->
         <section class="nv-gift-pick" data-pick-group="gift">
-          <h3 class="ds-title-s nv-gift-pick__head">Подарок</h3>
+          <h3 class="ds-title-l nv-gift-pick__head">Подарок</h3>
           <div class="nv-gift-pick__row">
-            <button class="nv-pick __none" aria-label="Без подарка">⊘</button>
+            <button class="nv-pick __none" aria-label="Без подарка"><span class="nv-pick__union" aria-hidden="true"></span></button>
             <button class="nv-pick __selected" aria-label="Бонсай" aria-pressed="true">🌳</button>
             <button class="nv-pick" aria-label="Парник">🏡</button>
             <button class="nv-pick" aria-label="Машинка">🚗</button>
           </div>
         </section>
 
-        <!-- Фон -->
+        <!-- Фон (только на своём профиле) -->
         <section class="nv-gift-pick" data-pick-group="bg">
-          <h3 class="ds-title-s nv-gift-pick__head">Фон</h3>
+          <h3 class="ds-title-l nv-gift-pick__head">Фон</h3>
           <div class="nv-gift-pick__row">
-            <button class="nv-pick __none" aria-label="Без фона">⊘</button>
+            <button class="nv-pick __none" aria-label="Без фона"><span class="nv-pick__union" aria-hidden="true"></span></button>
             <button class="nv-pick __selected" aria-label="Сакура" aria-pressed="true">🌸</button>
             <button class="nv-pick" aria-label="Сакура 2">🌸</button>
             <button class="nv-pick" aria-label="Сакура 3">🌸</button>
           </div>
         </section>
 
-        <!-- Статус «Бонсай» -->
+        <!-- Статус «Бонсай»: заголовок → подзаголовок → картинка → прогресс → текст -->
         <section class="nv-gift-status">
-          <h3 class="ds-title-s nv-gift-status__head">Бонсай</h3>
+          <h3 class="ds-title-l nv-gift-status__head">Бонсай</h3>
           <p class="ds-body-m nv-gift-status__sub">133 полива · 3 уровень</p>
-          <div class="nv-gift-stages" aria-hidden="true">
-            <span class="nv-gift-stages__item __done">🌱</span>
-            <span class="nv-gift-stages__item __done">🌿</span>
-            <span class="nv-gift-stages__item __done">🌳</span>
-            <span class="nv-gift-stages__item __todo">🌸</span>
-            <span class="nv-gift-stages__item __todo">🌺</span>
+          <div class="nv-gift-status__art">
+            <img src="../assets/new-vision/bonsai-all-stages.png" alt="">
           </div>
           <div class="nv-progress"><div class="nv-progress__fill" style="width:60%"></div></div>
-          <p class="ds-caption-m nv-gift-status__hint">Осталось 14 поливов до 4 уровня</p>
+          <p class="ds-body-m nv-gift-status__text">Осталось 14 поливов до 4 уровня</p>
         </section>
 
-        <!-- Кто поливал -->
-        <section class="nv-gift-watered">
-          <h3 class="ds-title-s nv-gift-watered__head">Кто поливал</h3>
+        <!-- Кто поливал (3 случайных человека из people.js) -->
+        <section class="nv-gift-watered" data-watered-list>
+          <h3 class="ds-title-l nv-gift-watered__head">Кто поливал</h3>
           <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
-            <div class="uni-cell-additional-content"><div class="ds-title-s">Ольга Вайнер</div></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-m" data-watered-name>Ольга Вайнер</div></div>
           </div></div></div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
-            <div class="uni-cell-additional-content"><div class="ds-title-s">Алексей Отрыв</div></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-m" data-watered-name>Алексей Отрыв</div></div>
           </div></div></div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
-            <div class="uni-cell-additional-content"><div class="ds-title-s">Алексей Отрыв</div></div>
+            <div class="uni-cell-additional-content"><div class="ds-body-m" data-watered-name>Алексей Отрыв</div></div>
           </div></div></div>
         </section>
       </div>
@@ -588,6 +584,12 @@
       // реальные действия навбара (только свой профиль)
       document.querySelectorAll('.nv-pr-cover__nav-actions').forEach(function (el) {
         el.hidden = el.getAttribute('data-nav') !== view;
+      });
+
+      // в шторке «Живой подарок» разделы «Подарок» и «Фон» — только на своём
+      // профиле (на чужом дарить/менять фон нельзя)
+      document.querySelectorAll('#bonsaiSheet [data-pick-group]').forEach(function (el) {
+        el.hidden = view !== 'self';
       });
 
       // бонсай — уровень/поливы зависят от того, чей профиль (рендер в nv-bonsai.js)
@@ -818,6 +820,28 @@
         if (p && imgs[i]) { if (p.photo) imgs[i].src = p.photo; imgs[i].alt = p.name || ''; }
       });
     });
+
+    // ── «Кто поливал»: 3 случайных реальных человека из people.js ───────────
+    (function () {
+      var sec = document.querySelector('[data-watered-list]');
+      if (!sec) return;
+      var pool = (window.DS_PEOPLE_DATA || []).filter(function (p) {
+        return typeof p.id === 'number';   // реальные люди (не group-/ad-/vvz-/my_profile)
+      });
+      // перемешать (Фишер–Йейтс) и взять первых трёх
+      for (var i = pool.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+      }
+      sec.querySelectorAll('.uni-cell').forEach(function (cell, idx) {
+        var p = pool[idx];
+        if (!p) return;
+        var img  = cell.querySelector('.avatar img');
+        var name = cell.querySelector('[data-watered-name]');
+        if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+        if (name) name.textContent = p.name;
+      });
+    })();
 
     // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
     document.querySelectorAll('#bonsaiSheet .nv-gift-pick').forEach(function (group) {
