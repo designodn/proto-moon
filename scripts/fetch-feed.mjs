@@ -213,9 +213,29 @@ function mediaVideo(photos)  {
           <span class="media__time">0:45</span>
         </div>`;
 }
+/** YouTube video id из watch/shorts/youtu.be/embed-ссылки (или null). */
+function youtubeId(url) {
+  const m = String(url).match(/(?:youtube\.com\/(?:shorts\/|watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
 function mediaClip(photos) {
-  const poster = photos[0] ? img(photos[0]) : '';
-  return `        <div class="media __type-clip">${poster}
+  const src = photos[0];
+  const yt = src && youtubeId(src);
+  let visual = '';
+  if (yt) {
+    // YouTube-плеер: автоплей (только с mute), зацикливание (loop+playlist),
+    // без контролов/брендинга. Формат 9:16 задаёт .media.__type-clip.
+    const params = `autoplay=1&mute=1&loop=1&playlist=${yt}&controls=0&playsinline=1&modestbranding=1&rel=0`;
+    visual = `<iframe class="media__yt" src="https://www.youtube.com/embed/${yt}?${params}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  } else if (src && /\.(mp4|webm|ogg|mov|m3u8)(\?|#|$)/i.test(src)) {
+    // Прямой видео-файл: нативный <video>, автоплей зацикленно без звука.
+    const poster = photos[1] ? ` poster="${esc(photos[1])}"` : '';
+    visual = `<video src="${esc(src)}" autoplay loop muted playsinline${poster}></video>`;
+  } else if (src) {
+    visual = img(src);
+  }
+  return `        <div class="media __type-clip">${visual}
           <button class="media__mute" aria-label="Mute">🔇</button>
         </div>`;
 }
