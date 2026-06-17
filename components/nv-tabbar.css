@@ -74,5 +74,5 @@ ok-tabbar { display: contents; }
 .tabbar .tabbar-icon.__slot-feed    { --tabbar-icon-src: url('../assets/new-vision-icons/feed.svg'); }
 .tabbar .tabbar-icon.__slot-tribune { --tabbar-icon-src: url('../assets/new-vision-icons/tribune.svg'); }
 .tabbar .tabbar-icon.__slot-message { --tabbar-icon-src: url('../assets/new-vision-icons/message.svg'); }
-.tabbar .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../assets/new-vision-icons/clip.svg'); }
+.tabbar .tabbar-icon.__slot-clip    { --tabbar-icon-src: url('../assets/new-vision-icons/glyph_clips_24.svg'); }
 .tabbar .tabbar-icon.__slot-menu    { --tabbar-icon-src: url('../assets/new-vision-icons/menu.svg'); }
