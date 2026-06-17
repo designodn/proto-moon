@@ -527,6 +527,13 @@
       var ov = document.createElement('div');
       ov.className = 'nv-pr-cover__reveal';
       ov.style.background = targetBgCss(savedBg) || 'var(--dynamic-surface-base-secondary)';
+      // центр проявления — центр аватарки
+      var av = coverEl.querySelector('.nv-pr-cover__avatar');
+      if (av) {
+        var ar = av.getBoundingClientRect(), cr = coverEl.getBoundingClientRect();
+        ov.style.setProperty('--nv-cx', (ar.left - cr.left + ar.width / 2) + 'px');
+        ov.style.setProperty('--nv-cy', (ar.top - cr.top + ar.height / 2) + 'px');
+      }
       // вставляем над текущим фоном/ветками, но под контентом (z-index в CSS)
       coverEl.insertBefore(ov, sakuraLayer ? sakuraLayer.nextSibling : coverEl.firstChild);
       // заранее ставим тему текста/кнопок под новый фон — чтобы не было мигания
