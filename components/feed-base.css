@@ -81,13 +81,16 @@
   gap: var(--space-3);
   margin-left: var(--space-4);
   margin-right: var(--space-4);
-  padding: var(--space-3);
-  border: 1px solid var(--dynamic-stroke-contrast-low);
-  border-radius: 16px;
+  padding: var(--space-4) var(--space-4) 0;
+  border: 2px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 20px;
+  overflow: hidden;
 }
-/* Фото внутри реплая — со скруглением (не edge-to-edge, как в обычном посте) */
+/* Фото внутри реплая — во всю ширину (edge-to-edge), упирается в края блока. */
 .feed-memory__reply .media {
-  border-radius: 12px;
+  width: calc(100% + 2 * var(--space-4));
+  margin: 0 calc(-1 * var(--space-4));
+  border-radius: 0;
 }
 
 /* ============================================================
