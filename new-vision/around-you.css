@@ -299,8 +299,8 @@
 .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 12px;
+  inset: -6px -8px;            /* подложка за ячейкой: +8px по бокам, +6px сверху/снизу */
+  border-radius: 16px;
   background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
   animation: au-fade 1.3s ease-out both;
   pointer-events: none;
