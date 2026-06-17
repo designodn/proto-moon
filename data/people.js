@@ -1,0 +1,113 @@
+/* Сгенерировано scripts/fetch-people.mjs — НЕ редактировать вручную. */
+window.DS_PEOPLE_DATA = [
+  {
+    "id": 1,
+    "name": "Александра Бачурина (Душка)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 58,
+    "city": "Санкт-Петербург",
+    "bio": "Люблю сад и внуков"
+  },
+  {
+    "id": 2,
+    "name": "Сергей Чернышов",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 66,
+    "city": "Улан-Удэ",
+    "bio": "сад"
+  },
+  {
+    "id": 3,
+    "name": "Зинаида Халина(Стребкова)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 70,
+    "city": "",
+    "bio": "сад внуки"
+  },
+  {
+    "id": 4,
+    "name": "Виктор Бондарев",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 63,
+    "city": "Курск",
+    "bio": ""
+  },
+  {
+    "id": 5,
+    "name": "Антонида Чекалова (Гахова)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 86,
+    "city": "Омск",
+    "bio": ""
+  },
+  {
+    "id": 6,
+    "name": "Александр Кириевич",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 46,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": 7,
+    "name": "Галина Гаджикулиева",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 69,
+    "city": "Тверь",
+    "bio": ""
+  },
+  {
+    "id": 8,
+    "name": "Александр Мещеряков",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 78,
+    "city": "Ростов-на-Дону",
+    "bio": ""
+  },
+  {
+    "id": 9,
+    "name": "Екатерина )))))",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 106,
+    "city": "Иркутск",
+    "bio": ""
+  },
+  {
+    "id": 10,
+    "name": "Александр Попов",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&dpr=2",
+    "media": "image",
+    "gender": "м",
+    "age": 65,
+    "city": "Чита",
+    "bio": ""
+  },
+  {
+    "id": "my_profile",
+    "name": "Анфиса Тимирбаева(Абдуллина)",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2",
+    "media": "image",
+    "gender": "ж",
+    "age": 47,
+    "city": "Янаул",
+    "bio": ""
+  }
+];

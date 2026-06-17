@@ -150,12 +150,12 @@
         <div class="vvz-portlet__row">
           <div class="vvz-card __default" data-dismiss-target>
             <div class="vvz-card__media">
-              <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=15')"></div>
-              <img src="https://i.pravatar.cc/240?img=15" alt="">
+              <div class="vvz-card__blur" data-person-bg="3"></div>
+              <img data-person-avatar="3" alt="">
               <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Ажар Сарбасова</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="3">Зинаида Халина (Стребкова)</div>
               <div class="vvz-card__subtitle ds-caption-m">3 общих друга</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -165,12 +165,12 @@
 
           <div class="vvz-card __default" data-dismiss-target>
             <div class="vvz-card__media">
-              <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=68')"></div>
-              <img src="https://i.pravatar.cc/240?img=68" alt="">
+              <div class="vvz-card__blur" data-person-bg="4"></div>
+              <img data-person-avatar="4" alt="">
               <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Александр Кирюшкин</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="4">Виктор Бондарев</div>
               <div class="vvz-card__subtitle ds-caption-m">3 общих друга</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -180,12 +180,12 @@
 
           <div class="vvz-card __default" data-dismiss-target>
             <div class="vvz-card__media">
-              <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=52')"></div>
-              <img src="https://i.pravatar.cc/240?img=52" alt="">
+              <div class="vvz-card__blur" data-person-bg="5"></div>
+              <img data-person-avatar="5" alt="">
               <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Мария Иванова</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="5">Антонида Чекалова (Гахова)</div>
               <div class="vvz-card__subtitle ds-caption-m">7 общих друзей</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -195,12 +195,12 @@
 
           <div class="vvz-card __default" data-dismiss-target>
             <div class="vvz-card__media">
-              <div class="vvz-card__blur" style="background-image:url('https://i.pravatar.cc/240?img=33')"></div>
-              <img src="https://i.pravatar.cc/240?img=33" alt="">
+              <div class="vvz-card__blur" data-person-bg="6"></div>
+              <img data-person-avatar="6" alt="">
               <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s">Олег Зайцев</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="6">Александр Кириевич</div>
               <div class="vvz-card__subtitle ds-caption-m">2 общих друга</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -339,6 +339,10 @@
   <script src="components/dismissible.js"></script>
   <script src="components/tab.js"></script>
   <script src="components/tab-bar.js"></script>
+
+  <!-- Реальные люди из Google-таблицы «Люди» (data-person-* атрибуты) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
 
   <!-- Делегированный переход по data-href (кнопка «Ещё» в портлете → vvz.html) -->
   <script>
