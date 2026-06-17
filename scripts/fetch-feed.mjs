@@ -395,12 +395,16 @@ ${more}
     /* ── воспоминание ── */
     case 'memory': {
       const self = String(author) === 'my_profile';
+      // Реплай-блок с обводкой: автор (как в feed-header) + текст + фото.
+      const reply = [
+        feedHeader(author, { time: '5 лет назад', subscribe: false }),
+        text ? `          <p class="ds-body-m feed-memory__text">${esc(text)}</p>` : '',
+        mediaPhoto(photos),
+      ].filter(Boolean).join('\n');
       const parts = [
         breadcrumbs(tema, rubrika),
         `        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`,
-        authorHeader(author, { size: 36, subtitle: '5 лет назад', subscribe: false }),
-        text ? `        <p class="ds-body-m">${esc(text)}</p>` : '',
-        mediaPhoto(photos),
+        `        <div class="feed-memory__reply">\n${reply}\n        </div>`,
         ctaButton('Поделиться снова', { style: 'secondary' }),
       ];
       return `      <article class="feed-memory island" data-entity="${self ? 'self' : 'user'}">\n${parts.filter(Boolean).join('\n')}\n      </article>`;
