@@ -224,7 +224,7 @@
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-secondary">
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/notifications_24.svg')"></span>
+                  <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/notifications_24.svg')"></span>
                   Уведомления
                 </span>
               </button>
@@ -540,8 +540,13 @@
         b.classList.toggle('__active', b.getAttribute('data-set-view') === view);
       });
 
-      // фон обложки: сохранённый — во всех видах
-      applySavedBg();
+      // фон обложки: только self (у друга/гостя фича выбора фона не нужна)
+      if (view === 'self') {
+        applySavedBg();
+      } else {
+        coverEl.style.background = '';
+        coverEl.classList.remove('__bg-dark');
+      }
     }
 
     // init из URL
@@ -595,8 +600,9 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openS(bonsaiSheet); }
     });
 
-    // открыть «Фон» — тап по обложке (в любом виде), кроме интерактива
+    // открыть «Фон» — тап по обложке только в self (для друга/гостя фича не нужна)
     document.addEventListener('click', function (e) {
+      if (document.body.getAttribute('data-view') !== 'self') return;
       if (!e.target.closest('.nv-pr-cover')) return;
       if (e.target.closest('button, a, label, input, .nv-pr-switch, [data-bonsai-open]')) return;
       pendingBg = savedBg; pendingDark = savedDark;
