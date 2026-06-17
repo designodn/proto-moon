@@ -70,7 +70,7 @@
               <div class="uni-cell">
                 <div class="activity-lead">
                   <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=45" alt=""></div>
-                  <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
+                  <span class="lead-trophy" data-lottie="../assets/lottie/trophy.json" aria-hidden="true"></span>
                 </div>
                 <div class="uni-cell-additional-content ds-body-m"><b>Тамара Белова</b> заняла 1 место в фотоконкурсе</div>
                 <div class="button-wrapper __size-36">
@@ -932,7 +932,7 @@
 
   // Конфетти «Праздника» — разовый бёрст по центру ячейки (body-оверлей, т.к.
   // должен выходить за overflow:hidden ряда). Вызывать после раскрытия ячейки.
-  // Трофей «1 место» — НЕ здесь: он прибит к ячейке как in-cell бейдж (.lead-lottie),
+  // Трофей «1 место» — НЕ здесь: он прибит к ячейке как in-cell бейдж (.lead-trophy),
   // поэтому едет вместе с ячейкой при сдвиге конвейера (см. загрузчик ниже).
   function playCellLottie(cell) {
     if (cell.classList.contains('__cat-holiday')) {
@@ -991,13 +991,13 @@
 })();
 </script>
 
-<!-- Прибитые in-cell Lottie-бейджи (трофей «1 место»). ОТДЕЛЬНО от скрипта
-     конвейера: тот делает return при prefers-reduced-motion и тогда трофей бы
-     не загрузился. Бейдж живёт внутри ячейки → едет с ней при сдвиге. До
-     загрузки/без сети — emoji-фолбэк 🥇 внутри span. -->
+<!-- Трофей «1 место» — Lottie в пустом контейнере .lead-trophy внутри ячейки
+     (едет с ней при сдвиге). Подключение как у конфетти: autoplay, без emoji
+     и без data_ready. ОТДЕЛЬНО от скрипта конвейера (тот делает return при
+     prefers-reduced-motion). Нет сети/CDN — контейнер просто пустой. -->
 <script>
 (function () {
-  var hosts = document.querySelectorAll('.ds-activity-conveyor .lead-lottie[data-lottie]');
+  var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
   if (!hosts.length) return;
 
   var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
@@ -1014,27 +1014,18 @@
     });
     return lottieLoading;
   }
-  // При reduced-motion не зацикливаем (статичный трофей), иначе играем.
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   hosts.forEach(function (host) {
     ensureLottie().then(function (lottie) {
-      var fb = host.textContent;
-      // Прячем emoji СРАЗУ (не ждём data_ready — оно капризное и может не
-      // выстрелить, тогда 🥇 перекрывает трофей). SVG отрисуется в span.
-      host.classList.add('__lottie-on');
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: !still, autoplay: !still,
         path: host.getAttribute('data-lottie')
       });
       if (still) anim.addEventListener('DOMLoaded', function () {
-        anim.goToAndStop(anim.totalFrames - 1, true);          // статичный последний кадр
+        anim.goToAndStop(anim.totalFrames - 1, true);   // reduced-motion → статичный кадр
       });
-      // Реально упало (нет файла/битый JSON) — возвращаем emoji.
-      anim.addEventListener('data_failed', function () {
-        anim.destroy(); host.classList.remove('__lottie-on'); host.textContent = fb;
-      });
-    }).catch(function () { /* нет сети — остаётся emoji */ });
+    }).catch(function () { /* нет сети — контейнер пустой */ });
   });
 })();
 </script>
