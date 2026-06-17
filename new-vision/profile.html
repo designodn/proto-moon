@@ -203,10 +203,10 @@
           <!-- CTA: чужой профиль (не в друзьях) — «Дружить» primary -->
           <div class="nv-pr-cta" data-cta="stranger" hidden>
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary">
+              <button class="button-container __style-primary" data-friend-request>
                 <span class="button-content">
-                  <span class="icon __size-20 __src" style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
-                  Дружить
+                  <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
+                  <span data-fr-label>Дружить</span>
                 </span>
               </button>
             </div>
@@ -689,6 +689,45 @@
       } else {
         applyPerson();
       }
+    })();
+
+    // ── «Дружить» → «Запрос отправлен» → «У вас в друзьях» ───────────────────
+    // Тап по primary-кнопке отправляет запрос (secondary, иконка user_request),
+    // через 3 сек запрос «принимается» — становится «У вас в друзьях» (галочка,
+    // иконка user_added). Поток в одну сторону.
+    (function () {
+      var btn = document.querySelector('[data-friend-request]');
+      if (!btn) return;
+      var icon  = btn.querySelector('[data-fr-icon]');
+      var label = btn.querySelector('[data-fr-label]');
+
+      function setState(style, iconName, text) {
+        btn.classList.toggle('__style-primary', style === 'primary');
+        btn.classList.toggle('__style-secondary', style === 'secondary');
+        icon.style.setProperty('--icon-src', "url('../assets/icons/" + iconName + ".svg')");
+        label.textContent = text;
+      }
+
+      var state = 'default';   // default → sent → friends
+      var timer = null;
+
+      btn.addEventListener('click', function () {
+        if (state === 'default') {
+          // отправляем запрос; через 3 сек он «принимается»
+          state = 'sent';
+          setState('secondary', 'user_request_16_20', 'Запрос отправлен');
+          timer = setTimeout(function () {
+            state = 'friends';
+            setState('secondary', 'user_added_16_20', 'У вас в друзьях');
+          }, 3000);
+        } else if (state === 'sent') {
+          // отмена запроса — возврат к «Дружить»
+          clearTimeout(timer);
+          state = 'default';
+          setState('primary', 'user_add_16_20', 'Дружить');
+        }
+        // state === 'friends' — уже в друзьях, тап ничего не меняет
+      });
     })();
 
     // выбор плитки в «Живом подарке» (radio по группам Подарок/Фон)
