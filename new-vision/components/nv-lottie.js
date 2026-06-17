@@ -29,20 +29,27 @@
     return loading;
   }
 
-  // Разовый Lottie-оверлей в координатах left/top (fixed).
-  // size — число (квадрат size×size) либо объект {w, h, par}, где par —
-  // preserveAspectRatio для rendererSettings ('none' = растянуть на бокс,
-  // по умолчанию 'xMidYMid meet'). Кладём на body — ряды/острова могут быть
-  // overflow:hidden, а эффект должен выходить за их пределы.
+  // Разовый Lottie-оверлей в координатах left/top.
+  // size — число (квадрат size×size) либо объект {w, h, par, mount}:
+  //   par   — preserveAspectRatio ('none' = растянуть на бокс, по умолчанию
+  //           'xMidYMid meet');
+  //   mount — DOM-элемент-контейнер. Если задан, оверлей кладётся ВНУТРЬ него
+  //           (position:absolute, left/top — относительно mount) — так эффект
+  //           едет и клипается вместе с контейнером (нужно для фидов). Если не
+  //           задан — fixed-оверлей на body (выходит за overflow:hidden рядов).
   function play(path, left, top, size) {
     return ensure().then(function (lottie) {
-      var w = typeof size === 'object' ? size.w : size;
-      var h = typeof size === 'object' ? size.h : size;
-      var par = (typeof size === 'object' && size.par) || 'xMidYMid meet';
+      var obj = typeof size === 'object' ? size : null;
+      var w = obj ? obj.w : size;
+      var h = obj ? obj.h : size;
+      var par = (obj && obj.par) || 'xMidYMid meet';
+      var mount = obj && obj.mount;
       var host = document.createElement('div');
-      host.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;' +
+      host.style.cssText =
+        (mount ? 'position:absolute;' : 'position:fixed;') +
+        'pointer-events:none;z-index:3;' +
         'width:' + w + 'px;height:' + h + 'px;left:' + left + 'px;top:' + top + 'px;';
-      document.body.appendChild(host);
+      (mount || document.body).appendChild(host);
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: false, autoplay: true, path: path,
         rendererSettings: { preserveAspectRatio: par }

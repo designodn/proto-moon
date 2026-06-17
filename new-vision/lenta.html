@@ -1179,17 +1179,17 @@
 
   function burstConfetti(feed) {
     if (!window.nvLottie) return;
-    var r = feed.getBoundingClientRect();
-    // Конфетти «вылетает из кнопки»: низ бокса — у кнопки (CTA/подарок),
-    // верх — у верхнего края фида. Бокс растянут на остаток высоты фида и
-    // во всю ширину; preserveAspectRatio:'none' заполняет его по высоте.
     var btn = feed.querySelector('.nv-gift-btn');
-    var br = btn ? btn.getBoundingClientRect() : null;
-    var bottom = br ? br.top + br.height / 2 : r.bottom;   // точка вылета — центр кнопки
-    var height = Math.max(bottom - r.top, 80);
+    if (!btn) return;
+    var fr = feed.getBoundingClientRect();
+    var br = btn.getBoundingClientRect();
+    // Бокс монтируется ВНУТРЬ фида (absolute) — едет и остаётся в его рамках
+    // при скролле. Низ — у верхней границы кнопки, верх — у начала фида;
+    // во всю ширину, preserveAspectRatio:'none' заполняет по высоте.
+    var height = Math.max(br.top - fr.top, 80);
     window.nvLottie.play('../assets/lottie/confetti.json',
-      r.left, bottom - height,
-      { w: r.width, h: height, par: 'none' });
+      0, 0,
+      { w: feed.clientWidth, h: height, par: 'none', mount: feed });
   }
 
   var io = new IntersectionObserver(function (entries, observer) {
