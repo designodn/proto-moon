@@ -146,41 +146,43 @@
       <div class="feed-container">
 
       <!-- Сториз-карусель «Сейчас на даче» -->
+      <!-- МОМЕНТЫ (истории) в island-карточке.
+           data-stories — сколько сториз у автора (= столько палочек прогресса
+           в viewer'е). data-name — заголовок viewer'а. -->
       <article class="feed-stories island">
-        <nav class="breadcrumbs">
-          <a class="breadcrumbs__item" href="#">Дача</a>
-          <span class="breadcrumbs__separator" aria-hidden="true"></span>
-          <span class="breadcrumbs__item __state-on">Сейчас на даче</span>
-        </nav>
-        <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
-          <div class="avatar __size-56 __type-image __ring-active __has-addon __has-caption" data-skip-viewer>
-            <img src="https://i.pravatar.cc/128?img=15" alt="">
-            <div class="avatar__addon __pos-br">
-              <div class="button-circle-wrapper __size-20 __style-primary"><button class="button-circle" aria-label="Добавить момент"><span class="icon __slot-plus"></span></button></div>
-            </div>
-            <div class="avatar__caption">Ваш момент</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="3" data-name="Елена">
-            <img src="https://i.pravatar.cc/128?img=49" alt="">
-            <div class="avatar__caption">Елена</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="2" data-name="Евгения">
-            <img src="https://i.pravatar.cc/128?img=23" alt="">
-            <div class="avatar__caption">Евгения</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="4" data-name="Александр">
-            <img src="https://i.pravatar.cc/128?img=52" alt="">
-            <div class="avatar__caption">Александр</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption" data-stories="1" data-name="Ирина">
-            <img src="https://i.pravatar.cc/128?img=44" alt="">
-            <div class="avatar__caption">Ирина</div>
-          </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption" data-stories="2" data-name="Михаил">
-            <img src="https://i.pravatar.cc/128?img=33" alt="">
-            <div class="avatar__caption">Михаил</div>
+      <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
+        <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
+             не открывает viewer (data-skip-viewer). -->
+        <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
+          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
+          <div class="avatar__addon __pos-br stories-row__add">
+            <img src="../assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
         </div>
+        <!-- Не просмотренные (оранжевое кольцо). -->
+        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
+        <div class="avatar __size-56 __type-image __ring-active __has-addon"
+             data-bday data-stories="1" data-name="Лиза">
+          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
+          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
+        </div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+
+        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
+             CTA-кнопка снизу — только у ВВЗ. -->
+        <div class="avatar __size-56 __type-image __ring-active"
+             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
+             aria-label="Возможно, вы знакомы">
+          <img src="../assets/icons/vvz_stories.png" alt="">
+        </div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
+
+        <!-- Просмотренные (серое кольцо) -->
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
+      </div>
       </article>
 
       <!-- 1. Текст + видео -->
@@ -790,6 +792,7 @@
 </script>
 
 <!-- Моменты → полноэкранный вьюер (DS-компонент stories-row + moment.js) -->
+<script src="../components/vvz-card.js"></script>
 <script src="../components/moment.js"></script>
 <script>
   (function () {
@@ -805,7 +808,55 @@
     });
     slot.replaceWith(viewer);
 
-    MomentViewer.bindRow(row, viewer);
+    var VVZ_PEOPLE = [
+      { name: 'Карина Затонская', sub: '28 лет, Рига, Латвия',  img: 'https://i.pravatar.cc/192?img=47', mutuals: 18, m: [44, 12, 5] },
+      { name: 'Илья Воронов',     sub: '31 год, Москва',         img: 'https://i.pravatar.cc/192?img=33' },
+      { name: 'Анна Соколова',    sub: '25 лет, Санкт-Петербург',img: 'https://i.pravatar.cc/192?img=44', mutuals: 12, m: [12, 5, 23] },
+      { name: 'Мария Лебедева',   sub: '29 лет, Казань',         img: 'https://i.pravatar.cc/192?img=45' }
+    ];
+
+    function makeVvzSlide() {
+      return MomentViewer.vvzSlide({
+        title:  'Возможно, вы знакомы',
+        people: VVZ_PEOPLE,
+        cta:    { label: 'Показать всех', onClick: function () { location.href = '../vvz.html'; } }
+      });
+    }
+
+    MomentViewer.bindRow(row, viewer, {
+      slides: function (ava) {
+        // ВВЗ-сториз — собирается из готового хелпера.
+        if (ava.hasAttribute('data-vvz')) {
+          return [makeVvzSlide()];
+        }
+        // Именинная сториз — фото-фон именинника + блюр снизу + текст.
+        if (ava.hasAttribute('data-bday')) {
+          var img = ava.querySelector('img');
+          var name = ava.getAttribute('data-name') || '';
+          var FULL = { 'Лиза': ['Лизы', 'Михайловой'], 'Алексей': ['Алексея', 'Орлова'], 'Дима': ['Димы', 'Соколова'] };
+          var pair = FULL[name] || [name, ''];
+          var firstGen = pair[0];
+          var fullGen = (pair[0] + ' ' + pair[1]).trim();
+          var slide = MomentViewer.bdaySlide({
+            photo:          img ? img.src : '',
+            name:           fullGen,
+            headerTitle:    'День рождения ' + firstGen,
+            headerSubtitle: '3 часа назад',
+            cta:            'Поздравить'
+          });
+          slide.cta.onClick = function () { location.href = '../gifts-catalog.html'; };
+          return [slide];
+        }
+        // Обычная сториз с цветной заливкой.
+        var count = parseInt(ava.getAttribute('data-stories'), 10) || 1;
+        var palette = MomentViewer.palette;
+        var slides = [];
+        for (var i = 0; i < count; i++) {
+          slides.push({ color: palette[i % palette.length] });
+        }
+        return slides;
+      }
+    });
   })();
 </script>
 
