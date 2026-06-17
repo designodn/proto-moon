@@ -87,26 +87,33 @@ async function main() {
     );
   }
   const rows = parseCsv(await res.text());
-  const [, ...body] = rows; // первая строка — заголовки
+  // Колонки читаем ПО НАЗВАНИЯМ (порядок столбцов в листе менялся) — по ключевому слову.
+  const header = (rows[0] || []).map(h => h.trim().toLowerCase());
+  const body = rows.slice(1);
+  const col = kw => header.findIndex(h => h.includes(kw));
+  const iId = col('id'), iName = col('имя'), iSub = col('текст'), iPhoto = col('фото'),
+        iGender = col('пол'), iAge = col('возраст'), iCity = col('город'), iBio = col('о себе');
+  const at = (cols, i) => (i >= 0 ? (cols[i] || '').trim() : '');
 
   const people = [];
   for (const cols of body) {
-    let idRaw = (cols[0] || '').trim();
-    const name = (cols[1] || '').trim();
+    let idRaw = at(cols, iId);
+    const name = at(cols, iName);
     if (!idRaw || !name) continue; // пропускаем пустые болванки
     idRaw = idRaw.replace(/^vv+z-(\d+)$/i, 'vvz-$1'); // чиним опечатки vvvz-N → vvz-N
     const id = /^\d+$/.test(idRaw) ? Number(idRaw) : idRaw; // числовой или строковый (my_profile, vvz-N)
-    const photo = (cols[2] || '').trim() || null;
+    const photo = at(cols, iPhoto) || null;
     const media = await detectMedia(photo);
     people.push({
       id,
       name,
+      subtitle: at(cols, iSub),       // столбец «текст» — подпись под именем (напр. у рекламы)
       photo: media ? photo : null,
       media,
-      gender: (cols[3] || '').trim(),
-      age: parseAge(cols[4]),
-      city: normCity(cols[5]),
-      bio: (cols[6] || '').trim(),
+      gender: at(cols, iGender),
+      age: parseAge(at(cols, iAge)),
+      city: normCity(at(cols, iCity)),
+      bio: at(cols, iBio),
     });
     const flag = media === 'image' ? '🖼' : media === 'video' ? '🎬' : '⚠️';
     console.log(`  ${flag} #${id} ${name}`);

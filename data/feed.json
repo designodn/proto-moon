@@ -22,7 +22,7 @@
     {
       "id": "post-2",
       "type": "ad",
-      "author": "Квартал бизнес-класса «Б15»",
+      "author": "ad-1",
       "title": "",
       "text": "От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 мину...",
       "photos": [
@@ -56,9 +56,9 @@
       "photos": [
         "https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "12",
+      "comments": "20",
+      "reshares": "1",
       "tema": "",
       "rubrika": ""
     },
@@ -84,9 +84,9 @@
       "photos": [
         "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&dpr=2"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "112",
+      "comments": "43",
+      "reshares": "12",
       "tema": "Дача",
       "rubrika": "Сезонные советы"
     },
@@ -99,16 +99,16 @@
       "photos": [
         "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItQ78d_1sAmaVQ2TFGIpufPBJ7hIuvpy4kLXgxgzhO-O35B_tiCJp926IqupEmU9Du4E2K5esrB2eYxH7rP_Fw_xuPACL7b7uCiuVT1U4AAAAp&dpr=2"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "35",
+      "comments": "180",
+      "reshares": "10",
       "tema": "Рыбалка",
       "rubrika": "Рекомендации групп"
     },
     {
       "id": "post-8",
       "type": "ad",
-      "author": "Магазин снастей",
+      "author": "ad-2",
       "title": "",
       "text": "Новые японские спининги Belleza UX уже в продаже",
       "photos": [
@@ -129,9 +129,9 @@
       "photos": [
         "https://www.ckbran.ru/upload/medialibrary/e96/xt08ybjsifywqg113cx499j70so4hxjs.jpg"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "212",
+      "comments": "14",
+      "reshares": "3",
       "tema": "Дзен",
       "rubrika": "Здоровье"
     },
@@ -157,8 +157,8 @@
       "photos": [
         "https://iv.okcdn.ru/videoPreview?id=16833467124412&type=39&idx=1&tkn=GzF9Fz5eDAm_5wP4YvQWhn7WRN8"
       ],
-      "likes": "",
-      "comments": "",
+      "likes": "14",
+      "comments": "73",
       "reshares": "",
       "tema": "",
       "rubrika": ""
@@ -179,7 +179,7 @@
     {
       "id": "post-13",
       "type": "ad",
-      "author": "Магазин цветов",
+      "author": "ad-3",
       "title": "",
       "text": "Порадуйте своих близких! Закажите им наши лучшие букеты, сейчас со скидкой до 50% ...",
       "photos": [
@@ -204,9 +204,9 @@
         "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&dpr=2",
         "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9eEuh5Y2raEgDlsJx8Cl6m6EI3JgnPzdVSLdjcmQak7aSFf2N1VJz-eaEZPJPEQxH4n2whTxP_ry6b0HvmfetBFCgfjfihZcNDYnj0EMAAAAp&dpr=2"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "5",
+      "comments": "12",
+      "reshares": "1",
       "tema": "",
       "rubrika": ""
     },
@@ -272,7 +272,7 @@
     {
       "id": "post-19",
       "type": "ad",
-      "author": "Магазин цветов Фантазия",
+      "author": "ad-4",
       "title": "",
       "text": "Цветы оптом и в розницу",
       "photos": [
@@ -321,9 +321,9 @@
       "photos": [
         "https://avatars.dzeninfra.ru/get-zen_doc/8220767/pub_63e9ec741b468f22ef1e7232_63ee070c3398503757765481/scale_1200"
       ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
+      "likes": "56",
+      "comments": "97",
+      "reshares": "10",
       "tema": "Еда",
       "rubrika": "Рекомендации групп"
     },

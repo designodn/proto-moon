@@ -30,6 +30,23 @@
   gap: var(--space-2); /* крошки ↔ строка автора */
 }
 
+/* Строка автора без собственных горизонтальных/вертикальных паддингов —
+   отступ 16 даёт карточка-обёртка (feed-base / feed-discussion / …),
+   крошки и автор за счёт этого выровнены по левому краю. */
+.feed-header .uni-cell-wrapper {
+  --uni-cell-padding-left:   0;
+  --uni-cell-padding-right:  0;
+  --uni-cell-padding-top:    0;
+  --uni-cell-padding-bottom: 0;
+}
+
+/* База .uni-cell идёт без gap (его задаёт контекст). Во всех feed-header —
+   gap 12 между авой и текстом справа (самодостаточно для любой обёртки). */
+.feed-header .uni-cell {
+  align-items: center;
+  gap: 12px !important;
+}
+
 /* имя ↔ время */
 .feed-header .uni-cell-additional-content {
   gap: 2px;

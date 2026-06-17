@@ -270,8 +270,16 @@ function renderPost(p, idx) {
 
     /* ── реклама ── */
     case 'ad': {
+      // Аватар/имя — из «Люди», если автор это id (напр. ad-1); иначе инициалы по тексту.
+      const inRoster = !!PEOPLE[String(author)];
+      const subtitle = (inRoster && PEOPLE[String(author)].subtitle) || 'Реклама 0+';
+      const header = authorHeader(inRoster ? author : null, {
+        size: 44, subtitle, subscribe: false,
+        literalName: inRoster ? null : author,
+      });
       const parts = [
-        authorHeader(null, { size: 44, literalName: author, subtitle: 'Реклама 0+', subscribe: false }),
+        header,
+        title ? `        <div class="ds-title-m">${esc(title)}</div>` : '',
         feedText(text, 2),
         mediaPhoto(photos),
         ctaButton('Перейти'),
@@ -363,13 +371,10 @@ ${cards}
       const more = x.moreReplies
         ? `        <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(x.moreReplies)}</span></button></span>`
         : '';
-      const body = text ? `        <p class="ds-body-m">${esc(text)}</p>` : '';
+      const body = text ? `        <p class="ds-body-m feed-discussion__lead">${esc(text)}</p>` : '';
       return `      <article class="feed-discussion island">
-${breadcrumbs(tema, rubrika)}
-${authorHeader(author, { size: 36, subtitle: time })}
-        <header class="header __size-xl">
-          <h2 class="header__title">${esc(title)}</h2>
-        </header>
+${feedHeader(author, { tema, rubrika, time })}
+        <h2 class="nv-feed__title ds-title-xl feed-discussion__title">${esc(title)}</h2>
 ${body}
         <hr class="ds-divider">
 ${comment}
