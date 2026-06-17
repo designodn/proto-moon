@@ -6,9 +6,9 @@
 
 ```html
 <div class="promo-banner __sticky"
-     style="--promo-banner-image:url('../assets/promo-banner/day-of-gifts.jpg')">
+     style="--promo-banner-image:url('../assets/promo-banner/day-of-gifts.png')">
 ```
 
-Положи сюда файл `day-of-gifts.jpg` (фон «Народный день подарков») — он уже прописан
-в `new-vision/lenta.html`. Рекомендуемый размер ~1076×504, ориентация альбомная,
+Файл `day-of-gifts.png` (фон «Народный день подарков») прописан в
+`new-vision/lenta.html`. Рекомендуемый размер ~1076×504, ориентация альбомная,
 смысловой объект (подарок) справа: слева ложится заголовок и кнопки.
