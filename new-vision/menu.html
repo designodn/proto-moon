@@ -114,10 +114,10 @@
         <div class="uni-cell-container __state-enabled">
           <div class="uni-cell">
             <div class="uni-cell-additional-content">
-              <div class="ds-title-l ll-profile-title">Ольга Вайнер</div>
+              <div class="ds-title-l ll-profile-title" data-user-name>Ольга Вайнер</div>
               <div class="ds-body-m ll-profile-subtitle">Перейти в профиль</div>
             </div>
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/120?img=45" alt="Ольга Вайнер"></div>
+            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/120?img=45" data-user-avatar alt="Ольга Вайнер"></div>
           </div>
         </div>
       </a>
@@ -261,5 +261,8 @@
       location.href = item.getAttribute('data-href');
     });
   </script>
+  <!-- Текущий пользователь из строки my_profile (ава и имя профиля в меню, data-user-*) -->
+  <script src="../data/people.js"></script>
+  <script src="../components/user-data.js"></script>
 </body>
 </html>

@@ -40,7 +40,7 @@
         </div>
         <div class="nav-bar __type-feed nv-feed-nav">
           <div class="nav-bar__leading">
-            <a class="avatar __type-image nv-nav-avatar" href="profile.html?view=self" aria-label="Мой профиль"><img src="https://i.pravatar.cc/96?img=45" alt=""></a>
+            <a class="avatar __type-image nv-nav-avatar" href="profile.html?view=self" aria-label="Мой профиль"><img src="https://i.pravatar.cc/96?img=45" data-user-avatar alt=""></a>
           </div>
           <div class="nav-bar__trailing">
             <span class="button-inline-wrapper __size-32 __view-secondary"><button class="button-inline __size-32" aria-label="Создать"><span class="button-inline__content"><span class="icon __slot-plus"></span></span></button></span>
@@ -591,7 +591,7 @@
         </div>
         <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 35 ответов</span></button></span>
         <div class="comment-input">
-          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" alt=""></div>
+          <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/128?img=15" data-user-avatar alt=""></div>
           <input class="text-input __size-36" placeholder="Написать ответ…">
         </div>
       </article>
@@ -1118,6 +1118,10 @@
   feeds.forEach(function (f) { io.observe(f); });
 })();
 </script>
+
+<!-- Текущий пользователь из строки my_profile (ава навбара и инпута коммента, data-user-*) -->
+<script src="../data/people.js"></script>
+<script src="../components/user-data.js"></script>
 
 </body>
 </html>
