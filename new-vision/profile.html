@@ -693,6 +693,32 @@
       randomizeOtherProfile();
     }
 
+    // Я полил → появляюсь в начале списка «Кто поливал», счётчик поливов +1.
+    document.addEventListener('nv-bonsai-watered', function () {
+      var list = document.querySelector('[data-watered-list]');
+      if (list && !list.querySelector('[data-watered-me]')) {
+        var u = window.DS_USER || {};
+        var w = document.createElement('div');
+        w.className = 'uni-cell-wrapper';
+        w.setAttribute('data-watered-me', '');
+        w.innerHTML = '<div class="uni-cell-container __state-enabled"><div class="uni-cell">' +
+          '<div class="avatar __size-44 __type-image"><img alt=""></div>' +
+          '<div class="uni-cell-additional-content"><div class="ds-body-m"></div></div></div></div>';
+        var img = w.querySelector('img');
+        if (u.avatarSrc) img.src = u.avatarSrc;
+        img.alt = u.name || 'Вы';
+        w.querySelector('.ds-body-m').textContent = u.name || 'Вы';
+        list.insertBefore(w, list.querySelector('.uni-cell-wrapper'));
+      }
+      // счётчик поливов в шторке +1 (полив = человек)
+      var sub = document.querySelector('.nv-gift-status__sub');
+      var m = sub && /(\d+)\D+(\d+)\s*уровень/.exec(sub.textContent);
+      if (m) {
+        var poured = +m[1] + 1, level = +m[2];
+        sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
+      }
+    });
+
     // клики по переключателю — меняем состояние + ?view= без перезагрузки.
     // dev-пилюля убрана из разметки; обработчик оставлен под защитой, если её вернут.
     var switchEl = document.querySelector('.nv-pr-switch');
