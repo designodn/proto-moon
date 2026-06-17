@@ -248,7 +248,12 @@
       while (alive.length > MAX_STACK) dismiss(alive.shift());
     }
 
-    el.__hideTimer = setTimeout(function () { dismiss(el); }, data.lifetime || NOTIF_LIFETIME);
+    // Авто-дисмисс по таймеру — только в heads-up (лента). На лок-скрине
+    // (__mode-lock) пуши висят постоянно, как реальные уведомления: ничего
+    // не уезжает само, пока экран не разблокируют (или свайп по карточке).
+    if (isHeadsUp(b)) {
+      el.__hideTimer = setTimeout(function () { dismiss(el); }, data.lifetime || NOTIF_LIFETIME);
+    }
   }
 
   /* ── Планирование стрима ─────────────────────────────────── */
