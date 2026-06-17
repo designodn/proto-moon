@@ -149,7 +149,10 @@
 @keyframes nv-congrats-reveal {
   /* state 1 — ядро снизу-слева (-44%, 105%), держим до 500мс */
   0%   { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0); }
-  19%  { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0); }
+  /* перетекание едет линейно (равномерно) — ядро доезжает до state2 ровно
+     к 1700мс, а не залипает раньше из-за ease-in-out */
+  19%  { --nv-gx: -44%; --nv-gy: 105%; opacity: 1; transform: translateY(0);
+         animation-timing-function: linear; }
   /* state 2 — перетекание ядра в верх-право (90%, -19%), длительность ≈1200мс */
   65%  { --nv-gx: 90%;  --nv-gy: -19%; opacity: 1; transform: translateY(0); }
   /* state 3 — в прозрачность + уход вниз, длительность ≈900мс */
