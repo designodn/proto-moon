@@ -97,7 +97,9 @@
 .nv-gift-pick__row {
   display: flex; gap: var(--space-3);
   overflow-x: auto; scrollbar-width: none;
-  padding: 4px 0; margin: -4px 0;
+  /* 6px со всех сторон (с компенсацией margin) — чтобы обводка выбранного
+     чипса (кольцо 5px) не обрезалась скролл-контейнером */
+  padding: 6px; margin: -6px;
 }
 .nv-gift-pick__row::-webkit-scrollbar { display: none; }
 
