@@ -50,10 +50,14 @@
 :root,
 .__ui-theme_enabled,
 .__font-roboto {
+  /* База UI (кнопки, ячейки, инпуты) — OK Sans Text: текстовый оптический
+     кат, оптимизирован под мелкий UI/контролы. */
   --font-family: "OK Sans Text", "OK Sans Display", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Roboto — текстовый шрифт для body/caption стилей. Title/Display
-     наследуют --font-family (OK Sans). */
+  /* Заголовки — OK Sans Display: дисплейный кат под крупный текст. */
+  --font-family-display: "OK Sans Display", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Тексты публикаций (body/caption стили) — Roboto. */
   --font-family-content: "Roboto", "OK Sans Text", Onest, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -61,12 +65,20 @@
    Прод-прототипы (.__font-roboto в tokens.css) не затрагиваются: там всё
    остаётся Roboto-first.
 
-   Правило: title/display — OK Sans (через --font-family по умолчанию);
-   все остальные текстовые стили (body, caption) — Roboto.
+   Привязка идёт к ds-* стилям (а не к компонентам):
+   - title/display  → OK Sans Display (--font-family-display)
+   - body/caption   → Roboto         (--font-family-content)
+   - кнопки своих ds-классов не несут (стилизуются через .button-container),
+     поэтому остаются на базовом --font-family = OK Sans Text. */
+.ds-display-xl,
+.ds-display-m,
+.ds-title-xl,
+.ds-title-l,
+.ds-title-m,
+.ds-title-s {
+  font-family: var(--font-family-display);
+}
 
-   Привязка идёт к ds-* стилям, а не к компонентам: Roboto получают только
-   элементы, набранные этими стилями. Кнопки своих ds-классов не несут
-   (стилизуются через .button-container), поэтому остаются на OK Sans. */
 .ds-body-l,
 .ds-body-m,
 .ds-caption-m,
