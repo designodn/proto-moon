@@ -23,14 +23,80 @@
     display: flex; flex-direction: column; gap: var(--space-4);
     padding: var(--space-2) var(--space-4) 96px;
   }
-  /* инфо-баннер */
+  /* инфо-баннер (кликабельный → штора с правилами) */
   .rf-banner {
-    background: var(--dynamic-surface-base-primary);
+    display: flex; align-items: center; gap: var(--space-3);
+    width: 100%; box-sizing: border-box; text-align: left;
+    border: 0; font: inherit; cursor: pointer;
+    background: var(--dynamic-surface-contrast-low);
     border-radius: 16px;
     padding: var(--space-4);
     color: var(--dynamic-text-and-icons-base-primary);
   }
+  .rf-banner__text { flex: 1 1 0; min-width: 0; }
+  .rf-banner__chevron { flex-shrink: 0; opacity: 0.5; }
   .rf-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  /* ── Штора (правила / как получить билет) ─────────────────────── */
+  .rf-sheet {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    visibility: hidden;
+  }
+  .rf-sheet.__open { visibility: visible; }
+  .rf-sheet__scrim {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0; transition: opacity 280ms ease;
+  }
+  .rf-sheet.__open .rf-sheet__scrim { opacity: 1; }
+  .rf-sheet__panel {
+    position: relative;
+    background: var(--dynamic-surface-base-secondary);
+    border-radius: 24px 24px 0 0;
+    padding: 12px 16px 24px;
+    transform: translateY(100%);
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .rf-sheet.__open .rf-sheet__panel { transform: translateY(0); }
+  .rf-sheet__handle { display:flex; justify-content:center; padding: 0 0 16px; }
+  .rf-sheet__handle span { width: 36px; height: 4px; border-radius: 999px; background: var(--dynamic-surface-contrast-low); }
+  .rf-sheet__emoji img { width: 96px; height: 96px; object-fit: contain; display: block; margin: 0 auto; }
+  .rf-sheet__title { text-align: center; margin: 16px 0 16px; color: var(--dynamic-text-and-icons-base-primary); }
+  .rf-sheet__list { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .rf-sheet__item { display: flex; gap: var(--space-3); align-items: flex-start; text-align: left; color: var(--dynamic-text-and-icons-base-secondary); }
+  .rf-sheet__num {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--dynamic-surface-base-primary);
+    color: var(--dynamic-text-and-icons-base-primary);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 13px; font-weight: 700; line-height: 1;
+  }
+  .rf-sheet__dot {
+    flex-shrink: 0; width: 6px; height: 6px; margin: 9px 9px 0 9px; border-radius: 50%;
+    background: var(--dynamic-text-and-icons-base-secondary);
+  }
+  .rf-sheet__btns .button-wrapper,
+  .rf-sheet__btns .button-container { width: 100%; }
+
+  /* ── Тост (лимит приглашений) ─────────────────────────────────── */
+  .rf-toast {
+    position: fixed; left: 50%; bottom: 96px; z-index: 120;
+    transform: translateX(-50%) translateY(16px);
+    width: calc(100% - 32px); max-width: 448px; box-sizing: border-box;
+    padding: var(--space-3) var(--space-4);
+    border-radius: 14px;
+    background: #1F1F22; color: #fff;
+    font: 600 15px/20px var(--font-family);
+    box-shadow: 0 12px 32px -10px rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity 240ms ease, transform 240ms ease;
+  }
+  .rf-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .rf-toast { transition: opacity 240ms ease; }
+    .rf-toast.__show { transform: translateX(-50%); }
+  }
 
   /* кнопка-инвайт / статус «Отправлено» */
   .rf-sent {
@@ -70,6 +136,7 @@
             <span class="ds-title-l">Выберите друзей</span>
           </div>
           <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" id="info-btn" aria-label="Как получить билет"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/info_circle_24.svg" width="24" height="24" alt=""></span></button></span>
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Поиск"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="../assets/icons/search_24.svg" width="24" height="24" alt=""></span></button></span>
           </div>
         </div>
@@ -77,7 +144,10 @@
 
       <!-- КОНТЕНТ -->
       <div class="rf">
-        <div class="rf-banner ds-body-m">Приглашение отправим вашему другу сообщением в чат</div>
+        <button class="rf-banner ds-body-m" id="banner" type="button">
+          <span class="rf-banner__text">Приглашение отправим вашему другу сообщением в чат, вы можете отправить не больше 10 приглашений в день</span>
+          <img class="rf-banner__chevron ll-icon" src="../assets/icons/chevron-right.svg" width="24" height="24" alt="">
+        </button>
 
         <div class="rf-list" id="list">
           <!-- строки друзей вставляются из JS -->
@@ -92,6 +162,47 @@
       </div>
     </div>
   </div>
+
+  <!-- Штора «Как мы засчитываем переход» (по тапу на баннер) -->
+  <div class="rf-sheet" id="rules-sheet" aria-hidden="true">
+    <div class="rf-sheet__scrim" data-sheet-close></div>
+    <div class="rf-sheet__panel" role="dialog" aria-label="Как мы засчитываем переход">
+      <div class="rf-sheet__handle"><span></span></div>
+      <div class="ds-title-l rf-sheet__title">Как мы засчитываем переход</div>
+      <ul class="rf-sheet__list">
+        <li class="rf-sheet__item"><span class="rf-sheet__dot"></span><span class="ds-body-m">Дневной лимит на приглашение: 10</span></li>
+        <li class="rf-sheet__item"><span class="rf-sheet__dot"></span><span class="ds-body-m">Приглашённый друг должен перейти по ссылке и сделать 1 вращение — только тогда мы начисляем билет</span></li>
+      </ul>
+      <div class="rf-sheet__btns">
+        <div class="button-wrapper __size-56 __full-width">
+          <button class="button-container __style-primary" data-sheet-close><span class="button-content">Понятно</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Штора «Как получить билет?» (по тапу на info в навбаре) -->
+  <div class="rf-sheet" id="howto-sheet" aria-hidden="true">
+    <div class="rf-sheet__scrim" data-sheet-close></div>
+    <div class="rf-sheet__panel" role="dialog" aria-label="Как получить билет?">
+      <div class="rf-sheet__handle"><span></span></div>
+      <div class="rf-sheet__emoji"><img src="../assets/koleso/biletik.png" alt=""></div>
+      <div class="ds-title-l rf-sheet__title">Как получить билет?</div>
+      <ul class="rf-sheet__list">
+        <li class="rf-sheet__item"><span class="rf-sheet__num">1</span><span class="ds-body-m">Нажмите «Пригласить» на экране выбора друзей. Друг получит ваше приглашение в чат</span></li>
+        <li class="rf-sheet__item"><span class="rf-sheet__num">2</span><span class="ds-body-m">Приглашение зачтётся, если друг перейдёт по ссылке и покрутит колесо хотя бы один раз</span></li>
+        <li class="rf-sheet__item"><span class="rf-sheet__num">3</span><span class="ds-body-m">Можно приглашать до 10 друзей в день</span></li>
+      </ul>
+      <div class="rf-sheet__btns">
+        <div class="button-wrapper __size-56 __full-width">
+          <button class="button-container __style-primary" data-sheet-close><span class="button-content">Понятно</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Тост: превышен дневной лимит приглашений -->
+  <div class="rf-toast" id="toast" role="status" aria-live="polite">Вы использовали все приглашения на сегодня, ждём вас завтра</div>
 
   <script>
     var FRIENDS = [
@@ -122,19 +233,82 @@
       list.appendChild(cell);
     });
 
-    // тап «Пригласить» → «Отправлено»
-    list.addEventListener('click', function (e) {
-      var btn = e.target.closest('.button-wrapper.__size-28');
-      if (!btn) return;
+    // ── Дневной лимит приглашений ─────────────────────────────────
+    // Счётчик живёт в sessionStorage, поэтому не сбрасывается при
+    // переходах/перезагрузках прототипа (так лимит реально достижим).
+    var DAILY_LIMIT = 10;
+    var STORE_KEY = 'kf_invited_today';
+
+    function getInvited() {
+      var v = parseInt(sessionStorage.getItem(STORE_KEY), 10);
+      if (isNaN(v)) {
+        v = FRIENDS.filter(function (f) { return f.sent; }).length;
+        sessionStorage.setItem(STORE_KEY, v);
+      }
+      return v;
+    }
+    function setInvited(v) { sessionStorage.setItem(STORE_KEY, v); }
+
+    // одно приглашение: true — засчитано, false — лимит исчерпан
+    function inviteOne() {
+      var n = getInvited();
+      if (n >= DAILY_LIMIT) return false;
+      setInvited(n + 1);
+      return true;
+    }
+
+    function markSent(wrapper) {
       var sent = document.createElement('span');
       sent.className = 'rf-sent';
       sent.textContent = 'Отправлено';
-      btn.replaceWith(sent);
+      wrapper.replaceWith(sent);
+    }
+
+    // ── Тост ──────────────────────────────────────────────────────
+    var toastEl = document.getElementById('toast');
+    var toastTimer;
+    function showToast() {
+      toastEl.classList.add('__show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
+    }
+
+    // тап «Пригласить» → «Отправлено» (или тост, если лимит исчерпан)
+    list.addEventListener('click', function (e) {
+      var btn = e.target.closest('.button-wrapper.__size-28');
+      if (!btn) return;
+      if (!inviteOne()) { showToast(); return; }
+      markSent(btn);
     });
 
-    // «Пригласить всех сразу» → назад на колесо с заработанным билетом
+    // «Пригласить всех сразу» → шлём, сколько позволяет лимит
     document.getElementById('invite-all').addEventListener('click', function () {
+      var pending = list.querySelectorAll('.button-wrapper.__size-28');
+      var sent = 0;
+      for (var i = 0; i < pending.length; i++) {
+        if (!inviteOne()) break;
+        markSent(pending[i]);
+        sent++;
+      }
+      if (sent < pending.length) { showToast(); return; } // упёрлись в лимит — остаёмся
+      // всех пригласили → на колесо с заработанным билетом
       location.href = 'koleso.html?tickets=1';
+    });
+
+    // ── Шторки (правила / как получить билет) ─────────────────────
+    function openSheet(el) { el.classList.add('__open'); el.setAttribute('aria-hidden', 'false'); }
+    function closeSheet(el) { el.classList.remove('__open'); el.setAttribute('aria-hidden', 'true'); }
+
+    document.getElementById('banner').addEventListener('click', function () {
+      openSheet(document.getElementById('rules-sheet'));
+    });
+    document.getElementById('info-btn').addEventListener('click', function () {
+      openSheet(document.getElementById('howto-sheet'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-sheet-close]')) return;
+      var open = document.querySelector('.rf-sheet.__open');
+      if (open) closeSheet(open);
     });
   </script>
 </body>
