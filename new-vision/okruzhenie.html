@@ -37,6 +37,8 @@
           <div class="nav-bar__leading">
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-href="lenta.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
             <span class="ds-title-l">Вокруг вас сейчас</span>
+          </div>
+          <div class="nav-bar__trailing">
             <span class="pulse-dot"></span>
           </div>
         </div>
@@ -45,18 +47,11 @@
       <!-- Все типы ячеек «Вокруг вас сейчас» -->
       <div class="activity-list" id="activityList">
 
-        <button class="activity-replay" id="replayBtn" type="button">↻ Проиграть появление</button>
-
-        <!-- Промо-баннер «Копите народные билеты» -->
-        <div class="promo-banner">
-          <a class="promo-banner__card" href="#">
-            <span class="promo-banner__title">Копите народные билеты<span class="promo-banner__arrow">→</span></span>
-            <span class="promo-banner__art">
-              <img class="promo-banner__bow" src="../assets/around/banner-bow.png" alt="">
-              <img class="promo-banner__car" src="../assets/around/banner-car.png" alt="">
-            </span>
-          </a>
-        </div>
+        <!-- Промо-баннер «Копите народные билеты» — вариация компонента promo-banner -->
+        <a class="promo-banner __view-kr" href="#">
+          <p class="promo-banner__title">Копите народные билеты</p>
+          <span class="promo-banner__chevron" aria-hidden="true"></span>
+        </a>
 
         <!-- Спец-ячейка к промо: выигрыш билетов (аватар + онлайн + инлайн-билет) -->
         <div class="uni-cell-wrapper __type-activity">
@@ -66,7 +61,7 @@
                 <img src="https://i.pravatar.cc/128?img=24" alt="">
                 <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
               </div>
-              <div class="uni-cell-additional-content ds-body-m"><span><b>Люба Сергеева</b> выиграла <span style="white-space:nowrap">2 <span class="inline-ticket" aria-label="билета"></span> билета</span> в конкурсе народный ОК</span></div>
+              <div class="uni-cell-additional-content ds-body-m"><span><b>Люба Сергеева</b> выиграла <span style="white-space:nowrap">2 <img class="inline-ticket" src="../assets/koleso/biletik.png" alt="билет"> билета</span> в конкурсе народный ОК</span></div>
               <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
             </div>
           </div>
@@ -329,26 +324,6 @@
   </div>
 
 <script src="../components/tab-bar.js"></script>
-
-<!-- Анимация появления ячеек: стаггер + перезапуск по кнопке -->
-<script>
-(function () {
-  var list = document.getElementById('activityList');
-  if (!list) return;
-  var rows = list.querySelectorAll('.uni-cell-wrapper');
-  rows.forEach(function (row, i) {
-    row.style.setProperty('--enter-delay', (i * 0.06).toFixed(2) + 's');
-  });
-  function play() {
-    list.classList.remove('play');
-    void list.offsetWidth; /* reflow — чтобы анимации запустились заново */
-    list.classList.add('play');
-  }
-  play();
-  var btn = document.getElementById('replayBtn');
-  if (btn) btn.addEventListener('click', play);
-})();
-</script>
 
 </body>
 </html>
