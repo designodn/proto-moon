@@ -98,3 +98,12 @@
 .ds-caption-s-accent {
   font-family: var(--font-family-content);
 }
+
+/* Инлайн-кнопки (текстовые ссылки) метрически = body/caption, поэтому идут
+   на Roboto заодно с текстами. Зеркалим size-селекторы из tokens.css. */
+.button-inline.__size-32,
+.button-inline.__size-24,
+.button-inline.__size-20,
+.button-inline.__size-16 {
+  font-family: var(--font-family-content);
+}
