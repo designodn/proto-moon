@@ -85,6 +85,8 @@
       root.classList.add('__cooldown');
       labelEl.textContent = 'Через 23ч 59м';
       showToast();
+      // оповещаем профиль: текущий пользователь полил (добавить себя в список)
+      root.dispatchEvent(new CustomEvent('nv-bonsai-watered', { bubbles: true }));
       busy = false;
     }, 1100);
   }

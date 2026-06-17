@@ -24,9 +24,10 @@
 }
 .nv-bg-grid .nv-pick > img { border-radius: 20px; }
 
-/* Активен только один свотч; обводка вокруг активного — 3px (п.2) */
+/* Активен только один свотч; обводка 3px с оффсетом 2px от квадрата */
 .nv-bg-grid .nv-pick.__selected {
-  box-shadow: 0 0 0 3px #F23C00;
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-quaternary),
+              0 0 0 5px #F23C00;
 }
 
 /* «Нет фона»: белая плитка + ⊘ (union). Обводка плитки и значок ⊘ —
@@ -37,7 +38,8 @@
 }
 .nv-bg-grid .nv-pick.__none.__selected {
   box-shadow: inset 0 0 0 1px var(--dynamic-surface-contrast-low),
-              0 0 0 3px #F23C00;
+              0 0 0 2px var(--dynamic-surface-base-quaternary),
+              0 0 0 5px #F23C00;
 }
 .nv-pick__union {
   position: relative; width: 30px; height: 30px;
@@ -57,7 +59,7 @@
    с обводкой contrast-low, по центру верхне-правого угла; внутри — стадия
    бонсая (stage-5). Figma 3160:204558 (п.6). */
 .nv-pick__badge {
-  position: absolute; top: -16px; right: -16px;
+  position: absolute; top: -4px; right: -4px;
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   background: #fff; border-radius: 50%;

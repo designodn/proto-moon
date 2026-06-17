@@ -599,11 +599,99 @@
       }
     }
 
+    // ── Рандомизация чужого профиля (friend/stranger) ──────────────────────
+    // У других людей всё генерится: уровень бонсая 1–5 (поливы по таблице),
+    // ~5 поливавших из people.js, инфа в «Живом подарке», заливка обложки,
+    // числа в статистике. Свой профиль (self) не трогаем.
+    var POUR_BY_LEVEL = { 1: 5, 2: 20, 3: 50, 4: 100, 5: 1000 };
+    function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+    function realPeople() {
+      return (window.DS_PEOPLE_DATA || []).filter(function (p) { return typeof p.id === 'number'; });
+    }
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      return arr;
+    }
+    function pluralPour(n) {
+      var a = Math.abs(n) % 100, b = a % 10;
+      if (a > 10 && a < 20) return 'поливов';
+      if (b > 1 && b < 5) return 'полива';
+      if (b === 1) return 'полив';
+      return 'поливов';
+    }
+    function pluralFriends(n) {
+      var a = n % 100, b = n % 10;
+      if (a >= 11 && a <= 14) return 'друзей';
+      if (b === 1) return 'друг';
+      if (b >= 2 && b <= 4) return 'друга';
+      return 'друзей';
+    }
+
+    function randomizeOtherProfile() {
+      // 1) бонсай: уровень 1–5, поливы по таблице
+      var level = randInt(1, 5);
+      var poured = POUR_BY_LEVEL[level];
+      if (window.NVBonsai) window.NVBonsai.setState(level, poured);
+
+      // инфа в «Живом подарке»: подзаголовок, прогресс, текст
+      var sub = document.querySelector('.nv-gift-status__sub');
+      if (sub) sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
+      var fill = document.querySelector('.nv-progress__fill');
+      var txt  = document.querySelector('.nv-gift-status__text');
+      if (level < 5) {
+        var next = POUR_BY_LEVEL[level + 1];
+        if (fill) fill.style.width = Math.round(poured / next * 100) + '%';
+        if (txt)  txt.textContent = 'Осталось ' + (next - poured) + ' поливов до ' + (level + 1) + ' уровня';
+      } else {
+        if (fill) fill.style.width = '100%';
+        if (txt)  txt.textContent = 'Достигнут максимальный уровень';
+      }
+
+      // ~5 поливавших из people.js
+      var list = document.querySelector('[data-watered-list]');
+      if (list) {
+        list.querySelectorAll('.uni-cell-wrapper').forEach(function (el) { el.remove(); });
+        shuffle(realPeople()).slice(0, randInt(4, 6)).forEach(function (p) {
+          var w = document.createElement('div');
+          w.className = 'uni-cell-wrapper';
+          w.innerHTML = '<div class="uni-cell-container __state-enabled"><div class="uni-cell">' +
+            '<div class="avatar __size-44 __type-image"><img alt=""></div>' +
+            '<div class="uni-cell-additional-content"><div class="ds-body-m"></div></div></div></div>';
+          var img = w.querySelector('img');
+          if (p.photo) img.src = p.photo;
+          img.alt = p.name;
+          w.querySelector('.ds-body-m').textContent = p.name;
+          list.appendChild(w);
+        });
+      }
+
+      // 2) случайная заливка обложки (из свотчей шторки «Фон», кроме «без фона»)
+      var sw = shuffle(Array.prototype.filter.call(
+        document.querySelectorAll('#bgSheet .nv-pick[data-bg]'),
+        function (s) { return s.getAttribute('data-bg') !== 'none'; }
+      ))[0];
+      if (sw) { paintCover(sw.getAttribute('data-bg'), sw.getAttribute('data-dark') === '1'); shakeSakura(); }
+
+      // 3) статистика: друзья 10–30, фото 2–50, группы 12, заметка 1
+      var nums = document.querySelectorAll('.nv-pr-stat__num');
+      var fr = randInt(10, 30), ph = randInt(2, 50);
+      if (nums[0]) nums[0].textContent = fr + ' ' + pluralFriends(fr);
+      if (nums[1]) nums[1].textContent = ph + ' фото';
+      if (nums[2]) nums[2].textContent = '12 групп';
+      if (nums[3]) nums[3].textContent = '1 заметка';
+    }
+
     // init из URL
     var initial = new URLSearchParams(location.search).get('view') || 'friend';
     applyView(initial);
-    // при заходе/обновлении на свой профиль с фоном «Сакура» — встряхнуть ветки
-    if (document.body.getAttribute('data-view') === 'self') shakeSakura();
+    if (document.body.getAttribute('data-view') === 'self') {
+      shakeSakura();   // свой профиль с сакурой — качнуть ветки
+    } else {
+      randomizeOtherProfile();
+    }
 
     // клики по переключателю — меняем состояние + ?view= без перезагрузки.
     // dev-пилюля убрана из разметки; обработчик оставлен под защитой, если её вернут.
