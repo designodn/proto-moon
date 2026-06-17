@@ -81,3 +81,26 @@
   margin-bottom: -6px;
   min-height: 0;
 }
+
+/* ============================================================
+   Кольцо момента в NV-ленте — настоящий border на кружке-контейнере
+   (а не outline): он участвует в размере элемента и не рисуется как
+   «абсолютная» накладка поверх соседей. Толщина 3px.
+   ============================================================ */
+.feed-stories__list > .avatar.__has-caption.__ring-active > img,
+.feed-stories__list > .avatar.__has-caption.__ring-viewed > img {
+  outline: none;
+  box-sizing: border-box;
+  border: 3px solid var(--static-stroke-special-accent);
+}
+.feed-stories__list > .avatar.__has-caption.__ring-viewed > img {
+  border-color: var(--dynamic-stroke-contrast-mid);
+}
+
+/* Подпись: отступ от кружка 4px, типографика ds-caption-m (13/16). */
+.feed-stories__list > .avatar .avatar__caption {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+}
