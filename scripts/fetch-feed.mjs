@@ -325,7 +325,9 @@ function renderPost(p, idx) {
       return `      <article class="feed-congrats __gift island __intro">
 ${authorHeader(author, { size: 44, nameClass: 'ds-title-m', subtitle: time, subscribe: false })}
         <div class="nv-gift-card">
-          <p class="nv-gift-card__caption">${esc(text)}</p>${reshare}${media}
+          <div class="nv-gift-card__head">
+            <p class="nv-gift-card__caption">${esc(text)}</p>${reshare}
+          </div>${media}
         </div>
 ${btn}
       </article>`;

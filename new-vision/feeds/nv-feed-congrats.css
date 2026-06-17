@@ -60,6 +60,12 @@
   border-radius: 20px;
   overflow: hidden;
 }
+/* Общий блок «текст + от кого»: между ними 4; до подарка (медиа) — card-gap 12. */
+.nv-gift-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
 .nv-gift-card__caption {
   margin: 0;
   font-family: var(--font-family);
