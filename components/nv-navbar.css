@@ -13,6 +13,11 @@
  * Поэтому NV-иконки в assets/new-vision-icons/ должны быть одноцветными силуэтами.
  */
 
+/* ── Навбар на белом фоне (в DS __type-publish прозрачный) ── */
+.nav-bar.__type-publish {
+  background-color: var(--dynamic-surface-base-secondary) !important;
+}
+
 /* ── Иконки навбара: NV-пак, 32px ── */
 .nav-bar.__type-publish .icon {
   width: 32px;
