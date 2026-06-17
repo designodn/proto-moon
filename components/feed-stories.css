@@ -85,13 +85,15 @@
 /* ============================================================
    Кольцо момента в NV-ленте — настоящий border на кружке-контейнере
    (а не outline): он участвует в размере элемента и не рисуется как
-   «абсолютная» накладка поверх соседей. Толщина 3px.
-   ============================================================ */
+   «абсолютная» накладка поверх соседей. Толщина 3px, плюс 2px зазор между
+   обводкой и фото (padding в цвет острова, box-sizing сохраняет размер 56). */
 .feed-stories__list > .avatar.__has-caption.__ring-active > img,
 .feed-stories__list > .avatar.__has-caption.__ring-viewed > img {
   outline: none;
   box-sizing: border-box;
   border: 3px solid var(--static-stroke-special-accent);
+  padding: 2px;
+  background-color: var(--dynamic-surface-base-secondary);
 }
 .feed-stories__list > .avatar.__has-caption.__ring-viewed > img {
   border-color: var(--dynamic-stroke-contrast-mid);

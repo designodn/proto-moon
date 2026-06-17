@@ -17,13 +17,14 @@
   flex-direction: column;
   gap: var(--space-3);
 }
-.feed-congrats > :not(.media):not(.avatar) {
+/* Горизонтальные отступы 16 задаёт сам остров; дети без собственных
+   горизонтальных паддингов выравниваются по контентной области (как в
+   feed-contest). Так border-box карточки подарка совпадает по левому краю
+   с аватаром шапки. */
+.feed-congrats.island {
   padding-left: var(--space-4);
   padding-right: var(--space-4);
 }
-/* Крупный аватар ДР — прямой ребёнок: даём левый отступ маржином,
-   чтобы паддинг не съедал ширину (box-sizing: border-box → фото сжимается). */
-.feed-congrats > .avatar { margin-left: var(--space-4); }
 .feed-congrats .uni-cell-wrapper {
   --uni-cell-padding-left: 0;
   --uni-cell-padding-right: 0;
@@ -158,6 +159,10 @@
   display: flex;
   gap: var(--space-3);
   overflow-x: auto;
+  /* Остров даёт паддинг 16; скролл бликует на всю ширину (компенсируем
+     паддинг отрицательным margin), а инсет первого/последнего — свой padding. */
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
   padding-left: var(--space-4);
   padding-right: var(--space-4);
   scrollbar-width: none;
