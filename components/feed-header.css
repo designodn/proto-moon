@@ -40,6 +40,13 @@
   --uni-cell-padding-bottom: 0;
 }
 
+/* База .uni-cell идёт без gap (его задаёт контекст). Во всех feed-header —
+   gap 12 между авой и текстом справа (самодостаточно для любой обёртки). */
+.feed-header .uni-cell {
+  align-items: center;
+  gap: 12px !important;
+}
+
 /* имя ↔ время */
 .feed-header .uni-cell-additional-content {
   gap: 2px;
