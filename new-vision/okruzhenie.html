@@ -51,7 +51,7 @@
 
         <!-- Промо-баннер «Копите народные билеты» — вариация компонента promo-banner -->
         <a class="promo-banner __view-kr" href="#">
-          <p class="promo-banner__title">Копите народные билеты</p>
+          <p class="promo-banner__title ds-title-m">Копите народные билеты</p>
           <span class="promo-banner__chevron" aria-hidden="true"></span>
         </a>
 
@@ -227,7 +227,7 @@
             <div class="uni-cell">
               <div class="activity-lead">
                 <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/winuchastok/128/128" alt=""></div>
-                <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
+                <span class="lead-trophy" data-lottie="../assets/lottie/trophy.json" aria-hidden="true"></span>
               </div>
               <div class="uni-cell-additional-content ds-body-m"><b>Пётр Иванов</b> занял 1 место в конкурсе «Лучший участок»</div>
               <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
@@ -313,15 +313,13 @@
 
   </div>
 
-<!-- Lottie-стикеры в лид-визуале (трофей в ячейке конкурса).
-     Лениво грузим lottie-web (как actions-bar.js). До загрузки и при ошибке
-     (нет файла / нет сети) остаётся emoji-фолбэк внутри span. -->
+<!-- Трофей «1 место» — Lottie в пустом контейнере .lead-trophy.
+     Подключение как у конфетти: autoplay, без emoji и без data_ready.
+     Нет сети/CDN — контейнер просто пустой. -->
 <script>
 (function () {
-  var hosts = document.querySelectorAll('.lead-lottie[data-lottie]');
+  var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
   if (!hosts.length) return;
-  // При reduced-motion НЕ выходим (иначе остаётся emoji) — грузим трофей,
-  // но не зацикливаем: показываем статичный последний кадр.
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
@@ -341,10 +339,6 @@
 
   hosts.forEach(function (host) {
     ensureLottie().then(function (lottie) {
-      var fallback = host.textContent;
-      // Прячем emoji СРАЗУ (data_ready капризное — может не выстрелить, тогда
-      // 🥇 перекрывает трофей). Возвращаем только при реальном провале загрузки.
-      host.classList.add('__lottie-on');
       var anim = lottie.loadAnimation({
         container: host, renderer: 'svg', loop: !still, autoplay: !still,
         path: host.getAttribute('data-lottie')
@@ -352,10 +346,7 @@
       if (still) anim.addEventListener('DOMLoaded', function () {
         anim.goToAndStop(anim.totalFrames - 1, true);
       });
-      anim.addEventListener('data_failed', function () {
-        anim.destroy(); host.classList.remove('__lottie-on'); host.textContent = fallback;
-      });
-    }).catch(function () { /* нет сети — остаётся emoji */ });
+    }).catch(function () { /* нет сети — контейнер пустой */ });
   });
 })();
 </script>
