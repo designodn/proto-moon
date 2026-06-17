@@ -24,15 +24,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 .activity-header__chevron {
-  width: 8px;
-  height: 13px;
-  margin-left: auto; /* прибиваем к правому краю заголовка */
+  width: 9px;
+  height: 14px;
   flex-shrink: 0;
-  background-color: var(--dynamic-text-and-icons-base-secondary);
-  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
-          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  background-color: var(--dynamic-text-and-icons-base-primary);
+  -webkit-mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+          mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
   transition: transform 200ms ease;
 }
+/* Индикатор (пульс-точка) — к правому краю заголовка */
+.activity-header .pulse-dot { margin-left: auto; }
 .activity-header:active .activity-header__chevron { transform: translateX(2px); }
 
 /* Промо-баннер «Копите народные билеты» — вариация DS-компонента
