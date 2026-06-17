@@ -20,6 +20,7 @@
    Раскомментируй/добавляй по мере появления дивергентных компонентов: */
 /* @import url('./components/nv-profile.css'); */
 @import url('../components/nv-tabbar.css');       /* NV-таб-бар: свой пак иконок */
+@import url('../components/nv-navbar.css');        /* NV-навбар ленты: NV-иконки 32px + «Опубликовать» */
 @import url('./components/nv-gift-sheet.css');    /* шторка «Живой подарок» (+ chrome .nv-sheet*) */
 @import url('./components/nv-bg-sheet.css');      /* шторка «Фон» (фон обложки) */
 @import url('./components/nv-toast.css');         /* тост (positive) */

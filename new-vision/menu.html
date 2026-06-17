@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="new-vision.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="../components/screen-transition.js"></script>
+<script src="../components/ok-tabbar.js"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
 
@@ -240,21 +241,9 @@
     </div>
 
     <!-- TABBAR — меню активно; лента ведёт на NV-ленту -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" data-href="lenta.html" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-tribune" data-href="../tribune.html" aria-label="Трибуна"></button>
-          <button class="tabbar-icon __slot-message" data-href="../messages.html" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" data-href="#" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
-        </div>
-        <div class="tabbar__handle"></div>
-      </div>
-    </div>
+    <ok-tabbar data-variant="nv" data-active="menu"></ok-tabbar>
   </div>
 
-  <script src="../components/tab-bar.js"></script>
 
   <!-- Делегированный переход по data-href (quick-actions / menu items) -->
   <script>

@@ -1,0 +1,33 @@
+/**
+ * New Vision — Navbar (шапка ленты)
+ *
+ * Форкаем у общего .nav-bar.__type-publish (components/meshok-up.css) ТОЛЬКО то,
+ * что расходится с Q3: пак иконок (NV, 32px) и вид кнопки «Опубликовать».
+ * Структура разметки и раскладка __type-publish — из общей DS.
+ *
+ * Применяется только на NV-страницах: файл грузится через new-vision.css, поэтому
+ * правила можно нацеливать прямо на .nav-bar.__type-publish, не задевая Q3-ленту
+ * (где тот же тип навбара, но свои иконки).
+ *
+ * Отрисовка иконок — как везде в DS: маска + currentColor (база — icon.css).
+ * Поэтому NV-иконки в assets/new-vision-icons/ должны быть одноцветными силуэтами.
+ */
+
+/* ── Иконки навбара: NV-пак, 32px ── */
+.nav-bar.__type-publish .icon {
+  width: 32px;
+  height: 32px;
+}
+.nav-bar.__type-publish .icon.__slot-plus     { --icon-src: url('../assets/new-vision-icons/plus.svg'); }
+.nav-bar.__type-publish .icon.__slot-bell     { --icon-src: url('../assets/new-vision-icons/bell.svg'); }
+.nav-bar.__type-publish .icon.__slot-search   { --icon-src: url('../assets/new-vision-icons/search.svg'); }
+.nav-bar.__type-publish .icon.__slot-calendar { --icon-src: url('../assets/new-vision-icons/calendar.svg'); }
+
+/* ── Кнопка «Опубликовать»: pill 48px, радиус 16, фон surface-contrast-low
+      (даёт __style-secondary), иконка-плюс 32px + текст ── */
+.nv-publish-btn { --button-border-radius: 16px; }
+.nv-publish-btn .button-container {
+  height: 48px;
+  padding: 0 12px;
+  --button-content-gap: 8px;
+}
