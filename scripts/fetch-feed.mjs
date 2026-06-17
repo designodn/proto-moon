@@ -125,6 +125,21 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
         </div></div></div>`;
 }
 
+/** Верхушка фида (feed-header): крошки СВЕРХУ + строка автора.
+ *  Ава 44, имя через ds-title-m в 1 строку (feed-header__name), под именем —
+ *  ВРЕМЯ всегда (не «Сообщество»). */
+function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null } = {}) {
+  const crumbs = breadcrumbs(tema, rubrika);
+  const cell = authorHeader(id, {
+    size,
+    nameClass: `${nameClass} feed-header__name`,
+    subtitle: time,
+    subscribe,
+    literalName,
+  });
+  return `        <header class="feed-header">${crumbs ? '\n' + crumbs : ''}\n${cell}\n        </header>`;
+}
+
 /** Хлебные крошки из темы/рубрики. */
 function breadcrumbs(tema, rubrika) {
   const items = [];
@@ -180,6 +195,7 @@ function mediaVideo(photos)  {
   const poster = photos[0] ? img(photos[0]) : '';
   return `        <div class="media __aspect-4-3 __type-video">${poster}
           <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
+          <span class="media__time">0:45</span>
         </div>`;
 }
 function mediaClip(photos) {
@@ -241,8 +257,7 @@ function renderPost(p, idx) {
         if (text) parts.push(`        <p class="ds-body-m">${esc(text)}</p>`);
         parts.push(mediaPhoto(photos));
       } else {
-        parts.push(head(36));
-        parts.push(breadcrumbs(tema, rubrika));
+        parts.push(feedHeader(author, { tema, rubrika, time }));
         if (title) parts.push(`        <h2 class="nv-feed__title ds-title-l">${esc(title)}</h2>`);
         parts.push(feedText(text));
         if (type === 'video')   parts.push(mediaVideo(photos));
@@ -447,33 +462,43 @@ const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /* ── main ───────────────────────────────────────────────────────────────────── */
 async function main() {
-  console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
-  const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
-  if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-  const rows = parseCsv(await res.text());
-  const [, ...body] = rows;
+  // --offline: перегенерить разметку из уже сохранённого data/feed.json,
+  // не обращаясь к таблице (полезно, когда нет сети или меняли только шаблон).
+  const offline = process.argv.includes('--offline');
+  let posts;
 
-  const posts = [];
-  for (const c of body) {
-    const id = (c[0] || '').trim();
-    const type = (c[1] || '').trim();
-    if (!id || !type) continue;
-    posts.push({
-      id, type,
-      author: (c[2] || '').trim(),
-      title: (c[3] || '').trim(),
-      text: (c[4] || '').trim(),
-      photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
-      likes: (c[6] || '').trim(),
-      comments: (c[7] || '').trim(),
-      reshares: (c[8] || '').trim(),
-      tema: (c[9] || '').trim(),
-      rubrika: (c[10] || '').trim(),
-    });
+  if (offline) {
+    console.log('→ Офлайн-реген из data/feed.json (таблицу не тяну)…');
+    posts = JSON.parse(readFileSync(resolve(ROOT, 'data/feed.json'), 'utf8')).posts || [];
+  } else {
+    console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
+    const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
+    const rows = parseCsv(await res.text());
+    const [, ...body] = rows;
+
+    posts = [];
+    for (const c of body) {
+      const id = (c[0] || '').trim();
+      const type = (c[1] || '').trim();
+      if (!id || !type) continue;
+      posts.push({
+        id, type,
+        author: (c[2] || '').trim(),
+        title: (c[3] || '').trim(),
+        text: (c[4] || '').trim(),
+        photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        likes: (c[6] || '').trim(),
+        comments: (c[7] || '').trim(),
+        reshares: (c[8] || '').trim(),
+        tema: (c[9] || '').trim(),
+        rubrika: (c[10] || '').trim(),
+      });
+    }
+
+    writeFileSync(resolve(ROOT, 'data/feed.json'),
+      JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
   }
-
-  writeFileSync(resolve(ROOT, 'data/feed.json'),
-    JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
 
   const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
   splice(cards);
