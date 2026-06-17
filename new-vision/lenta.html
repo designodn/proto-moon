@@ -148,163 +148,135 @@
            Дача-сториз — первый фид в стопке, поэтому внутри feed-container. -->
       <div class="feed-container">
 
-      <!-- Сториз-карусель «Сейчас на даче» -->
-      <!-- МОМЕНТЫ (истории) в island-карточке.
-           data-stories — сколько сториз у автора (= столько палочек прогресса
-           в viewer'е). data-name — заголовок viewer'а. -->
-      <article class="feed-stories island">
-      <div class="stories-row" id="nv-stories-row" aria-label="Моменты">
-        <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
-             не открывает viewer (data-skip-viewer). -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
-          <div class="avatar__addon __pos-br stories-row__add">
-            <img src="../assets/icons/add_24.svg" width="20" height="20" alt="">
-          </div>
-        </div>
-        <!-- Не просмотренные (оранжевое кольцо). -->
-        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Лиза">
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
-          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
-
-        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
-             CTA-кнопка снизу — только у ВВЗ. -->
-        <div class="avatar __size-56 __type-image __ring-active"
-             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
-             aria-label="Возможно, вы знакомы">
-          <img src="../assets/icons/vvz_stories.png" alt="">
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
-
-        <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
-      </div>
-      </article>
-
       <!-- FEED:START (генерится scripts/fetch-feed.mjs — не редактировать вручную) -->
       <article class="feed-base island" data-entity="group">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="group-5" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="group-5"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Еда</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Рецепты</span>
         </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="group-5" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="group-5"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">08:15</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Шашлык как в детстве Это вкуснее, чем  я ожидал!</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="media __aspect-4-3 __type-video"><img src="https://avatars.dzeninfra.ru/get-zen_doc/1901671/pub_5e7d003d16fa5012842479e5_5e820a69d4abfe57572f6291/scale_1200" alt="">
           <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
+          <span class="media__time">0:45</span>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>48</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>15</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">48</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">15</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-base island">
+        <header class="feed-header">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="9" alt=""></div>
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="9" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="9"></div>
+            <div class="ds-title-m feed-header__name" data-person-name="9"></div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">09:35</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-base island" data-entity="group">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="group-4" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="group-4"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Дача</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Сезонные советы</span>
         </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="group-4" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="group-4"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">11:18</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="media __aspect-4-3"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&amp;dpr=2" alt=""></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-base island" data-entity="group">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="group-3" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="group-3"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Рыбалка</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
         </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="group-3" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="group-3"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Как привлечь удачу на рыбалке</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="media __aspect-4-3 __type-video"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItQ78d_1sAmaVQ2TFGIpufPBJ7hIuvpy4kLXgxgzhO-O35B_tiCJp926IqupEmU9Du4E2K5esrB2eYxH7rP_Fw_xuPACL7b7uCiuVT1U4AAAAp&amp;dpr=2" alt="">
           <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
+          <span class="media__time">0:45</span>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-base island">
+        <header class="feed-header">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="10" alt=""></div>
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="10" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="10"></div>
+            <div class="ds-title-m feed-header__name" data-person-name="10"></div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">14:02</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
@@ -316,16 +288,16 @@
           <div class="media__cell __more" data-more="2"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&amp;dpr=2" alt=""></div>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-contest island">
 
-        <h2 class="nv-feed__title">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
+        <h2 class="nv-feed__title ds-title-l">Покажите свой урожай! Лучшие фото попадут в подборку района</h2>
         <div class="picture-stack">
           <div class="picture __size-96"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KjV2NH5_kLPuwpkP3gbMHxichSOQKZ7bQSEW_xwOTzsrPch5jw-Yn1hW3KLUx7A9rYBta8F1sjZ7dbqQTlUVLXrdtQRaPl0NL9vC-3Mz0AAAAp&amp;dpr=2" alt=""></div>
           <div class="picture __size-96"><img src="https://cheb-live.ru/userfiles/article/cmeYk_0OWZ_3g1scGqsvoQp5Qs6ygJuC.png" alt=""></div>
@@ -341,6 +313,7 @@
       </article>
 
       <article class="feed-base island" data-entity="group">
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item"><img class="breadcrumbs__badge" src="../assets/new-vision/dzen-badge.png" alt="">Дзен</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
@@ -349,18 +322,19 @@
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img data-person-avatar="group-2" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-m" data-person-name="group-2"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество</div>
+            <div class="ds-title-m feed-header__name" data-person-name="group-2"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">17:46</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
-        <h2 class="nv-feed__title">Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих</h2>
+        </header>
+        <h2 class="nv-feed__title ds-title-l">Гемоглобин и сердце: почему анемия заставляет сердце работать за двоих</h2>
         <p class="ds-body-m">Когда пациент видит в анализе крови сниженный гемоглобин, он чаще всего думает о слабости, бледности, железе и, возможно, питании. Кажется, что это история про кровь, но не про сердце.</p>
         <div class="media __aspect-4-3"><img src="https://www.ckbran.ru/upload/medialibrary/e96/xt08ybjsifywqg113cx499j70so4hxjs.jpg" alt=""></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -392,7 +366,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">В этот день</span>
         </nav>
-        <h2 class="nv-feed__title">Поделитесь с друзьями вашим днем 5 лет назад</h2>
+        <h2 class="nv-feed__title ds-title-l">Поделитесь с друзьями вашим днем 5 лет назад</h2>
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-36 __type-image"><img data-person-avatar="4" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -408,28 +382,30 @@
       </article>
 
       <article class="feed-base island" data-entity="group">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="group-1" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="group-1"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">Сообщество</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Еда</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
         </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="group-1" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="group-1"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">21:33</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Забирайте идею подачи блинов. А если нужно еще и не наесть бочков, то готовьте по моему рецепту</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/8220767/pub_63e9ec741b468f22ef1e7232_63ee070c3398503757765481/scale_1200" alt=""></div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -528,51 +504,55 @@
       </article>
 
       <article class="feed-base island">
+        <header class="feed-header">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="7" alt=""></div>
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="7"></div>
+            <div class="ds-title-m feed-header__name" data-person-name="7"></div>
             <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">15:20</div>
           </div>
           <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
         </div></div></div>
+        </header>
         <div class="media __type-clip"><img src="https://iv.okcdn.ru/videoPreview?id=16833467124412&amp;type=39&amp;idx=1&amp;tkn=GzF9Fz5eDAm_5wP4YvQWhn7WRN8" alt="">
           <button class="media__mute" aria-label="Mute">🔇</button>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-base island">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="2" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="2"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">17:46</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Здоровье</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Обсуждают</span>
         </nav>
-        <h2 class="nv-feed__title">Болит колено при приседании. Что это может быть?</h2>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="2" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="2"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">17:46</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
+        <h2 class="nv-feed__title ds-title-l">Болит колено при приседании. Что это может быть?</h2>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span></span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span></span></button></div>
+          <label class="button-wrapper __size-36 button-klass"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
 
       <article class="feed-congrats __birthday island __intro">
         <div class="avatar __size-72 __type-image"><img data-person-avatar="10" alt=""></div>
-        <h2 class="nv-feed__title">Николай празднует свой День рождения!</h2>
+        <h2 class="nv-feed__title ds-title-l">Николай празднует свой День рождения!</h2>
         <div class="avatars-view __size-36">
           <div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img data-person-avatar="1" alt=""></div>
@@ -592,7 +572,7 @@
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Нужен совет</span>
         </nav>
-        <h2 class="nv-feed__title">Помогите ответом в Санкт-Петербурге</h2>
+        <h2 class="nv-feed__title ds-title-l">Помогите ответом в Санкт-Петербурге</h2>
         <div class="feed-questions__list">
           <div class="question-card">
             <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
@@ -615,7 +595,7 @@
 
       <article class="feed-group island">
         <div class="avatar __size-72 __type-image"><img data-person-avatar="group-3" alt=""></div>
-        <h2 class="nv-feed__title">Вступай в сообщество рыбаков</h2>
+        <h2 class="nv-feed__title ds-title-l">Вступай в сообщество рыбаков</h2>
         <div class="avatars-view __size-36">
           <div class="avatars-view__stack">
             <div class="avatar __size-36 __type-image"><img data-person-avatar="1" alt=""></div>
@@ -667,50 +647,65 @@
       </article>
 
       <article class="feed-stories island">
-
-        <h2 class="nv-feed__title">12 людей рядом делятся моментом с дачи</h2>
+        <nav class="breadcrumbs">
+          <span class="breadcrumbs__item">Рядом</span>
+          <span class="breadcrumbs__separator" aria-hidden="true"></span>
+          <span class="breadcrumbs__item __state-on">Дача</span>
+        </nav>
+        <h2 class="nv-feed__title ds-title-l">12 людей рядом делятся моментом с дачи</h2>
         <div class="feed-stories__list">
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
-            <img data-person-avatar="4" alt="">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon" data-skip-viewer>
+            <img data-person-avatar="my_profile" alt="">
+            <div class="avatar__addon __pos-br stories-row__add"><img src="../assets/icons/add_24.svg" width="20" height="20" alt=""></div>
+            <div class="avatar__caption">Поделиться</div>
+          </div>
+          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
+            <img data-person-avatar="1" alt="">
+            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="4" alt=""></div>
             <div class="avatar__caption">Виктор</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
-            <img data-person-avatar="5" alt="">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
+            <img data-person-avatar="2" alt="">
+            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="5" alt=""></div>
             <div class="avatar__caption">Антонида</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-viewed __has-caption">
-            <img data-person-avatar="6" alt="">
+          <div class="avatar __size-56 __type-image __ring-viewed __has-caption __has-addon">
+            <img data-person-avatar="3" alt="">
+            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="6" alt=""></div>
             <div class="avatar__caption">Александр</div>
           </div>
-          <div class="avatar __size-56 __type-image __ring-active __has-caption">
-            <img data-person-avatar="7" alt="">
+          <div class="avatar __size-56 __type-image __ring-active __has-caption __has-addon">
+            <img data-person-avatar="9" alt="">
+            <div class="avatar__addon __pos-br stories-row__friend"><img data-person-avatar="7" alt=""></div>
             <div class="avatar__caption">Галина</div>
           </div>
         </div>
       </article>
 
       <article class="feed-base island">
-        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-          <div class="avatar __size-36 __type-image"><img data-person-avatar="7" alt=""></div>
-          <div class="contents-view-container uni-cell-additional-content">
-            <div class="ds-title-s" data-person-name="7"></div>
-            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">11:18</div>
-          </div>
-          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-        </div></div></div>
+        <header class="feed-header">
         <nav class="breadcrumbs">
           <span class="breadcrumbs__item">Санкт-Петербург</span>
           <span class="breadcrumbs__separator" aria-hidden="true"></span>
           <span class="breadcrumbs__item __state-on">Рядом живут</span>
         </nav>
+        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+          <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
+          <div class="contents-view-container uni-cell-additional-content">
+            <div class="ds-title-m feed-header__name" data-person-name="7"></div>
+            <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">11:18</div>
+          </div>
+          <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
+        </div></div></div>
+        </header>
         <div class="feed-text">
           <p class="feed-text__body ds-body-m">Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.</p>
           <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
         </div>
         <div class="actions-bar">
-          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-klass__icon-outline icon __size-20 __slot-klass-outline"></span><span class="button-klass__icon-filled icon __size-20 __slot-klass-filled"></span><span class="button-klass__count"></span></span></span></label>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-comment"></span>5</span></button></div>
-          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __slot-reshare"></span>1</span></button></div>
+          <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="../assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">5</span></button></div>
+          <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="../assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">1</span></button></div>
           <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
         </div>
       </article>
@@ -1076,6 +1071,8 @@
 <!-- Авторы карточек ленты (data-person-*) + анимация лайка -->
 <script src="../components/people-data.js"></script>
 <script src="../components/actions-bar.js"></script>
+<!-- Прячет «Раскрыть/Свернуть», если текст карточки виден целиком -->
+<script src="../components/feed-text.js"></script>
 
 </body>
 </html>

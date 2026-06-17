@@ -1,0 +1,43 @@
+/**
+ * OK Design System — FeedHeader
+ *
+ * Верхушка карточки ленты: хлебные крошки СВЕРХУ + строка автора
+ * (ава + имя + время + опц. правый элемент-кнопка). Собирается из
+ * примитивов breadcrumbs + uni-cell, задаёт только их компоновку.
+ *
+ *   <header class="feed-header">
+ *     <nav class="breadcrumbs">…тема › рубрика…</nav>            <!-- опц. -->
+ *     <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+ *       <div class="avatar __size-44 __type-image"><img></div>
+ *       <div class="contents-view-container uni-cell-additional-content">
+ *         <div class="ds-title-m feed-header__name" data-person-name>…</div>  <!-- имя, 1 строка -->
+ *         <div class="ds-caption-m" …>14:02</div>                            <!-- время, всегда -->
+ *       </div>
+ *       <label class="button-subscribe">…</label>                            <!-- опц. -->
+ *     </div></div></div>
+ *   </header>
+ *
+ * Правила:
+ *  - крошки ↔ строка автора = 8;
+ *  - имя ↔ время = 2;
+ *  - имя всегда в одну строку (эллипсис);
+ *  - под именем — ВРЕМЯ (а не «Сообщество»): признак сообщества несут крошки/бейдж.
+ */
+
+.feed-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2); /* крошки ↔ строка автора */
+}
+
+/* имя ↔ время */
+.feed-header .uni-cell-additional-content {
+  gap: 2px;
+}
+
+/* имя — одна строка с эллипсисом */
+.feed-header__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
