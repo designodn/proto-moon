@@ -40,6 +40,12 @@
   margin-top: var(--space-5);
 }
 
+/* Иконки кнопок — маска через .icon.__src (currentColor: белая в primary,
+   обычная в secondary). URL держим в компоненте: относительный путь
+   резолвится относительно этого файла (components/ → ../assets). */
+.feed-birthday__icon-gift { --icon-src: url('../assets/icons/gift_16_20.svg'); }
+.feed-birthday__icon-more { --icon-src: url('../assets/icons/more_16_20.svg'); }
+
 /* ============================================================
    DECO — праздничная «шапка», прибита к верху острова. Высота 144,
    фигурная нижняя кромка (path figma: бока ниже, центр приподнят).
