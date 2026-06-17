@@ -24,121 +24,49 @@
   -webkit-tap-highlight-color: transparent;
 }
 .activity-header__chevron {
-  width: 8px;
-  height: 13px;
-  margin-left: 2px;
+  width: 9px;
+  height: 14px;
   flex-shrink: 0;
-  background-color: var(--dynamic-text-and-icons-base-secondary);
-  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
-          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+  background-color: var(--dynamic-text-and-icons-base-primary);
+  -webkit-mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+          mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
   transition: transform 200ms ease;
 }
+/* Индикатор (пульс-точка) — к правому краю заголовка */
+.activity-header .pulse-dot { margin-left: auto; }
 .activity-header:active .activity-header__chevron { transform: translateX(2px); }
 
-/* ============================================================
-   ПРОМО-БАННЕР — «Копите народные билеты →»
-   Персиковая плашка во всю ширину наверху списка: жирный заголовок
-   со стрелкой + декоративная картинка (машина + коробка с бантом),
-   которая выходит за нижний/верхний край и обрезается скруглением.
-   ============================================================ */
-.promo-banner {
-  padding: 12px 16px;
-}
-.promo-banner__card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 64px;
-  padding: 8px 8px 8px 16px;
-  border-radius: 20px;
-  overflow: hidden;
-  background-color: #ffd6c4;
-  color: var(--static-text-and-icons-base-primary);
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.promo-banner__card:active { transform: scale(0.99); }
-.promo-banner__title {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--font-family);
-  font-size: 19px;
-  line-height: 1.1;
-  font-weight: 700;
-}
-.promo-banner__arrow {
-  display: inline-block;
-  margin-left: 4px;
-  transition: transform 200ms ease;
-}
-.promo-banner__card:active .promo-banner__arrow { transform: translateX(3px); }
-
-/* Декоративная композиция справа — обе картинки бликуют за край плашки */
-.promo-banner__art {
-  position: relative;
-  width: 124px;
-  height: 64px;
-  flex-shrink: 0;
-}
-.promo-banner__car {
-  position: absolute;
-  right: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 96px;
-  width: auto;
-  pointer-events: none;
-}
-.promo-banner__bow {
-  position: absolute;
-  left: -4px;
-  bottom: -8px;
-  height: 70px;
-  width: auto;
-  transform: rotate(-9deg);
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.20));
-  pointer-events: none;
-  z-index: 1;
-}
+/* Промо-баннер «Копите народные билеты» — вариация DS-компонента
+   .promo-banner.__view-kr (см. components/promo-banner.css).
+   В списке: отступ сверху 8, бока 16, до первой ячейки 12. */
+.activity-list > .promo-banner { margin: 8px 16px 12px; }
 
 /* ============================================================
-   СПИСОК-СТРАНИЦА — вертикальный список с хайрлайн-разделителями
+   СПИСОК-СТРАНИЦА — вертикальный список ячеек (без разделителей).
+   Паддинги ячейки: вертикальные 12, горизонтальные 16.
    ============================================================ */
 .activity-list {
   display: flex;
   flex-direction: column;
 }
-/* Разделитель под текстом ряда — от лид-визуала до правого края,
-   как в системных списках (под аватаркой линии нет). */
 .activity-list > .uni-cell-wrapper {
-  --uni-cell-padding-top:    10px;
-  --uni-cell-padding-bottom: 10px;
-}
-.activity-list > .uni-cell-wrapper:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: calc(var(--uni-cell-padding-left) + 44px + 12px);
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background-color: var(--dynamic-stroke-contrast-low);
+  --uni-cell-padding-top:    12px;
+  --uni-cell-padding-bottom: 12px;
+  --uni-cell-padding-left:   16px;
+  --uni-cell-padding-right:  16px;
 }
 
 /* ============================================================
-   ИНЛАЙН-ИКОНКА в тексте ячейки (напр. билет: «выиграла 2 🎫 билета»)
-   Маск-иконка на акцентном цвете, слегка наклонена — как в макете.
+   ИНЛАЙН-БИЛЕТИК в тексте ячейки («выиграла 2 [билет] билета»)
+   Настоящий билетик из колеса — assets/koleso/biletik.png.
    ============================================================ */
 .inline-ticket {
   display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin: 0 1px;
-  vertical-align: -2px;
-  background-color: var(--static-surface-status-accent);
-  -webkit-mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
-          mask: url('../assets/icons/ticket_24.svg') no-repeat center / contain;
-  transform: rotate(8deg);
+  width: 18px;
+  height: 18px;
+  margin: 0 2px;
+  vertical-align: -4px;
+  object-fit: contain;
 }
 
 /* ============================================================
@@ -176,6 +104,20 @@
   pointer-events: none;
   user-select: none;
 }
+/* Lottie-вариант лид-стикера (трофей в ячейке конкурса).
+   До загрузки/при ошибке виден emoji-фолбэк (текст внутри span);
+   когда Lottie проигрался — emoji прячем (.__lottie-on), показываем SVG. */
+.lead-lottie {
+  width: 34px;
+  height: 34px;
+  right: -8px;
+  bottom: -6px;
+  font-size: 26px;          /* размер emoji-фолбэка */
+  line-height: 34px;
+  text-align: center;
+}
+.lead-lottie.__lottie-on { font-size: 0; }   /* убираем emoji, остаётся SVG */
+.lead-lottie svg { display: block; width: 100%; height: 100%; }
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
@@ -190,12 +132,13 @@
 }
 .ava-cluster > .avatar {
   position: absolute;
-  border: 2px solid var(--dynamic-surface-base-secondary);
+  border: 1.8px solid var(--dynamic-surface-base-secondary);
   box-sizing: content-box;
 }
-.ava-cluster > .avatar:nth-child(1) { top: 0;    left: 0;   z-index: 1; }
-.ava-cluster > .avatar:nth-child(2) { top: -2px; left: 20px; z-index: 2; }
-.ava-cluster > .avatar:nth-child(3) { top: 20px; left: 10px; z-index: 3; }
+/* Точная раскладка из макета (avaPicture 1.3, кластер): 22 слева, 22 справа-сверху, 16 снизу */
+.ava-cluster > .avatar:nth-child(1) { width: 22px; height: 22px; left: 0;    top: 13px;   z-index: 3; }
+.ava-cluster > .avatar:nth-child(2) { width: 22px; height: 22px; left: 22px; top: 1.5px;  z-index: 1; }
+.ava-cluster > .avatar:nth-child(3) { width: 16px; height: 16px; left: 21px; top: 27.5px; z-index: 2; }
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #4 — ПАРА НАКЛОНЁННЫХ ФОТО в боксе 44×44
@@ -322,6 +265,47 @@
     animation: none !important;
   }
   .activity-list.play .uni-cell-container::before { display: none; }
+}
+
+/* ============================================================
+   ПОЯВЛЕНИЕ В КОНВЕЙЕРЕ (виджет «Вокруг вас» в ленте).
+   Та же палитра категорий, что и в списке-странице, но триггер —
+   класс .__conv-appear, который JS вешает на входящую ячейку
+   (см. инлайн-скрипт конвейера в lenta.html). Высоту/scale-из-точки
+   делает .__conv-enter (animations.css); здесь — только цвет подложки.
+   Подложка вспыхивает (au-fade) и гаснет → ячейка приходит к дефолту.
+   Конфетти у .__cat-holiday — Lottie-оверлей на body (clip ряда мешает),
+   тоже из скрипта конвейера.
+   ============================================================ */
+.ds-activity-conveyor__track > .__conv-appear {
+  isolation: isolate; /* свой стек-контекст: подложка ::before (z-index:-1) ляжет под текст */
+}
+.ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
+  animation: au-fade 1.3s ease-out both;
+  pointer-events: none;
+  z-index: -1;
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-win .uni-cell-container::before {
+  background-color: rgba(255, 196, 61, 0.30); /* «1 место» — золото */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-holiday .uni-cell-container::before {
+  background-color: rgba(150, 120, 255, 0.20); /* «Праздник» — лаванда */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-container::before {
+  background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%); /* «Нейро» */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content {
+  /* backwards: после анимации цвет возвращается в каскад (dynamic-токен) */
+  animation: au-neuro-text 1.3s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before { display: none; }
+  .ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content { animation: none; }
 }
 
 /* ============================================================

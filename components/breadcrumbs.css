@@ -1,8 +1,8 @@
 /**
  * OK Design System — Breadcrumbs
  *
- * Inline trail of clickable category links separated by a chevron icon.
- * Typography is locked to title S (15/20, weight 600). Self-contained —
+ * Inline trail of category tags separated by a chevron glyph.
+ * Typography is locked to title S, bold (15/20, weight 700). Self-contained —
  * no need to add a `.ds-*` class on the host.
  *
  * STRUCTURE (max 3 levels):
@@ -28,26 +28,24 @@
  *   .__state-disabled  — opacity 0.36, not interactive
  *
  * SEPARATOR:
- *   Rendered as an 8×8 icon via CSS mask. Default glyph is
- *   `assets/icons/arrow_right_12.svg`. Override per-instance with the
- *   `--breadcrumbs-separator-src` custom property when a brand-specific
- *   icon ships.
+ *   A text chevron "›" (17px, secondary colour) rendered via the empty
+ *   `.breadcrumbs__separator` span. Sits 4px after the previous tag and
+ *   8px before the next one.
  */
 
 .breadcrumbs {
   --breadcrumbs-color: var(--dynamic-text-and-icons-base-primary);
-  --breadcrumbs-separator-src: url('../assets/icons/arrow_right_12.svg');
 
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
   color: var(--breadcrumbs-color);
 
-  /* title S — 15 / 20 / 600 */
+  /* title S, bold — 15 / 20 / 700 */
   font-family: var(--font-family);
   font-size: 15px;
   line-height: 20px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -63,11 +61,13 @@
   transition: background-color var(--ds-animation-duration) var(--ds-animation-easing);
 }
 
-/* Leading badge — 16px glyph 4px before the text (gap handled by item) */
+/* Leading badge — 16px icon 4px before the text (gap handled by item) */
 .breadcrumbs__badge {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
+  border-radius: 4px;
+  object-fit: cover;
 }
 
 a.breadcrumbs__item:hover {
@@ -84,18 +84,18 @@ a.breadcrumbs__item:hover {
   pointer-events: none;
 }
 
+/* Separator — text chevron "›" between tags */
 .breadcrumbs__separator {
   flex-shrink: 0;
-  display: inline-block;
-  /* square arrow_right_12 glyph scaled to 8×8 — box matches the visible
-     glyph so the 2px / 8px margins read as true visual gaps */
-  width: 8px;
-  height: 8px;
-  margin-left: 2px;
+  margin-left: 4px;
   margin-right: 8px;
-  background-color: currentColor;
-  opacity: 0.5;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1;
   user-select: none;
-  -webkit-mask: var(--breadcrumbs-separator-src) center / contain no-repeat;
-          mask: var(--breadcrumbs-separator-src) center / contain no-repeat;
+}
+
+.breadcrumbs__separator::before {
+  content: "›";
 }

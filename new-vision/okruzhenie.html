@@ -15,6 +15,7 @@
     max-width: none;
     height: 100dvh;
     min-height: 100dvh;
+    background: var(--dynamic-surface-base-secondary); /* белый, без серого под ячейками */
   }
 </style>
 </head>
@@ -38,6 +39,8 @@
           <div class="nav-bar__leading">
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-href="lenta.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
             <span class="ds-title-l">Вокруг вас сейчас</span>
+          </div>
+          <div class="nav-bar__trailing">
             <span class="pulse-dot"></span>
           </div>
         </div>
@@ -46,18 +49,11 @@
       <!-- Все типы ячеек «Вокруг вас сейчас» -->
       <div class="activity-list" id="activityList">
 
-        <button class="activity-replay" id="replayBtn" type="button">↻ Проиграть появление</button>
-
-        <!-- Промо-баннер «Копите народные билеты» -->
-        <div class="promo-banner">
-          <a class="promo-banner__card" href="#">
-            <span class="promo-banner__title">Копите народные билеты<span class="promo-banner__arrow">→</span></span>
-            <span class="promo-banner__art">
-              <img class="promo-banner__bow" src="../assets/around/banner-bow.png" alt="">
-              <img class="promo-banner__car" src="../assets/around/banner-car.png" alt="">
-            </span>
-          </a>
-        </div>
+        <!-- Промо-баннер «Копите народные билеты» — вариация компонента promo-banner -->
+        <a class="promo-banner __view-kr" href="#">
+          <p class="promo-banner__title">Копите народные билеты</p>
+          <span class="promo-banner__chevron" aria-hidden="true"></span>
+        </a>
 
         <!-- Спец-ячейка к промо: выигрыш билетов (аватар + онлайн + инлайн-билет) -->
         <div class="uni-cell-wrapper __type-activity">
@@ -67,7 +63,7 @@
                 <img src="https://i.pravatar.cc/128?img=24" alt="">
                 <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
               </div>
-              <div class="uni-cell-additional-content ds-body-m"><span><b>Люба Сергеева</b> выиграла <span style="white-space:nowrap">2 <span class="inline-ticket" aria-label="билета"></span> билета</span> в конкурсе народный ОК</span></div>
+              <div class="uni-cell-additional-content ds-body-m"><span><b>Люба Сергеева</b> выиграла <span style="white-space:nowrap">2 <img class="inline-ticket" src="../assets/koleso/biletik.png" alt="билет"> билета</span> в конкурсе народный ОК</span></div>
               <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
             </div>
           </div>
@@ -231,7 +227,7 @@
             <div class="uni-cell">
               <div class="activity-lead">
                 <div class="picture __size-44 __type-image"><img src="https://picsum.photos/seed/winuchastok/128/128" alt=""></div>
-                <span class="lead-sticker">🥇</span>
+                <span class="lead-sticker lead-lottie" data-lottie="../assets/lottie/trophy.json" role="img" aria-label="Трофей">🥇</span>
               </div>
               <div class="uni-cell-additional-content ds-body-m"><b>Пётр Иванов</b> занял 1 место в конкурсе «Лучший участок»</div>
               <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
@@ -317,23 +313,43 @@
 
   </div>
 
-<!-- Анимация появления ячеек: стаггер + перезапуск по кнопке -->
+<!-- Lottie-стикеры в лид-визуале (трофей в ячейке конкурса).
+     Лениво грузим lottie-web (как actions-bar.js). До загрузки и при ошибке
+     (нет файла / нет сети) остаётся emoji-фолбэк внутри span. -->
 <script>
 (function () {
-  var list = document.getElementById('activityList');
-  if (!list) return;
-  var rows = list.querySelectorAll('.uni-cell-wrapper');
-  rows.forEach(function (row, i) {
-    row.style.setProperty('--enter-delay', (i * 0.06).toFixed(2) + 's');
-  });
-  function play() {
-    list.classList.remove('play');
-    void list.offsetWidth; /* reflow — чтобы анимации запустились заново */
-    list.classList.add('play');
+  var hosts = document.querySelectorAll('.lead-lottie[data-lottie]');
+  if (!hosts.length) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; // оставляем статичный emoji
+
+  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+  var lottieLoading = null;
+  function ensureLottie() {
+    if (window.lottie) return Promise.resolve(window.lottie);
+    if (lottieLoading) return lottieLoading;
+    lottieLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = LOTTIE_CDN; s.async = true;
+      s.onload = function () { resolve(window.lottie); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return lottieLoading;
   }
-  play();
-  var btn = document.getElementById('replayBtn');
-  if (btn) btn.addEventListener('click', play);
+
+  hosts.forEach(function (host) {
+    ensureLottie().then(function (lottie) {
+      var fallback = host.textContent;
+      var anim = lottie.loadAnimation({
+        container: host, renderer: 'svg', loop: true, autoplay: true,
+        path: host.getAttribute('data-lottie')
+      });
+      // emoji прячем только когда JSON реально подгрузился
+      anim.addEventListener('data_ready', function () { host.classList.add('__lottie-on'); });
+      // нет файла/битый JSON — сносим пустой SVG, возвращаем emoji
+      anim.addEventListener('data_failed', function () { anim.destroy(); host.textContent = fallback; });
+    }).catch(function () { /* нет сети — остаётся emoji */ });
+  });
 })();
 </script>
 
