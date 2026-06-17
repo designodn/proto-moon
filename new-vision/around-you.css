@@ -26,7 +26,7 @@
 .activity-header__chevron {
   width: 8px;
   height: 13px;
-  margin-left: 2px;
+  margin-left: auto; /* прибиваем к правому краю заголовка */
   flex-shrink: 0;
   background-color: var(--dynamic-text-and-icons-base-secondary);
   -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
