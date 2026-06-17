@@ -149,5 +149,55 @@ window.DS_PEOPLE_DATA = [
     "age": 53,
     "city": "Бийск",
     "bio": ""
+  },
+  {
+    "id": "group-1",
+    "name": "Наталья Атаманюк | Рецепты",
+    "photo": "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1L4AGIpaJqmXBqZF5Jg5v6nSXQvFI-QmLlFmjaw9Z-c0442kX3cD9AR8knQYoSKDM7ZREk0nSHyafKVgfIidnFuLC615ccnAAAAKQ&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-2",
+    "name": "Доктор Мясников",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LDgqkTIy8evV5-Cu096as6sS5ESXjenLwagcd7_plDLBwG_m44RmmxuRXww7C1h0LTOlIWF7aQhBkPdtPWdrC-u-nBCFGyTGBN4143G-sAAAAp&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-3",
+    "name": "Рыбалка и Охота",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRXwtU424YNhdd0EdU6dg0Cp51K1-5m4FS7w4i_Z7uqh4jpOPIb-KCsDlnXcjSJJvUwsQ7B6WyBwPBQUC79fx-5ye0qeEM9gwTsqgzEUAAAAp&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-4",
+    "name": "Идеи для сада и огорода своими руками с фото",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-5",
+    "name": "Игорь Черняков",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1K3ZfIUJ2wQoa2mZ3cfO0RXX0hbFm3WyaSYZH-GZkyTe8xUwVTWOF-mQePtegmiCs2yTwd_JqaTz1HLT8Uv1yly8ZMlqo8ADaSxIyxvPMUAAAAp&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
   }
 ];
