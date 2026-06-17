@@ -75,12 +75,16 @@
   display: flex;
   flex-direction: column;
   justify-content: center;     /* центрируем появление внутри ячейки */
-  overflow: hidden;            /* контент клипается при коллапсе высоты */
+  overflow: visible;           /* в покое НЕ клипаем — трофей-бейдж выходит в зазор */
 }
+/* Клип нужен только во время анимации высоты (вход/уход), иначе контент
+   торчал бы при height:0. В покое ряд open, чтобы трофей не обрезался. */
+.ds-activity-conveyor__track > .__conv-enter,
+.ds-activity-conveyor__track > .__conv-leave { overflow: hidden; }
 /* В конвейере отключаем «выпирающую» подложку контейнера (margin -8 / padding 8),
    иначе аватар 44 не помещается в ячейку 54 и клипается.
-   overflow:visible — чтобы подложка появления (::before) могла выйти за контент
-   на 8px по бокам / 6px сверху-снизу (клип остаётся на ряду конвейера). */
+   overflow:visible — чтобы подложка появления (::before) и трофей-бейдж
+   могли выйти за контент (ряд в покое тоже open, см. выше). */
 .ds-activity-conveyor .uni-cell-container {
   margin: 0;
   padding: 0;
