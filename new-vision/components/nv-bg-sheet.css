@@ -89,16 +89,16 @@
   pointer-events: none;
   --nv-reveal-r: 0%;
   -webkit-mask: radial-gradient(circle at var(--nv-cx, 50%) var(--nv-cy, 42%),
-                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 16%));
+                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 30%));
           mask: radial-gradient(circle at var(--nv-cx, 50%) var(--nv-cy, 42%),
-                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 16%));
+                #000 var(--nv-reveal-r), rgba(0,0,0,0) calc(var(--nv-reveal-r) + 30%));
 }
 .nv-pr-cover__reveal.__play {
-  animation: nv-bg-reveal 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: nv-bg-reveal 1000ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 @keyframes nv-bg-reveal {
   from { --nv-reveal-r: 0%; }
-  to   { --nv-reveal-r: 160%; }
+  to   { --nv-reveal-r: 175%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nv-pr-cover__reveal.__play { animation: none; }
