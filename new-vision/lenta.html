@@ -311,7 +311,7 @@
         </div>
       </article>
 
-      <article class="feed-congrats __birthday island __intro">
+      <article class="feed-congrats __birthday island __intro __btnhold">
         <div class="avatar __size-72 __type-image"><img data-person-avatar="10" alt=""></div>
         <h2 class="nv-feed__title ds-title-xl">Николай празднует свой День рождения!</h2>
         <div class="avatars-view __size-36">
@@ -610,7 +610,7 @@
         </div>
       </article>
 
-      <article class="feed-congrats __gift __ai island __intro">
+      <article class="feed-congrats __gift __ai island __intro __btnhold">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img data-person-avatar="6" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -829,7 +829,7 @@
         </div>
       </article>
 
-      <article class="feed-congrats __gift island __intro">
+      <article class="feed-congrats __gift island __intro __btnhold">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img data-person-avatar="8" alt=""></div>
           <div class="contents-view-container uni-cell-additional-content">
@@ -1167,13 +1167,16 @@
 
   // Без анимаций или без IntersectionObserver — сразу показываем белую карточку.
   if (reduce || !('IntersectionObserver' in window)) {
-    feeds.forEach(function (f) { f.classList.remove('__intro'); });
+    feeds.forEach(function (f) { f.classList.remove('__intro', '__btnhold'); });
     return;
   }
 
-  // Фаза 3 (уход градиента) стартует на 1700мс таймлайна reveal — в этот же
-  // момент возвращаем тёмный текст и фирменную кнопку (переход 900мс в CSS).
+  // Фаза 3 (уход градиента) стартует на 1700мс таймлайна reveal — в этот момент
+  // тёмным становится ТЕКСТ (снимаем .__intro).
   var DARKEN_AT = 1700;
+  // Кнопка зажигается фирменным градиентом только ПОСЛЕ ухода подложки (конец
+  // анимации 2600мс) — backdrop как будто перетекает в кнопку (снимаем .__btnhold).
+  var BTN_REVEAL_AT = 2400;
   // Конфетти стреляем сразу с проявлением фона.
   var CONFETTI_AT = 150;
 
@@ -1199,7 +1202,8 @@
       observer.unobserve(feed);
       feed.classList.add('__play');                                  // запуск keyframe-фона
       setTimeout(function () { burstConfetti(feed); }, CONFETTI_AT);  // конфетти поверх
-      setTimeout(function () { feed.classList.remove('__intro'); }, DARKEN_AT);
+      setTimeout(function () { feed.classList.remove('__intro'); }, DARKEN_AT);     // текст темнеет
+      setTimeout(function () { feed.classList.remove('__btnhold'); }, BTN_REVEAL_AT); // кнопка загорается после ухода
     });
   }, { threshold: 0.35 });
 
