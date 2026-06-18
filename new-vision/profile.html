@@ -635,13 +635,9 @@
       return 'друзей';
     }
 
-    function randomizeOtherProfile() {
-      // 1) бонсай: уровень 1–5, поливы по таблице
-      var level = randInt(1, 5);
-      var poured = POUR_BY_LEVEL[level];
-      if (window.NVBonsai) window.NVBonsai.setState(level, poured);
-
-      // инфа в «Живом подарке»: подзаголовок, прогресс, текст
+    // Синхронизация инфы в шторке «Живой подарок» с состоянием бонсая
+    // (подзаголовок, прогресс, текст «осталось до N+1 уровня»).
+    function syncBonsaiSheet(level, poured) {
       var sub = document.querySelector('.nv-gift-status__sub');
       if (sub) sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
       var fill = document.querySelector('.nv-progress__fill');
@@ -649,11 +645,21 @@
       if (level < 5) {
         var next = POUR_BY_LEVEL[level + 1];
         if (fill) fill.style.width = Math.round(poured / next * 100) + '%';
-        if (txt)  txt.textContent = 'Осталось ' + (next - poured) + ' поливов до ' + (level + 1) + ' уровня';
+        if (txt)  txt.textContent = 'Осталось ' + Math.max(0, next - poured) + ' поливов до ' + (level + 1) + ' уровня';
       } else {
         if (fill) fill.style.width = '100%';
         if (txt)  txt.textContent = 'Достигнут максимальный уровень';
       }
+    }
+
+    function randomizeOtherProfile() {
+      // 1) бонсай: уровень 1–5, поливы по таблице
+      var level = randInt(1, 5);
+      var poured = POUR_BY_LEVEL[level];
+      if (window.NVBonsai) window.NVBonsai.setState(level, poured);
+
+      // инфа в «Живом подарке» — синхронно с состоянием бонсая
+      syncBonsaiSheet(level, poured);
 
       // ~5 поливавших из people.js
       var list = document.querySelector('[data-watered-list]');
@@ -694,6 +700,7 @@
     applyView(initial);
     if (document.body.getAttribute('data-view') === 'self') {
       shakeSakura();   // свой профиль с сакурой — качнуть ветки
+      syncBonsaiSheet(VIEWS.self.level, VIEWS.self.poured);   // шторка = виджет
     } else {
       randomizeOtherProfile();
     }
