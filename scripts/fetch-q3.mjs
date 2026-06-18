@@ -166,8 +166,8 @@ function media(photos) {
   // максимум 4 ячейки, на 4-й — плашка «Ещё N», если фото больше четырёх.
   // text-feed__media выводит грид из паддинга карточки (full-bleed).
   const cells = photos.slice(0, 4).map((u, i) => {
-    const more = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}` : '"';
-    return `            <div class="media__cell${more}>${img(u)}</div>`;
+    const attrs = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}"` : '"';
+    return `            <div class="media__cell${attrs}>${img(u)}</div>`;
   }).join('\n');
   return `          <div class="text-feed__media media __type-gallery">
 ${cells}
