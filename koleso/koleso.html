@@ -121,7 +121,12 @@
     position: relative;
     width: 106px; height: 110px;
     cursor: pointer;
+    transform-origin: center;
+    transition: transform 200ms cubic-bezier(0, -0.3, 0.5, 1.3);
   }
+  /* press feedback — лёгкий «бамп» к центру, как у аватаров/кнопок */
+  .rl-action:active,
+  .rl-action.__clicked { transform: scale(0.95); }
   /* белая «подложка» с наклоном — размеры/угол из макета: 99.66×96.9, −6.73° */
   .rl-action::before {
     content: ''; position: absolute;
@@ -221,7 +226,7 @@
       <div class="rl-action" role="button" tabindex="0" aria-label="Задания" data-href="koleso-tasks.html">
         <img class="rl-action__img" src="../assets/koleso/zadaniia.png" alt="">
         <span class="rl-action__label">Задания</span>
-        <span class="rl-action__badge">2</span>
+        <span class="rl-action__badge">4</span>
       </div>
       <div class="rl-coin" aria-label="Билеты">
         <span id="coin-count">1</span>
@@ -247,26 +252,23 @@
   <script>
     // ── Призы барабана (картинки из ../assets/koleso) ─────────────
     var PRIZES = [
-      { img: 'aifon.png',            c: 'iPhone' },
-      { img: 'ozon-promokod.png',    c: 'Промокод Ozon' },
-      { img: 'telefon.png',          c: 'Смартфон' },
-      { img: 'pylesos.png',          c: 'Пылесос' },
-      { img: 'fen.png',              c: 'Фен' },
-      { img: 'chainik.png',          c: 'Чайник' },
-      { img: 'chainik-igrushka.png', c: 'Игрушка' },
-      { img: 'gril.png',             c: 'Гриль' },
-      { img: 'barbekiu.png',         c: 'Барбекю' },
-      { img: 'shveinaia.png',        c: 'Швейная машина' },
-      { img: 'mebel.png',            c: 'Мебель' },
-      { img: 'podarok.png',          c: 'Подарок' },
-      { img: 'oki.png',              c: 'ОКи' }
+      { img: 'new/pic_ozon.png' },
+      { img: 'new/pic_ok_10-1.png' },
+      { img: 'new/pic_multicooker.png' },
+      { img: 'new/pic_tele.png' },
+      { img: 'new/pic_rubies.png' },
+      { img: 'new/pic_kaspersky_20pr.png' },
+      { img: 'new/pic_shok-cookir.png' },
+      { img: 'new/pic_all_included_1-1.png' },
+      { img: 'new/pic_invisible_1-1.png' },
+      { img: 'new/pic_ticket-ruletka.png' }
     ];
 
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
       el.innerHTML = '<img class="rl-prize__img" src="../assets/koleso/' +
-                     p.img + '" alt="' + p.c + '">';
+                     p.img + '" alt="">';
       return el;
     }
 
