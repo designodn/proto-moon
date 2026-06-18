@@ -6,10 +6,9 @@
     "кнопки": "CTA и actions-bar зашиты в шаблон по типу. В данных только числовые счётчики stats и текст особых CTA (повод подарка).",
     "слот_activity": "Опциональный слот ОБЁРТКИ (не привязан к типу): серая строка «почему пост в ленте» над автором, напр. «<b>Борис Фрол</b> поставил класс». Может стоять у любого поста.",
     "автор_inline": "В отличие от NV-ленты, авторы Q3 пока inline (имя + аватар-URL + время), без реестра people.json. Поле authorId зарезервировано на будущее.",
-    "медиа": "Прямые URL картинок/гифок. Для галереи — массив. aspect-ratio — дефолт шаблона по типу/числу фото.",
+    "медиа": "Слот базового поста (как media в NV feed-base): { kind: none|image|gallery, url | images[] }. Прямые URL картинок/гифок. variant поста (text|photo|gallery) выводится из media.kind. aspect-ratio — дефолт шаблона по числу фото. (У reshare/gift/clip медиа лежит в их собственных под-объектах.)",
     "слот_матрица": {
-      "text":           { "author": true, "text": "value+clamp?", "media": "none",    "stats": true, "_note": "clamp:true прячет хвост текста под «ещё». Отдельного типа text-long НЕТ — это свойство" },
-      "text-gallery":   { "author": true, "text": "value+clamp?", "media": "gallery", "stats": true },
+      "text":           { "author": true, "text": "value+clamp?", "media": "none|image|gallery", "stats": true, "_variants": "text (без медиа) · photo (1 фото) · gallery (N фото) — ОДИН тип, разница только в слоте media. Как feed-base/text|photo|gallery в NV", "_note": "clamp:true прячет хвост текста под «ещё»; text-long и text-gallery — НЕ отдельные типы" },
       "vvz-portlet":    { "_note": "ряд карточек «Возможно, вы знакомы» + финальная help-карточка; CTA «Дружить» из шаблона" },
       "on-this-day":    { "author": "self", "title": true, "reshareCard": true, "likes": true, "_note": "бейдж «Видите только вы», CTA «Поделиться»" },
       "group-post":     { "author": "group", "subscribe": true, "text": "clamp", "media": "gallery", "stats": true, "topComment": true },
@@ -35,7 +34,7 @@
       "колонки": "id · тип · автор · заголовок · текст · фото · лайки · комменты · репосты · тема · рубрика — ТЕ ЖЕ колонки и порядок, что в листе «Посты» NV.",
       "маппинг": {
         "id": "q1, q2 … (ключ поста)",
-        "тип": "text|text-gallery|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip",
+        "тип": "text|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip (text+фото = photo/gallery, отдельного типа нет)",
         "ещё": "если в листе нужна отметка длинного текста под «ещё» — служебная колонка/флаг → text.clamp:true (НЕ отдельный тип)",
         "активность": "строка «N поставил класс» (слот_activity) — companion-поле по id, не отдельный тип",
         "автор": "имя автора (или id из people.json — как в NV); для group-post/reshare — название сообщества",
@@ -86,10 +85,10 @@
       "stats": { "comments": 14, "reshares": 73, "likes": 16 }
     },
     {
-      "id": "q3", "type": "text-gallery",
+      "id": "q3", "type": "text", "variant": "gallery",
       "author": { "name": "Евгения Молчанова", "avatar": "https://i.okcdn.ru/...molchanova.jpg", "time": "вчера, 18:02" },
       "text": { "value": "Дача, конец июля. Розы наконец зацвели после пересадки. Делюсь фотками: ракурсы разные, чтобы было видно, как они стоят.", "clamp": true },
-      "media": [ "https://vki9.okcdn.ru/...rose1.jpg", "https://vki9.okcdn.ru/...rose2.jpg" ],
+      "media": { "kind": "gallery", "images": [ "https://vki9.okcdn.ru/...rose1.jpg", "https://vki9.okcdn.ru/...rose2.jpg" ] },
       "stats": { "comments": 24, "reshares": 5, "likes": 128 }
     },
     {
