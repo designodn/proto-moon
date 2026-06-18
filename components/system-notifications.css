@@ -19,14 +19,12 @@
   pointer-events: none;
 }
 
-/* ── Heads-up в приложении: ниже DS-статус-бара (--status-bar-height
-   из meshok-up.css) + 4px воздуха. Источник правды о высоте — один,
-   так что если status-bar когда-нибудь сменит высоту, оверлей
-   подхватит сам. На lock-screen (start.html) сидим на собственных
-   оверрайдах (.device .notifs / .device.headsup-notifs .notifs),
-   поэтому это правило туда не достаёт. */
+/* ── Heads-up в приложении: статус-бар скрыт (см. meshok-up.css), поэтому
+   крепимся к верху экрана — под системный статус-бар устройства (safe-area)
+   + 4px воздуха. На lock-screen (start.html) сидим на собственных оверрайдах
+   (.device .notifs / .device.headsup-notifs .notifs), туда правило не достаёт. */
 .notifs.__mode-heads-up {
-  top: calc(var(--status-bar-height) + var(--space-1));
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-1));
 }
 
 /* ── Режим «список» (lock-screen) ───────────────────────────── */

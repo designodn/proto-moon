@@ -33,8 +33,9 @@
 .inapp-pushes {
   position: fixed;
   left: 0; right: 0;
-  /* Под DS-статус-баром (--status-bar-height из meshok-up.css) + воздух */
-  top: calc(var(--status-bar-height, 44px) + var(--space-1, 4px));
+  /* Статус-бар скрыт (см. meshok-up.css) → крепимся к верху экрана:
+     под системный статус-бар устройства (safe-area) + воздух. */
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-1, 4px));
   z-index: 1000;
   pointer-events: none;
 }
