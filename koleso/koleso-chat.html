@@ -19,11 +19,12 @@
   .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
 
   /* ── Навбар с именем/статусом и аватаркой ─────────────────────── */
-  /* Белая подложка под шапкой (статус-бар + навбар) */
-  .meshok-up { background: var(--dynamic-surface-base-secondary);
-               border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
+  /* Белая подложка шапки (.meshok-up = display:contents и фон не рисует,
+     поэтому красим сам навбар). */
   .ch-nav { display:flex; align-items:center; gap: var(--space-3);
-            height:52px; padding: 0 var(--space-2) 0 var(--space-4); }
+            height:52px; padding: 0 var(--space-2) 0 var(--space-4);
+            background: var(--dynamic-surface-base-secondary);
+            border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
   .ch-nav__head { flex:1 1 0; min-width:0; text-align:center; }
   .ch-nav__name { color: var(--dynamic-text-and-icons-base-primary);
                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
