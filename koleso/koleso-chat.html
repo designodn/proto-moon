@@ -19,6 +19,9 @@
   .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
 
   /* ── Навбар с именем/статусом и аватаркой ─────────────────────── */
+  /* Белая подложка под шапкой (статус-бар + навбар) */
+  .meshok-up { background: var(--dynamic-surface-base-secondary);
+               border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
   .ch-nav { display:flex; align-items:center; gap: var(--space-3);
             height:52px; padding: 0 var(--space-2) 0 var(--space-4); }
   .ch-nav__head { flex:1 1 0; min-width:0; text-align:center; }
@@ -27,8 +30,9 @@
   .ch-nav__status { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 1px; }
 
   /* ── Лента сообщений ──────────────────────────────────────────── */
+  /* justify-content:flex-end — сообщения прижаты к низу (как только что пришли) */
   .ch-feed { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-             display:flex; flex-direction:column; gap: var(--space-2);
+             display:flex; flex-direction:column; justify-content:flex-end; gap: var(--space-2);
              padding: var(--space-3) var(--space-3) var(--space-4); }
   .ch-feed::-webkit-scrollbar { display:none; }
 
@@ -37,8 +41,8 @@
             background: var(--dynamic-surface-base-inverse-tertiary, rgba(46,47,51,0.48));
             color:#fff; border-radius: 12px; padding: 4px 12px; }
 
-  /* пузырь входящего сообщения */
-  .ch-msg { align-self:flex-start; max-width: 76%;
+  /* пузырь сообщения (исходящее — прижато вправо) */
+  .ch-msg { align-self:flex-end; max-width: 76%;
             background: var(--dynamic-surface-base-secondary);
             border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
   .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
