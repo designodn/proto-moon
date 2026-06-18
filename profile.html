@@ -83,7 +83,12 @@
     --tabs-view-padding-right: var(--space-4);
     --tabs-view-padding-top: 0;
     --tabs-view-padding-bottom: 0;
-    background: transparent;
+    /* Прилипает к верху скролла, затем возвращается в поток. Фон = primary
+       (тот же серый, но непрозрачный) — маскирует посты, проезжающие под ним. */
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--dynamic-surface-base-primary);
     margin-top: var(--space-2);
   }
   /* «селект-пилюля» — белый фон на secondary-подложке. Достигается через __view-primary,
