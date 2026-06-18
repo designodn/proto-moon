@@ -80,12 +80,6 @@
   font-family: var(--font-family-display);
 }
 
-/* Лейбл таба (tabs-view, .tab-wrapper .label) — типографика title-s; tab.css
-   задаёт его на --font-family (0-2-0), поэтому переводим на Display явно. */
-.tab-wrapper .label {
-  font-family: var(--font-family-display);
-}
-
 /* Тексты публикаций (body/caption) → Roboto */
 .ds-body-l,
 .ds-body-m,

@@ -232,13 +232,9 @@
   white-space: nowrap;
 }
 
-/* лейбл — стиль ds-title-s (15/20, вес 600) */
+/* лейбл — стиль ds-title-s (15/20, вес 600): типографику даёт класс ds-title-s
+   на самом лейбле (тогда NV-шрифт «протекает» через nv-fonts), здесь — только цвет. */
 .tab-wrapper .label {
-  font-family: var(--font-family);
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 600;
-  letter-spacing: 0;
   color: var(--tab-label-color);
 }
 
