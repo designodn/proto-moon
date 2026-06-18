@@ -468,7 +468,7 @@
   --static-stroke-contrast-inverse-mid: rgba(255, 255, 255, 0.16);
   --static-stroke-contrast-low: rgba(46, 47, 51, 0.08);
   --static-stroke-contrast-mid: rgba(46, 47, 51, 0.16);
-  --static-stroke-special-accent: #FF7700;
+  --static-stroke-special-accent: #F64A00;
   --static-stroke-special-focus: #0099FF;
   --static-stroke-special-highlight: #67E55C;
   --static-surface-base-inverse-primary: #FFFFFF;
@@ -489,7 +489,7 @@
   --static-surface-special-layer-quaternary: rgba(0, 0, 0, 0.36);
   --static-surface-special-layer-secondary: rgba(0, 0, 0, 0.76);
   --static-surface-special-layer-tertiary: rgba(0, 0, 0, 0.56);
-  --static-surface-status-accent: #FF7700;
+  --static-surface-status-accent: #F64A00;
   --static-surface-status-attention: #FFB313;
   --static-surface-status-contrast-accent: rgba(255, 119, 0, 0.12);
   --static-surface-status-contrast-attention: rgba(219, 153, 12, 0.12);
