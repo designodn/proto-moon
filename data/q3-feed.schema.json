@@ -4,12 +4,12 @@
     "источник_разметки": "lenta-q3.html (фид, карточки 1–14 + stories-row + banner)",
     "принцип": "Каждая карточка = ОБЁРТКА (article.text-feed.island или спец-класс) + слоты по type. Слот, которого нет в данных → генератор не рисует узел (а не оставляет пустым).",
     "кнопки": "CTA и actions-bar зашиты в шаблон по типу. В данных только числовые счётчики stats и текст особых CTA (повод подарка).",
+    "слот_activity": "Опциональный слот ОБЁРТКИ (не привязан к типу): серая строка «почему пост в ленте» над автором, напр. «<b>Борис Фрол</b> поставил класс». Может стоять у любого поста.",
     "автор_inline": "В отличие от NV-ленты, авторы Q3 пока inline (имя + аватар-URL + время), без реестра people.json. Поле authorId зарезервировано на будущее.",
     "медиа": "Прямые URL картинок/гифок. Для галереи — массив. aspect-ratio — дефолт шаблона по типу/числу фото.",
     "слот_матрица": {
-      "text":           { "author": true, "text": true,  "media": "none",    "stats": true },
-      "text-long":      { "author": true, "text": "clamp","media": "none",    "stats": true, "activity": "опц." },
-      "text-gallery":   { "author": true, "text": "clamp","media": "gallery", "stats": true },
+      "text":           { "author": true, "text": "value+clamp?", "media": "none",    "stats": true, "_note": "clamp:true прячет хвост текста под «ещё». Отдельного типа text-long НЕТ — это свойство" },
+      "text-gallery":   { "author": true, "text": "value+clamp?", "media": "gallery", "stats": true },
       "vvz-portlet":    { "_note": "ряд карточек «Возможно, вы знакомы» + финальная help-карточка; CTA «Дружить» из шаблона" },
       "on-this-day":    { "author": "self", "title": true, "reshareCard": true, "likes": true, "_note": "бейдж «Видите только вы», CTA «Поделиться»" },
       "group-post":     { "author": "group", "subscribe": true, "text": "clamp", "media": "gallery", "stats": true, "topComment": true },
@@ -35,7 +35,9 @@
       "колонки": "id · тип · автор · заголовок · текст · фото · лайки · комменты · репосты · тема · рубрика — ТЕ ЖЕ колонки и порядок, что в листе «Посты» NV.",
       "маппинг": {
         "id": "q1, q2 … (ключ поста)",
-        "тип": "text|text-long|text-gallery|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip",
+        "тип": "text|text-gallery|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip",
+        "ещё": "если в листе нужна отметка длинного текста под «ещё» — служебная колонка/флаг → text.clamp:true (НЕ отдельный тип)",
+        "активность": "строка «N поставил класс» (слот_activity) — companion-поле по id, не отдельный тип",
         "автор": "имя автора (или id из people.json — как в NV); для group-post/reshare — название сообщества",
         "заголовок": "title (on-this-day, friendversary, tagged-photo, shared-link, повод подарка). Иначе пусто",
         "текст": "тело поста; <br> для абзацев",
@@ -77,7 +79,7 @@
       "stats": { "comments": 7, "reshares": 2, "likes": 34 }
     },
     {
-      "id": "q2", "type": "text-long",
+      "id": "q2", "type": "text",
       "activity": "<b>Борис Фрол</b> поставил класс",
       "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
       "text": { "value": "Они редко скучают друг с другом: умеют вдохновлять и подталкивать к развитию. Ни один из них не будет «привязывать» партнёра или ограничивать свободу — каждый сам выбирает свой путь, и это здорово.", "clamp": true },
