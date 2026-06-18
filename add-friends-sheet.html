@@ -137,7 +137,7 @@
   .fp.__state-3 .friend-big-card__accept,
   .fp.__state-4 .friend-big-card__accept {
     opacity: 1; pointer-events: auto;
-    max-height: 100px; padding: 12px 16px 16px;
+    max-height: 100px; padding: 20px 16px 16px;  /* 20 — зазор «авы → кнопка» */
   }
 
   /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
@@ -446,6 +446,11 @@
       if (p.city) parts.push(p.city);
       return parts.join(', ');
     }
+    var withPhoto = people.filter(function (p) { return p && p.photo; });
+    function randomPhoto() {
+      if (!withPhoto.length) return null;
+      return withPhoto[Math.floor(Math.random() * withPhoto.length)].photo;
+    }
     for (var i = 0; i < 7; i++) {
       var p = people[i];
       if (!p) continue;
@@ -457,6 +462,11 @@
       if (capEl) capEl.textContent = caption(p);
       var img = card.querySelector('.friend-big-card__photo img');
       if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+      // Общие друзья — случайные аватарки из реестра.
+      card.querySelectorAll('.friend-big-card__mutual .avatar img').forEach(function (a) {
+        var ph = randomPhoto();
+        if (ph) { a.src = ph; a.alt = ''; }
+      });
     }
   })();
 </script>
@@ -755,10 +765,13 @@
       var snapped = 0;
       var lastSwipeEnd = 0;  // момент конца горизонтального свайпа — гасим ложный click по карточке
 
-      // Карточка «принять всех» — подгоняем высоту под реальную карточку друга
-      // (в ряду они height:auto, фото 300 + инфо + кнопка), чтобы стояла вровень.
-      if (els[8] && els[IDX[0]]) {
-        els[8].style.height = els[IDX[0]].offsetHeight + 'px';
+      // Карточка «принять всех» — высота вровень с самой высокой карточкой друга.
+      if (els[8]) {
+        var maxH = 0;
+        [1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
+          if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
+        });
+        if (maxH) els[8].style.height = maxH + 'px';
       }
 
       function symmetricRound(x) {

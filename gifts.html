@@ -53,6 +53,8 @@
     text-align: center;
     font-size: 32px; line-height: 1.2;
     font-weight: 700;
+    /* Заголовок форсированно дисплейным катом OK Sans Display (а не Roboto). */
+    font-family: "OK Sans Display", var(--font-family, sans-serif);
     letter-spacing: 0;
     color: var(--dynamic-text-and-icons-base-primary);
     margin: 0;
@@ -99,15 +101,28 @@
     background: linear-gradient(140deg, #a07a55 0%, #5e4226 100%);
   }
 
-  /* Нижний CTA */
-  .gp__bottom {
-    position: absolute; left: 0; right: 0; bottom: 24px;
-    padding: 0 16px;
-    display: flex;
-    z-index: 5;
+  /* Карточка «Принять все» — белая, по центру оранжевая галочка + текст.
+     Высоту проставляет JS (вровень с самой высокой карточкой подарка). */
+  .gp .gift-card.__accept-all {
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
   }
-  .gp__bottom .button-wrapper { width: 100%; }
-  .gp__bottom .button-container { width: 100%; }
+  .gp .gift-card.__accept-all .gift-card__all {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .gift-card__all-check { display: block; }
+  .gift-card__all-text {
+    color: var(--dynamic-text-and-icons-base-primary);
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+  }
 
   .gp__handle {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -175,9 +190,6 @@
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Удалить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
       <div class="gift-card__accept-overlay" aria-hidden="true"></div>
       <div class="gift-card__accept-check" aria-hidden="true">
         <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
@@ -199,9 +211,6 @@
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Удалить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
       <div class="gift-card__accept-overlay" aria-hidden="true"></div>
       <div class="gift-card__accept-check" aria-hidden="true">
         <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
@@ -223,23 +232,23 @@
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Удалить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
       <div class="gift-card__accept-overlay" aria-hidden="true"></div>
       <div class="gift-card__accept-check" aria-hidden="true">
         <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
       </div>
     </article>
-  </main>
 
-  <div class="gp__bottom">
-    <div class="button-wrapper __size-56">
-      <button class="button-container __style-primary" id="gpAcceptAll">
-        <span class="button-content">Принять все</span>
-      </button>
-    </div>
-  </div>
+    <!-- Последняя карточка «Принять все» — точка входа в массовое принятие.
+         По тапу запускается схлоп оставшихся карточек + конфетти. -->
+    <article class="gift-card __accept-all" data-i="4">
+      <div class="gift-card__all">
+        <svg class="gift-card__all-check" width="96" height="82" viewBox="0 0 115 98" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4.21094 58.3466C21.0354 69.7613 28.7942 77.2497 39.1654 92.8613C62.8023 51.3892 77.96 31.608 110.211 5.86133" stroke="#F55418" stroke-width="15" stroke-linejoin="bevel"/>
+        </svg>
+        <div class="gift-card__all-text">Принять<br>все подарки</div>
+      </div>
+    </article>
+  </main>
 
   <div class="gp__handle"></div>
 
@@ -248,6 +257,26 @@
 </div>
 
 <script src="components/back-button.js"></script>
+<!-- Реальные люди из листа «Люди» (data/people.js) как отправители подарков.
+     Первые 3 раскладываем по карточкам в визуальном порядке (data-i 3,2,1):
+     имя + аватар в шапке карточки. Сами гифки-подарки не трогаем. -->
+<script src="data/people.js"></script>
+<script>
+  (function () {
+    var people = window.DS_PEOPLE_DATA || [];
+    var order = [3, 2, 1];  // data-i слева→направо
+    for (var k = 0; k < order.length; k++) {
+      var p = people[k];
+      if (!p) continue;
+      var card = document.querySelector('.gift-card[data-i="' + order[k] + '"]');
+      if (!card) continue;
+      var nameEl = card.querySelector('.gift-card__name');
+      if (nameEl) nameEl.textContent = p.name;
+      var av = card.querySelector('.gift-card__cell .avatar img');
+      if (av && p.photo) { av.src = p.photo; av.alt = p.name; }
+    }
+  })();
+</script>
 <!-- Lottie-плеер для конфетти на финал «Принять все». -->
 <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
 <script>
@@ -298,25 +327,30 @@
       { title: 249, cards: {
           3: { cx: 185.600, cy: 526.545, s: 0.50246, r: -6.46,  o: 0 },
           2: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0.50,  o: 0 },
-          1: { cx: 179.842, cy: 558.120, s: 0.50246, r:  9.78,  o: 0 }
+          1: { cx: 179.842, cy: 558.120, s: 0.50246, r:  9.78,  o: 0 },
+          4: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0,     o: 0 }
       }},
-      // Стейт 2 — раскрытый веер.
+      // Стейт 2 — раскрытый веер. Карточка 4 («принять все») скрыта (o:0).
       { title: 130, cards: {
           3: { cx: 154.014, cy: 377.251, s: 0.74440, r: -7.21,  o: 1 },
           2: { cx: 237.871, cy: 479.750, s: 0.74440, r:  15,    o: 1 },
-          1: { cx: 135.122, cy: 560.177, s: 0.74440, r: -16.48, o: 1 }
+          1: { cx: 135.122, cy: 560.177, s: 0.74440, r: -16.48, o: 1 },
+          4: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0,     o: 0 }
       }},
-      // Стейт 3 — в ряд, шаг 316 (300 + gap 16), первая на x=125.
+      // Стейт 3 — в ряд, шаг 316 (300 + gap 16). cy 490 — ряд центрирован
+      // по вертикали (нижняя кнопка убрана). Карточка 4 — в конце ряда.
       { title: 130, cards: {
-          3: { cx: 275, cy: 441, s: 1, r: 0, o: 1 },
-          2: { cx: 591, cy: 441, s: 1, r: 0, o: 1 },
-          1: { cx: 907, cy: 441, s: 1, r: 0, o: 1 }
+          3: { cx: 275, cy: 490, s: 1, r: 0, o: 1 },
+          2: { cx: 591, cy: 490, s: 1, r: 0, o: 1 },
+          1: { cx: 907, cy: 490, s: 1, r: 0, o: 1 },
+          4: { cx: 1223, cy: 490, s: 1, r: 0, o: 1 }
       }},
       // Стейт 4 — сдвинут влево, первая карточка с гаттером 16px от левого края.
       { title: 130, cards: {
-          3: { cx: 166, cy: 441, s: 1, r: 0, o: 1 },
-          2: { cx: 482, cy: 441, s: 1, r: 0, o: 1 },
-          1: { cx: 798, cy: 441, s: 1, r: 0, o: 1 }
+          3: { cx: 166, cy: 490, s: 1, r: 0, o: 1 },
+          2: { cx: 482, cy: 490, s: 1, r: 0, o: 1 },
+          1: { cx: 798, cy: 490, s: 1, r: 0, o: 1 },
+          4: { cx: 1114, cy: 490, s: 1, r: 0, o: 1 }
       }},
       // Стейт 5 (exit) — «Принять все» внизу. Карточки ужимаются до
       // стейта 1 (scale 0.50246, рутации той же стопки) и уходят ВНИЗ
@@ -324,7 +358,8 @@
       { title: 312, cards: {
           3: { cx: 185.600, cy: 836.510, s: 0.50246, r: -6.46,  o: 0 },
           2: { cx: 185.503, cy: 850.341, s: 0.50246, r:  0.50,  o: 0 },
-          1: { cx: 179.842, cy: 868.120, s: 0.50246, r:  9.78,  o: 0 }
+          1: { cx: 179.842, cy: 868.120, s: 0.50246, r:  9.78,  o: 0 },
+          4: { cx: 185.503, cy: 850.341, s: 0.50246, r:  0,     o: 0 }
       }}
     ];
     // data-i отражает порядок «спереди-назад» в стопочно-веерных стейтах
@@ -334,8 +369,9 @@
     //   data-i=2 → Мария    (middle)
     //   data-i=1 → Дмитрий  (rightmost в ряду, front в стопке)
     // Итерация IDX=[3,2,1] идёт «back → front», чтобы applyCard перерисовал
-    // нижние карточки первыми (z-index уже задан в CSS).
-    var IDX = [3, 2, 1];
+    // нижние карточки первыми (z-index уже задан в CSS). 4 — карточка
+    // «принять все» в самом конце ряда.
+    var IDX = [3, 2, 1, 4];
 
     var els = {};
     IDX.forEach(function (i) {
@@ -515,10 +551,10 @@
       // По мере acceptCard/dismissCard уменьшается, rowState[i].cx и minSnap
       // пересчитываются. firstCx — left-most cx (state 4 position 0).
       var firstCx = rowState[3].cx;
-      // IDX = [3, 2, 1] и так в порядке left → right (см. data-i convention).
-      var liveCards = IDX.slice();                   // [3, 2, 1]
+      // IDX = [3, 2, 1, 4] в порядке left → right (4 — карточка «принять все»).
+      var liveCards = IDX.slice();                   // [3, 2, 1, 4]
       var minSnap = -(liveCards.length - 1);         // n карт → 0..-(n-1)
-      var processing = {};                           // защита от double-tap accept/trash
+      var processing = {};                           // защита от double-tap accept
 
       var startX = 0, startY = 0;
       var dragging = false;
@@ -527,26 +563,34 @@
       var snapRaf = null;             // активная rAF снапа
       var GUTTER = 5;
       var snapped = 0;                // последняя зафиксированная позиция
-      // Кнопки/«активный» вид появляются на первом свайпе и ОСТАЮТСЯ (не
-      // пропадают при возврате к первой карточке). При единственной карточке
-      // свайпнуть некуда — активируем сразу.
-      var activated = (liveCards.length <= 1);
+      var lastSwipeEnd = 0;           // момент конца свайпа — гасим ложный click по карточке
+      // Кнопки «Принять» показываем СРАЗУ в ряду (без свайпа).
+      var activated = true;
 
+      // __active не вешаем на карточку «принять все» (data-i 4): у неё нет
+      // кнопки «Принять», а высоту ей проставляем отдельно (вровень с подарками).
       function setActiveAll(on) {
-        IDX.forEach(function (i) { els[i].classList.toggle('__active', on); });
+        IDX.forEach(function (i) {
+          if (i === 4) return;
+          els[i].classList.toggle('__active', on);
+        });
       }
-      // Однажды активировав (первый свайп), держим кнопки видимыми навсегда.
-      function activateButtons() {
-        if (activated) return;
-        activated = true;
-        setActiveAll(true);
-        // Нижний CTA «Принять все» делаем серым (вторичным).
-        var allBtn = document.getElementById('gpAcceptAll');
-        if (allBtn && allBtn.classList.contains('__style-primary')) {
-          allBtn.classList.replace('__style-primary', '__style-secondary');
-        }
-      }
+      function activateButtons() { activated = true; }
       setActiveAll(activated);
+
+      // Карточка «принять все» — высота вровень с самой высокой карточкой подарка.
+      // Меряем С ЗАДЕРЖКОЙ: класс __active растит высоту 350→422 анимированно
+      // (transition 240ms), поэтому сразу offsetHeight вернёт 350. Карточка 4 в
+      // этот момент за правым краем ряда — скачок высоты не виден.
+      if (els[4]) {
+        setTimeout(function () {
+          var maxH = 0;
+          [3, 2, 1].forEach(function (i) {
+            if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
+          });
+          if (maxH) els[4].style.height = maxH + 'px';
+        }, 300);
+      }
       // Округление «от нуля» — симметрично для ±0.5 (Math.round даёт асимметрию).
       function symmetricRound(x) {
         return x < 0 ? -Math.round(-x) : Math.round(x);
@@ -556,6 +600,10 @@
         if (animating) return;
         if (dragging) return;                                  // блок второго пальца
         if (e.target && e.target.closest && e.target.closest('button')) return;
+        // По карточке «принять все» drag не стартуем и pointer НЕ захватываем —
+        // иначе setPointerCapture ретаргетит click на сцену и тап не дойдёт до
+        // листенера карточки. Без захвата нативный click срабатывает штатно.
+        if (e.target && e.target.closest && e.target.closest('.gift-card.__accept-all')) return;
 
         // Снап НЕ отменяем сразу — это сделает onMove, когда подтвердит,
         // что началось горизонтальное движение. Тап без движения
@@ -626,6 +674,7 @@
         // больше не происходит.
         endDrag();
         if (!wasLocked) return;   // tap или вертикаль — снап идёт сам собой
+        lastSwipeEnd = performance.now();
         var raw = panOffset / STEP;
         var target = symmetricRound(raw);
         if (target > 0) target = 0;
@@ -660,10 +709,9 @@
         snapRaf = requestAnimationFrame(frame);
       }
 
-      // ── ACCEPT / DISMISS ────────────────────────────────────
+      // ── ACCEPT ──────────────────────────────────────────────
       // Тап «Принять» → залить оранжевым + галочка → улёт вверх → ряд сдвигается.
-      // Тап трэш  → улёт вниз (без заливки) → ряд сдвигается.
-      function processCard(i, kind) {
+      function processCard(i) {
         if (processing[i]) return;
         processing[i] = true;
         var el = els[i];
@@ -672,12 +720,11 @@
         var SHIFT_DUR = 350;     // длительность сдвига оставшихся карт
 
         function flyOut() {
-          var dir = (kind === 'accept') ? -1 : 1;
-          el.classList.add(dir < 0 ? '__flying-up' : '__flying-down');
+          el.classList.add('__flying-up');
           var cs = rowState[i];
           var tx = (cs.cx - 330) + panOffset;
-          var ty = (cs.cy - 175) + dir * 800;
-          var rot = dir < 0 ? 22 : -22;
+          var ty = (cs.cy - 175) - 800;
+          var rot = 22;
           requestAnimationFrame(function () {
             el.style.transform =
               'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
@@ -718,25 +765,16 @@
           }
         }
 
-        if (kind === 'accept') {
-          el.classList.add('__accepting');
-          setTimeout(flyOut, FILL_DUR);
-        } else {
-          flyOut();
-        }
+        el.classList.add('__accepting');
+        setTimeout(flyOut, FILL_DUR);
       }
 
       IDX.forEach(function (i) {
         var el = els[i];
         var accBtn = el.querySelector('.gift-card__accept .button-container');
-        var trashBtn = el.querySelector('.gift-card__trash');
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
-          processCard(i, 'accept');
-        });
-        if (trashBtn) trashBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          processCard(i, 'dismiss');
+          processCard(i);
         });
       });
 
@@ -745,14 +783,17 @@
       scene.addEventListener('pointerup', onUp);
       scene.addEventListener('pointercancel', onCancel);
 
-      // ── «Принять все» (нижний CTA) ─────────────────────────────
+      // ── «Принять все» (тап по последней карточке) ───────────────
       // Возвращаем карточки в стейт 2 (веер), потом ужимаем до стейта 1
       // и уводим вниз за viewport с opacity 0 (STATES[4] / __state-5).
-      var acceptAllBtn = document.getElementById('gpAcceptAll');
-      if (acceptAllBtn && !acceptAllBtn.dataset.wired) {
-        acceptAllBtn.dataset.wired = '1';
-        acceptAllBtn.addEventListener('click', function () {
+      // Карточка «принять все» (4) гаснет на шаге 1 (o:0 в веере).
+      var acceptAllCard = els[4];
+      if (acceptAllCard && !acceptAllCard.dataset.wired) {
+        acceptAllCard.dataset.wired = '1';
+        acceptAllCard.addEventListener('click', function () {
           if (animating) return;
+          // Не реагируем на «клик» — хвост горизонтального свайпа.
+          if (performance.now() - lastSwipeEnd < 250) return;
           if (!liveCards.length) return;
           // Останавливаем активный снап + бэйкаем текущий panOffset в
           // STATES[3].cards.cx, чтобы from-снапшот transitionTo был
