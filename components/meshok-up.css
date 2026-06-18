@@ -34,24 +34,13 @@
 /* ============================================================
    STATUS BAR — единственный sticky-элемент в meshok-up
    ============================================================ */
+/* Статус-бар отдан реальной ОС устройства: фейковую «9:41 + иконки» не рисуем
+   на уровне компонента, чтобы скрылось сразу во всех экранах-детях meshok-up
+   (а не по странице вручную). Разметку .status-bar можно оставлять в HTML.
+   Если экрану нужно зарезервировать место под системный статус-бар — он сам
+   добавляет padding-top: env(safe-area-inset-top) на скролл-контейнер ленты. */
 .status-bar {
-  /* Статус-бар скрыт на всех страницах (внутри компонента). Высоту
-     --status-bar-height оставляем опубликованной — на неё опираются
-     sticky-офсеты и верхний отступ инапп-пушей. Чтобы вернуть статус-бар,
-     поменяй display: none → flex. */
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  flex-shrink: 0;
   display: none;
-  align-items: flex-end;
-  justify-content: space-between;
-  height: var(--status-bar-height);
-  padding: var(--space-2) var(--space-5) var(--space-2);
-  /* Цвет фона зафиксирован — переопределять на странице нельзя */
-  background-color: var(--dynamic-surface-base-secondary) !important;
-  color: var(--dynamic-text-and-icons-base-primary);
-  font-family: var(--font-family);
 }
 
 .status-bar__time {
