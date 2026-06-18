@@ -221,7 +221,7 @@
       return '<div class="button-wrapper __size-28 rf-invite"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
     }
     function goBtnHTML() {
-      return '<div class="button-wrapper __size-28 rf-go"><button class="button-container __style-primary"><span class="button-content">Перейти</span></button></div>';
+      return '<div class="button-wrapper __size-28 rf-go"><button class="button-container __style-secondary"><span class="button-content">Перейти</span></button></div>';
     }
 
     FRIENDS.forEach(function (f) {
@@ -273,7 +273,7 @@
         if (left <= 0) {
           clearInterval(t);
           wrapper.className = 'button-wrapper __size-28 rf-go';
-          wrapper.innerHTML = '<button class="button-container __style-primary"><span class="button-content">Перейти</span></button>';
+          wrapper.innerHTML = '<button class="button-container __style-secondary"><span class="button-content">Перейти</span></button>';
         } else {
           span.textContent = left + ' с';
         }
