@@ -1188,12 +1188,14 @@
     var fr = feed.getBoundingClientRect();
     var br = btn.getBoundingClientRect();
     // Бокс монтируется ВНУТРЬ фида (absolute) — едет и остаётся в его рамках
-    // при скролле. Низ — у верхней границы кнопки, верх — у начала фида;
-    // во всю ширину, preserveAspectRatio:'none' заполняет по высоте.
+    // при скролле. Низ — у верхней границы кнопки, верх — у начала фида.
+    // par 'xMidYMid slice' (cover) — заполняет бокс по высоте, СОХРАНЯЯ пропорции
+    // (лишнее по бокам обрезается). В высоких фидах подарков 'none' растягивал
+    // конфетти вертикально и оно «плевалось».
     var height = Math.max(br.top - fr.top, 80);
     window.nvLottie.play('../assets/lottie/confetti.json',
       0, 0,
-      { w: feed.clientWidth, h: height, par: 'none', mount: feed });
+      { w: feed.clientWidth, h: height, par: 'xMidYMid slice', mount: feed });
   }
 
   var io = new IntersectionObserver(function (entries, observer) {
