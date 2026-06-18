@@ -274,9 +274,10 @@
            в viewer'е). data-name — заголовок viewer'а. -->
       <div class="stories-row" id="ll-stories-row" aria-label="Моменты">
         <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
-             не открывает viewer (data-skip-viewer). -->
+             не открывает viewer (data-skip-viewer). Аватары — из people.json
+             (data-person-avatar), резолвит people-data.js. -->
         <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
+          <img data-person-avatar="my_profile" alt="Ваша история">
           <div class="avatar__addon __pos-br stories-row__add">
             <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
@@ -284,11 +285,11 @@
         <!-- Не просмотренные (оранжевое кольцо). -->
         <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
         <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Лиза">
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
+             data-bday data-stories="1" data-name="Александра">
+          <img data-person-avatar="1" alt="">
           <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
         </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Виктор"><img data-person-avatar="4" alt=""></div>
 
         <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
              CTA-кнопка снизу — только у ВВЗ. -->
@@ -297,15 +298,15 @@
              aria-label="Возможно, вы знакомы">
           <img src="assets/icons/vvz_stories.png" alt="">
         </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Галина"><img data-person-avatar="7" alt=""></div>
 
         <!-- Сториз годовщины дружбы убрана из стака — открывается тапом
              по постеру «Годовщина дружбы» в фиде (см. скрипт ниже). -->
         <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Антонида"><img data-person-avatar="5" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Екатерина"><img data-person-avatar="9" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Сергей"><img data-person-avatar="2" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Александр"><img data-person-avatar="10" alt=""></div>
       </div>
 
 
