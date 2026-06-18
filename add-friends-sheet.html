@@ -138,30 +138,6 @@
     max-height: 100px; padding: 12px 16px 16px;
   }
 
-  /* Крестик «скрыть» на карточке — тёмная плашка в правом верхнем углу фото.
-     Виден только в ряду (как и кнопка). Тап → карточка улетает вниз. */
-  .friend-big-card__skip {
-    position: absolute; top: 12px; right: 12px;
-    width: 36px; height: 36px;
-    border: 0; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 12px;
-    cursor: pointer;
-    z-index: 6;
-    opacity: 0; pointer-events: none;
-    transition: opacity 320ms ease;
-  }
-  .fp.__state-3 .friend-big-card__skip,
-  .fp.__state-4 .friend-big-card__skip {
-    opacity: 1; pointer-events: auto;
-  }
-  .friend-big-card__skip img {
-    width: 20px; height: 20px;
-    /* close_24.svg чёрный — инвертируем в белый */
-    filter: brightness(0) invert(1);
-  }
-
   /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
      Фиксируем высоту 460 даже в ряду (где остальные карточки height:auto) —
      поэтому селектор со специфичностью стейта. */
@@ -579,22 +555,6 @@
     });
     var titleEl = root.querySelector('.fp__title');
 
-    // Крестик «скрыть» на карточках друзей (1..7) — инжектим, чтобы не дублировать
-    // разметку в семи article. Тап → карточка улетает (dismiss). Карточка 8
-    // («принять всех») крестика не имеет.
-    [1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
-      var el = els[i];
-      if (!el || el.querySelector('.friend-big-card__skip')) return;
-      var btn = document.createElement('button');
-      btn.className = 'friend-big-card__skip';
-      btn.setAttribute('aria-label', 'Скрыть');
-      var img = document.createElement('img');
-      img.src = 'assets/icons/close_24.svg';
-      img.alt = '';
-      btn.appendChild(img);
-      el.appendChild(btn);
-    });
-
     // Применить состояние одной карточки. dxPan — горизонтальный сдвиг (от свайпа).
     function applyCard(el, s, dxPan) {
       var tx = (s.cx - 330) + (dxPan || 0);
@@ -849,11 +809,10 @@
         snapRaf = requestAnimationFrame(frame);
       }
 
-      // ── ACCEPT / DISMISS на карточке ───────────────────────
-      // Тап «Дружить» (kind='accept') → заливка оранжевым + галочка
-      // (класс __accepting) → улёт ВВЕРХ → ряд сдвигается влево.
-      // Тап крестик (kind='dismiss') → улёт ВНИЗ (без заливки) → ряд сдвигается.
-      function processCard(i, kind) {
+      // ── ACCEPT («Дружить» на карточке) ─────────────────────
+      // Тап «Дружить» → заливка оранжевым + галочка (класс __accepting)
+      // → улёт ВВЕРХ → ряд сдвигается влево.
+      function processCard(i) {
         if (processing[i]) return;
         processing[i] = true;
         var el = els[i];
@@ -862,12 +821,11 @@
         var SHIFT_DUR = 350;
 
         function flyOut() {
-          var dir = (kind === 'dismiss') ? 1 : -1;
-          el.classList.add(dir < 0 ? '__flying-up' : '__flying-down');
+          el.classList.add('__flying-up');
           var cs = rowState[i];
           var tx = (cs.cx - 330) + panOffset;
-          var ty = (cs.cy - 230) + dir * 800;
-          var rot = dir < 0 ? 22 : -22;
+          var ty = (cs.cy - 230) - 800;
+          var rot = 22;
           requestAnimationFrame(function () {
             el.style.transform =
               'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
@@ -919,11 +877,6 @@
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
           processCard(i, 'accept');
-        });
-        var skipBtn = el.querySelector('.friend-big-card__skip');
-        if (skipBtn) skipBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          processCard(i, 'dismiss');
         });
       });
 
