@@ -390,17 +390,22 @@
     }
 
     // Динамическое центрирование ряда по вертикали между заголовком и низом
-    // экрана (вместо статичного cy). Высота карточки подарка в ряду — 422
-    // (__active). Перекладываем cy в ряд-стейтах 2 (вход) и 3 (покой).
-    var ROW_CARD_H = 422;
+    // экрана + ужимание на низких вьюпортах. Если при масштабе 1 зазор
+    // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
+    // зазор стал ровно 48. Высота карточки подарка в ряду — 422 (__active).
+    var ROW_CARD_H = 422, ROW_HALF = 175, MIN_GAP = 48;
     function recenterRow() {
       var pageH = window.innerHeight || document.documentElement.clientHeight;
       var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
-      var cardTop = titleBottom + Math.max(0, (pageH - titleBottom - ROW_CARD_H) / 2);
-      var cy = cardTop + 175;  // 175 — половина базового бокса карточки (350)
+      var avail = pageH - titleBottom;
+      var s = 1;
+      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+        s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
+      }
+      var cy = titleBottom + avail / 2 - (ROW_CARD_H / 2 - ROW_HALF);
       [2, 3].forEach(function (si) {
         var cards = STATES[si].cards;
-        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; });
+        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; cards[k].s = s; });
       });
     }
     recenterRow();
@@ -738,10 +743,11 @@
           var tx = (cs.cx - 330) + panOffset;
           var ty = (cs.cy - 175) - 800;
           var rot = 22;
+          var sc = cs.s || 1;
           requestAnimationFrame(function () {
             el.style.transform =
               'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
-              'scale(1) rotate(' + rot + 'deg)';
+              'scale(' + sc + ') rotate(' + rot + 'deg)';
           });
           setTimeout(removeFromRow, FLY_DUR);
         }
