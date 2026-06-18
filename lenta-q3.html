@@ -29,11 +29,10 @@
      внутри ленты не должен пробивать поверх оверлея уведомлений (z-45). */
   .phone-frame__feed { position: relative; z-index: 0; }
 
-  /* Статус-бар отдаём реальной системе устройства (как и home-indicator:
-     пилюлю не рисуем, свайп-зону храним). Свою «9:41 + иконки» прячем,
-     а сверху резервируем safe-area, чтобы навбар «Опубликовать» не залезал
-     под системные часы/нотч. viewport-fit=cover делает env()-инсет ненулевым. */
-  .meshok-up .status-bar { display: none; }
+  /* Статус-бар отдаём реальной системе устройства (скрыт в самом DS-компоненте
+     meshok-up, см. components/meshok-up.css). Здесь только резервируем сверху
+     safe-area, чтобы навбар «Опубликовать» не залезал под системные часы/нотч;
+     viewport-fit=cover делает env()-инсет ненулевым на устройстве. */
   .phone-frame__feed { padding-top: env(safe-area-inset-top, 0px); }
 
   /* Иконки <img src="…svg"> (.ll-icon) → components/app-shell.css */
