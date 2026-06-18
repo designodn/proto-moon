@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_dark __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>UGC Клип Предпросмотр — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+
+  /* Тёмный полноэкранный редактор клипа. Фон — чёрный, чтобы превью-кадр
+     «выезжал» островом по центру, как в эталоне «UGC Клип Предпросмотр». */
+  html, body { margin: 0; padding: 0; height: 100%; background: #000; }
+  .phone-frame { background: #000; }
+  .phone-frame__feed {
+    padding-top: env(safe-area-inset-top, 0px);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Системные иконки статус-бара на чёрном — белым. */
+  .status-bar { color: #fff; }
+  .status-bar img { filter: brightness(0) invert(1); }
+
+  /* Верхняя панель: ✕ слева, «Редактировать» справа. */
+  .ce-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+  }
+  .ce-close {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; padding: 0; border-radius: 50%;
+    background: transparent; cursor: pointer;
+  }
+  .ce-close img { filter: brightness(0) invert(1); }
+  /* Пилюля «Редактировать» — фростед-светлая на тёмном, текст белый. */
+  .ce-edit {
+    display: inline-flex; align-items: center; gap: var(--space-1-5);
+    height: 40px; padding: 0 16px;
+    border: 0; border-radius: 14px; cursor: pointer;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+  .ce-edit img { filter: brightness(0) invert(1); }
+
+  /* Превью-кадр клипа: крупный портретный остров по центру. */
+  .ce-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-4) var(--space-4);
+  }
+  .ce-preview {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    aspect-ratio: 9 / 16;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #111;
+  }
+  .ce-preview > img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  /* Подпись-период сверху по центру. */
+  .ce-title {
+    position: absolute;
+    top: var(--space-5);
+    left: 0; right: 0;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+  /* Кнопка play по центру кадра. */
+  .ce-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border: 0; padding: 0; border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+  .ce-play img { filter: brightness(0) invert(1); }
+
+  /* Раскадровка снизу превью: лента превьюшек + белый плейхед слева.
+     Лёгкий градиент снизу для читаемости миниатюр. */
+  .ce-strip-grad {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 120px;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.45), transparent);
+    pointer-events: none;
+  }
+  .ce-strip {
+    position: absolute;
+    left: var(--space-4); right: var(--space-4); bottom: var(--space-4);
+    z-index: 2;
+    display: flex;
+    gap: 4px;
+    height: 48px;
+  }
+  .ce-strip__frame {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #222;
+  }
+  .ce-strip__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Плейхед — тонкая белая вертикаль над лентой (слева). */
+  .ce-playhead {
+    position: absolute;
+    left: calc(var(--space-4) + 4px);
+    bottom: calc(var(--space-4) - 6px);
+    z-index: 3;
+    width: 2px;
+    height: 60px;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Нижний CTA «Создать клип» — оранжевый primary во всю ширину. */
+  .ce-cta {
+    padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+  .ce-cta .button-container { height: 56px; }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <div class="status-bar">
+        <span class="status-bar__time">9:41</span>
+        <span class="status-bar__indicators">
+          <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+        </span>
+      </div>
+
+      <!-- Верхняя панель -->
+      <div class="ce-top">
+        <button class="ce-close" id="ceClose" aria-label="Закрыть">
+          <img src="assets/icons/close_24.svg" width="24" height="24" alt="">
+        </button>
+        <button class="ce-edit" id="ceEdit">
+          <span class="ds-body-l">Редактировать</span>
+        </button>
+      </div>
+
+      <!-- Превью клипа -->
+      <div class="ce-stage">
+        <div class="ce-preview" id="cePreview">
+          <img id="ceHero" src="" alt="">
+          <div class="ce-title ds-title-xl" id="ceTitle">Лето 2026</div>
+          <button class="ce-play" id="cePlay" aria-label="Воспроизвести">
+            <img src="assets/icons/play_filled_24.svg" width="28" height="28" alt="">
+          </button>
+          <div class="ce-strip-grad"></div>
+          <div class="ce-strip" id="ceStrip"></div>
+          <div class="ce-playhead"></div>
+        </div>
+      </div>
+
+      <!-- Нижний CTA -->
+      <div class="ce-cta">
+        <div class="button-wrapper __size-44 __full-width">
+          <button class="button-container __style-primary"><span class="button-content">Создать клип</span></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Данные клипа прокидывает lenta-q3.html через sessionStorage('clipEdit')
+    // = { label, photos: [...] }. Фолбэк — дефолтная летняя подборка.
+    (function () {
+      var data = null;
+      try { data = JSON.parse(sessionStorage.getItem('clipEdit') || 'null'); } catch (_) {}
+      var photos = (data && data.photos && data.photos.length) ? data.photos : [
+        'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200'
+      ];
+      var label = (data && data.label) || 'Лето 2026';
+
+      document.getElementById('ceTitle').textContent = label;
+      var hero = document.getElementById('ceHero');
+      hero.src = photos[0];
+
+      // Раскадровка — миниатюры из тех же кадров.
+      var strip = document.getElementById('ceStrip');
+      strip.innerHTML = photos.map(function (u) {
+        return '<div class="ce-strip__frame"><img src="' + u + '" alt=""></div>';
+      }).join('');
+
+      // Play прокручивает кадры в герое (имитация воспроизведения клипа).
+      var i = 0, timer = null;
+      var play = document.getElementById('cePlay');
+      play.addEventListener('click', function () {
+        if (timer) { clearInterval(timer); timer = null; play.style.opacity = ''; return; }
+        play.style.opacity = '0';
+        timer = setInterval(function () {
+          i = (i + 1) % photos.length;
+          hero.src = photos[i];
+        }, 1200);
+      });
+    })();
+  </script>
+
+  <!-- ✕ и системный back возвращают в ленту -->
+  <script>
+    document.getElementById('ceClose').addEventListener('click', function () {
+      location.href = 'lenta-q3.html';
+    });
+  </script>
+  <script src="components/back-trap.js" data-target="lenta-q3.html"></script>
+</body>
+</html>
