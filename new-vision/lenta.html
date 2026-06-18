@@ -51,7 +51,7 @@
         <div class="tabs">
           <button class="tabs-tab ds-title-xl __state-on">Лента</button>
           <button class="tabs-tab ds-title-xl" data-href="../today.html">Сегодня</button>
-          <button class="tabs-tab ds-title-xl" data-href="../gifts.html">Подарки</button>
+          <button class="tabs-tab ds-title-xl" data-href="../gifts-catalog.html">Подарки</button>
           <button class="tabs-tab ds-title-xl">Обсуждение</button>
           <div class="button-circle-wrapper __size-32 __style-secondary"><button class="button-circle" aria-label="Создать"><span class="icon __slot-plus"></span></button></div>
         </div>
@@ -873,7 +873,7 @@
 
   </div>
 
-<!-- навигация по верхним табам ленты (Сегодня → today, Подарки → gifts) -->
+<!-- навигация по верхним табам ленты (Сегодня → today, Подарки → каталог) -->
 <script>
   document.addEventListener('click', function (e) {
     var tab = e.target.closest ? e.target.closest('.tabs-tab[data-href]') : null;
