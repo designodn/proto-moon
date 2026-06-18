@@ -293,7 +293,7 @@ ${media(photos)}
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
             <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
           </header>
-          <div class="vvz-portlet__row">
+          <div class="vvz-portlet__row __cards-160">
 ${cards}
 
             <!-- Финальная карточка стека: «Найдите ещё больше друзей» -->
@@ -347,9 +347,7 @@ ${likesBlock}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
-              </span></button>
+              <button class="button-container __style-primary"><span class="button-content">Поделиться</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end">
               <button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">
