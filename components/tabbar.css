@@ -87,19 +87,12 @@
   cursor: grab;
 }
 
-/* iOS home indicator — пилюля 134×5, центрирована по нижней кромке.
-   Скрыта на Android (свайп всё равно ловится, но визуального индикатора нет). */
-.tabbar.__platform-ios .tabbar__handle::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 8px;
-  transform: translateX(-50%);
-  width: 134px;
-  height: 5px;
-  border-radius: 100px;
-  background-color: var(--dynamic-text-and-icons-base-primary);
-  pointer-events: none;
+/* Home-indicator отдан реальной ОС устройства: визуальную «пилюлю» не рисуем
+   на уровне компонента (ни на iOS, ни на Android), чтобы скрылось сразу во всех
+   экранах-детях — как и фейковый статус-бар в meshok-up. .tabbar__handle при этом
+   остаётся: свайп-вверх (свайп-зона) продолжает ловиться. */
+.tabbar .tabbar__handle::after {
+  display: none;
 }
 
 .tabbar__handle:active {
