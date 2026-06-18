@@ -106,6 +106,45 @@
   }
   .ll-pr-empty__title { margin-top: var(--space-3); color: var(--dynamic-text-and-icons-base-primary); }
   .ll-pr-empty__hint { margin-top: var(--space-1); }
+
+  /* CTA-ряд тянется по высоте; скрытый ряд (другого вида профиля) убираем */
+  .ll-pr-cta { align-items: stretch; }
+  .ll-pr-cta[hidden] { display: none; }
+
+  /* «Общие друзья» — стек аватарок + текст, под CTA */
+  .ll-pr-mutuals { padding: 0 var(--space-4) var(--space-4); }
+  .ll-pr-mutuals[hidden] { display: none; }
+  /* аватарки лежат на белой карточке → обводка стека под цвет карточки */
+  .ll-pr-mutuals .avatars-view__stack > * { border-color: var(--dynamic-surface-base-quaternary); }
+  .ll-pr-mutuals .avatars-view__text { color: var(--dynamic-text-and-icons-base-secondary); }
+  .ll-pr-mutuals .avatars-view__text b { color: var(--dynamic-text-and-icons-base-primary); font-weight: 600; }
+
+  /* Тост «Заявка отправлена» — тёмная пилюля снизу + действие «Отменить» */
+  .ll-toast {
+    position: fixed; left: 50%; bottom: 96px; z-index: 1100;
+    transform: translateX(-50%) translateY(16px);
+    display: flex; align-items: center; gap: var(--space-3);
+    width: calc(100% - 32px); max-width: 448px; box-sizing: border-box;
+    padding: var(--space-3) var(--space-4);
+    border-radius: 14px;
+    background: #1F1F22; color: #fff;
+    box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity 240ms ease, transform 240ms ease;
+  }
+  .ll-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .ll-toast__text { flex: 1 1 auto; min-width: 0; }
+  .ll-toast__action {
+    flex-shrink: 0; appearance: none; border: 0; background: transparent;
+    color: var(--dynamic-text-and-icons-status-accent);
+    font-family: inherit; font-weight: 600; font-size: 15px; line-height: 20px;
+    padding: 0; cursor: pointer;
+  }
+  .ll-toast__action:active { opacity: 0.6; }
+  @media (prefers-reduced-motion: reduce) {
+    .ll-toast { transition: opacity 240ms ease; }
+    .ll-toast.__show { transform: translateX(-50%); }
+  }
 </style>
 </head>
 <body>
@@ -139,34 +178,72 @@
 
         <div class="ll-pr-head">
           <div class="ll-pr-head__body">
-            <div class="ds-title-l ll-pr-head__name" data-user-name>Эмиль Дружинин</div>
+            <div class="ds-title-l ll-pr-head__name" data-pr-subject-name>Эмиль Дружинин</div>
             <div class="ds-caption-m ll-pr-head__status">Сейчас на сайте</div>
           </div>
           <div class="avatar __size-72 __type-image">
-            <img src="https://i.pravatar.cc/144?img=68" data-user-avatar alt="">
+            <img src="https://i.pravatar.cc/144?img=68" data-pr-subject-avatar alt="">
           </div>
         </div>
 
-        <div class="ll-pr-cta">
+        <!-- CTA: чужой профиль (не в друзьях) — primary «Добавить в друзья» + написать + подарок -->
+        <div class="ll-pr-cta" data-cta="stranger">
           <div class="button-wrapper __size-44 __full-width">
-            <button class="button-container __style-primary" style="width:100%;">
-              <span class="button-content">Дружить</span>
+            <button class="button-container __style-primary" data-friend-request>
+              <span class="button-content">
+                <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('assets/icons/user_add_16_20.svg')"></span>
+                <span data-fr-label>Добавить в друзья</span>
+              </span>
             </button>
           </div>
-          <div class="button-circle-wrapper __size-44 __style-secondary">
-            <button class="button-circle" aria-label="Подарок">
-              <img class="ll-icon" src="assets/icons/gift_24.svg" width="24" height="24" alt="">
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Написать сообщение">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/message_24.svg')"></span></span>
             </button>
           </div>
-          <div class="button-circle-wrapper __size-44 __style-secondary">
-            <button class="button-circle" aria-label="Подписаться">
-              <img class="ll-icon" src="assets/icons/follow_24.svg" width="24" height="24" alt="">
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Подарок">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/gift_24.svg')"></span></span>
             </button>
+          </div>
+        </div>
+
+        <!-- CTA: свой профиль — уведомления + настройки + ещё (как в NV-профиле) -->
+        <div class="ll-pr-cta" data-cta="self" hidden>
+          <div class="button-wrapper __size-44 __full-width">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/notifications_24.svg')"></span>
+                Уведомления
+              </span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Настройки">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/settings_24.svg')"></span></span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Ещё">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/more_24.svg')"></span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Общие друзья (только чужой профиль; скрывается после отправки заявки) -->
+        <div class="ll-pr-mutuals" data-mutuals>
+          <div class="avatars-view __size-36">
+            <div class="avatars-view__stack">
+              <div class="avatar __size-36 __type-image"><img data-person-avatar="vvz-1" alt=""></div>
+              <div class="avatar __size-36 __type-image"><img data-person-avatar="vvz-2" alt=""></div>
+              <div class="avatar __size-36 __type-image"><img data-person-avatar="vvz-3" alt=""></div>
+            </div>
+            <span class="avatars-view__text ds-body-m">Общие друзья: <b data-person-name="vvz-1"></b>, <b data-person-name="vvz-2"></b> и ещё 2 друга</span>
           </div>
         </div>
 
         <!-- Возможно, вы знакомы — DS-портлет .vvz-portlet с модификатором __cards-160 (узкие) -->
-        <section class="vvz-portlet" data-dismiss-row aria-label="Возможно, вы знакомы">
+        <section class="vvz-portlet" id="vvzPortlet" data-dismiss-row aria-label="Возможно, вы знакомы" hidden>
           <header class="vvz-portlet__header">
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
             <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
@@ -304,7 +381,7 @@
             <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label ds-title-s">Увлечения</span></span></span></span>
           </button>
           <button class="tab-wrapper __view-primary" role="tab" aria-selected="false">
-            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label ds-title-s">События Александра</span></span></span></span>
+            <span class="inner-wrapper"><span class="tab"><span class="content"><span class="label ds-title-s">События <span data-pr-subject-first>Эмиля</span></span></span></span></span>
           </button>
         </div>
       </div>
@@ -313,7 +390,7 @@
       <section class="ll-pr-empty">
         <div class="ll-pr-empty__art" aria-hidden="true">🗂️</div>
         <div class="ds-title-s ll-pr-empty__title">Пока ничего нет</div>
-        <div class="ds-caption-m ll-pr-empty__hint">Здесь появятся события Эмиля</div>
+        <div class="ds-caption-m ll-pr-empty__hint">Здесь появятся события <span data-pr-subject-first>Эмиля</span></div>
       </section>
 
       <div style="height: 96px"></div>
@@ -334,6 +411,12 @@
         <div class="tabbar__handle"></div>
       </div>
     </div>
+
+    <!-- Тост «Заявка в друзья отправлена» + действие «Отменить» -->
+    <div class="ll-toast" id="profileToast" role="status" aria-live="polite">
+      <span class="ll-toast__text ds-body-m">Заявка в друзья отправлена</span>
+      <button class="ll-toast__action" type="button" data-toast-cancel>Отменить</button>
+    </div>
   </div>
 
   <script src="components/tab.js"></script>
@@ -352,5 +435,100 @@
   </script>
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="components/people-data.js"></script>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       Логика профиля: вид (свой / чужой), маппинг чужого ФИО+авы из
+       URL (?name=&avatar=, открывается тапом по аватарке в ленте) и
+       поток «Добавить в друзья → Заявка отправлена» с тостом.
+
+       Вид: ?view=self|stranger. По умолчанию — stranger, если пришёл
+       ?name (значит открыли чужой профиль), иначе self (свой профиль).
+       ───────────────────────────────────────────────────────────── -->
+  <script>
+  (function () {
+    var qs = new URLSearchParams(location.search);
+    var paramName   = qs.get('name');
+    var paramAvatar = qs.get('avatar');
+    var view = qs.get('view') || (paramName ? 'stranger' : 'self');
+    if (view !== 'self' && view !== 'stranger') view = 'stranger';
+
+    document.body.setAttribute('data-view', view);
+
+    // CTA-ряды: показываем только подходящий виду
+    document.querySelectorAll('.ll-pr-cta').forEach(function (el) {
+      el.hidden = el.getAttribute('data-cta') !== view;
+    });
+
+    var mutuals = document.querySelector('[data-mutuals]');
+    var portlet = document.getElementById('vvzPortlet');
+    var nameEl  = document.querySelector('[data-pr-subject-name]');
+    var avaEl   = document.querySelector('[data-pr-subject-avatar]');
+    var firstEls = document.querySelectorAll('[data-pr-subject-first]');
+
+    function setFirst(name) {
+      var first = (name || '').trim().split(/\s+/)[0];
+      if (!first) return;
+      firstEls.forEach(function (el) { el.textContent = first; });
+    }
+
+    if (view === 'self') {
+      // Свой профиль: данные из DS_USER, общих друзей нет, ВВЗ показан
+      var me = window.DS_USER || {};
+      if (nameEl && me.name) nameEl.textContent = me.name;
+      if (avaEl && me.avatarSrc) { avaEl.src = me.avatarSrc; avaEl.alt = me.name || ''; }
+      setFirst(me.name || (nameEl && nameEl.textContent));
+      if (mutuals) mutuals.hidden = true;
+      if (portlet) portlet.hidden = false;
+    } else {
+      // Чужой профиль: имя/ава из URL (фолбэк — статика), общие друзья видны,
+      // ВВЗ спрятан до отправки заявки
+      if (paramName && nameEl) nameEl.textContent = paramName;
+      if (paramAvatar && avaEl) { avaEl.src = paramAvatar; avaEl.alt = paramName || ''; }
+      setFirst(paramName || (nameEl && nameEl.textContent));
+      if (mutuals) mutuals.hidden = false;
+      if (portlet) portlet.hidden = true;
+    }
+
+    // ── Поток «Добавить в друзья» ──────────────────────────────────
+    var btn   = document.querySelector('[data-friend-request]');
+    var toast = document.getElementById('profileToast');
+    if (btn) {
+      var icon  = btn.querySelector('[data-fr-icon]');
+      var label = btn.querySelector('[data-fr-label]');
+      var toastTimer = null;
+
+      function setSent(sent) {
+        btn.classList.toggle('__style-primary', !sent);
+        btn.classList.toggle('__style-secondary', sent);
+        icon.style.setProperty('--icon-src',
+          "url('assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
+        label.textContent = sent ? 'Заявка отправлена' : 'Добавить в друзья';
+        // отправили заявку → прячем общих друзей, показываем ВВЗ (как в инсте)
+        if (mutuals) mutuals.hidden = sent;
+        if (portlet) portlet.hidden = !sent;
+      }
+      function showToast() {
+        if (!toast) return;
+        toast.classList.add('__show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove('__show'); }, 4000);
+      }
+      function hideToast() {
+        if (!toast) return;
+        clearTimeout(toastTimer);
+        toast.classList.remove('__show');
+      }
+
+      btn.addEventListener('click', function () {
+        var sent = btn.classList.contains('__style-secondary');
+        if (!sent) { setSent(true);  showToast(); }   // отправить заявку
+        else       { setSent(false); hideToast(); }   // повторный тап = отмена
+      });
+
+      var cancel = toast && toast.querySelector('[data-toast-cancel]');
+      if (cancel) cancel.addEventListener('click', function () { setSent(false); hideToast(); });
+    }
+  })();
+  </script>
 </body>
 </html>
