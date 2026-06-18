@@ -91,6 +91,11 @@
   .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-base-secondary); }
   .ll-pr-tabs .tab-wrapper.__view-primary.__selected { background: var(--dynamic-surface-base-quaternary); }
 
+  /* Лента постов в личном профиле (карточки .island на secondary-подложке) */
+  .ll-pr-posts { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3) 0; }
+  .ll-pr-posts[hidden] { display: none; }
+  .ll-pr-empty[hidden] { display: none; }
+
   /* Пустое состояние с картинкой по центру */
   .ll-pr-empty {
     background: var(--dynamic-surface-base-quaternary);
@@ -111,6 +116,12 @@
   .ll-pr-cta { align-items: stretch; }
   .ll-pr-cta[hidden] { display: none; }
 
+  /* Анимированная смена состояния кнопки заявки: фон/цвет «перетекают» 500мс,
+     контент (иконка+текст) кроссфейдится за 2×250мс на стыке состояний. */
+  [data-friend-request] { transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease; }
+  [data-friend-request] .button-content { transition: opacity 250ms ease; }
+  [data-friend-request].__fr-fading .button-content { opacity: 0; }
+
   /* «Общие друзья» — стек аватарок + текст, под CTA */
   .ll-pr-mutuals { padding: 0 var(--space-4) var(--space-4); }
   .ll-pr-mutuals[hidden] { display: none; }
@@ -119,32 +130,6 @@
   .ll-pr-mutuals .avatars-view__text { color: var(--dynamic-text-and-icons-base-secondary); }
   .ll-pr-mutuals .avatars-view__text b { color: var(--dynamic-text-and-icons-base-primary); font-weight: 600; }
 
-  /* Тост «Заявка отправлена» — тёмная пилюля снизу + действие «Отменить» */
-  .ll-toast {
-    position: fixed; left: 50%; bottom: 96px; z-index: 1100;
-    transform: translateX(-50%) translateY(16px);
-    display: flex; align-items: center; gap: var(--space-3);
-    width: calc(100% - 32px); max-width: 448px; box-sizing: border-box;
-    padding: var(--space-3) var(--space-4);
-    border-radius: 14px;
-    background: #1F1F22; color: #fff;
-    box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5);
-    opacity: 0; pointer-events: none;
-    transition: opacity 240ms ease, transform 240ms ease;
-  }
-  .ll-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-  .ll-toast__text { flex: 1 1 auto; min-width: 0; }
-  .ll-toast__action {
-    flex-shrink: 0; appearance: none; border: 0; background: transparent;
-    color: var(--dynamic-text-and-icons-status-accent);
-    font-family: inherit; font-weight: 600; font-size: 15px; line-height: 20px;
-    padding: 0; cursor: pointer;
-  }
-  .ll-toast__action:active { opacity: 0.6; }
-  @media (prefers-reduced-motion: reduce) {
-    .ll-toast { transition: opacity 240ms ease; }
-    .ll-toast.__show { transform: translateX(-50%); }
-  }
 </style>
 </head>
 <body>
@@ -331,11 +316,11 @@
         <div class="ll-pr-info">
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/calendar_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Родился 12 июня</span>
+            <span class="ds-body-m" data-pr-birth>Родился 12 июня</span>
           </div>
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/home_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Живет в Москва</span>
+            <span class="ds-body-m" data-pr-city>Живет в Москва</span>
           </div>
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/follow_16_20.svg" width="16" height="16" alt="">
@@ -364,11 +349,83 @@
         </div>
       </div>
 
-      <!-- Пустое состояние ленты профиля -->
-      <section class="ll-pr-empty">
+      <!-- Пустое состояние ленты профиля (только чужой профиль) -->
+      <section class="ll-pr-empty" data-stranger-empty>
         <div class="ll-pr-empty__art" aria-hidden="true">🗂️</div>
         <div class="ds-title-s ll-pr-empty__title">Пока ничего нет</div>
         <div class="ds-caption-m ll-pr-empty__hint">Здесь появятся события <span data-pr-subject-first>Эмиля</span></div>
+      </section>
+
+      <!-- Посты автора профиля (только личный профиль; автор = my_profile).
+           Тексты — из NV-профиля. data-pr-name/-avatar заполняет user-data.js. -->
+      <section class="ll-pr-posts" data-self-posts hidden>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Анфиса Тимирбаева(Абдуллина)</div>
+              <div class="ds-caption-s text-feed__time">Вчера, 19:30</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Сегодня вся семья собралась за одним столом — дети, внуки и даже младшая правнучка приехала. Смотрю на<span class="text-feed__body-full"> них и понимаю: вот оно, главное богатство. Дом снова полон смеха и детского топота. Сердце радуется ❤️</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">23</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">4</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 87;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Анфиса Тимирбаева(Абдуллина)</div>
+              <div class="ds-caption-s text-feed__time">2 дня назад</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Мой внук Миша закончил школу с золотой медалью! Так горжусь, что слов не хватает. Кажется, только<span class="text-feed__body-full"> вчера вела его за руку в первый класс, а теперь он совсем взрослый и собирается поступать в институт. Расти большим и счастливым, родной 🎓</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">56</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">8</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 142;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-name>Анфиса Тимирбаева(Абдуллина)</div>
+              <div class="ds-caption-s text-feed__time">5 дней назад</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Люблю эти тихие вечера, когда созваниваюсь со всеми детьми по очереди. У каждого своя жизнь, свои<span class="text-feed__body-full"> заботы, но слышать родные голоса — настоящее счастье. Берегите своих близких и почаще говорите им тёплые слова. Время летит так быстро.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">19</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">11</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 64;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
       </section>
 
       <div style="height: 96px"></div>
@@ -390,11 +447,6 @@
       </div>
     </div>
 
-    <!-- Тост «Заявка в друзья отправлена» + действие «Отменить» -->
-    <div class="ll-toast" id="profileToast" role="status" aria-live="polite">
-      <span class="ll-toast__text ds-body-m">Заявка в друзья отправлена</span>
-      <button class="ll-toast__action" type="button" data-toast-cancel>Отменить</button>
-    </div>
   </div>
 
   <script src="components/tab.js"></script>
@@ -415,71 +467,104 @@
   <script src="components/people-data.js"></script>
 
   <!-- ─────────────────────────────────────────────────────────────
-       Профиль другого человека: маппинг ФИО+авы из URL (?name=&avatar=,
-       открывается тапом по аватарке в ленте) и поток «Добавить в друзья
-       → Заявка отправлена» с тостом.
+       Два режима profile.html:
+       • Личный профиль (открыт из меню, без ?name) — данные из my_profile
+         (DS_USER), свои посты, без CTA «Добавить в друзья» и общих друзей.
+       • Чужой профиль (открыт из ленты с ?name=&avatar=) — ФИО/ава из URL,
+         флоу «Добавить в друзья → Заявка отправлена → У вас в друзьях».
        ───────────────────────────────────────────────────────────── -->
   <script>
   (function () {
     var qs = new URLSearchParams(location.search);
     var paramName   = qs.get('name');
     var paramAvatar = qs.get('avatar');
+    var isSelf = !paramName; // без ?name (из меню) — личный профиль
 
     var mutuals = document.querySelector('[data-mutuals]');
     var portlet = document.getElementById('vvzPortlet');
+    var cta     = document.querySelector('.ll-pr-cta');
+    var empty   = document.querySelector('[data-stranger-empty]');
+    var posts   = document.querySelector('[data-self-posts]');
     var nameEl  = document.querySelector('[data-pr-subject-name]');
     var avaEl   = document.querySelector('[data-pr-subject-avatar]');
     var firstEls = document.querySelectorAll('[data-pr-subject-first]');
 
-    // Имя/ава чужого профиля из URL (фолбэк — статика в разметке)
+    if (isSelf) {
+      // Личный профиль: имя/ава из my_profile (DS_USER заполняет user-data.js)
+      var me = window.DS_USER || {};
+      if (me.name && nameEl) nameEl.textContent = me.name;
+      if (me.avatarSrc && avaEl) { avaEl.src = me.avatarSrc; avaEl.alt = me.name || ''; }
+      var selfName = me.name || (nameEl && nameEl.textContent) || '';
+      var selfFirst = selfName.trim().split(/\s+/)[0];
+      if (selfFirst) firstEls.forEach(function (el) { el.textContent = selfFirst; });
+
+      // Инфо-строки из строки my_profile реестра (город/возраст/род)
+      var meRow = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0] || {};
+      var birthEl = document.querySelector('[data-pr-birth]');
+      var cityEl  = document.querySelector('[data-pr-city]');
+      if (birthEl) {
+        var born = (meRow.gender === 'ж' ? 'Родилась' : 'Родился') + ' 12 июня';
+        if (meRow.age) born += ' (' + meRow.age + ' лет)';
+        birthEl.textContent = born;
+      }
+      if (cityEl && meRow.city) cityEl.textContent = 'Живёт в ' + meRow.city;
+
+      if (cta)     cta.hidden = true;      // на своём профиле «Добавить в друзья» не нужно
+      if (mutuals) mutuals.hidden = true;
+      if (portlet) portlet.hidden = true;
+      if (empty)   empty.hidden = true;
+      if (posts)   posts.hidden = false;   // показываем свои посты
+      return;                              // флоу заявки на личном профиле не запускаем
+    }
+
+    // Чужой профиль: ФИО/ава из URL (фолбэк — статика в разметке)
     if (paramName && nameEl) nameEl.textContent = paramName;
     if (paramAvatar && avaEl) { avaEl.src = paramAvatar; avaEl.alt = paramName || ''; }
     var subjName = paramName || (nameEl && nameEl.textContent) || '';
     var first = subjName.trim().split(/\s+/)[0];
     if (first) firstEls.forEach(function (el) { el.textContent = first; });
 
-    // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки
+    // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки, посты скрыты
     if (mutuals) mutuals.hidden = false;
     if (portlet) portlet.hidden = true;
+    if (empty)   empty.hidden = false;
+    if (posts)   posts.hidden = true;
 
-    // ── Поток «Добавить в друзья» ──────────────────────────────────
-    var btn   = document.querySelector('[data-friend-request]');
-    var toast = document.getElementById('profileToast');
+    // ── Поток «Добавить в друзья»: add → (≈500мс) Заявка отправлена → (3с) У вас в друзьях.
+    //    ВВЗ показывается при отправке и НЕ убирается до перезахода на страницу. ──
+    var btn = document.querySelector('[data-friend-request]');
     if (btn) {
       var icon  = btn.querySelector('[data-fr-icon]');
       var label = btn.querySelector('[data-fr-label]');
-      var toastTimer = null;
+      var FADE  = 250; // пол-кроссфейда контента; фон тянется 500мс параллельно
 
-      function setSent(sent) {
-        btn.classList.toggle('__style-primary', !sent);
-        btn.classList.toggle('__style-secondary', sent);
-        icon.style.setProperty('--icon-src',
-          "url('../assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
-        label.textContent = sent ? 'Заявка отправлена' : 'Добавить в друзья';
-        // отправили заявку → прячем общих друзей, показываем ВВЗ (как в инсте)
-        if (mutuals) mutuals.hidden = sent;
-        if (portlet) portlet.hidden = !sent;
-      }
-      function showToast() {
-        if (!toast) return;
-        toast.classList.add('__show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(function () { toast.classList.remove('__show'); }, 4000);
-      }
-      function hideToast() {
-        if (!toast) return;
-        clearTimeout(toastTimer);
-        toast.classList.remove('__show');
+      var STATES = {
+        sent:    { icon: 'user_request_16_20', text: 'Заявка отправлена' },
+        friends: { icon: 'user_added_16_20',   text: 'У вас в друзьях' }
+      };
+
+      // Плавный переход в состояние: гасим контент, на стыке меняем текст/иконку/фон, проявляем.
+      function morph(state) {
+        var s = STATES[state];
+        btn.classList.add('__fr-fading');
+        setTimeout(function () {
+          btn.classList.remove('__style-primary');
+          btn.classList.add('__style-secondary');
+          icon.style.setProperty('--icon-src', "url('../assets/icons/" + s.icon + ".svg')");
+          label.textContent = s.text;
+          btn.classList.remove('__fr-fading');
+        }, FADE);
       }
 
+      var inFlow = false;
       btn.addEventListener('click', function () {
-        var sent = btn.classList.contains('__style-secondary');
-        if (!sent) { setSent(true);  showToast(); }   // отправить заявку
-        else       { setSent(false); hideToast(); }   // повторный тап = отмена
+        if (inFlow) return;                 // флоу одноразовый (сброс — перезаходом на страницу)
+        inFlow = true;
+        morph('sent');                      // → «Заявка отправлена»
+        if (mutuals) mutuals.hidden = true; // прячем общих друзей
+        if (portlet) portlet.hidden = false; // показываем ВВЗ (и не убираем)
+        setTimeout(function () { morph('friends'); }, 3000); // через 3с → «У вас в друзьях»
       });
-
-      var cancel = toast && toast.querySelector('[data-toast-cancel]');
-      if (cancel) cancel.addEventListener('click', function () { setSent(false); hideToast(); });
     }
   })();
   </script>
