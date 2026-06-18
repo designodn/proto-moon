@@ -561,7 +561,7 @@
     // Имя/подпись одинаковы во всех (демо-персона из макета — Ольга Вайнер);
     // различается «хром»: обложка, иконки навбара, CTA, уровень бонсая.
     var VIEWS = {
-      self:     { poured: 3,   level: 1 },
+      self:     { poured: 19,  level: 1 },   // на 1 полив до 2 уровня (порог 20)
       friend:   { poured: 133, level: 5 },
       stranger: { poured: 133, level: 5 }
     };
@@ -722,12 +722,13 @@
         w.querySelector('.ds-body-m').textContent = u.name || 'Вы';
         list.insertBefore(w, list.querySelector('.uni-cell-wrapper'));
       }
-      // счётчик поливов в шторке +1 (полив = человек)
-      var sub = document.querySelector('.nv-gift-status__sub');
-      var m = sub && /(\d+)\D+(\d+)\s*уровень/.exec(sub.textContent);
-      if (m) {
-        var poured = +m[1] + 1, level = +m[2];
-        sub.textContent = poured + ' ' + pluralPour(poured) + ' · ' + level + ' уровень';
+      // шторка синхронно с виджетом (после полива уровень/поливы изменились)
+      var bonsai = document.querySelector('.nv-bonsai');
+      if (bonsai) {
+        syncBonsaiSheet(
+          +bonsai.getAttribute('data-bonsai-level') || 1,
+          +bonsai.getAttribute('data-bonsai-poured') || 0
+        );
       }
     });
 
