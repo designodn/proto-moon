@@ -273,13 +273,15 @@
     var TIMER_SEC = 5;
     function startTimer(wrapper) {
       var btn = wrapper.querySelector('.button-container');
+      var label = btn.querySelector('.button-content');
       wrapper.className = 'button-wrapper __size-28 rf-timer';
       btn.classList.add('__state-timered');
       btn.style.setProperty('--timered-animation-duration', TIMER_SEC + 's');
+      label.textContent = 'Приглашаем';
       setTimeout(function () {
         wrapper.className = 'button-wrapper __size-28 rf-go';
         btn.classList.remove('__state-timered');
-        btn.querySelector('.button-content').textContent = 'Перейти';
+        label.textContent = 'Перейти';
       }, TIMER_SEC * 1000);
     }
 
