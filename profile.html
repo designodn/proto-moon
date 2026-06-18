@@ -12,8 +12,8 @@
 <script src="components/screen-transition.js"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
-  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-primary); }
+  .phone-frame { background: var(--dynamic-surface-base-primary); }
 
   /* «Белая карточка» — секция профиля поверх secondary-фона страницы */
   .ll-pr-card { background: var(--dynamic-surface-base-quaternary); }
@@ -189,6 +189,28 @@
           <div class="button-wrapper __size-44">
             <button class="button-container __style-secondary" aria-label="Подарок">
               <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CTA: личный профиль — Уведомления + Настройки + Ещё (как в NV-профиле) -->
+        <div class="ll-pr-cta" data-cta="self" hidden>
+          <div class="button-wrapper __size-44 __full-width">
+            <button class="button-container __style-secondary">
+              <span class="button-content">
+                <span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/notifications_24.svg')"></span>
+                Уведомления
+              </span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Настройки">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/settings_24.svg')"></span></span>
+            </button>
+          </div>
+          <div class="button-wrapper __size-44">
+            <button class="button-container __style-secondary" aria-label="Ещё">
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/more_24.svg')"></span></span>
             </button>
           </div>
         </div>
@@ -482,7 +504,8 @@
 
     var mutuals = document.querySelector('[data-mutuals]');
     var portlet = document.getElementById('vvzPortlet');
-    var cta     = document.querySelector('.ll-pr-cta');
+    var ctaStranger = document.querySelector('[data-cta="stranger"]');
+    var ctaSelf     = document.querySelector('[data-cta="self"]');
     var empty   = document.querySelector('[data-stranger-empty]');
     var posts   = document.querySelector('[data-self-posts]');
     var nameEl  = document.querySelector('[data-pr-subject-name]');
@@ -509,7 +532,8 @@
       }
       if (cityEl && meRow.city) cityEl.textContent = 'Живёт в ' + meRow.city;
 
-      if (cta)     cta.hidden = true;      // на своём профиле «Добавить в друзья» не нужно
+      if (ctaStranger) ctaStranger.hidden = true;  // прячем «Добавить в друзья»
+      if (ctaSelf)     ctaSelf.hidden = false;     // показываем Уведомления/Настройки/Ещё
       if (mutuals) mutuals.hidden = true;
       if (portlet) portlet.hidden = true;
       if (empty)   empty.hidden = true;
@@ -525,6 +549,8 @@
     if (first) firstEls.forEach(function (el) { el.textContent = first; });
 
     // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки, посты скрыты
+    if (ctaStranger) ctaStranger.hidden = false;
+    if (ctaSelf)     ctaSelf.hidden = true;
     if (mutuals) mutuals.hidden = false;
     if (portlet) portlet.hidden = true;
     if (empty)   empty.hidden = false;
