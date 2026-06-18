@@ -434,10 +434,13 @@
 
   <script>
     // Виджет «Колесо призов» → открытие рулетки.
+    // Прокидываем query текущей страницы (?nv=1), чтобы колесо осталось в том же
+    // прототипе: дальше screen-transition.js сам сохраняет ?nv на всех переходах,
+    // включая «назад».
     (function () {
       var w = document.getElementById('rouletteWidget');
       if (!w) return;
-      function open() { window.location.href = 'koleso/koleso.html'; }
+      function open() { window.location.href = 'koleso/koleso.html' + location.search; }
       w.addEventListener('click', open);
       w.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
