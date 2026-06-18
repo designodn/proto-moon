@@ -74,10 +74,15 @@
 .ds-body-l,
 .ds-body-m,
 .ds-caption-m,
-.ds-caption-m-accent,
-.ds-caption-s,
-.ds-caption-s-accent {
+.ds-caption-s {
   font-family: var(--font-family-content);
+}
+
+/* Акцентные капшены (semibold) → OK Sans Display, как заголовки/акценты.
+   Например чип-тег «Вы давно не общались» (ds-caption-m-accent) в сообщениях. */
+.ds-caption-m-accent,
+.ds-caption-s-accent {
+  font-family: var(--font-family-display);
 }
 
 /* Жирные выделения внутри текста ячеек (имена/акценты) — OK Sans Display.
