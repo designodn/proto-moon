@@ -51,12 +51,16 @@
     'profile.html':  'new-vision/profile.html'
   };
 
-  // Шрифтовая карта NV на общую страницу (на родных NV-страницах она уже есть).
+  // Шрифтовая карта NV + NV-навбар на общую страницу (на родных NV-страницах
+  // они уже есть). nv-navbar.css нужен ради NV-глифа «назад» (.icon.__slot-back);
+  // остальные его правила заскоплены на .nv-feed-nav, которого у q3-навбаров нет.
   if (!onNVPage) {
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = ROOT + 'new-vision/nv-fonts.css';
-    document.head.appendChild(link);
+    ['new-vision/nv-fonts.css', 'components/nv-navbar.css'].forEach(function (href) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = ROOT + href;
+      document.head.appendChild(link);
+    });
   }
 
   /* nvResolve(raw): куда реально вести по NV-правилам.
