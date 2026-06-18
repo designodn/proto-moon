@@ -26,7 +26,7 @@
     nv: {
       platform: 'android',
       wrapper: 'phone-frame__tabbar',
-      home: 'start.html',
+      home: '../new-vision.html',
       tabs: [
         { slot: 'feed',    href: 'lenta.html',       label: 'Лента' },
         { slot: 'tribune', href: '../tribune.html',  label: 'Трибуна' },

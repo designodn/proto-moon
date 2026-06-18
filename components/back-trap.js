@@ -2,10 +2,10 @@
 
    Полезен для прототипа, где «Back из ленты» должен всегда вести на меню,
    какая бы ни была реальная история (например, лента открыта по прямой
-   ссылке, без start.html в стэке).
+   ссылке, без q3-view.html в стэке).
 
    Использование:
-     <script src="components/back-trap.js" data-target="start.html"></script>
+     <script src="components/back-trap.js" data-target="q3-view.html"></script>
 
    Что делает:
    - На загрузке pushState'ит sentinel-state в историю.

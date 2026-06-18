@@ -16,35 +16,136 @@
  * <body> (и defer) опаздывает зарегистрировать listener, и html.nav-back не ставится.
  */
 /* ── New Vision mode ──────────────────────────────────────────────────────
- * Протягивает NV-шрифты на общие q3-страницы (messages, tribune, …), когда
- * навигация идёт в рамках прототипа New Vision.
+ * NV-прототип переиспользует часть q3-страниц (today/messages/tribune/…),
+ * накладывая на них NV-режим. Чтобы режим не «протекал» (и нельзя было
+ * случайно вывалиться в стандартный прототип), вся навигация NV проходит через
+ * ОДИН шлюз: перехватчик кликов в фазе capture + nvResolve().
  *
  * Режим активен, если страница лежит в /new-vision/ ИЛИ в URL есть ?nv=1.
- *  - на общих (не-NV) страницах подмешиваем new-vision/nv-fonts.css;
- *  - проброс ?nv=1 на все локальные .html-ссылки (href и data-href), чтобы
- *    режим сохранялся при переходах вглубь.
+ *  - на общих (не-NV) страницах подмешиваем new-vision/nv-fonts.css и NV-таб-бар;
+ *  - любая локальная .html-навигация остаётся в NV (?nv=1 не теряется);
+ *  - страницы, у которых есть NV-версия (лента/меню/профиль), принудительно
+ *    ведут на неё, а не на стандартные q3-страницы.
  * q3-прототип без ?nv не затрагивается. */
 (function () {
   var onNVPage = location.pathname.indexOf('/new-vision/') !== -1;
   var hasNVParam = /[?&]nv=1(?:&|$)/.test(location.search);
   if (!onNVPage && !hasNVParam) return;
 
+  // Маркер NV-режима на <html> — хук для точечных NV-оверрайдов в CSS страниц
+  // (например .__nv .gp__title на gifts.html, где текст не на ds-* классах).
+  document.documentElement.classList.add('__nv');
+
+  // Корень сайта относительно текущего документа (учитывает суб-путь деплоя):
+  // на NV-странице это всё до '/new-vision/', иначе — папка текущей страницы.
+  var p = location.pathname;
+  var ROOT = p.indexOf('/new-vision/') !== -1
+    ? p.slice(0, p.indexOf('/new-vision/') + 1)
+    : p.slice(0, p.lastIndexOf('/') + 1);
+
+  // Страницы, у которых в NV есть собственная версия → принудительный ремап.
+  var NV_TWIN = {
+    'lenta.html':    'new-vision/lenta.html',
+    'lenta-q3.html': 'new-vision/lenta.html',
+    'menu.html':     'new-vision/menu.html',
+    'profile.html':  'new-vision/profile.html'
+  };
+
   // Шрифтовая карта NV на общую страницу (на родных NV-страницах она уже есть).
   if (!onNVPage) {
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'new-vision/nv-fonts.css';
+    link.href = ROOT + 'new-vision/nv-fonts.css';
     document.head.appendChild(link);
   }
 
-  // Дописать ?nv=1 к локальной .html-ссылке, сохранив существующий query/hash.
+  /* nvResolve(raw): куда реально вести по NV-правилам.
+     Возвращает строку-URL (с ?nv=1, при необходимости ремапнутую на NV-двойника)
+     либо null — если это не локальная .html-навигация и трогать её не нужно. */
+  function nvResolve(raw) {
+    if (!raw || raw.charAt(0) === '#') return null;
+    var u;
+    try { u = new URL(raw, location.href); } catch (e) { return null; }
+    if (u.origin !== location.origin) return null;       // внешняя ссылка
+    if (!/\.html$/.test(u.pathname)) return null;         // не страница
+    var file = u.pathname.split('/').pop();
+    var path;
+    if (u.pathname.indexOf('/new-vision/') !== -1) path = u.pathname;   // уже NV-native
+    else if (NV_TWIN[file]) path = ROOT + NV_TWIN[file];                // ремап на NV-версию
+    else path = u.pathname;                                            // общая q3-страница
+    var search = u.search;
+    if (!/[?&]nv=1(?:[&#]|$)/.test(search)) search = (search ? search + '&' : '?') + 'nv=1';
+    return path + search + u.hash;
+  }
+
+  // Слот таб-бара → логическая цель (относительно корня сайта).
+  var SLOT_ROUTE = {
+    feed:    'new-vision/lenta.html',
+    tribune: 'tribune.html',
+    message: 'messages.html',
+    menu:    'new-vision/menu.html',
+    clip:    '#'
+  };
+
+  function slotOf(el) {
+    var m = el.className.match(/__slot-([a-z]+)/);
+    return m ? m[1] : null;
+  }
+
+  /* Единый перехватчик навигации NV (capture: срабатывает РАНЬШЕ tab-bar.js,
+     ok-tabbar и любых инлайн-обработчиков, поэтому они не могут увести из NV). */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) return;
+    var raw, isTab = false;
+    var tabBtn = e.target.closest('.tabbar-icon');
+    if (tabBtn) {
+      isTab = true;
+      raw = tabBtn.getAttribute('data-href') || SLOT_ROUTE[slotOf(tabBtn)];
+    } else {
+      var navEl = e.target.closest('a[href], [data-href], .tabs-tab');
+      if (!navEl) return;
+      raw = navEl.getAttribute('href') || navEl.getAttribute('data-href');
+    }
+    if (raw === '#') { if (isTab) { e.preventDefault(); e.stopImmediatePropagation(); } return; }
+    var dest = nvResolve(raw);
+    if (!dest) return;                                  // не наша навигация — пропускаем
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (isTab) { try { sessionStorage.setItem('nav-tab', '1'); } catch (_) {} }
+    location.href = dest;
+  }, true);
+
+  /* На заимствованной q3-странице рисуем NV-таб-бар вместо стандартного:
+     подгружаем nv-tabbar.css и подменяем содержимое существующего .tabbar
+     на 5 NV-слотов (роутинг — через перехватчик выше по слотам). */
+  function mountNVTabbar() {
+    var bar = document.querySelector('.tabbar');
+    if (!bar) return;
+
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = ROOT + 'components/nv-tabbar.css';
+    document.head.appendChild(css);
+
+    // Активный слот переносим со старого таб-бара (book → tribune).
+    var active = null, on = bar.querySelector('.tabbar-icon.__state-on');
+    if (on) active = ({ feed: 'feed', book: 'tribune', tribune: 'tribune',
+                        message: 'message', menu: 'menu', clip: 'clip' })[slotOf(on)] || null;
+
+    var SLOTS = ['feed', 'tribune', 'message', 'clip', 'menu'];
+    var LABEL = { feed: 'Лента', tribune: 'Трибуна', message: 'Сообщения', clip: 'Клипы', menu: 'Меню' };
+    var row = SLOTS.map(function (s) {
+      return '<div class="tabbar__cell"><button class="tabbar-icon __slot-' + s +
+             (s === active ? ' __state-on' : '') + '" aria-label="' + LABEL[s] + '"></button></div>';
+    }).join('');
+    bar.className = 'tabbar __platform-android';
+    bar.innerHTML = '<div class="tabbar__row">' + row + '</div><div class="tabbar__handle"></div>';
+  }
+
+  // Дописать ?nv=1 к локальной .html-ссылке (для не-JS переходов и как страховка).
   function withNV(url) {
-    if (!url || url.charAt(0) === '#') return url;
-    if (!/\.html(?:[?#]|$)/.test(url)) return url;
-    if (/[?&]nv=1(?:[&#]|$)/.test(url)) return url;
-    var hash = '', base = url, h = url.indexOf('#');
-    if (h !== -1) { hash = url.slice(h); base = url.slice(0, h); }
-    return base + (base.indexOf('?') !== -1 ? '&' : '?') + 'nv=1' + hash;
+    var dest = nvResolve(url);
+    return dest != null ? dest : url;
   }
   function propagateNV() {
     var nodes = document.querySelectorAll('a[href], [data-href]'), i, el, attr, v;
@@ -54,6 +155,7 @@
       v = el.getAttribute(attr);
       if (v != null) el.setAttribute(attr, withNV(v));
     }
+    if (!onNVPage) mountNVTabbar();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', propagateNV);
   else propagateNV();

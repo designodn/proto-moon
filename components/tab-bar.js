@@ -41,7 +41,7 @@
     }
   });
 
-  /* Home-indicator swipe-up: жест по .tabbar__handle → start.html */
+  /* Home-indicator swipe-up: жест по .tabbar__handle → q3-view.html */
   var handle = document.querySelector('.tabbar__handle');
   if (handle) {
     var sy = 0, dy = 0, dragging = false;
@@ -61,7 +61,7 @@
     function endGesture() {
       if (!dragging) return;
       dragging = false;
-      if (dy < -40) location.href = 'start.html';
+      if (dy < -40) location.href = 'q3-view.html';
     }
     handle.addEventListener('pointerup', endGesture);
     handle.addEventListener('pointercancel', endGesture);

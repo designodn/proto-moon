@@ -976,7 +976,7 @@
 
   <!-- Stack of system push-notifications from «ОК», прилетающих
        пока пользователь листает ленту. Стрим начат на стартовом
-       экране (start.html) и продолжается здесь. -->
+       экране (q3-view.html) и продолжается здесь. -->
   <!-- Системные пуши: декларативный автостарт компонента
        (см. components/system-notifications.js). Достаточно
        этого <div> + подключения JS — на нём настраивается
@@ -985,14 +985,14 @@
   <script src="components/system-notifications.js"></script>
   <!-- Back из ленты всегда возвращает на меню — компонент пушит sentinel
        в историю и перехватывает popstate. Ставим at_home=1, чтобы
-       start.html подхватил это и открылся не на локскрине, а на меню. -->
+       q3-view.html подхватил это и открылся не на локскрине, а на меню. -->
   <script>
     try { sessionStorage.setItem('okstart_at_home', '1'); } catch (e) {}
     document.addEventListener('back-trap:before-navigate', function () {
       try { sessionStorage.setItem('okstart_at_home', '1'); } catch (e) {}
     });
   </script>
-  <script src="components/back-trap.js" data-target="start.html"></script>
+  <script src="components/back-trap.js" data-target="q3-view.html"></script>
   <script src="components/tab-bar.js"></script>
   <script src="components/dismissible.js"></script>
   <script src="components/calendar-date.js"></script>
