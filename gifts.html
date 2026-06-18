@@ -168,7 +168,12 @@
     </div>
   </div>
 
-  <button class="gp__close nav-bar__back" data-href="notifications.html" aria-label="Закрыть">
+  <!-- Шит открыт пушем из notifications (location.href). Закрытие = history.back()
+       (pop), а НЕ переход на notifications.html: иначе в истории копится лишняя
+       запись [notifications → gifts → notifications], и «назад» из оповещений
+       возвращает в уже закрытый шит. Без data-href screen-transition.js делает
+       history.back() — как у обычной навбар-кнопки «назад». -->
+  <button class="gp__close nav-bar__back" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
   </button>
 
