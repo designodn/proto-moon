@@ -1221,5 +1221,37 @@
 <!-- Прячет «Раскрыть/Свернуть», если текст карточки виден целиком -->
 <script src="../components/feed-text.js"></script>
 
+<!-- Клип: тап по mute-индикатору включает/выключает звук видео.
+     Автоплей возможен только с muted; звук появляется по жесту юзера. -->
+<script>
+(function () {
+  var ICON_OFF = "url('../assets/icons/sound_off_24.svg')";
+  var ICON_ON  = "url('../assets/icons/sound_24.svg')";
+
+  document.querySelectorAll('.clip-feed').forEach(function (card) {
+    var video = card.querySelector('.clip-feed__media video');
+    var btn = card.querySelector('.clip-feed__mute');
+    if (!video || !btn) return;
+    var icon = btn.querySelector('.icon');
+
+    function sync() {
+      var muted = video.muted;
+      if (icon) icon.style.setProperty('--icon-src', muted ? ICON_OFF : ICON_ON);
+      btn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
+      btn.setAttribute('aria-pressed', String(!muted));
+    }
+
+    btn.addEventListener('click', function () {
+      video.muted = !video.muted;
+      // при включении звука гарантируем продолжение воспроизведения
+      if (!video.muted) { var p = video.play(); if (p && p.catch) p.catch(function(){}); }
+      sync();
+    });
+
+    sync();
+  });
+})();
+</script>
+
 </body>
 </html>
