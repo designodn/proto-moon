@@ -5,13 +5,15 @@
     "принцип": "Каждая карточка = ОБЁРТКА (article.text-feed.island или спец-класс) + слоты по type. Слот, которого нет в данных → генератор не рисует узел (а не оставляет пустым).",
     "кнопки": "CTA и actions-bar зашиты в шаблон по типу. В данных только числовые счётчики stats и текст особых CTA (повод подарка).",
     "слот_activity": "Опциональный слот ОБЁРТКИ (не привязан к типу): серая строка «почему пост в ленте» над автором, напр. «<b>Борис Фрол</b> поставил класс». Может стоять у любого поста.",
+    "слот_entity": "Флаг обёртки user|self|group (как в NV). group → автор-сообщество: кнопка «Подписаться» в шапке и бейдж «Сообщество» рисуются шаблоном автоматически. «Групповой пост» — это НЕ отдельный тип, а text/photo/gallery с entity:group.",
+    "слот_topComment": "Опциональный слот: один встроенный комментарий под actions-bar ({ name, initials?, color?, avatar?, time, text, likes }). Companion-данные, может висеть у любого text-поста.",
     "автор_inline": "В отличие от NV-ленты, авторы Q3 пока inline (имя + аватар-URL + время), без реестра people.json. Поле authorId зарезервировано на будущее.",
     "медиа": "Слот базового поста (как media в NV feed-base): { kind: none|image|gallery, url | images[] }. Прямые URL картинок/гифок. variant поста (text|photo|gallery) выводится из media.kind. aspect-ratio — дефолт шаблона по числу фото. (У reshare/gift/clip медиа лежит в их собственных под-объектах.)",
     "слот_матрица": {
       "text":           { "author": true, "text": "value+clamp?", "media": "none|image|gallery", "stats": true, "_variants": "text (без медиа) · photo (1 фото) · gallery (N фото) — ОДИН тип, разница только в слоте media. Как feed-base/text|photo|gallery в NV", "_note": "clamp:true прячет хвост текста под «ещё»; text-long и text-gallery — НЕ отдельные типы" },
+      "_group_post":    "НЕ отдельный тип: групповой пост = text + entity:group (+ опц. media, topComment). См. слот_entity.",
       "vvz-portlet":    { "_note": "ряд карточек «Возможно, вы знакомы» + финальная help-карточка; CTA «Дружить» из шаблона" },
       "on-this-day":    { "author": "self", "title": true, "reshareCard": true, "likes": true, "_note": "бейдж «Видите только вы», CTA «Поделиться»" },
-      "group-post":     { "author": "group", "subscribe": true, "text": "clamp", "media": "gallery", "stats": true, "topComment": true },
       "reshare-group":  { "author": true, "reshareFrom": true, "text": true, "media": "image", "stats": true },
       "reshare-post":   { "author": true, "innerPost": true, "stats": true, "_note": "вложенная карточка с бордером: автор+текст(clamp)+медиа" },
       "added-friend":   { "author": true, "text": true, "friend": true, "_note": "friend-row: большой аватар, verified, общие друзья, CTA «Добавить в друзья»" },
@@ -34,10 +36,10 @@
       "колонки": "id · тип · автор · заголовок · текст · фото · лайки · комменты · репосты · тема · рубрика — ТЕ ЖЕ колонки и порядок, что в листе «Посты» NV.",
       "маппинг": {
         "id": "q1, q2 … (ключ поста)",
-        "тип": "text|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip (text+фото = photo/gallery, отдельного типа нет)",
+        "тип": "text|vvz-portlet|on-this-day|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip (text+фото = photo/gallery; text+группа = групповой пост — отдельных типов нет)",
         "ещё": "если в листе нужна отметка длинного текста под «ещё» — служебная колонка/флаг → text.clamp:true (НЕ отдельный тип)",
         "активность": "строка «N поставил класс» (слот_activity) — companion-поле по id, не отдельный тип",
-        "автор": "имя автора (или id из people.json — как в NV); для group-post/reshare — название сообщества",
+        "автор": "имя автора (или id из people.json — как в NV). Если автор — сообщество, пометить entity:group (служебный флаг или id вида group-*) → шаблон даёт «Подписаться» + бейдж «Сообщество»",
         "заголовок": "title (on-this-day, friendversary, tagged-photo, shared-link, повод подарка). Иначе пусто",
         "текст": "тело поста; <br> для абзацев",
         "фото": "ссылки через запятую (галерея/одиночное/медиа клипа/постер)",
@@ -112,11 +114,10 @@
       "likes": { "avatars": [ "https://i.pravatar.cc/96?img=32", "https://i.pravatar.cc/96?img=47", "https://i.pravatar.cc/96?img=23" ], "text": "Понравилось 4 людям" }
     },
     {
-      "id": "q4", "type": "group-post",
+      "id": "q4", "type": "text", "variant": "gallery", "entity": "group",
       "author": { "name": "Super.ru", "avatar": "https://super.ru/apple-touch-icon.png", "time": "12:48" },
-      "subscribe": true,
       "text": { "value": "«Титькастая бестия». Настя Ивлеева заявила о новом этапе в жизни. ...", "clamp": true },
-      "media": [ "https://vki9.okcdn.ru/...ivl1.jpg", "https://vki9.okcdn.ru/...ivl2.jpg" ],
+      "media": { "kind": "gallery", "images": [ "https://vki9.okcdn.ru/...ivl1.jpg", "https://vki9.okcdn.ru/...ivl2.jpg" ] },
       "stats": { "comments": 234, "reshares": 18, "likes": 1247 },
       "topComment": { "name": "Светлана Иванова", "initials": "СИ", "color": "#018DEB", "time": "5 минут назад", "text": "Явилась не запылилась мы не соскучились ужасс", "likes": 12 }
     },
