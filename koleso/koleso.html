@@ -32,19 +32,8 @@
   }
 
   .rl-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
-  /* status-иконки нарисованы тёмным → выбеливаем для оранжевого фона */
-  .rl-status-ico { filter: brightness(0) invert(1); }
 
-  /* ── Хром: статус-бар + навбар ─────────────────────────────────── */
-  .rl-status {
-    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    height: 44px; padding: 8px 24px;
-    color: #fff;
-  }
-  .rl-status__time { font-size: 15px; line-height: 1; font-weight: 600; letter-spacing: -0.3px; }
-  .rl-status__ind { display:flex; align-items:center; gap: 7px; }
-
+  /* ── Хром: навбар (статус-бар отдан реальной ОС) ───────────────── */
   .rl-nav {
     position: absolute; top: 44px; left: 0; right: 0; z-index: 20;
     display: flex; align-items: center; justify-content: space-between;
@@ -185,23 +174,12 @@
     text-align: center; font-size: 13px; line-height: 16px; color: #fff;
   }
   .rl-disclaimer a { color: #fff; text-decoration: underline; }
-  /* home-indicator */
-  .rl-handle { display:flex; justify-content:center; padding: 10px 0 8px; }
-  .rl-handle span { width: 108px; height: 4px; border-radius: 12px; background: rgba(255,255,255,0.9); }
 </style>
 </head>
 <body>
   <div class="rl" data-screen>
 
     <!-- Хром -->
-    <div class="rl-status">
-      <span class="rl-status__time">9:41</span>
-      <span class="rl-status__ind">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-wifi.svg"    width="16" height="12" alt="">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-signal.svg"  width="17" height="12" alt="">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-battery.svg" width="25" height="12" alt="">
-      </span>
-    </div>
     <div class="rl-nav">
       <button class="rl-nav__btn nav-bar__back" aria-label="Назад" data-href="../today.html">
         <img class="rl-icon" src="../assets/icons/arrow_left_24.svg" width="24" height="24" alt="">
@@ -245,7 +223,6 @@
         Нажимая «Крутить колесо», вы соглашаетесь<br>
         с <a href="#" onclick="return false">Условиями&nbsp;акции</a>
       </p>
-      <div class="rl-handle"><span></span></div>
     </div>
   </div>
 
