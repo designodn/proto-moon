@@ -374,6 +374,18 @@
   </div>
 
   <script>
+    // Куда возвращает «Назад»: по умолчанию lenta-light, но вызывающий экран
+    // может задать свой возврат через sessionStorage('klipyBack') — например,
+    // клип из воспоминаний (Q3) → назад в lenta-q3.html. Ключ одноразовый.
+    (function () {
+      var back = document.querySelector('.klipy-back');
+      var target = null;
+      try { target = sessionStorage.getItem('klipyBack'); sessionStorage.removeItem('klipyBack'); } catch (_) {}
+      if (back && target) back.setAttribute('data-href', target);
+    })();
+  </script>
+
+  <script>
     // ВВЗ-карточки — рендерим через DS-фабрику VvzCard (тот же модуль, что
     // и в сториз-вьюере). vvz-card.js подключён с defer и отрабатывает до
     // DOMContentLoaded, поэтому в коллбэке window.VvzCard уже готов (инлайн-

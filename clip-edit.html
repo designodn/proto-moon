@@ -236,7 +236,9 @@
       location.href = 'lenta-q3.html';
     });
     // «Создать клип» → проваливаемся в полноэкранный плеер клипов (леер #208).
+    // Просим плеер вернуть «Назад» в ленту Q3 (одноразовый ключ).
     document.getElementById('ceCreate').addEventListener('click', function () {
+      try { sessionStorage.setItem('klipyBack', 'lenta-q3.html'); } catch (_) {}
       location.href = 'klipy.html';
     });
   </script>
