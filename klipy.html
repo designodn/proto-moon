@@ -375,9 +375,10 @@
 
   <script>
     // ВВЗ-карточки — рендерим через DS-фабрику VvzCard (тот же модуль, что
-    // и в сториз-вьюере). Скрипт подключён с defer, поэтому к этому моменту
-    // window.VvzCard уже доступен.
-    (function () {
+    // и в сториз-вьюере). vvz-card.js подключён с defer и отрабатывает до
+    // DOMContentLoaded, поэтому в коллбэке window.VvzCard уже готов (инлайн-
+    // скрипт без defer выполнился бы раньше внешнего defer — отсюда обёртка).
+    document.addEventListener('DOMContentLoaded', function () {
       var grid = document.querySelector('[data-vvz-grid]');
       if (!grid || !window.VvzCard) return;
       var people = [
@@ -387,7 +388,7 @@
         { name: 'Олег Кравцов',     img: 'https://i.pravatar.cc/200?img=52', mutuals: 3,  m: [11, 2, 9] }
       ];
       grid.innerHTML = people.map(window.VvzCard.render).join('');
-    })();
+    });
 
     // Лайк — переключение outline/filled + правка счётчика (демо).
     document.addEventListener('click', function (e) {
