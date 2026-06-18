@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="index.css">
 <link rel="stylesheet" href="components/system-notifications.css">
 <link rel="stylesheet" href="components/tooltip.css">
-<link rel="stylesheet" href="components/media.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <style>
@@ -788,7 +787,7 @@
             </div>
           </div>
 
-          <div class="clip-feed__mute" aria-hidden="true">🔇</div>
+          <button class="clip-feed__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
 
           <div class="actions-bar clip-feed__actions">
             <div class="button-wrapper __size-36"><button class="button-container __style-on-image"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">23</span></button></div>
@@ -1036,5 +1035,31 @@
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+
+  <!-- Клип: тап по кнопке справа снизу включает/выключает звук (как в NV-клипе). -->
+  <script>
+  (function () {
+    var ICON_OFF = "url('assets/icons/sound_off_24.svg')";
+    var ICON_ON  = "url('assets/icons/sound_24.svg')";
+    document.querySelectorAll('.clip-feed').forEach(function (card) {
+      var video = card.querySelector('.clip-feed__media video');
+      var btn = card.querySelector('.clip-feed__mute');
+      if (!video || !btn) return;
+      var icon = btn.querySelector('.icon');
+      function sync() {
+        var muted = video.muted;
+        if (icon) icon.style.setProperty('--icon-src', muted ? ICON_OFF : ICON_ON);
+        btn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
+        btn.setAttribute('aria-pressed', String(!muted));
+      }
+      btn.addEventListener('click', function () {
+        video.muted = !video.muted;
+        if (!video.muted) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+        sync();
+      });
+      sync();
+    });
+  })();
+  </script>
 </body>
 </html>
