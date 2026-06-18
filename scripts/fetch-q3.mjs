@@ -111,6 +111,22 @@ const personName = id => PEOPLE[String(id)]?.name || '';
 const personPhoto = id => PEOPLE[String(id)]?.photo || '';
 const splitIds = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
 
+/* Подстановка имени: токен «<id>_name» в заголовках/текстах → имя человека из
+ * people.json (только имя — без фамилии и скобок). Так в листе можно писать
+ * «my_profile_name, поздравляем …», а реальное имя проставит скрипт сам.
+ * Ids сортируем по длине убыванием, чтобы длинные («my_profile») матчились
+ * раньше коротких. */
+const firstName = id => personName(id).split(/[ (]/)[0];
+const NAME_IDS = Object.keys(PEOPLE).sort((a, b) => b.length - a.length);
+const resolveNames = str => {
+  let s = String(str ?? '');
+  for (const id of NAME_IDS) {
+    const token = id + '_name';
+    if (s.includes(token)) s = s.split(token).join(firstName(id));
+  }
+  return s;
+};
+
 /* ── helpers разметки ───────────────────────────────────────────────────────── */
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -274,7 +290,9 @@ async function fetchLinkMeta(url) {
 
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
 function renderPost(p, idx) {
-  const { id, type, author, title, text, photos, likes, comments, reshares, link } = p;
+  const { id, type, author, photos, likes, comments, reshares, link } = p;
+  const title = resolveNames(p.title);   // «<id>_name» → имя из people.json
+  const text = resolveNames(p.text);
   const ids = splitIds(author);
   const aid = ids[0];
   const time = TIMES[idx % TIMES.length];
