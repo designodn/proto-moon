@@ -719,6 +719,12 @@
       var snapped = 0;
       var lastSwipeEnd = 0;  // момент конца горизонтального свайпа — гасим ложный click по карточке
 
+      // Карточка «принять всех» — подгоняем высоту под реальную карточку друга
+      // (в ряду они height:auto, фото 300 + инфо + кнопка), чтобы стояла вровень.
+      if (els[8] && els[IDX[0]]) {
+        els[8].style.height = els[IDX[0]].offsetHeight + 'px';
+      }
+
       function symmetricRound(x) {
         return x < 0 ? -Math.round(-x) : Math.round(x);
       }
@@ -727,6 +733,10 @@
         if (animating) return;
         if (dragging) return;
         if (e.target && e.target.closest && e.target.closest('button')) return;
+        // По карточке «Принять всех» drag не стартуем и pointer НЕ захватываем —
+        // иначе setPointerCapture ретаргетит click на сцену и тап по карточке
+        // не доходит до её листенера. Без захвата нативный click срабатывает штатно.
+        if (e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all')) return;
 
         startX = e.clientX;
         startY = e.clientY;
