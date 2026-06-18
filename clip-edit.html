@@ -185,10 +185,10 @@
         </div>
       </div>
 
-      <!-- Нижний CTA -->
+      <!-- Нижний CTA → проваливаемся в полноэкранный плеер клипов (klipy.html) -->
       <div class="ce-cta">
         <div class="button-wrapper __size-44 __full-width">
-          <button class="button-container __style-primary"><span class="button-content">Создать клип</span></button>
+          <button class="button-container __style-primary" id="ceCreate"><span class="button-content">Создать клип</span></button>
         </div>
       </div>
 
@@ -234,6 +234,10 @@
   <script>
     document.getElementById('ceClose').addEventListener('click', function () {
       location.href = 'lenta-q3.html';
+    });
+    // «Создать клип» → проваливаемся в полноэкранный плеер клипов (леер #208).
+    document.getElementById('ceCreate').addEventListener('click', function () {
+      location.href = 'klipy.html';
     });
   </script>
   <script src="components/back-trap.js" data-target="lenta-q3.html"></script>
