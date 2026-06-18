@@ -191,19 +191,19 @@
           <div class="button-wrapper __size-44 __full-width">
             <button class="button-container __style-primary" data-friend-request>
               <span class="button-content">
-                <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('assets/icons/user_add_16_20.svg')"></span>
+                <span class="icon __size-20 __src" data-fr-icon style="--icon-src:url('../assets/icons/user_add_16_20.svg')"></span>
                 <span data-fr-label>Добавить в друзья</span>
               </span>
             </button>
           </div>
           <div class="button-wrapper __size-44">
             <button class="button-container __style-secondary" aria-label="Написать сообщение">
-              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/message_24.svg')"></span></span>
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/message_24.svg')"></span></span>
             </button>
           </div>
           <div class="button-wrapper __size-44">
             <button class="button-container __style-secondary" aria-label="Подарок">
-              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/gift_24.svg')"></span></span>
+              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('../assets/icons/gift_24.svg')"></span></span>
             </button>
           </div>
         </div>
@@ -342,7 +342,7 @@
             <span class="ds-body-m">Подписчики: 18 человек</span>
           </div>
           <div class="ll-pr-info__row __accent __link" role="button" tabindex="0">
-            <span class="icon __size-16 __src ll-pr-info__icon" style="--icon-src:url('assets/icons/info_circle_16_20.svg')"></span>
+            <span class="icon __size-16 __src ll-pr-info__icon" style="--icon-src:url('../assets/icons/info_circle_16_20.svg')"></span>
             <span class="ds-body-m">Вся информация</span>
           </div>
         </div>
@@ -454,7 +454,7 @@
         btn.classList.toggle('__style-primary', !sent);
         btn.classList.toggle('__style-secondary', sent);
         icon.style.setProperty('--icon-src',
-          "url('assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
+          "url('../assets/icons/" + (sent ? 'user_request_16_20' : 'user_add_16_20') + ".svg')");
         label.textContent = sent ? 'Заявка отправлена' : 'Добавить в друзья';
         // отправили заявку → прячем общих друзей, показываем ВВЗ (как в инсте)
         if (mutuals) mutuals.hidden = sent;
