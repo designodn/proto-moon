@@ -288,8 +288,10 @@
 
     // ── Тост ──────────────────────────────────────────────────────
     var toastEl = document.getElementById('toast');
+    var LIMIT_MSG = toastEl.textContent;
     var toastTimer;
-    function showToast() {
+    function showToast(msg) {
+      toastEl.textContent = msg || LIMIT_MSG;
       toastEl.classList.add('__show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
@@ -307,6 +309,25 @@
       var go = e.target.closest('.rf-go');
       if (go) { goToChat(go.closest('.user-cell')); }
     });
+
+    // ── Нативный шеринг ссылки («Поделиться») ─────────────────────
+    var shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function () {
+        var data = {
+          title: 'Колесо призов',
+          text: 'Я играю в Колесо призов — крути и выигрывай! Переходи по ссылке, мы оба получим билет.',
+          url: location.href
+        };
+        if (navigator.share) {
+          navigator.share(data).catch(function () {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(data.url).then(function () {
+            showToast('Ссылка скопирована');
+          }).catch(function () {});
+        }
+      });
+    }
 
     // ── Шторки (правила / как получить билет) ─────────────────────
     function openSheet(el) { el.classList.add('__open'); el.setAttribute('aria-hidden', 'false'); }
