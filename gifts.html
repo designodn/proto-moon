@@ -394,7 +394,18 @@
     // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
     // зазор стал ровно 48. Высота карточки подарка в ряду — 422 (__active).
     var ROW_CARD_H = 422, ROW_HALF = 175, MIN_GAP = 48;
+    var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
     function recenterRow() {
+      if (!BASE) {
+        BASE = {};
+        [1, 2, 3].forEach(function (si) {
+          BASE[si] = {};
+          Object.keys(STATES[si].cards).forEach(function (k) {
+            var c = STATES[si].cards[k];
+            BASE[si][k] = { cx: c.cx, cy: c.cy, s: c.s };
+          });
+        });
+      }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
       var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
       var avail = pageH - titleBottom;
@@ -402,10 +413,28 @@
       if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
-      var cy = titleBottom + avail / 2 - (ROW_CARD_H / 2 - ROW_HALF);
+      var centerY = titleBottom + avail / 2;
+      // Ряд (стейты 2,3): все на rowCy, шаг (cx) сжимаем к центру сетки (180) на s.
+      var rowCy = centerY - (ROW_CARD_H / 2 - ROW_HALF);
       [2, 3].forEach(function (si) {
-        var cards = STATES[si].cards;
-        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; cards[k].s = s; });
+        Object.keys(STATES[si].cards).forEach(function (k) {
+          var c = STATES[si].cards[k], b = BASE[si][k];
+          c.cy = rowCy;
+          c.s = s;
+          c.cx = 180 + (b.cx - 180) * s;
+        });
+      });
+      // Стак-веер (стейт 1): масштабируем размеры и шаг; на низких экранах
+      // дополнительно центрируем веер по вертикали.
+      var b1 = BASE[1], cys = [];
+      Object.keys(b1).forEach(function (k) { cys.push(b1[k].cy); });
+      var cloudC = (Math.min.apply(null, cys) + Math.max.apply(null, cys)) / 2;
+      var cloudCenterY = (s < 1) ? centerY : cloudC;
+      Object.keys(STATES[1].cards).forEach(function (k) {
+        var c = STATES[1].cards[k], b = b1[k];
+        c.cx = 180 + (b.cx - 180) * s;
+        c.cy = cloudCenterY + (b.cy - cloudC) * s;
+        c.s = b.s * s;
       });
     }
     recenterRow();
