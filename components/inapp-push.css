@@ -101,6 +101,27 @@
   -webkit-box-orient: vertical;
 }
 
+/* user-пуш без body (вариант «… подарком ›»): заголовок переносится
+   в 2 строки, как title в __type-ok. */
+.inapp-push.__type-user.__no-body .inapp-push__title {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Шеврон-стрелка справа (glyph_right_24) — DS-глиф 24, в тосте 20px,
+   цвет icon/secondary. Не сжимается. */
+.inapp-push__arrow {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.inapp-push__arrow svg { display: block; width: 20px; height: 20px; }
+
 /* ── Тип «ОК» — иконка в круге + заголовок в 2 строки ───────── */
 .inapp-push.__type-ok .inapp-push__main { gap: 0; }
 .inapp-push.__type-ok .inapp-push__title {

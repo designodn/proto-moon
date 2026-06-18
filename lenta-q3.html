@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="index.css">
 <link rel="stylesheet" href="components/system-notifications.css">
 <link rel="stylesheet" href="components/tooltip.css">
+<link rel="stylesheet" href="components/inapp-push.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <style>
@@ -1161,5 +1162,24 @@
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+
+  <!-- In-app push «Антонина снова в ОК!» — прилетает ВНУТРИ приложения
+       примерно через минуту после старта сессии (delay 60c). Расписание
+       живёт в sessionStorage, поэтому таймер не сбрасывается при переходах
+       между страницами прототипа и срабатывает один раз за сессию. -->
+  <div class="inapp-pushes" id="inappPushes"></div>
+  <script src="components/inapp-push.js"></script>
+  <script>
+    var ll_p5 = (window.DS_PEOPLE && window.DS_PEOPLE.get(5)) || {};
+    OkInApp.setItems([{
+      type:  'user',
+      title: 'Антонина снова в ОК! Порадуйте её подарком',
+      image: ll_p5.photo || 'https://i.pravatar.cc/240?img=31',
+      arrow: true,
+      href:  'gifts-catalog.html',
+      delay: 60000
+    }]);
+    OkInApp.start();
+  </script>
 </body>
 </html>

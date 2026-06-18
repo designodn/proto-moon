@@ -87,6 +87,12 @@
   cursor: grab;
 }
 
+/* Визуальный home-indicator (пилюля) скрыт на всех страницах. Сам хендл
+   (24px-зона свайпа-вверх → home/q3) остаётся живым — прячем только глиф.
+   !important перебивает более специфичные правила iOS/NV (.tabbar.__platform-ios
+   .tabbar__handle::after и .tabbar .tabbar__handle::after). */
+.tabbar__handle::after { display: none !important; }
+
 /* iOS home indicator — пилюля 134×5, центрирована по нижней кромке.
    Скрыта на Android (свайп всё равно ловится, но визуального индикатора нет). */
 .tabbar.__platform-ios .tabbar__handle::after {

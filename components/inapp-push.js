@@ -146,12 +146,21 @@
   }
 
   /* ── Рендер карточки ──────────────────────────────────────── */
-  function renderUserHTML() {
+  // glyph_right_24 (DS «стрелка вправо») — рисуем инлайном с currentColor,
+  // чтобы покрасить в secondary; в Figma-тосте отрисован на 20px.
+  var ARROW_SVG =
+    '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">' +
+      '<path d="M9.1478 6.33938L14.7818 12.0194L9.1508 17.6594C8.6828 18.1294 8.6838 18.8894 9.1518 19.3594C9.6208 19.8294 10.3808 19.8294 10.8488 19.3594L17.3238 12.8694C17.7908 12.3994 17.7918 11.6494 17.3268 11.1794L10.8518 4.64937C10.3848 4.17937 9.6248 4.17937 9.1548 4.64937C8.6848 5.10938 8.6818 5.86937 9.1478 6.33938Z" fill="currentColor"/>' +
+    '</svg>';
+
+  function renderUserHTML(data) {
+    // Без body заголовок переносится в 2 строки (вариант «… подарком ›»).
+    var body = data.body ? '<div class="inapp-push__body ds-body-m"></div>' : '';
     return (
       '<div class="avatar __size-56 __type-image"><img alt=""></div>' +
       '<div class="inapp-push__main">' +
         '<div class="inapp-push__title ds-title-s"></div>' +
-        '<div class="inapp-push__body ds-body-m"></div>' +
+        body +
       '</div>'
     );
   }
@@ -174,12 +183,21 @@
     var isOk = data.type === 'ok';
     var el = document.createElement('div');
     el.className = 'inapp-push ' + (isOk ? '__type-ok' : '__type-user');
-    el.innerHTML = isOk ? renderOkHTML(data) : renderUserHTML();
+    // user-пуш без body → заголовок в 2 строки (модификатор __no-body)
+    if (!isOk && !data.body) el.classList.add('__no-body');
+    el.innerHTML = isOk ? renderOkHTML(data) : renderUserHTML(data);
     el.querySelector('.inapp-push__title').textContent = data.title || '';
     if (!isOk) {
       var bodyEl = el.querySelector('.inapp-push__body');
       if (bodyEl) bodyEl.textContent = data.body || '';
       if (data.image) el.querySelector('.avatar img').src = data.image;
+    }
+    // Шеврон-стрелка справа (glyph_right) — для пушей-CTA «открыть …».
+    if (data.arrow) {
+      var arrow = document.createElement('div');
+      arrow.className = 'inapp-push__arrow';
+      arrow.innerHTML = ARROW_SVG;
+      el.appendChild(arrow);
     }
     b.appendChild(el);
     attachGestures(el, data);
