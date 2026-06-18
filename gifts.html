@@ -34,8 +34,9 @@
   /* Крестик закрытия — у правого края viewport */
   .gp__close {
     position: absolute;
-    top: 67px;
-    right: 13px;
+    /* Равный отступ 12px сверху и справа (статус-бар убран). */
+    top: 12px;
+    right: 12px;
     width: 44px; height: 44px;
     border: 0; padding: 0; background: transparent;
     display: flex; align-items: center; justify-content: center;
@@ -157,17 +158,6 @@
 
 <div class="gp-scene" id="gpScene">
 
-  <div class="meshok-up">
-    <div class="status-bar">
-      <span class="status-bar__time">9:41</span>
-      <span class="status-bar__indicators">
-        <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
-        <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
-        <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
-      </span>
-    </div>
-  </div>
-
   <button class="gp__close nav-bar__back" data-href="notifications.html" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
   </button>
@@ -249,8 +239,6 @@
       </div>
     </article>
   </main>
-
-  <div class="gp__handle"></div>
 
   <div class="gp-confetti" id="gpConfetti" aria-hidden="true"></div>
 
@@ -400,8 +388,31 @@
       IDX.forEach(function (i) { applyCard(els[i], st.cards[i], 0); });
       titleEl.style.top = st.title + 'px';
     }
+
+    // Динамическое центрирование ряда по вертикали между заголовком и низом
+    // экрана (вместо статичного cy). Высота карточки подарка в ряду — 422
+    // (__active). Перекладываем cy в ряд-стейтах 2 (вход) и 3 (покой).
+    var ROW_CARD_H = 422;
+    function recenterRow() {
+      var pageH = window.innerHeight || document.documentElement.clientHeight;
+      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      var cardTop = titleBottom + Math.max(0, (pageH - titleBottom - ROW_CARD_H) / 2);
+      var cy = cardTop + 175;  // 175 — половина базового бокса карточки (350)
+      [2, 3].forEach(function (si) {
+        var cards = STATES[si].cards;
+        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; });
+      });
+    }
+    recenterRow();
+
     applyState(0);
     root.classList.add('__state-1');
+
+    // Пересчёт центрирования при ресайзе/смене ориентации.
+    window.addEventListener('resize', function () {
+      recenterRow();
+      if (current === 2 || current === 3) applyState(current);
+    });
 
     // Предзагружаем lottie-конфетти. Запустим один раз после exit-цепочки
     // «Принять все». Lottie-web подключён ниже как <script>.
@@ -563,7 +574,7 @@
       var snapRaf = null;             // активная rAF снапа
       var GUTTER = 5;
       var snapped = 0;                // последняя зафиксированная позиция
-      var lastSwipeEnd = 0;           // момент конца свайпа — гасим ложный click по карточке
+      var downAcceptAll = false;      // тап начат на карточке «принять все»?
       // Кнопки «Принять» показываем СРАЗУ в ряду (без свайпа).
       var activated = true;
 
@@ -600,10 +611,9 @@
         if (animating) return;
         if (dragging) return;                                  // блок второго пальца
         if (e.target && e.target.closest && e.target.closest('button')) return;
-        // По карточке «принять все» drag не стартуем и pointer НЕ захватываем —
-        // иначе setPointerCapture ретаргетит click на сцену и тап не дойдёт до
-        // листенера карточки. Без захвата нативный click срабатывает штатно.
-        if (e.target && e.target.closest && e.target.closest('.gift-card.__accept-all')) return;
+        // По карточке «принять все» drag РАЗРЕШАЕМ (чтобы листать назад с конца),
+        // а тап по ней ловим в onUp (без свайпа) — см. downAcceptAll.
+        downAcceptAll = !!(e.target && e.target.closest && e.target.closest('.gift-card.__accept-all'));
 
         // Снап НЕ отменяем сразу — это сделает onMove, когда подтвердит,
         // что началось горизонтальное движение. Тап без движения
@@ -673,8 +683,11 @@
         // вышли в vertical-lock (там dragging уже false). Capture-leak'а
         // больше не происходит.
         endDrag();
-        if (!wasLocked) return;   // tap или вертикаль — снап идёт сам собой
-        lastSwipeEnd = performance.now();
+        if (!wasLocked) {
+          // Тап без свайпа по карточке «принять все» → массовое принятие.
+          if (downAcceptAll) runAcceptAll();
+          return;
+        }
         var raw = panOffset / STEP;
         var target = symmetricRound(raw);
         if (target > 0) target = 0;
@@ -787,13 +800,8 @@
       // Возвращаем карточки в стейт 2 (веер), потом ужимаем до стейта 1
       // и уводим вниз за viewport с opacity 0 (STATES[4] / __state-5).
       // Карточка «принять все» (4) гаснет на шаге 1 (o:0 в веере).
-      var acceptAllCard = els[4];
-      if (acceptAllCard && !acceptAllCard.dataset.wired) {
-        acceptAllCard.dataset.wired = '1';
-        acceptAllCard.addEventListener('click', function () {
+      function runAcceptAll() {
           if (animating) return;
-          // Не реагируем на «клик» — хвост горизонтального свайпа.
-          if (performance.now() - lastSwipeEnd < 250) return;
           if (!liveCards.length) return;
           // Останавливаем активный снап + бэйкаем текущий panOffset в
           // STATES[3].cards.cx, чтобы from-снапшот transitionTo был
@@ -822,7 +830,6 @@
               }, 1);
             }
           });
-        });
       }
     }
 

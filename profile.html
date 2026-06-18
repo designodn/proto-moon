@@ -81,9 +81,9 @@
   .ll-pr-tabs {
     --tabs-view-padding-left: var(--space-4);
     --tabs-view-padding-right: var(--space-4);
-    --tabs-view-padding-top: var(--space-3);
-    --tabs-view-padding-bottom: var(--space-3);
-    background: var(--dynamic-surface-base-quaternary);
+    --tabs-view-padding-top: 0;
+    --tabs-view-padding-bottom: 0;
+    background: transparent;
     margin-top: var(--space-2);
   }
   /* «селект-пилюля» — белый фон на secondary-подложке. Достигается через __view-primary,
@@ -91,9 +91,10 @@
   .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-base-secondary); }
   .ll-pr-tabs .tab-wrapper.__view-primary.__selected { background: var(--dynamic-surface-base-quaternary); }
 
-  /* Лента постов в личном профиле (карточки .island на secondary-подложке) */
-  .ll-pr-posts { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) var(--space-3) 0; }
+  /* Лента постов в личном профиле: острова на всю ширину, встык, без скруглений */
+  .ll-pr-posts { display: flex; flex-direction: column; gap: var(--space-1); }
   .ll-pr-posts[hidden] { display: none; }
+  .ll-pr-posts .island { border-radius: 0; }
   .ll-pr-empty[hidden] { display: none; }
 
   /* Пустое состояние с картинкой по центру */

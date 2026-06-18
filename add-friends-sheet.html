@@ -34,8 +34,9 @@
   /* Крестик закрытия — у правого края viewport */
   .fp__close {
     position: absolute;
-    top: 67px;
-    right: 13px;
+    /* Равный отступ 12px сверху и справа (статус-бар убран). */
+    top: 12px;
+    right: 12px;
     width: 44px; height: 44px;
     border: 0; padding: 0; background: transparent;
     display: flex; align-items: center; justify-content: center;
@@ -197,17 +198,6 @@
 <body>
 
 <div class="fp-scene" id="fpScene">
-
-  <div class="meshok-up">
-    <div class="status-bar">
-      <span class="status-bar__time">9:41</span>
-      <span class="status-bar__indicators">
-        <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
-        <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
-        <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
-      </span>
-    </div>
-  </div>
 
   <button class="fp__close nav-bar__back" data-href="lenta-q3.html" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
@@ -419,8 +409,6 @@
     </article>
   </main>
 
-  <div class="fp__handle"></div>
-
   <div class="fp-confetti" id="fpConfetti" aria-hidden="true"></div>
 
 </div>
@@ -622,8 +610,32 @@
       IDX.forEach(function (i) { applyCard(els[i], st.cards[i], 0); });
       titleEl.style.top = st.title + 'px';
     }
+
+    // Динамическое центрирование ряда по вертикали между заголовком и низом
+    // экрана (вместо статичного cy). Считаем от высоты вьюпорта и высоты
+    // карточки в ряду (≈522 — фото 300 + инфо + кнопка). Перекладываем cy в
+    // ряд-стейтах 2 (вход) и 3 (покой), их же использует свайп.
+    var ROW_CARD_H = 522;
+    function recenterRow() {
+      var pageH = window.innerHeight || document.documentElement.clientHeight;
+      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      var cardTop = titleBottom + Math.max(0, (pageH - titleBottom - ROW_CARD_H) / 2);
+      var cy = cardTop + 230;  // 230 — половина базового бокса карточки (460)
+      [2, 3].forEach(function (si) {
+        var cards = STATES[si].cards;
+        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; });
+      });
+    }
+    recenterRow();
+
     applyState(0);
     root.classList.add('__state-1');
+
+    // Пересчёт центрирования при ресайзе/смене ориентации.
+    window.addEventListener('resize', function () {
+      recenterRow();
+      if (current === 2 || current === 3) applyState(current);
+    });
 
     // Предзагружаем lottie-конфетти. Запустим после exit-цепочки.
     var confettiHost = document.getElementById('fpConfetti');
@@ -763,7 +775,7 @@
       var snapRaf = null;
       var GUTTER = 5;
       var snapped = 0;
-      var lastSwipeEnd = 0;  // момент конца горизонтального свайпа — гасим ложный click по карточке
+      var downAcceptAll = false;  // тап начат на карточке «принять всех»?
 
       // Карточка «принять всех» — высота вровень с самой высокой карточкой друга.
       if (els[8]) {
@@ -782,10 +794,9 @@
         if (animating) return;
         if (dragging) return;
         if (e.target && e.target.closest && e.target.closest('button')) return;
-        // По карточке «Принять всех» drag не стартуем и pointer НЕ захватываем —
-        // иначе setPointerCapture ретаргетит click на сцену и тап по карточке
-        // не доходит до её листенера. Без захвата нативный click срабатывает штатно.
-        if (e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all')) return;
+        // По карточке «принять всех» drag РАЗРЕШАЕМ (чтобы листать назад с конца),
+        // а тап по ней ловим в onUp (без свайпа) — см. downAcceptAll.
+        downAcceptAll = !!(e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all'));
 
         startX = e.clientX;
         startY = e.clientY;
@@ -835,8 +846,11 @@
         if (e && pointerId !== null && e.pointerId !== pointerId) return;
         var wasLocked = locked;
         endDrag();
-        if (!wasLocked) return;
-        lastSwipeEnd = performance.now();
+        if (!wasLocked) {
+          // Тап без свайпа по карточке «принять всех» → массовое принятие.
+          if (downAcceptAll) runAcceptAll();
+          return;
+        }
         var raw = panOffset / STEP;
         var target = symmetricRound(raw);
         if (target > 0) target = 0;
@@ -921,13 +935,9 @@
           }
         }
 
-        if (kind === 'dismiss') {
-          flyOut();
-        } else {
-          // Сначала заливка + галочка (как в подарках), затем улёт.
-          el.classList.add('__accepting');
-          setTimeout(flyOut, FILL_DUR);
-        }
+        // Заливка + галочка, затем улёт вверх.
+        el.classList.add('__accepting');
+        setTimeout(flyOut, FILL_DUR);
       }
 
       IDX.forEach(function (i) {
@@ -949,13 +959,8 @@
       // обратно в кружки (CSS-морф по классу __state-2). Шаг 2: кружки
       // схлопываются в комок (state 6). Шаг 3: комок падает вниз, тая
       // (state 5). Карточка «принять всех» (8) гаснет на шаге 1 (o:0 в state 2).
-      var acceptAllCard = els[8];
-      if (acceptAllCard && !acceptAllCard.dataset.wired) {
-        acceptAllCard.dataset.wired = '1';
-        acceptAllCard.addEventListener('click', function () {
+      function runAcceptAll() {
           if (animating) return;
-          // Не реагируем на «клик», который пришёл хвостом горизонтального свайпа.
-          if (performance.now() - lastSwipeEnd < 250) return;
           if (!liveCards.length) return;
           if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
           if (panOffset !== 0) {
@@ -986,7 +991,6 @@
               }, 1);
             }
           });
-        });
       }
     }
 
