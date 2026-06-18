@@ -247,23 +247,23 @@
   <script>
     // ── Призы барабана (картинки из ../assets/koleso) ─────────────
     var PRIZES = [
-      { img: 'new/pic_ozon.png',           c: 'Ozon 10 000 ₽' },
-      { img: 'new/pic_ok_10-1.png',        c: '10 000 ОКов' },
-      { img: 'new/pic_multicooker.png',    c: 'Мультиварка' },
-      { img: 'new/pic_tele.png',           c: 'Телевизор' },
-      { img: 'new/pic_rubies.png',         c: 'Рубины' },
-      { img: 'new/pic_kaspersky_20pr.png', c: 'Kaspersky eSIM −20%' },
-      { img: 'new/pic_shok-cookir.png',    c: 'Fitness Shock −20%' },
-      { img: 'new/pic_all_included_1-1.png', c: 'Всё включено на 1 день' },
-      { img: 'new/pic_invisible_1-1.png',  c: 'Невидимка на 1 день' },
-      { img: 'new/pic_ticket-ruletka.png', c: 'Народный билет' }
+      { img: 'new/pic_ozon.png' },
+      { img: 'new/pic_ok_10-1.png' },
+      { img: 'new/pic_multicooker.png' },
+      { img: 'new/pic_tele.png' },
+      { img: 'new/pic_rubies.png' },
+      { img: 'new/pic_kaspersky_20pr.png' },
+      { img: 'new/pic_shok-cookir.png' },
+      { img: 'new/pic_all_included_1-1.png' },
+      { img: 'new/pic_invisible_1-1.png' },
+      { img: 'new/pic_ticket-ruletka.png' }
     ];
 
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
       el.innerHTML = '<img class="rl-prize__img" src="../assets/koleso/' +
-                     p.img + '" alt="' + p.c + '">';
+                     p.img + '" alt="">';
       return el;
     }
 
