@@ -70,6 +70,22 @@
   font-family: var(--font-family-display);
 }
 
+/* Заголовки header-компонента (.header__title): tokens.css задаёт им шрифт
+   через .header.__size-N .header__title (специфичность 0-2-0, бьёт .ds-title-*),
+   поэтому зеркалим size-селекторы на Display — как для кнопок выше. */
+.header.__size-xl .header__title,
+.header.__size-l  .header__title,
+.header.__size-m  .header__title,
+.header.__size-s  .header__title {
+  font-family: var(--font-family-display);
+}
+
+/* Лейбл таба (tabs-view, .tab-wrapper .label) — типографика title-s; tab.css
+   задаёт его на --font-family (0-2-0), поэтому переводим на Display явно. */
+.tab-wrapper .label {
+  font-family: var(--font-family-display);
+}
+
 /* Тексты публикаций (body/caption) → Roboto */
 .ds-body-l,
 .ds-body-m,
