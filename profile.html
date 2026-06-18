@@ -83,7 +83,12 @@
     --tabs-view-padding-right: var(--space-4);
     --tabs-view-padding-top: 0;
     --tabs-view-padding-bottom: 0;
-    background: transparent;
+    /* Прилипает к верху скролла, затем возвращается в поток. Фон = primary
+       (тот же серый, но непрозрачный) — маскирует посты, проезжающие под ним. */
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--dynamic-surface-base-primary);
     margin-top: var(--space-2);
   }
   /* «селект-пилюля» — белый фон на secondary-подложке. Достигается через __view-primary,
@@ -451,6 +456,78 @@
 
       </section>
 
+      <!-- Посты чужого профиля (автор = человек из ленты; имя/ава —
+           data-pr-subject-*, заполняются в скрипте). Тексты — из ленты. -->
+      <section class="ll-pr-posts" data-stranger-posts hidden>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-subject-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-subject-name>Эмиль Дружинин</div>
+              <div class="ds-caption-s text-feed__time">Вчера, 18:02</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Дача, конец июля. Розы наконец зацвели после пересадки. Делюсь фотками:<span class="text-feed__body-full"> ракурсы разные, чтобы было видно, как они стоят. Год ждали — и вот результат, сами не верим 🌹</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">12</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">3</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 41;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-subject-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-subject-name>Эмиль Дружинин</div>
+              <div class="ds-caption-s text-feed__time">3 дня назад</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Поставили новый счётчик, а расход стал больше обычного. Кто-нибудь<span class="text-feed__body-full"> разбирался, как пересчитать показания? Поделитесь опытом, буду благодарен.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">31</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">2</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 18;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img data-pr-subject-avatar alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s" data-pr-subject-name>Эмиль Дружинин</div>
+              <div class="ds-caption-s text-feed__time">Неделю назад</div>
+            </div>
+          </div></div></div>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Посадили розы на даче вместе с Ольгой. Тогда казалось, что не<span class="text-feed__body-full"> приживутся, а они до сих пор цветут. Иногда лучшее просто требует терпения.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">9</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 27;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+      </section>
+
       <div style="height: 96px"></div>
 
     </div>
@@ -508,17 +585,22 @@
     var ctaStranger = document.querySelector('[data-cta="stranger"]');
     var ctaSelf     = document.querySelector('[data-cta="self"]');
     var empty   = document.querySelector('[data-stranger-empty]');
-    var posts   = document.querySelector('[data-self-posts]');
-    var nameEl  = document.querySelector('[data-pr-subject-name]');
-    var avaEl   = document.querySelector('[data-pr-subject-avatar]');
+    var selfPosts     = document.querySelector('[data-self-posts]');
+    var strangerPosts = document.querySelector('[data-stranger-posts]');
+    var nameEls = document.querySelectorAll('[data-pr-subject-name]');   // шапка + авторы постов
+    var avaEls  = document.querySelectorAll('[data-pr-subject-avatar]');
     var firstEls = document.querySelectorAll('[data-pr-subject-first]');
+
+    function setSubject(name, avatar) {
+      if (name) nameEls.forEach(function (el) { el.textContent = name; });
+      if (avatar) avaEls.forEach(function (el) { el.src = avatar; el.alt = name || ''; });
+    }
 
     if (isSelf) {
       // Личный профиль: имя/ава из my_profile (DS_USER заполняет user-data.js)
       var me = window.DS_USER || {};
-      if (me.name && nameEl) nameEl.textContent = me.name;
-      if (me.avatarSrc && avaEl) { avaEl.src = me.avatarSrc; avaEl.alt = me.name || ''; }
-      var selfName = me.name || (nameEl && nameEl.textContent) || '';
+      setSubject(me.name, me.avatarSrc);
+      var selfName = me.name || (nameEls[0] && nameEls[0].textContent) || '';
       var selfFirst = selfName.trim().split(/\s+/)[0];
       if (selfFirst) firstEls.forEach(function (el) { el.textContent = selfFirst; });
 
@@ -538,24 +620,25 @@
       if (mutuals) mutuals.hidden = true;
       if (portlet) portlet.hidden = true;
       if (empty)   empty.hidden = true;
-      if (posts)   posts.hidden = false;   // показываем свои посты
+      if (strangerPosts) strangerPosts.hidden = true;
+      if (selfPosts)     selfPosts.hidden = false; // показываем свои посты
       return;                              // флоу заявки на личном профиле не запускаем
     }
 
-    // Чужой профиль: ФИО/ава из URL (фолбэк — статика в разметке)
-    if (paramName && nameEl) nameEl.textContent = paramName;
-    if (paramAvatar && avaEl) { avaEl.src = paramAvatar; avaEl.alt = paramName || ''; }
-    var subjName = paramName || (nameEl && nameEl.textContent) || '';
+    // Чужой профиль: ФИО/ава из URL (фолбэк — статика в разметке) — в шапку и в посты
+    setSubject(paramName, paramAvatar);
+    var subjName = paramName || (nameEls[0] && nameEls[0].textContent) || '';
     var first = subjName.trim().split(/\s+/)[0];
     if (first) firstEls.forEach(function (el) { el.textContent = first; });
 
-    // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки, посты скрыты
+    // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки, показываем посты человека
     if (ctaStranger) ctaStranger.hidden = false;
     if (ctaSelf)     ctaSelf.hidden = true;
     if (mutuals) mutuals.hidden = false;
     if (portlet) portlet.hidden = true;
-    if (empty)   empty.hidden = false;
-    if (posts)   posts.hidden = true;
+    if (empty)   empty.hidden = true;
+    if (selfPosts)     selfPosts.hidden = true;
+    if (strangerPosts) strangerPosts.hidden = false;
 
     // ── Поток «Добавить в друзья»: add → (≈500мс) Заявка отправлена → (3с) У вас в друзьях.
     //    ВВЗ показывается при отправке и НЕ убирается до перезахода на страницу. ──
