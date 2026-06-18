@@ -44,6 +44,9 @@
 
   .gift-trigger { cursor: pointer; }
   .gift-trigger:active .notification-cell__title { opacity: 0.6; }
+
+  /* Кликабелен только таб «Все» — остальные пока декоративные */
+  .ll-notifs-tabs .tab-wrapper:not([data-filter="all"]) { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -103,39 +106,27 @@
         </div>
       </div>
 
-      <!-- список оповещений -->
+      <!-- список оповещений (захардкожены) -->
       <div class="ll-notifs-list" id="notifsList">
-
-        <!-- 0. Триггер: подарили 3 подарка → открывает экран gifts.html -->
-        <div class="notification-cell gift-trigger" data-cat="gifts" data-href="gifts.html" role="button" tabindex="0">
-          <div class="avatars-view __size-56">
-            <div class="avatars-view__stack">
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=47" alt=""></div>
-              <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
-            </div>
-          </div>
-          <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title"><b>Виктория, Мария и Дмитрий</b> подарили вам 3 подарка 🎁</div>
-            <div class="ds-caption-m notification-cell__time">сегодня в 13:02</div>
-            <div class="notification-cell__actions">
-              <div class="button-wrapper __size-28"><button class="button-container __style-primary" data-href="gifts.html"><span class="button-content">Принять все</span></button></div>
-            </div>
-          </div>
+        <!-- Баннер: точка входа в шит массового принятия подарков (только таб «Все») -->
+        <div class="accept-banner">
+          <div class="ds-title-s accept-banner__title">У вас несколько новых подарков</div>
+          <div class="ds-body-m accept-banner__subtitle">Можно принять все из них сразу</div>
+          <div class="button-wrapper __size-44 accept-banner__btn"><button class="button-container __style-primary" data-href="gifts.html"><span class="button-content">Принять все</span></button></div>
         </div>
 
-        <!-- 1. Рекомендуемый друг -->
+        <!-- Рекомендуемый друг -->
         <div class="notification-cell" data-cat="friends">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+          <div class="avatar __size-56 __type-image"><img data-person-avatar="7" alt=""></div>
           <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title">Новый рекомендуемый друг: <b>Анна Первомайская</b></div>
+            <div class="ds-body-m notification-cell__title">Новый рекомендуемый друг: <b data-person-name="7"></b></div>
             <div class="ds-caption-m notification-cell__time">сегодня в 12:34</div>
             <div class="notification-cell__mutuals">
               <div class="avatars-view __size-24">
                 <div class="avatars-view__stack">
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img data-person-avatar="1" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img data-person-avatar="4" alt=""></div>
+                  <div class="avatar __size-24 __type-image"><img data-person-avatar="8" alt=""></div>
                 </div>
               </div>
               <span class="ds-caption-m">4 общих друга</span>
@@ -147,72 +138,45 @@
           </div>
         </div>
 
-        <!-- 2. Подарок -->
-        <div class="notification-cell" data-cat="gifts">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LTuMnskCqIRVVNmbIRQm0SyOPKRB5xqO1dDrESkvimyYk1_3Bg6yWFnHdTR3FZ6H0cpIr5ieLa6VEDiSnjOEc3ciYl1SSXw8J7D33_QccAAAAp&dpr=2" alt=""></div>
+        <!-- Администрация группы удалила тему -->
+        <div class="notification-cell" data-cat="groups">
+          <div class="avatar __size-56 __type-image"><img data-person-avatar="group-3" alt=""></div>
           <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title"><b>Мария Маяковская</b> подарила вам подарок 🎁</div>
-            <div class="ds-caption-m notification-cell__time">сегодня в 11:20</div>
+            <div class="ds-body-m notification-cell__title">Администрация группы удалила вашу ранее опубликованную тему</div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 12:34</div>
             <div class="notification-cell__actions">
-              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Подарить в ответ</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Закрыть</span></button></div>
             </div>
           </div>
         </div>
 
-        <!-- 3. Класс -->
+        <!-- Новое видео -->
         <div class="notification-cell" data-cat="other">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
+          <div class="avatar __size-56 __type-image"><img data-person-avatar="8" alt=""></div>
           <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title"><b>Александр Борщицкий</b> и ещё 8 человек оценили ваше фото</div>
-            <div class="ds-caption-m notification-cell__time">вчера в 19:05</div>
+            <div class="ds-body-m notification-cell__title"><b data-person-name="8"></b> добавил новое видео</div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 12:34</div>
+            <div class="notification-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Посмотреть</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Скрыть</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            </div>
           </div>
         </div>
 
-        <!-- 4. Открытка -->
-        <div class="notification-cell" data-cat="gifts">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+        <!-- Приглашение в игру -->
+        <div class="notification-cell" data-cat="games">
+          <div class="avatar __size-56 __type-image"><img data-person-avatar="2" alt=""></div>
           <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title"><b>Евгения Молчанова</b> отправила вам открытку «С добром!»</div>
-            <div class="ds-caption-m notification-cell__time">вчера</div>
-          </div>
-        </div>
-
-        <!-- 5. Подарок -->
-        <div class="notification-cell" data-cat="gifts">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KlPJb2p-6eK2lnJ5zICRbTaNaonSN6tKv9jm9OP4liccV1Jgpm_D-XHaUnT4NuMNnP3vDReRbjjmJ7dZqat-wXAZKU9tVWLrcf8vhMiW0AAAAp&dpr=2" alt=""></div>
-          <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title"><b>Альберт Фёдоров</b> хочет подарить вам подарок</div>
-            <div class="ds-caption-m notification-cell__time">2 дня назад</div>
+            <div class="ds-body-m notification-cell__title"><b data-person-name="2"></b> приглашает в игру <b>Бутылочка</b></div>
+            <div class="ds-caption-m notification-cell__time">сегодня в 12:34</div>
             <div class="notification-cell__actions">
               <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Принять</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Отклонить</span></button></div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
             </div>
           </div>
         </div>
-
-        <!-- 6. Группа -->
-        <div class="notification-cell" data-cat="groups">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
-          <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title">В группе <b>«6 соток»</b> новая запись: «Готовим грядки к зиме»</div>
-            <div class="ds-caption-m notification-cell__time">сегодня в 09:15</div>
-            <div class="notification-cell__actions">
-              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Открыть</span></button></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 7. Игра -->
-        <div class="notification-cell" data-cat="games">
-          <div class="avatar __size-56 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
-          <div class="notification-cell__body">
-            <div class="ds-body-m notification-cell__title">В игре <b>«Зоомир»</b> вас ждёт ежедневный подарок 🎁</div>
-            <div class="ds-caption-m notification-cell__time">вчера в 20:40</div>
-            <div class="notification-cell__actions">
-              <div class="button-wrapper __size-28"><button class="button-container __style-primary"><span class="button-content">Забрать</span></button></div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -281,6 +245,10 @@
   </script>
   <!-- навигация по таббару (feed → лента, message → сообщения) -->
   <script src="components/tab-bar.js"></script>
+
+  <!-- реальные люди (аватарки по data-person-avatar) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
 
   <!-- Триггер: клик по ячейке / клавиатура → переход на gifts.html -->
   <script>

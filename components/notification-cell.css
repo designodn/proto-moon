@@ -60,3 +60,33 @@
   gap: var(--space-2);
   margin-top: var(--space-2);   /* → кнопки: 8px (по Figma) */
 }
+
+/* Картинка-медиа (подарок/превью) — мягкий квадрат */
+.notification-cell__media {
+  margin-top: var(--space-2);
+}
+.notification-cell__media img {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 16px;
+}
+
+/* Чекбокс «Принять как приватный» — нативный input скрыт, бокс рисуем SVG-иконкой */
+.notification-cell__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  cursor: pointer;
+}
+.notification-cell__check-box {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  background: center / contain no-repeat url('../assets/icons/checkbox_off_24.svg');
+}
+.notification-cell__check input:checked + .notification-cell__check-box {
+  background-image: url('../assets/icons/checkbox_24.svg');
+}
+.notification-cell__check span:last-child { color: var(--dynamic-text-and-icons-base-primary); }
