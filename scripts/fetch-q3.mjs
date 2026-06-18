@@ -68,6 +68,9 @@ const COMPANION = {
   },
   // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
   clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
+  // memories-clip: подпись-период на медиа + дефолтное видео, если в листе нет своего.
+  // Подпись («Лето 2026») берём из колонки «text», иначе этот дефолт.
+  'memories-clip': { label: 'Лето 2026', fallbackMedia: 'assets/clips/sable-tepa.mp4' },
 };
 
 // vvz-portlet: подзаголовок каждой карточки (по порядку id из колонки «автор»)
@@ -637,6 +640,44 @@ ${countBtn('comment_16_20.svg', comments, { style: 'on-image' })}
 ${countBtn('reshare_16_20.svg', reshares, { style: 'on-image' })}
 ${klassBtn(likes, { style: 'on-image' })}
 ${moreBtn({ style: 'on-image' })}
+          </div>
+        </article>`;
+    }
+
+    /* ── Клип из воспоминаний — island c full-bleed клипом + оверлеи ──
+       Шапка «Видите только вы» + крупный заголовок, ниже медиа (видео/фото)
+       с подписью-периодом и mute-кнопкой, внизу primary «Поделиться» + «···». */
+    case 'memories-clip': {
+      // Медиа — локальное видео из репы (как clip), либо своё из листа.
+      const src = photos[0] || x.fallbackMedia;
+      const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
+        ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
+        : img(src, 'style="width:100%; height:100%; object-fit:cover; display:block" ');
+      const label = text || x.label || 'Лето 2026';
+      return `        <article class="text-feed island">
+          <div class="ll-otd__caption ds-body-m">
+            ${EYE_SVG}
+            <span>Видите только вы</span>
+          </div>
+          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+
+          <div class="text-feed__media ll-memclip__media">
+            ${visual}
+            <div class="ll-memclip__label ds-title-l">${esc(label)}</div>
+            <button class="ll-memclip__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
+          </div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-44 __full-width">
+              <button class="button-container __style-primary"><span class="button-content">
+                ${SHARE_SVG}Поделиться
+              </span></button>
+            </div>
+            <div class="button-wrapper __size-44 __pinned-end">
+              <button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">
+                ${llIcon('more_16_20.svg')}
+              </span></button>
+            </div>
           </div>
         </article>`;
     }
