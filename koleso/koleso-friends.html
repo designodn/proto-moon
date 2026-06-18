@@ -136,10 +136,21 @@
       <!-- КОНТЕНТ -->
       <div class="rf">
         <button class="rf-banner ds-body-m" id="banner" type="button">
-          <span class="rf-banner__text">Приглашение отправим вашему другу сообщением в чат, вы можете отправить не больше 10 приглашений в день</span>
+          <span class="rf-banner__text">Отправим вашему другу приглашение в чат, можно отправить не больше 10 приглашений в день</span>
         </button>
 
         <div class="rf-list" id="list">
+          <!-- «Друга нет в ОК?» — поделиться ссылкой -->
+          <div class="user-cell">
+            <div class="avatar __size-56 __type-icon"><span class="icon __size-24 __slot-reshare"></span></div>
+            <div class="user-cell__body">
+              <div class="ds-title-s user-cell__title">Друга нет в ОК?</div>
+              <div class="ds-caption-m user-cell__time">Отправьте ссылку</div>
+            </div>
+            <div class="user-cell__actions">
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary" id="share-btn"><span class="button-content">Поделиться</span></button></div>
+            </div>
+          </div>
           <!-- строки друзей вставляются из JS -->
         </div>
       </div>
@@ -204,20 +215,25 @@
     }
 
     var list = document.getElementById('list');
+
+    // Кнопки-состояния ячейки: пригласить → таймер → перейти
+    function inviteBtnHTML() {
+      return '<div class="button-wrapper __size-28 rf-invite"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
+    }
+    function goBtnHTML() {
+      return '<div class="button-wrapper __size-28 rf-go"><button class="button-container __style-primary"><span class="button-content">Перейти</span></button></div>';
+    }
+
     FRIENDS.forEach(function (f) {
       var cell = document.createElement('div');
       cell.className = 'user-cell';
+      cell.dataset.name = f.n;
+      cell.dataset.photo = f.photo || '';
+      // первого друга показываем как уже приглашённого — сразу «Перейти»
       cell.innerHTML =
         '<div class="avatar __size-56 __type-image"><img src="' + esc(f.photo) + '" alt=""></div>' +
         '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + esc(f.n) + '</div></div>' +
-        '<div class="user-cell__actions"></div>';
-      var actions = cell.querySelector('.user-cell__actions');
-      if (f.sent) {
-        actions.innerHTML = '<span class="rf-sent">Отправлено</span>';
-      } else {
-        actions.innerHTML =
-          '<div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
-      }
+        '<div class="user-cell__actions">' + (f.sent ? goBtnHTML() : inviteBtnHTML()) + '</div>';
       list.appendChild(cell);
     });
 
@@ -245,29 +261,73 @@
       return true;
     }
 
-    function markSent(wrapper) {
-      var sent = document.createElement('span');
-      sent.className = 'rf-sent';
-      sent.textContent = 'Отправлено';
-      wrapper.replaceWith(sent);
+    // ── Таймер ожидания после приглашения ────────────────────────
+    var TIMER_SEC = 5;
+    function startTimer(wrapper) {
+      var left = TIMER_SEC;
+      wrapper.className = 'button-wrapper __size-28 rf-timer';
+      wrapper.innerHTML = '<button class="button-container __style-secondary" disabled><span class="button-content">' + left + ' с</span></button>';
+      var span = wrapper.querySelector('.button-content');
+      var t = setInterval(function () {
+        left -= 1;
+        if (left <= 0) {
+          clearInterval(t);
+          wrapper.className = 'button-wrapper __size-28 rf-go';
+          wrapper.innerHTML = '<button class="button-container __style-primary"><span class="button-content">Перейти</span></button>';
+        } else {
+          span.textContent = left + ' с';
+        }
+      }, 1000);
+    }
+
+    // переход в диалог с другом (имя/фото — из data-атрибутов ячейки)
+    function goToChat(cell) {
+      location.href = 'koleso-chat.html?name=' + encodeURIComponent(cell.dataset.name || '') +
+                      '&photo=' + encodeURIComponent(cell.dataset.photo || '');
     }
 
     // ── Тост ──────────────────────────────────────────────────────
     var toastEl = document.getElementById('toast');
+    var LIMIT_MSG = toastEl.textContent;
     var toastTimer;
-    function showToast() {
+    function showToast(msg) {
+      toastEl.textContent = msg || LIMIT_MSG;
       toastEl.classList.add('__show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
     }
 
-    // тап «Пригласить» → «Отправлено» (или тост, если лимит исчерпан)
+    // тап «Пригласить» → таймер (или тост, если лимит исчерпан);
+    // тап «Перейти» → диалог с другом
     list.addEventListener('click', function (e) {
-      var btn = e.target.closest('.button-wrapper.__size-28');
-      if (!btn) return;
-      if (!inviteOne()) { showToast(); return; }
-      markSent(btn);
+      var invite = e.target.closest('.rf-invite');
+      if (invite) {
+        if (!inviteOne()) { showToast(); return; }
+        startTimer(invite);
+        return;
+      }
+      var go = e.target.closest('.rf-go');
+      if (go) { goToChat(go.closest('.user-cell')); }
     });
+
+    // ── Нативный шеринг ссылки («Поделиться») ─────────────────────
+    var shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function () {
+        var data = {
+          title: 'Колесо призов',
+          text: 'Я играю в Колесо призов — крути и выигрывай! Переходи по ссылке, мы оба получим билет.',
+          url: location.href
+        };
+        if (navigator.share) {
+          navigator.share(data).catch(function () {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(data.url).then(function () {
+            showToast('Ссылка скопирована');
+          }).catch(function () {});
+        }
+      });
+    }
 
     // ── Шторки (правила / как получить билет) ─────────────────────
     function openSheet(el) { el.classList.add('__open'); el.setAttribute('aria-hidden', 'false'); }
