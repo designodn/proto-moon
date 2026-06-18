@@ -567,7 +567,8 @@ ${authorHeader(aid, time)}
 
     /* ── Вас отметили на фото — full-bleed media + tooltip ── */
     case 'tagged-photo': {
-      const hero = x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
+      // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
+      const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
       const tag = x.tag || { name: 'Анастасия Кащеева', top: 28, left: 56 };
       return `        <article class="text-feed island">
           <div class="avatar __size-72 __type-image">${img(hero)}</div>
