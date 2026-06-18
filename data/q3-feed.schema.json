@@ -1,0 +1,225 @@
+{
+  "_readme": {
+    "что_это": "КОНТРАКТ модели Q3-ленты (lenta-q3.html). «Расчерчены» все типы карточек по фактической разметке. По этому контракту строится лист «Q3-посты» в гугл-таблице и применятор/генератор разметки.",
+    "источник_разметки": "lenta-q3.html (фид, карточки 1–14 + stories-row + banner)",
+    "принцип": "Каждая карточка = ОБЁРТКА (article.text-feed.island или спец-класс) + слоты по type. Слот, которого нет в данных → генератор не рисует узел (а не оставляет пустым).",
+    "кнопки": "CTA и actions-bar зашиты в шаблон по типу. В данных только числовые счётчики stats и текст особых CTA (повод подарка).",
+    "слот_activity": "Опциональный слот ОБЁРТКИ (не привязан к типу): серая строка «почему пост в ленте» над автором, напр. «<b>Борис Фрол</b> поставил класс». Может стоять у любого поста.",
+    "базовый_text": "Типы text · photo · photo-gallery · video — это ОДИН компонент feed-text (как feed-base в NV). Разные значения «тип» в листе → один шаблон, разница только в слоте media (none|image|gallery|video). clamp и entity работают на всех. text-long и text-gallery в отдельные типы НЕ выделяются.",
+    "слот_entity": "Флаг обёртки user|self|group (как в NV). group → автор-сообщество: кнопка «Подписаться» в шапке и бейдж «Сообщество» рисуются шаблоном автоматически. «Групповой пост» — это НЕ отдельный тип, а text/photo/photo-gallery/video с entity:group.",
+    "слот_topComment": "Опциональный слот: один встроенный комментарий под actions-bar ({ name, initials?, color?, avatar?, time, text, likes }). Companion-данные, может висеть у любого text-поста.",
+    "автор_inline": "В отличие от NV-ленты, авторы Q3 пока inline (имя + аватар-URL + время), без реестра people.json. Поле authorId зарезервировано на будущее.",
+    "медиа": "Слот базового feed-text (как media в NV feed-base): { kind: none|image|gallery|video, url | images[] }. Прямые URL картинок/гифок. Значение «тип» в листе (text/photo/photo-gallery/video) и media.kind связаны 1:1. aspect-ratio — дефолт шаблона по числу фото. (У reshare/gift/clip медиа лежит в их собственных под-объектах.)",
+    "слот_матрица": {
+      "text":           { "author": true, "text": "value+clamp?", "media": "none",    "stats": true, "_note": "база feed-text. clamp:true прячет хвост под «ещё». entity:group → групповой пост" },
+      "photo":          { "author": true, "text": "value+clamp?", "media": "image",   "stats": true, "_note": "тот же feed-text, media.kind=image (1 фото)" },
+      "photo-gallery":  { "author": true, "text": "value+clamp?", "media": "gallery", "stats": true, "_note": "тот же feed-text, media.kind=gallery (N фото)" },
+      "video":          { "author": true, "text": "value+clamp?", "media": "video",   "stats": true, "_note": "тот же feed-text, media.kind=video" },
+      "ad":             { "author": "advertiser", "text": "value+clamp?", "media": "image", "stats": false, "_note": "реклама — как feed-ad в NV 1:1. Автор-рекламодатель inline (name/initials/subtitle «Реклама 0+»), CTA «Перейти» из шаблона, счётчиков нет" },
+      "group-post":     { "author": "group", "text": "value+clamp?", "media": "none|image|gallery", "stats": true, "_note": "значение тип в листе = feed-text + entity:group (автор group-N): «Подписаться» + бейдж «Сообщество» из шаблона. Рендерится базовым feed-text, см. базовый_text" },
+      "vvz-portlet":    { "_note": "ряд карточек «Возможно, вы знакомы» + финальная help-карточка; CTA «Дружить» из шаблона" },
+      "on-this-day":    { "author": "self", "title": true, "reshareCard": true, "likes": true, "_note": "бейдж «Видите только вы», CTA «Поделиться»" },
+      "reshare-group":  { "author": true, "reshareFrom": true, "text": true, "media": "image", "stats": true },
+      "reshare-post":   { "author": true, "innerPost": true, "stats": true, "_note": "вложенная карточка с бордером: автор+текст(clamp)+медиа" },
+      "added-friend":   { "author": true, "text": true, "friend": true, "_note": "friend-row: большой аватар, verified, общие друзья, CTA «Добавить в друзья»" },
+      "shared-link":    { "author": true, "text": true, "link": true, "stats": true },
+      "gift-received":  { "author": true, "gift": true, "_variants": "postcard | gift | ai-gift", "_note": "повод + даритель + медиа; CTA по подвиду (Отправить открытку/подарок / Создать ИИ подарок)" },
+      "friendversary":  { "avatars": 2, "title": true, "text": true, "_note": "спец-класс feed-birthday, CTA «Поздравить друга»" },
+      "tagged-photo":   { "heroAvatar": true, "title": true, "media": "image", "tag": true, "_note": "full-bleed media + tooltip с именем, CTA «Поделиться»" },
+      "clip":           { "author": true, "media": "clip", "stats": true, "_note": "спец-класс clip-feed, 9:16, тёмные actions" }
+    },
+    "поля_автора": {
+      "name": "имя/название (для группы — название сообщества)",
+      "avatar": "URL аватара",
+      "time": "строка времени поста (9:12, «вчера, 18:02», «пн, 12:03»)",
+      "authorId": "ЗАРЕЗЕРВИРОВАНО: ссылка на people.json, если решим унифицировать с NV"
+    },
+    "поля_текста": "{ value, clamp? } — clamp=true прячет хвост (full) под «ещё». В value допускается <br> для абзацев.",
+    "поля_stats": "{ likes, comments, reshares } — как в NV-ленте. likes = счётчик кнопки «класс» в actions-bar.",
+    "лист_гугл_таблицы": {
+      "имя_листа": "Q3-посты (gid 1662648328) — новый лист в той же таблице, что и «Посты» NV: 1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y",
+      "колонки": "id · тип · автор · заголовок · текст · фото (ссылки через запятую) · лайки · комменты · репосты · ссылка. Отличие от NV «Посты»: вместо тема/рубрика — колонка ссылка (для shared-link).",
+      "маппинг": {
+        "id": "post-1, post-2 … (ключ строки; порядок строк = порядок в ленте)",
+        "тип": "text|photo|photo-gallery|video|ad|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip. text/photo/photo-gallery/video — один компонент feed-text (см. базовый_text)",
+        "автор": "id из листа «Люди» (как в NV): число (1,3,6…), my_profile, group-N (сообщество → «Подписаться»+бейдж), vvz-N, ad-N (рекламодатель). Несколько id через запятую — для vvz-portlet (карточки), added-friend / friendversary / gift-received (получатель, даритель)",
+        "заголовок": "title (on-this-day, friendversary, tagged-photo, повод подарка). Иначе пусто",
+        "текст": "тело поста; для shared-link — подводка над превью",
+        "фото": "ссылки через запятую (галерея/одиночное/медиа клипа/постер; для shared-link — картинка превью)",
+        "лайки": "stats.likes (= «класс»)",
+        "комменты": "stats.comments",
+        "репосты": "stats.reshares",
+        "ссылка": "URL для shared-link (link.url). У остальных типов — пусто"
+      },
+      "companion": "Вложенные куски, не влезающие в плоские колонки (link title/desc/domain, gift.from, friend.mutuals/verified, topComment, reshareFrom, варианты подарка, activity, stories-row, banner), держим в объекте COMPANION генератора, привязанными к ТИПУ/id карточки — ровно как EXTRAS в scripts/fetch-feed.mjs. Длинный текст «ещё» (clamp) и entity:group выводятся генератором (clamp — по длине, group — по id автора group-N)."
+    }
+  },
+
+  "stories": {
+    "_comment": "Ряд моментов над фидом. Первый элемент — ваша история (kind:add, viewer не открывается).",
+    "items": [
+      { "kind": "add", "name": "Ваша история", "avatar": "https://i.okcdn.ru/...your.jpg" },
+      { "name": "Лиза", "avatar": "https://i.okcdn.ru/...liza.jpg", "ring": "active", "bday": true, "stories": 1 },
+      { "name": "Алексей", "avatar": "https://i.pravatar.cc/112?img=12", "ring": "active", "stories": 5 },
+      { "name": "Возможно, вы знакомы", "avatar": "assets/icons/vvz_stories.png", "ring": "active", "vvz": true, "stories": 1 },
+      { "name": "Дима", "avatar": "https://i.pravatar.cc/112?img=5", "ring": "active", "stories": 2 },
+      { "name": "Сергей", "avatar": "https://i.pravatar.cc/112?img=9", "ring": "viewed", "stories": 4 },
+      { "name": "Евгения", "avatar": "https://i.pravatar.cc/112?img=23", "ring": "viewed", "stories": 3 }
+    ]
+  },
+
+  "banner": {
+    "_comment": "Картинка-баннер под сторис (опционально). text — подпись поверх.",
+    "text": "Добрый дружеский привет!<br>С пожеланием добра!",
+    "image": null
+  },
+
+  "posts": [
+    {
+      "id": "q1", "type": "text",
+      "author": { "name": "Альбина Чика 🍓🍓🍓🍓", "avatar": "https://i.okcdn.ru/...albina.jpg", "time": "9:12" },
+      "text": { "value": "Открыл сезон, поймал судака на 5 кг. Снасти и точку — в комментариях." },
+      "stats": { "comments": 7, "reshares": 2, "likes": 34 }
+    },
+    {
+      "id": "q2", "type": "text",
+      "activity": "<b>Борис Фрол</b> поставил класс",
+      "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
+      "text": { "value": "Они редко скучают друг с другом: умеют вдохновлять и подталкивать к развитию. Ни один из них не будет «привязывать» партнёра или ограничивать свободу — каждый сам выбирает свой путь, и это здорово.", "clamp": true },
+      "stats": { "comments": 14, "reshares": 73, "likes": 16 }
+    },
+    {
+      "id": "q3", "type": "photo-gallery",
+      "author": { "name": "Евгения Молчанова", "avatar": "https://i.okcdn.ru/...molchanova.jpg", "time": "вчера, 18:02" },
+      "text": { "value": "Дача, конец июля. Розы наконец зацвели после пересадки. Делюсь фотками: ракурсы разные, чтобы было видно, как они стоят.", "clamp": true },
+      "media": { "kind": "gallery", "images": [ "https://vki9.okcdn.ru/...rose1.jpg", "https://vki9.okcdn.ru/...rose2.jpg" ] },
+      "stats": { "comments": 24, "reshares": 5, "likes": 128 }
+    },
+    {
+      "id": "q-ad", "type": "ad", "entity": "group",
+      "author": { "name": "Квартал бизнес-класса «Б15»", "initials": "Б15", "subtitle": "Реклама 0+", "role": "advertiser" },
+      "text": { "value": "От 7,6 млн ₽! 15 минут до исторического центра. 2 варианта отделки.", "clamp": true },
+      "media": { "kind": "image", "url": null }
+    },
+
+    {
+      "id": "q-vvz", "type": "vvz-portlet",
+      "title": "Возможно, вы знакомы",
+      "cards": [
+        { "personId": "vvz-1", "name": "Алёна Ящук", "subtitle": "20 общих друзей" },
+        { "personId": "vvz-2", "name": "Анна Смирнова", "subtitle": "12 общих друзей" },
+        { "personId": "vvz-3", "name": "Александр Фёдоров", "subtitle": "12 общих друзей" },
+        { "personId": "vvz-4", "name": "Мария Иванова", "subtitle": "10 общих друзей" }
+      ]
+    },
+    {
+      "id": "q-otd", "type": "on-this-day",
+      "title": "7 лет назад в этот день",
+      "reshareCard": {
+        "author": { "name": "Вы", "avatar": "https://i.okcdn.ru/...you.jpg" },
+        "text": { "value": "Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут" },
+        "media": "https://vki9.okcdn.ru/...roses.jpg"
+      },
+      "likes": { "avatars": [ "https://i.pravatar.cc/96?img=32", "https://i.pravatar.cc/96?img=47", "https://i.pravatar.cc/96?img=23" ], "text": "Понравилось 4 людям" }
+    },
+    {
+      "id": "q4", "type": "photo-gallery", "entity": "group",
+      "author": { "name": "Super.ru", "avatar": "https://super.ru/apple-touch-icon.png", "time": "12:48" },
+      "text": { "value": "«Титькастая бестия». Настя Ивлеева заявила о новом этапе в жизни. ...", "clamp": true },
+      "media": { "kind": "gallery", "images": [ "https://vki9.okcdn.ru/...ivl1.jpg", "https://vki9.okcdn.ru/...ivl2.jpg" ] },
+      "stats": { "comments": 234, "reshares": 18, "likes": 1247 },
+      "topComment": { "name": "Светлана Иванова", "initials": "СИ", "color": "#018DEB", "time": "5 минут назад", "text": "Явилась не запылилась мы не соскучились ужасс", "likes": 12 }
+    },
+    {
+      "id": "q5", "type": "reshare-group",
+      "author": { "name": "Ирина Кузнецова", "avatar": "https://i.okcdn.ru/...kuznecova.jpg", "time": "пн, 12:03" },
+      "reshareFrom": { "name": "Соседи СПб", "avatar": "https://i.pravatar.cc/128?img=20" },
+      "text": { "value": "Нашли мастера по окнам — рекомендую, цены адекватные, приехал на следующий день после звонка. Контакт скину в личку." },
+      "media": "https://vki9.okcdn.ru/...okna.jpg",
+      "stats": { "comments": 9, "reshares": 4, "likes": 22 }
+    },
+    {
+      "id": "q6", "type": "reshare-post",
+      "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
+      "innerPost": {
+        "author": { "name": "Борис Фрол", "avatar": "https://i.pravatar.cc/128?img=52" },
+        "text": { "value": "Новый день! Ходила в дом культуры на йогу, очень понравилось. Ещё какой-то текст про йогу, дом культуры и хороший день.", "clamp": true },
+        "media": "https://vki9.okcdn.ru/...yoga.jpg"
+      },
+      "stats": { "comments": 14, "reshares": 73, "likes": 16 }
+    },
+    {
+      "id": "q7", "type": "added-friend",
+      "author": { "name": "Александр Миксунов", "avatar": "https://i.okcdn.ru/...miksunov.jpg", "time": "12:48" },
+      "text": { "value": "Добавил в друзья" },
+      "friend": {
+        "name": "Дмитрия Поречина", "verified": true, "avatar": "https://i.okcdn.ru/...porechin.jpg",
+        "subtitle": "20 общих друзей",
+        "mutuals": [ "https://i.pravatar.cc/96?img=32", "https://i.pravatar.cc/96?img=47", "https://i.pravatar.cc/96?img=23" ]
+      }
+    },
+    {
+      "id": "q8", "type": "shared-link",
+      "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
+      "text": { "value": "Ну я крайне не согласен!" },
+      "link": {
+        "url": "https://ok.ru",
+        "image": null,
+        "title": "Социальная сеть Одноклассники. Общение с друзьями в ОК.",
+        "description": "Одноклассники.ру это социальная сеть, где вы можете найти своих старых друзей.",
+        "domain": "Одноклассники | OK.ru"
+      },
+      "stats": { "comments": 14, "reshares": 73, "likes": 16 }
+    },
+    {
+      "id": "q9", "type": "gift-received", "variant": "postcard",
+      "author": { "name": "Александр Миксунов", "avatar": "https://i.okcdn.ru/...miksunov.jpg", "time": "12:48" },
+      "gift": {
+        "caption": "Получил открытку от",
+        "from": { "name": "Александра Москвичева", "avatar": "https://i.pravatar.cc/128?img=44" },
+        "media": "https://vki9.okcdn.ru/...card.jpg"
+      }
+    },
+    {
+      "id": "q10", "type": "gift-received", "variant": "gift",
+      "author": { "name": "Мария Маяковская", "avatar": "https://i.okcdn.ru/...mayak.jpg", "time": "12:48" },
+      "gift": {
+        "caption": "Получила подарок от",
+        "from": { "name": "Александра Москвичева", "avatar": "https://i.pravatar.cc/128?img=44" },
+        "media": "https://i.pinimg.com/originals/...gift.gif"
+      }
+    },
+    {
+      "id": "q11", "type": "gift-received", "variant": "ai-gift",
+      "author": { "name": "Мария Маяковская", "avatar": "https://i.okcdn.ru/...mayak.jpg", "time": "12:48" },
+      "gift": {
+        "caption": "Получила подарок на День сельскохозяйственных строителей от",
+        "from": { "name": "Александра Москвичева", "avatar": "https://i.pravatar.cc/128?img=44" },
+        "media": "https://i.pinimg.com/originals/...ai.gif"
+      }
+    },
+    {
+      "id": "q-fv", "type": "friendversary",
+      "avatars": [ "https://i.pravatar.cc/288?img=49", "https://i.pravatar.cc/288?img=23" ],
+      "title": "Анна, поздравляем с годовщиной дружбы",
+      "text": "Ровно 3 года назад вы добавили Ольгу в друзья OK"
+    },
+    {
+      "id": "q-tag", "type": "tagged-photo",
+      "heroAvatar": "https://i.pravatar.cc/192?img=49",
+      "title": "Вас отметили на фото 2 года назад",
+      "media": "https://images.unsplash.com/photo-1543007631-283050bb3e8c?w=750&q=80",
+      "tag": { "name": "Анастасия Кащеева", "top": 28, "left": 56 }
+    },
+    {
+      "id": "q12", "type": "clip",
+      "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
+      "media": "https://media.tenor.com/...clip.gif",
+      "stats": { "comments": 14, "reshares": 73, "likes": 16 }
+    }
+  ],
+
+  "feeds": {
+    "q3-lenta": ["q1", "q2", "q3", "q-vvz", "q-otd", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q-fv", "q-tag", "q12"]
+  }
+}

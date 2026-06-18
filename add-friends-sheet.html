@@ -53,6 +53,8 @@
     text-align: center;
     font-size: 32px; line-height: 1.2;
     font-weight: 700;
+    /* Заголовок форсированно дисплейным катом OK Sans Display (а не Roboto). */
+    font-family: "OK Sans Display", var(--font-family, sans-serif);
     letter-spacing: 0;
     color: var(--dynamic-text-and-icons-base-primary);
     margin: 0;
@@ -124,30 +126,46 @@
   .fp.__state-3 .friend-big-card,
   .fp.__state-4 .friend-big-card { height: auto; }
 
-  /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0).
-     Появляется в ряду после первого свайпа (флаг __buttons-shown) и больше НЕ
-     исчезает — в т.ч. при доскролле обратно в начало (матчим подарки). При
-     раскрытии карточка подрастает вниз, фото остаётся на месте. */
+  /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
+     кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
+     При раскрытии карточка подрастает вниз, фото остаётся на месте. */
   .friend-big-card__accept {
     opacity: 0; pointer-events: none;
     max-height: 0; padding: 0 16px; overflow: hidden;
     transition: max-height 360ms ease, padding 360ms ease, opacity 320ms ease;
   }
-  .fp.__buttons-shown.__state-3 .friend-big-card__accept,
-  .fp.__buttons-shown.__state-4 .friend-big-card__accept {
+  .fp.__state-3 .friend-big-card__accept,
+  .fp.__state-4 .friend-big-card__accept {
     opacity: 1; pointer-events: auto;
-    max-height: 100px; padding: 12px 16px 16px;
+    max-height: 100px; padding: 20px 16px 16px;  /* 20 — зазор «авы → кнопка» */
   }
 
-  /* Нижний CTA */
-  .fp__bottom {
-    position: absolute; left: 0; right: 0; bottom: 24px;
-    padding: 0 16px;
-    display: flex;
-    z-index: 5;
+  /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
+     Фиксируем высоту 460 даже в ряду (где остальные карточки height:auto) —
+     поэтому селектор со специфичностью стейта. */
+  .friend-big-card.__accept-all,
+  .fp.__state-3 .friend-big-card.__accept-all,
+  .fp.__state-4 .friend-big-card.__accept-all {
+    height: 460px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
   }
-  .fp__bottom .button-wrapper { width: 100%; }
-  .fp__bottom .button-container { width: 100%; }
+  .friend-big-card.__accept-all .friend-big-card__all {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .friend-big-card__all-check { display: block; }
+  .friend-big-card__all-text {
+    color: var(--dynamic-text-and-icons-base-primary);
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+  }
 
   .fp__handle {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -388,15 +406,18 @@
         <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
       </div>
     </article>
-  </main>
 
-  <div class="fp__bottom">
-    <div class="button-wrapper __size-56">
-      <button class="button-container __style-primary" id="fpAcceptAll">
-        <span class="button-content">Дружить со всеми</span>
-      </button>
-    </div>
-  </div>
+    <!-- Последняя карточка «Принять всех» — точка входа в массовое принятие.
+         По тапу запускается схлоп оставшихся карточек + конфетти. -->
+    <article class="friend-big-card __accept-all" data-i="8">
+      <div class="friend-big-card__all">
+        <svg class="friend-big-card__all-check" width="96" height="82" viewBox="0 0 115 98" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4.21094 58.3466C21.0354 69.7613 28.7942 77.2497 39.1654 92.8613C62.8023 51.3892 77.96 31.608 110.211 5.86133" stroke="#F55418" stroke-width="15" stroke-linejoin="bevel"/>
+        </svg>
+        <div class="friend-big-card__all-text">Принять<br>всех друзей</div>
+      </div>
+    </article>
+  </main>
 
   <div class="fp__handle"></div>
 
@@ -405,6 +426,50 @@
 </div>
 
 <script src="components/back-button.js"></script>
+<!-- Реальные люди из листа «Люди» (data/people.js). Берём первых 7 и
+     раскладываем по карточкам data-i 1..7: имя, подпись (возраст, город), фото. -->
+<script src="data/people.js"></script>
+<script>
+  (function () {
+    var people = window.DS_PEOPLE_DATA || [];
+    function ageWord(n) {
+      var a = n % 100;
+      if (a >= 11 && a <= 14) return 'лет';
+      var b = n % 10;
+      if (b === 1) return 'год';
+      if (b >= 2 && b <= 4) return 'года';
+      return 'лет';
+    }
+    function caption(p) {
+      var parts = [];
+      if (p.age != null) parts.push(p.age + ' ' + ageWord(p.age));
+      if (p.city) parts.push(p.city);
+      return parts.join(', ');
+    }
+    var withPhoto = people.filter(function (p) { return p && p.photo; });
+    function randomPhoto() {
+      if (!withPhoto.length) return null;
+      return withPhoto[Math.floor(Math.random() * withPhoto.length)].photo;
+    }
+    for (var i = 0; i < 7; i++) {
+      var p = people[i];
+      if (!p) continue;
+      var card = document.querySelector('.friend-big-card[data-i="' + (i + 1) + '"]');
+      if (!card) continue;
+      var nameEl = card.querySelector('.friend-big-card__name');
+      if (nameEl) nameEl.textContent = p.name;
+      var capEl = card.querySelector('.friend-big-card__caption');
+      if (capEl) capEl.textContent = caption(p);
+      var img = card.querySelector('.friend-big-card__photo img');
+      if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+      // Общие друзья — случайные аватарки из реестра.
+      card.querySelectorAll('.friend-big-card__mutual .avatar img').forEach(function (a) {
+        var ph = randomPhoto();
+        if (ph) { a.src = ph; a.alt = ''; }
+      });
+    }
+  })();
+</script>
 <!-- Lottie-плеер для конфетти на финал «Дружить со всеми». -->
 <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
 <script>
@@ -458,7 +523,8 @@
           4: { cx: 191.25, cy: 468.25, s: 0.30167, r: 0, o: 0 },
           5: { cx: 213.90, cy: 448.90, s: 0.24600, r: 0, o: 0 },
           6: { cx: 191.20, cy: 464.20, s: 0.26800, r: 0, o: 0 },
-          7: { cx: 191.00, cy: 449.00, s: 0.12667, r: 0, o: 0 }
+          7: { cx: 191.00, cy: 449.00, s: 0.12667, r: 0, o: 0 },
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }   // «принять всех» — скрыта в интро
       }},
       // Стейт 2 — РАЗЛЁТ: облако кружков С ЗАЗОРАМИ, без наложений, по центру и
       // в границах экрана (bbox-центр ≈ 180/468). ⌀ слегка уменьшены, чтобы 7
@@ -470,27 +536,31 @@
           4: { cx:  74, cy: 253, s: 0.28000, r: 0, o: 1 },  // ⌀84  (верх-лево)
           5: { cx: 324, cy: 458, s: 0.22000, r: 0, o: 1 },  // ⌀66  (право)
           6: { cx:  74, cy: 603, s: 0.24000, r: 0, o: 1 },  // ⌀72  (низ-лево)
-          7: { cx: 159, cy: 683, s: 0.12000, r: 0, o: 1 }   // ⌀36  (низ-центр)
+          7: { cx: 159, cy: 683, s: 0.12000, r: 0, o: 1 },  // ⌀36  (низ-центр)
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }   // «принять всех» — скрыта в интро
       }},
       // Стейт 3 — в ряд (вход), шаг 316 (300 + gap 16), сдвинут вправо на +109.
+      // cy 480 — ряд центрирован по вертикали (нижняя кнопка убрана).
       { title: 96, cards: {
-          1: { cx:  275, cy: 441, s: 1, r: 0, o: 1 },
-          2: { cx:  591, cy: 441, s: 1, r: 0, o: 1 },
-          3: { cx:  907, cy: 441, s: 1, r: 0, o: 1 },
-          4: { cx: 1223, cy: 441, s: 1, r: 0, o: 1 },
-          5: { cx: 1539, cy: 441, s: 1, r: 0, o: 1 },
-          6: { cx: 1855, cy: 441, s: 1, r: 0, o: 1 },
-          7: { cx: 2171, cy: 441, s: 1, r: 0, o: 1 }
+          1: { cx:  275, cy: 480, s: 1, r: 0, o: 1 },
+          2: { cx:  591, cy: 480, s: 1, r: 0, o: 1 },
+          3: { cx:  907, cy: 480, s: 1, r: 0, o: 1 },
+          4: { cx: 1223, cy: 480, s: 1, r: 0, o: 1 },
+          5: { cx: 1539, cy: 480, s: 1, r: 0, o: 1 },
+          6: { cx: 1855, cy: 480, s: 1, r: 0, o: 1 },
+          7: { cx: 2171, cy: 480, s: 1, r: 0, o: 1 },
+          8: { cx: 2487, cy: 480, s: 1, r: 0, o: 1 }   // «принять всех» — в конце ряда
       }},
       // Стейт 4 — ряд (покой), первая карточка с гаттером 16px (cx 166), шаг 316.
       { title: 96, cards: {
-          1: { cx:  166, cy: 441, s: 1, r: 0, o: 1 },
-          2: { cx:  482, cy: 441, s: 1, r: 0, o: 1 },
-          3: { cx:  798, cy: 441, s: 1, r: 0, o: 1 },
-          4: { cx: 1114, cy: 441, s: 1, r: 0, o: 1 },
-          5: { cx: 1430, cy: 441, s: 1, r: 0, o: 1 },
-          6: { cx: 1746, cy: 441, s: 1, r: 0, o: 1 },
-          7: { cx: 2062, cy: 441, s: 1, r: 0, o: 1 }
+          1: { cx:  166, cy: 480, s: 1, r: 0, o: 1 },
+          2: { cx:  482, cy: 480, s: 1, r: 0, o: 1 },
+          3: { cx:  798, cy: 480, s: 1, r: 0, o: 1 },
+          4: { cx: 1114, cy: 480, s: 1, r: 0, o: 1 },
+          5: { cx: 1430, cy: 480, s: 1, r: 0, o: 1 },
+          6: { cx: 1746, cy: 480, s: 1, r: 0, o: 1 },
+          7: { cx: 2062, cy: 480, s: 1, r: 0, o: 1 },
+          8: { cx: 2378, cy: 480, s: 1, r: 0, o: 1 }   // «принять всех» — в конце ряда
       }},
       // Стейт 5 (exit/drop) — ПЛОТНОЕ падение комком: все кружки сведены в одну
       // точку по центру (cx 180) и падают строго вниз вместе (cy = центр + 650),
@@ -503,7 +573,8 @@
           4: { cx: 180, cy: 1105, s: 0.30167, r: 0, o: 0 },
           5: { cx: 180, cy: 1105, s: 0.24600, r: 0, o: 0 },
           6: { cx: 180, cy: 1105, s: 0.26800, r: 0, o: 0 },
-          7: { cx: 180, cy: 1105, s: 0.12667, r: 0, o: 0 }
+          7: { cx: 180, cy: 1105, s: 0.12667, r: 0, o: 0 },
+          8: { cx: 180, cy: 1105, s: 0.40000, r: 0, o: 0 }
       }},
       // Стейт 6 (collapse) — кружки СХЛОПЫВАЮТСЯ в плотный комок по центру НА МЕСТЕ
       // (все в точку 180, 455), видимы (o:1). Промежуточный бит перед падением:
@@ -515,11 +586,13 @@
           4: { cx: 180, cy: 455, s: 0.30167, r: 0, o: 1 },
           5: { cx: 180, cy: 455, s: 0.24600, r: 0, o: 1 },
           6: { cx: 180, cy: 455, s: 0.26800, r: 0, o: 1 },
-          7: { cx: 180, cy: 455, s: 0.12667, r: 0, o: 1 }
+          7: { cx: 180, cy: 455, s: 0.12667, r: 0, o: 1 },
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }
       }}
     ];
-    // Порядок слева-направо в ряду = 1..7 (card1 — первая видимая, крупный кружок).
-    var IDX = [1, 2, 3, 4, 5, 6, 7];
+    // Порядок слева-направо в ряду = 1..7 (card1 — первая видимая, крупный кружок),
+    // 8 — карточка «принять всех» в самом конце ряда.
+    var IDX = [1, 2, 3, 4, 5, 6, 7, 8];
     var SUCCESS_TOP = 396;  // «Вы подружились со всеми» — между навбаром и кнопкой
 
     var els = {};
@@ -582,7 +655,7 @@
       setTimeout(function () {
         var closeBtn = document.querySelector('.fp__close');
         if (closeBtn) closeBtn.click();
-      }, 2200);
+      }, 2000);
     }
 
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
@@ -679,7 +752,7 @@
       var rowState = STATES[3].cards;
       var STEP = rowState[IDX[1]].cx - rowState[IDX[0]].cx;  // 312
       var firstCx = rowState[IDX[0]].cx;                     // 166 (card1, leftmost)
-      var liveCards = IDX.slice();                           // [1..7], слева-направо
+      var liveCards = IDX.slice();                           // [1..8], слева-направо (8 — «принять всех»)
       var minSnap = -(liveCards.length - 1);
       var processing = {};
 
@@ -690,6 +763,16 @@
       var snapRaf = null;
       var GUTTER = 5;
       var snapped = 0;
+      var lastSwipeEnd = 0;  // момент конца горизонтального свайпа — гасим ложный click по карточке
+
+      // Карточка «принять всех» — высота вровень с самой высокой карточкой друга.
+      if (els[8]) {
+        var maxH = 0;
+        [1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
+          if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
+        });
+        if (maxH) els[8].style.height = maxH + 'px';
+      }
 
       function symmetricRound(x) {
         return x < 0 ? -Math.round(-x) : Math.round(x);
@@ -699,6 +782,10 @@
         if (animating) return;
         if (dragging) return;
         if (e.target && e.target.closest && e.target.closest('button')) return;
+        // По карточке «Принять всех» drag не стартуем и pointer НЕ захватываем —
+        // иначе setPointerCapture ретаргетит click на сцену и тап по карточке
+        // не доходит до её листенера. Без захвата нативный click срабатывает штатно.
+        if (e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all')) return;
 
         startX = e.clientX;
         startY = e.clientY;
@@ -728,14 +815,6 @@
           if (Math.abs(dy) > Math.abs(dx)) { endDrag(); return; }
           if (e.cancelable) e.preventDefault();
           locked = true;
-          // Первый горизонтальный свайп — показываем кнопки «Дружить» на карточках
-          // (дальше класс не снимается, кнопки остаются видимыми до конца списка),
-          // и нижний CTA «Дружить со всеми» делаем серым (вторичным).
-          root.classList.add('__buttons-shown');
-          var allBtn = document.getElementById('fpAcceptAll');
-          if (allBtn && allBtn.classList.contains('__style-primary')) {
-            allBtn.classList.replace('__style-primary', '__style-secondary');
-          }
           if (snapRaf) {
             cancelAnimationFrame(snapRaf);
             snapRaf = null;
@@ -757,6 +836,7 @@
         var wasLocked = locked;
         endDrag();
         if (!wasLocked) return;
+        lastSwipeEnd = performance.now();
         var raw = panOffset / STEP;
         var target = symmetricRound(raw);
         if (target > 0) target = 0;
@@ -789,8 +869,8 @@
       }
 
       // ── ACCEPT («Дружить» на карточке) ─────────────────────
-      // Тап «Дружить» → заливка оранжевым + галочка (UI как в подарках,
-      // класс __accepting) → улёт вверх → ряд сдвигается влево.
+      // Тап «Дружить» → заливка оранжевым + галочка (класс __accepting)
+      // → улёт ВВЕРХ → ряд сдвигается влево.
       function processCard(i) {
         if (processing[i]) return;
         processing[i] = true;
@@ -841,9 +921,13 @@
           }
         }
 
-        // Сначала заливка + галочка (как в подарках), затем улёт.
-        el.classList.add('__accepting');
-        setTimeout(flyOut, FILL_DUR);
+        if (kind === 'dismiss') {
+          flyOut();
+        } else {
+          // Сначала заливка + галочка (как в подарках), затем улёт.
+          el.classList.add('__accepting');
+          setTimeout(flyOut, FILL_DUR);
+        }
       }
 
       IDX.forEach(function (i) {
@@ -851,7 +935,7 @@
         var accBtn = el.querySelector('.friend-big-card__accept .button-container');
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
-          processCard(i);
+          processCard(i, 'accept');
         });
       });
 
@@ -860,15 +944,18 @@
       scene.addEventListener('pointerup', onUp);
       scene.addEventListener('pointercancel', onCancel);
 
-      // ── «Дружить со всеми» (нижний CTA) ────────────────────────
+      // ── «Принять всех» (тап по последней карточке) ─────────────
       // Шаг 1: карточки возвращаются в стейт 2 (разлёт) и сворачиваются
       // обратно в кружки (CSS-морф по классу __state-2). Шаг 2: кружки
-      // падают вниз за viewport, тая (STATES[4]=exit, __state-5).
-      var acceptAllBtn = document.getElementById('fpAcceptAll');
-      if (acceptAllBtn && !acceptAllBtn.dataset.wired) {
-        acceptAllBtn.dataset.wired = '1';
-        acceptAllBtn.addEventListener('click', function () {
+      // схлопываются в комок (state 6). Шаг 3: комок падает вниз, тая
+      // (state 5). Карточка «принять всех» (8) гаснет на шаге 1 (o:0 в state 2).
+      var acceptAllCard = els[8];
+      if (acceptAllCard && !acceptAllCard.dataset.wired) {
+        acceptAllCard.dataset.wired = '1';
+        acceptAllCard.addEventListener('click', function () {
           if (animating) return;
+          // Не реагируем на «клик», который пришёл хвостом горизонтального свайпа.
+          if (performance.now() - lastSwipeEnd < 250) return;
           if (!liveCards.length) return;
           if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
           if (panOffset !== 0) {
