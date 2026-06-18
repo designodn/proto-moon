@@ -41,19 +41,19 @@ const csvUrl =
  * на ТИП карточки. main() разложит их по актуальным id — перенумерация строк
  * в листе ничего не ломает. Дефолты выбраны «разумно по эталону lenta-q3.html». */
 const COMPANION = {
-  // on-this-day: блок «понравилось» под reshare-card (аватары + текст)
+  // on-this-day: блок «понравилось» под reshare-card (аватары — id из people.json)
   'on-this-day': {
     likes: {
-      avatars: ['https://i.pravatar.cc/96?img=32', 'https://i.pravatar.cc/96?img=47', 'https://i.pravatar.cc/96?img=23'],
+      avatars: [3, 5, 7],
       text: 'Понравилось 4 людям',
     },
   },
-  // added-friend: общие друзья добавленного друга (verified + 3 аватара)
+  // added-friend: общие друзья добавленного друга (verified + аватары — id из people.json)
   'added-friend': {
     friend: {
       verified: true,
       subtitle: '20 общих друзей',
-      mutuals: ['https://i.pravatar.cc/96?img=32', 'https://i.pravatar.cc/96?img=47', 'https://i.pravatar.cc/96?img=23'],
+      mutuals: [1, 3, 9],
     },
   },
   // shared-link: title/description превью (домен выводим из host ссылки)
@@ -66,8 +66,8 @@ const COMPANION = {
     heroAvatar: 'https://i.pravatar.cc/192?img=49',
     tag: { name: 'Анастасия Кащеева', top: 28, left: 56 },
   },
-  // clip: дефолтная гифка-клип, если photos пуст
-  clip: { fallbackMedia: 'https://media.tenor.com/rImXojPJZ1IAAAAM/stars-in-the-sky-sparkle.gif' },
+  // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
+  clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
 };
 
 // vvz-portlet: подзаголовок каждой карточки (по порядку id из колонки «автор»)
@@ -162,9 +162,14 @@ function media(photos) {
   if (photos.length === 1) {
     return `          <div class="text-feed__media __single">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`;
   }
-  const cells = photos.map(u =>
-    `            <div class="text-feed__media-cell" style="aspect-ratio: 1">${img(u, 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`).join('\n');
-  return `          <div class="text-feed__media __row">
+  // Галерея — как в NV-ленте: 2-колоночный грид .media.__type-gallery (DS, components/media.css),
+  // максимум 4 ячейки, на 4-й — плашка «Ещё N», если фото больше четырёх.
+  // text-feed__media выводит грид из паддинга карточки (full-bleed).
+  const cells = photos.slice(0, 4).map((u, i) => {
+    const more = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}` : '"';
+    return `            <div class="media__cell${more}>${img(u)}</div>`;
+  }).join('\n');
+  return `          <div class="text-feed__media media __type-gallery">
 ${cells}
           </div>`;
 }
@@ -213,9 +218,11 @@ const VERIFIED_SVG = `<svg class="ll-badge-verified" width="16" height="16" view
                   </svg>`;
 
 /** Стек аватаров (avatars-view) по списку URL. */
-function avatarsStack(urls, extraClass = '') {
-  const stack = urls.map(u =>
-    `                <div class="avatar __size-36 __type-image">${img(u)}</div>`).join('\n');
+// Стопка аватаров. На вход — id людей из people.json: рендерим через
+// data-person-avatar (резолвит components/people-data.js), как avatars-view в NV.
+function avatarsStack(ids, extraClass = '') {
+  const stack = ids.map(id =>
+    `                <div class="avatar __size-36 __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`).join('\n');
   return `            <div class="avatars-view __size-36${extraClass ? ' ' + extraClass : ''}">
               <div class="avatars-view__stack">
 ${stack}
@@ -226,6 +233,43 @@ ${stack}
 function linkDomain(url) {
   try { return new URL(url).host.replace(/^www\./, ''); }
   catch { return ''; }
+}
+
+/** content атрибут <meta property|name="KEY">, устойчиво к порядку атрибутов. */
+function metaContent(html, key) {
+  const keyRe = new RegExp(`(?:property|name)=["']${escRe(key)}["']`, 'i');
+  const m = html.match(new RegExp(`<meta\\b[^>]*>`, 'gi')) || [];
+  for (const tag of m) {
+    if (keyRe.test(tag)) {
+      const c = tag.match(/content=["']([^"']*)["']/i);
+      if (c && c[1].trim()) return c[1].trim();
+    }
+  }
+  return '';
+}
+
+/** Тянет заголовок + первый абзац (описание) статьи по ссылке (og: → twitter: →
+ *  <title>/meta description). Возвращает {title, description} или null. */
+async function fetchLinkMeta(url) {
+  const decode = s => s
+    .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ').replace(/&laquo;/g, '«').replace(/&raquo;/g, '»')
+    .replace(/&mdash;/g, '—').replace(/&ndash;/g, '–')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  try {
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(15000),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; proto-moon/1.0)' },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    let title = metaContent(html, 'og:title') || metaContent(html, 'twitter:title');
+    if (!title) { const t = html.match(/<title[^>]*>([^<]+)<\/title>/i); title = t ? t[1].trim() : ''; }
+    let description = metaContent(html, 'og:description')
+      || metaContent(html, 'description') || metaContent(html, 'twitter:description');
+    title = decode(title); description = decode(description);
+    return (title || description) ? { title, description } : null;
+  } catch { return null; }
 }
 
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
@@ -265,7 +309,7 @@ ${feedText(text)}
 ${media(photos)}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width" style="display:block">
-              <button class="button-container __style-secondary" style="width:100%"><span class="button-content">Перейти</span></button>
+              <button class="button-container __style-primary" style="width:100%"><span class="button-content">Перейти</span></button>
             </div>
           </div>
         </article>`;
@@ -443,8 +487,8 @@ ${feedText(text)}
           <a class="text-feed__reshare-card" href="${esc(href)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
 ${preview}
             <div class="text-feed__link">
-              <div class="ds-title-m">${esc(x.title || domain)}</div>
-              <div class="ds-body-m">${esc(x.description || '')}</div>
+              <div class="ds-title-m">${esc(p.linkMeta?.title || x.title || domain)}</div>
+              <div class="ds-body-m">${esc(p.linkMeta?.description || x.description || '')}</div>
               <div class="ds-caption-m">${esc(domain)}</div>
             </div>
           </a>
@@ -550,9 +594,14 @@ ${authorHeader(aid, time)}
 
     /* ── Клип — full-bleed 9:16 с тёмными actions-overlay ── */
     case 'clip': {
+      // Видео клипа — локальный файл из репы (как clip-feed в NV-ленте).
+      // Если в листе дали свою ссылку на видео — используем её, иначе дефолт.
       const src = photos[0] || x.fallbackMedia;
+      const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
+        ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
+        : img(src);
       return `        <article class="clip-feed">
-          <div class="clip-feed__media">${img(src)}</div>
+          <div class="clip-feed__media">${visual}</div>
 
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
@@ -635,6 +684,16 @@ async function main() {
         reshares: (c[8] || '').trim(),
         link: (c[9] || '').trim(),
       });
+    }
+
+    // shared-link: тянем заголовок + первый абзац прямо со страницы (og:/title),
+    // кладём в post.linkMeta — попадёт в json и переживёт офлайн-реген.
+    for (const p of posts) {
+      if (p.type === 'shared-link' && p.link) {
+        const meta = await fetchLinkMeta(p.link);
+        if (meta) { p.linkMeta = meta; console.log(`  ↳ ${p.id}: «${meta.title}»`); }
+        else console.warn(`  ⚠️  ${p.id}: не удалось прочитать мету ${p.link} — оставляю заглушку`);
+      }
     }
 
     writeFileSync(resolve(ROOT, 'data/q3-feed.json'),
