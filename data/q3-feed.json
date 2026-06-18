@@ -91,7 +91,9 @@
       "author": "my_profile",
       "title": "7 лет назад в этот день",
       "text": "Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут",
-      "photos": [],
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200"
+      ],
       "likes": "",
       "comments": "",
       "reshares": "",
@@ -194,7 +196,7 @@
     {
       "id": "post-15",
       "type": "tagged-photo",
-      "author": "",
+      "author": "my_profile",
       "title": "Вас отметили на фото 2 года назад",
       "text": "",
       "photos": [

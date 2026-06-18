@@ -166,8 +166,8 @@ function media(photos) {
   // максимум 4 ячейки, на 4-й — плашка «Ещё N», если фото больше четырёх.
   // text-feed__media выводит грид из паддинга карточки (full-bleed).
   const cells = photos.slice(0, 4).map((u, i) => {
-    const more = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}` : '"';
-    return `            <div class="media__cell${more}>${img(u)}</div>`;
+    const attrs = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}"` : '"';
+    return `            <div class="media__cell${attrs}>${img(u)}</div>`;
   }).join('\n');
   return `          <div class="text-feed__media media __type-gallery">
 ${cells}
@@ -567,7 +567,8 @@ ${authorHeader(aid, time)}
 
     /* ── Вас отметили на фото — full-bleed media + tooltip ── */
     case 'tagged-photo': {
-      const hero = x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
+      // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
+      const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
       const tag = x.tag || { name: 'Анастасия Кащеева', top: 28, left: 56 };
       return `        <article class="text-feed island">
           <div class="avatar __size-72 __type-image">${img(hero)}</div>
