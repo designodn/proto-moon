@@ -316,11 +316,11 @@
         <div class="ll-pr-info">
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/calendar_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Родился 12 июня</span>
+            <span class="ds-body-m" data-pr-birth>Родился 12 июня</span>
           </div>
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/home_16_20.svg" width="16" height="16" alt="">
-            <span class="ds-body-m">Живет в Москва</span>
+            <span class="ds-body-m" data-pr-city>Живет в Москва</span>
           </div>
           <div class="ll-pr-info__row">
             <img class="ll-pr-info__icon" src="assets/icons/follow_16_20.svg" width="16" height="16" alt="">
@@ -497,6 +497,17 @@
       var selfName = me.name || (nameEl && nameEl.textContent) || '';
       var selfFirst = selfName.trim().split(/\s+/)[0];
       if (selfFirst) firstEls.forEach(function (el) { el.textContent = selfFirst; });
+
+      // Инфо-строки из строки my_profile реестра (город/возраст/род)
+      var meRow = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0] || {};
+      var birthEl = document.querySelector('[data-pr-birth]');
+      var cityEl  = document.querySelector('[data-pr-city]');
+      if (birthEl) {
+        var born = (meRow.gender === 'ж' ? 'Родилась' : 'Родился') + ' 12 июня';
+        if (meRow.age) born += ' (' + meRow.age + ' лет)';
+        birthEl.textContent = born;
+      }
+      if (cityEl && meRow.city) cityEl.textContent = 'Живёт в ' + meRow.city;
 
       if (cta)     cta.hidden = true;      // на своём профиле «Добавить в друзья» не нужно
       if (mutuals) mutuals.hidden = true;
