@@ -788,6 +788,11 @@
         <article class="clip-feed">
           <div class="clip-feed__media"><video src="assets/clips/sable-tepa.mp4" autoplay muted loop playsinline></video></div>
 
+          <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
+               оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
+          <a class="clip-feed__open" href="klipy.html" aria-label="Открыть клип"
+             style="position:absolute;inset:0;z-index:1"></a>
+
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
             <div class="clip-feed__txt">
