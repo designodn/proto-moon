@@ -37,13 +37,13 @@
 .status-bar {
   /* Статус-бар скрыт на всех страницах (внутри компонента). Высоту
      --status-bar-height оставляем опубликованной — на неё опираются
-     sticky-офсеты и верхний отступ инапп-пушей. */
-  display: none;
+     sticky-офсеты и верхний отступ инапп-пушей. Чтобы вернуть статус-бар,
+     поменяй display: none → flex. */
   position: sticky;
   top: 0;
   z-index: 50;
   flex-shrink: 0;
-  display: flex;
+  display: none;
   align-items: flex-end;
   justify-content: space-between;
   height: var(--status-bar-height);
