@@ -473,7 +473,7 @@
   /* OK Sans Display не подключён глобально — даём фолбэк на общий
      системный шрифт. Размер/жирность точно как в Figma. */
   font-family: 'OK Sans Display', var(--font-family);
-  font-size: 48px;
+  font-size: 32px;
   line-height: 1.1;
   font-weight: 700;
 }
