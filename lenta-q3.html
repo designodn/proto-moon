@@ -1171,9 +1171,11 @@
   <script src="components/inapp-push.js"></script>
   <script>
     var ll_p5 = (window.DS_PEOPLE && window.DS_PEOPLE.get(5)) || {};
+    // Имя берём из реестра (id=5) — первое слово из ФИО.
+    var ll_p5name = (ll_p5.name || 'Антонида').split(' ')[0];
     OkInApp.setItems([{
       type:  'user',
-      title: 'Антонина снова в ОК! Порадуйте её подарком',
+      title: ll_p5name + ' снова в ОК! Порадуйте её подарком',
       image: ll_p5.photo || 'https://i.pravatar.cc/240?img=31',
       arrow: true,
       href:  'gifts-catalog.html',
