@@ -1153,11 +1153,34 @@
       if (!e.target.closest) return;
       var post = e.target.closest('.text-feed');
       if (!post) return;
-      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more')) return;
+      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more, .avatar, .ds-title-s')) return;
       e.preventDefault();
       try { sessionStorage.setItem('openPost', post.innerHTML); } catch (_) {}
       location.href = 'post.html';
     });
+  </script>
+
+  <!-- Тап по автору поста (аватар/имя в шапке) → профиль человека.
+       ФИО и аватар прокидываем в profile.html через ?name=&avatar=. -->
+  <script>
+    (function () {
+      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s')
+        .forEach(function (el) { el.style.cursor = 'pointer'; });
+
+      document.addEventListener('click', function (e) {
+        var t = e.target;
+        var cell = t.closest && t.closest('.uni-cell');
+        if (!cell || !cell.querySelector('.avatar.__size-44')) return;
+        if (!t.closest('.avatar') && !t.closest('.ds-title-s')) return;
+        e.preventDefault();
+        var nameEl = cell.querySelector('.ds-title-s');
+        var img    = cell.querySelector('.avatar img');
+        var name = nameEl ? nameEl.textContent.trim() : '';
+        var ava  = img ? (img.getAttribute('src') || '') : '';
+        location.href = 'profile.html?name=' + encodeURIComponent(name) +
+                        '&avatar=' + encodeURIComponent(ava);
+      });
+    })();
   </script>
 
   <!-- Реальные люди из Google-таблицы (data-person-*) -->

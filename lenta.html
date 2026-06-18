@@ -1127,30 +1127,6 @@
     });
   </script>
 
-  <!-- Тап по автору поста (аватар/имя в шапке) → профиль человека.
-       ФИО и аватар прокидываем в profile.html через ?name=&avatar=. -->
-  <script>
-    (function () {
-      // курсор-подсказка на кликабельных частях шапки поста
-      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s')
-        .forEach(function (el) { el.style.cursor = 'pointer'; });
-
-      document.addEventListener('click', function (e) {
-        var t = e.target;
-        var cell = t.closest && t.closest('.uni-cell');
-        if (!cell || !cell.querySelector('.avatar.__size-44')) return;
-        // реагируем только на аватар и имя, не на время/прочее
-        if (!t.closest('.avatar') && !t.closest('.ds-title-s')) return;
-        var nameEl = cell.querySelector('.ds-title-s');
-        var img    = cell.querySelector('.avatar img');
-        var name = nameEl ? nameEl.textContent.trim() : '';
-        var ava  = img ? (img.getAttribute('src') || '') : '';
-        location.href = 'profile.html?name=' + encodeURIComponent(name) +
-                        '&avatar=' + encodeURIComponent(ava);
-      });
-    })();
-  </script>
-
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>

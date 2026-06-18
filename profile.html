@@ -208,29 +208,7 @@
           </div>
         </div>
 
-        <!-- CTA: свой профиль — уведомления + настройки + ещё (как в NV-профиле) -->
-        <div class="ll-pr-cta" data-cta="self" hidden>
-          <div class="button-wrapper __size-44 __full-width">
-            <button class="button-container __style-secondary">
-              <span class="button-content">
-                <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/notifications_24.svg')"></span>
-                Уведомления
-              </span>
-            </button>
-          </div>
-          <div class="button-wrapper __size-44">
-            <button class="button-container __style-secondary" aria-label="Настройки">
-              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/settings_24.svg')"></span></span>
-            </button>
-          </div>
-          <div class="button-wrapper __size-44">
-            <button class="button-container __style-secondary" aria-label="Ещё">
-              <span class="button-content"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/more_24.svg')"></span></span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Общие друзья (только чужой профиль; скрывается после отправки заявки) -->
+        <!-- Общие друзья (скрывается после отправки заявки) -->
         <div class="ll-pr-mutuals" data-mutuals>
           <div class="avatars-view __size-36">
             <div class="avatars-view__stack">
@@ -437,27 +415,15 @@
   <script src="components/people-data.js"></script>
 
   <!-- ─────────────────────────────────────────────────────────────
-       Логика профиля: вид (свой / чужой), маппинг чужого ФИО+авы из
-       URL (?name=&avatar=, открывается тапом по аватарке в ленте) и
-       поток «Добавить в друзья → Заявка отправлена» с тостом.
-
-       Вид: ?view=self|stranger. По умолчанию — stranger, если пришёл
-       ?name (значит открыли чужой профиль), иначе self (свой профиль).
+       Профиль другого человека: маппинг ФИО+авы из URL (?name=&avatar=,
+       открывается тапом по аватарке в ленте) и поток «Добавить в друзья
+       → Заявка отправлена» с тостом.
        ───────────────────────────────────────────────────────────── -->
   <script>
   (function () {
     var qs = new URLSearchParams(location.search);
     var paramName   = qs.get('name');
     var paramAvatar = qs.get('avatar');
-    var view = qs.get('view') || (paramName ? 'stranger' : 'self');
-    if (view !== 'self' && view !== 'stranger') view = 'stranger';
-
-    document.body.setAttribute('data-view', view);
-
-    // CTA-ряды: показываем только подходящий виду
-    document.querySelectorAll('.ll-pr-cta').forEach(function (el) {
-      el.hidden = el.getAttribute('data-cta') !== view;
-    });
 
     var mutuals = document.querySelector('[data-mutuals]');
     var portlet = document.getElementById('vvzPortlet');
@@ -465,29 +431,16 @@
     var avaEl   = document.querySelector('[data-pr-subject-avatar]');
     var firstEls = document.querySelectorAll('[data-pr-subject-first]');
 
-    function setFirst(name) {
-      var first = (name || '').trim().split(/\s+/)[0];
-      if (!first) return;
-      firstEls.forEach(function (el) { el.textContent = first; });
-    }
+    // Имя/ава чужого профиля из URL (фолбэк — статика в разметке)
+    if (paramName && nameEl) nameEl.textContent = paramName;
+    if (paramAvatar && avaEl) { avaEl.src = paramAvatar; avaEl.alt = paramName || ''; }
+    var subjName = paramName || (nameEl && nameEl.textContent) || '';
+    var first = subjName.trim().split(/\s+/)[0];
+    if (first) firstEls.forEach(function (el) { el.textContent = first; });
 
-    if (view === 'self') {
-      // Свой профиль: данные из DS_USER, общих друзей нет, ВВЗ показан
-      var me = window.DS_USER || {};
-      if (nameEl && me.name) nameEl.textContent = me.name;
-      if (avaEl && me.avatarSrc) { avaEl.src = me.avatarSrc; avaEl.alt = me.name || ''; }
-      setFirst(me.name || (nameEl && nameEl.textContent));
-      if (mutuals) mutuals.hidden = true;
-      if (portlet) portlet.hidden = false;
-    } else {
-      // Чужой профиль: имя/ава из URL (фолбэк — статика), общие друзья видны,
-      // ВВЗ спрятан до отправки заявки
-      if (paramName && nameEl) nameEl.textContent = paramName;
-      if (paramAvatar && avaEl) { avaEl.src = paramAvatar; avaEl.alt = paramName || ''; }
-      setFirst(paramName || (nameEl && nameEl.textContent));
-      if (mutuals) mutuals.hidden = false;
-      if (portlet) portlet.hidden = true;
-    }
+    // Стартовое состояние: общие друзья видны, ВВЗ спрятан до заявки
+    if (mutuals) mutuals.hidden = false;
+    if (portlet) portlet.hidden = true;
 
     // ── Поток «Добавить в друзья» ──────────────────────────────────
     var btn   = document.querySelector('[data-friend-request]');
