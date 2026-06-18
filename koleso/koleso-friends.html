@@ -262,22 +262,19 @@
     }
 
     // ── Таймер ожидания после приглашения ────────────────────────
+    // Используем штатный стейт кнопки __state-timered (радиальная заливка),
+    // текст «Пригласить» сохраняем; по окончании — меняем на «Перейти».
     var TIMER_SEC = 5;
     function startTimer(wrapper) {
-      var left = TIMER_SEC;
+      var btn = wrapper.querySelector('.button-container');
       wrapper.className = 'button-wrapper __size-28 rf-timer';
-      wrapper.innerHTML = '<button class="button-container __style-secondary" disabled><span class="button-content">' + left + ' с</span></button>';
-      var span = wrapper.querySelector('.button-content');
-      var t = setInterval(function () {
-        left -= 1;
-        if (left <= 0) {
-          clearInterval(t);
-          wrapper.className = 'button-wrapper __size-28 rf-go';
-          wrapper.innerHTML = '<button class="button-container __style-secondary"><span class="button-content">Перейти</span></button>';
-        } else {
-          span.textContent = left + ' с';
-        }
-      }, 1000);
+      btn.classList.add('__state-timered');
+      btn.style.setProperty('--timered-animation-duration', TIMER_SEC + 's');
+      setTimeout(function () {
+        wrapper.className = 'button-wrapper __size-28 rf-go';
+        btn.classList.remove('__state-timered');
+        btn.querySelector('.button-content').textContent = 'Перейти';
+      }, TIMER_SEC * 1000);
     }
 
     // переход в диалог с другом (имя/фото — из data-атрибутов ячейки)
