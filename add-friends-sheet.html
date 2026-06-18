@@ -53,6 +53,8 @@
     text-align: center;
     font-size: 32px; line-height: 1.2;
     font-weight: 700;
+    /* Заголовок форсированно дисплейным катом OK Sans Display (а не Roboto). */
+    font-family: "OK Sans Display", var(--font-family, sans-serif);
     letter-spacing: 0;
     color: var(--dynamic-text-and-icons-base-primary);
     margin: 0;
@@ -424,6 +426,40 @@
 </div>
 
 <script src="components/back-button.js"></script>
+<!-- Реальные люди из листа «Люди» (data/people.js). Берём первых 7 и
+     раскладываем по карточкам data-i 1..7: имя, подпись (возраст, город), фото. -->
+<script src="data/people.js"></script>
+<script>
+  (function () {
+    var people = window.DS_PEOPLE_DATA || [];
+    function ageWord(n) {
+      var a = n % 100;
+      if (a >= 11 && a <= 14) return 'лет';
+      var b = n % 10;
+      if (b === 1) return 'год';
+      if (b >= 2 && b <= 4) return 'года';
+      return 'лет';
+    }
+    function caption(p) {
+      var parts = [];
+      if (p.age != null) parts.push(p.age + ' ' + ageWord(p.age));
+      if (p.city) parts.push(p.city);
+      return parts.join(', ');
+    }
+    for (var i = 0; i < 7; i++) {
+      var p = people[i];
+      if (!p) continue;
+      var card = document.querySelector('.friend-big-card[data-i="' + (i + 1) + '"]');
+      if (!card) continue;
+      var nameEl = card.querySelector('.friend-big-card__name');
+      if (nameEl) nameEl.textContent = p.name;
+      var capEl = card.querySelector('.friend-big-card__caption');
+      if (capEl) capEl.textContent = caption(p);
+      var img = card.querySelector('.friend-big-card__photo img');
+      if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+    }
+  })();
+</script>
 <!-- Lottie-плеер для конфетти на финал «Дружить со всеми». -->
 <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
 <script>
