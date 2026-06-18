@@ -56,7 +56,7 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
-  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css), карточки 220 по дефолту */
+  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css), ряд __cards-160 (карточки 160) */
 
   /* Секции «Важные / Все друзья» — заголовок (как .vvz-portlet__title) + список .user-cell.
      Между ячейками вертикальный gap, тот же что в guests.html (--space-4). */
@@ -140,14 +140,14 @@
         </button>
       </div>
 
-      <!-- Возможно, вы знакомы — DS-компонент .vvz-portlet (Header с «Ещё» + ряд 220px vvz-card.__default). -->
+      <!-- Возможно, вы знакомы — DS-компонент .vvz-portlet (Header с «Ещё» + ряд __cards-160 vvz-card.__default). -->
       <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
         <header class="vvz-portlet__header">
           <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
         </header>
 
-        <div class="vvz-portlet__row">
+        <div class="vvz-portlet__row __cards-160">
           <div class="vvz-card __default" data-dismiss-target>
             <div class="vvz-card__media">
               <div class="vvz-card__blur" data-person-bg="vvz-1"></div>
