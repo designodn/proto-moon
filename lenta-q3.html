@@ -275,9 +275,10 @@
            в viewer'е). data-name — заголовок viewer'а. -->
       <div class="stories-row" id="ll-stories-row" aria-label="Моменты">
         <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
-             не открывает viewer (data-skip-viewer). -->
+             не открывает viewer (data-skip-viewer). Аватары — из people.json
+             (data-person-avatar), резолвит people-data.js. -->
         <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KtrUxASmukStGfhv8gKAdnO8o0XlTdnM6-KfH9cwylJb75wIpMwrl23su2VU84PVRXgYOXqKlOJNEXEFe1u1a0c0jB7m3EkgrolCyD8RoAAAAp&dpr=2" alt="Ваша история">
+          <img data-person-avatar="my_profile" alt="Ваша история">
           <div class="avatar__addon __pos-br stories-row__add">
             <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
@@ -285,11 +286,11 @@
         <!-- Не просмотренные (оранжевое кольцо). -->
         <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
         <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Лиза">
-          <img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IFpes1IoSvMCGuKiIW523YshCUzB85KW8GRKDM7ulkBIf2P1Tk38sfnQqwPjat2SQslXKRfqqge3TMInqv0cEztqcV_mlwoBP38YdVHS8AAAAp&dpr=2" alt="">
+             data-bday data-stories="1" data-name="Александра">
+          <img data-person-avatar="1" alt="">
           <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
         </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Алексей"><img src="https://i.pravatar.cc/112?img=12" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Виктор"><img data-person-avatar="4" alt=""></div>
 
         <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
              CTA-кнопка снизу — только у ВВЗ. -->
@@ -298,15 +299,15 @@
              aria-label="Возможно, вы знакомы">
           <img src="assets/icons/vvz_stories.png" alt="">
         </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Дима"><img src="https://i.pravatar.cc/112?img=5"  alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Галина"><img data-person-avatar="7" alt=""></div>
 
         <!-- Сториз годовщины дружбы убрана из стака — открывается тапом
              по постеру «Годовщина дружбы» в фиде (см. скрипт ниже). -->
         <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Сергей"><img src="https://i.pravatar.cc/112?img=9"  alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Евгения"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Елена"><img src="https://i.pravatar.cc/112?img=49" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Кирилл"><img src="https://i.pravatar.cc/112?img=33" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Антонида"><img data-person-avatar="5" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Екатерина"><img data-person-avatar="9" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Сергей"><img data-person-avatar="2" alt=""></div>
+        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Александр"><img data-person-avatar="10" alt=""></div>
       </div>
 
 
@@ -318,83 +319,7 @@
           <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
         </div>
 
-        <!-- 1. Короткий текст ------------------------------------------- -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KlPJb2p-6eK2lnJ5zICRbTaNaonSN6tKv9jm9OP4liccV1Jgpm_D-XHaUnT4NuMNnP3vDReRbjjmJ7dZqat-wXAZKU9tVWLrcf8vhMiW0AAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Альбина Чика 🍓🍓🍓🍓</div>
-              <div class="ds-caption-s text-feed__time">9:12</div>
-            </div>
-          </div></div></div>
-
-          <p class="ds-body-m text-feed__body">Открыл сезон, поймал судака на 5 кг. Снасти и точку — в комментариях.</p>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">7</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">2</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 34;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- 2. Длинный текст с «ещё» (тап разворачивает) + activity --- -->
-        <article class="text-feed island">
-          <div class="text-feed__activity ds-caption-m"><b>Борис Фрол</b> поставил класс</div>
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александра Миксунова</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
-            </div>
-          </div></div></div>
-
-          <label class="text-feed__body-toggle">
-            <input type="checkbox" hidden>
-            <p class="ds-body-m text-feed__body">
-              Они редко скучают друг с другом: умеют вдохновлять и подталкивать к развитию.<span class="text-feed__body-full"> Ни один из них не будет «привязывать» партнёра или ограничивать свободу — каждый сам выбирает свой путь, и это здорово.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
-            </p>
-          </label>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">14</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">73</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 16;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- 3. Текст + горизонтальная галерея --------------------------- -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Евгения Молчанова</div>
-              <div class="ds-caption-s text-feed__time">вчера, 18:02</div>
-            </div>
-          </div></div></div>
-
-          <label class="text-feed__body-toggle">
-            <input type="checkbox" hidden>
-            <p class="ds-body-m text-feed__body">
-              Дача, конец июля. Розы наконец зацвели после пересадки.<span class="text-feed__body-full"> Делюсь фотками: ракурсы разные, чтобы было видно, как они стоят.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
-            </p>
-          </label>
-
-          <div class="text-feed__media __row">
-            <div class="text-feed__media-cell" style="aspect-ratio: 220/165"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1LGodVgplOpC8fqxcQLrolhsyEXnbLgzgzwRCzZsAn44lhvpacHaRoJCBt5Q3QMq2Via9Bvms5Iiw285phbAxIAQP6-KAExAAAAKQ&dpr=2&fn=h_768" alt="" style="width:100%; height:100%; object-fit:cover; display:block"></div>
-            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1LyniNY49YeHM09Ap2pZineTQHBhQqvtYQVJCdRf3gCl_4lKBy9UPDXe8OrynyD-LvVrfbciiwun3PivwEKeSkGmFV9wrAuAAAAKQ&dpr=2" alt="" style="width:100%; height:100%; object-fit:cover; display:block"></div>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">24</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">5</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 128;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- Возможно, вы знакомы — горизонтальный ряд vvz-card.__default (dismissible) -->
+<!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->
         <section class="vvz-portlet island" data-dismiss-row aria-label="Возможно, вы знакомы">
           <header class="vvz-portlet__header">
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
@@ -409,7 +334,7 @@
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-1">Алёна Ящук</div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-1"></div>
                 <div class="vvz-card__subtitle ds-caption-m">20 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -424,7 +349,7 @@
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-2">Анна Смирнова</div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-2"></div>
                 <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -439,7 +364,7 @@
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-3">Александр Фёдоров</div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-3"></div>
                 <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -454,23 +379,8 @@
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-4">Мария Иванова</div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-4"></div>
                 <div class="vvz-card__subtitle ds-caption-m">10 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" data-person-bg="vvz-1"></div>
-                <img data-person-avatar="vvz-1" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-1">Олег Зайцев</div>
-                <div class="vvz-card__subtitle ds-caption-m">8 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
@@ -495,7 +405,110 @@
           </div>
         </section>
 
-        <!-- На этот день — карточка-воспоминание (только вы видите) -------- -->
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Зинаида Халина(Стребкова)</div>
+              <div class="ds-caption-s text-feed__time">12:48</div>
+            </div>
+          </div></div></div>
+
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после<span class="text-feed__body-full"> них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">5</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александра Бачурина (Душка)</div>
+              <div class="ds-caption-s text-feed__time">вчера, 18:02</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Поставили новый счётчик, а расход стал больше обычного.</p>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">20</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Квартал бизнес-класса «Б15»</div>
+              <div class="ds-caption-s text-feed__time">Покупки • Реклама 0+</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до центра города</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-secondary" style="width:100%"><span class="button-content">Перейти</span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Виктор Бондарев</div>
+              <div class="ds-caption-s text-feed__time">10:05</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">20</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 12;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александр Кириевич</div>
+              <div class="ds-caption-s text-feed__time">8:42</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Дача, конец июля. Розы наконец зацвели после пересадки. Делюсь фотками: ракурсы разные, чтобы было видно, как они стоят</p>
+          <div class="text-feed__media __row">
+            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&amp;dpr=2&amp;fn=w_790" alt=""></div>
+            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&amp;dpr=2&amp;fn=h_768" alt=""></div>
+            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1KjGJibpF8JvkFhGRAGzPKVvIO9ftaS4tGupM5hj0-npbGv6Nx3qwZeg8F2cixS7zUpHgr8X4ceJjyJ1TFMEROlXIwt3Wv0AAAAKQ&amp;dpr=2&amp;fn=h_768" alt=""></div>
+            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1JkzihRyIbKbjHYBU5KWQPZUrcN2MUgC2ca7chl--rFFCnazVUTaFPHiRZ5OnT9Eyd2YofuzREBA2syV164q87o3l2a3NgMAAAAKQ&amp;dpr=2&amp;fn=h_768" alt=""></div>
+          </div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">6</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">3</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 23;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+        </article>
+
         <article class="text-feed island">
           <div class="ll-otd__caption ds-body-m">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -507,15 +520,11 @@
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
-              <div class="avatar __size-24 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KlPJb2p-6eK2lnJ5zICRbTaNaonSN6tKv9jm9OP4liccV1Jgpm_D-XHaUnT4NuMNnP3vDReRbjjmJ7dZqat-wXAZKU9tVWLrcf8vhMiW0AAAAp&dpr=2" alt=""></div>
+              <div class="avatar __size-24 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
               <div class="ds-body-m text-feed__reshare-card-author-name">Вы</div>
             </div>
 
             <p class="ds-body-m text-feed__body">Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут</p>
-
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/240; overflow:hidden">
-              <img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1LGodVgplOpC8fqxcQLrolhsyEXnbLgzgzwRCzZsAn44lhvpacHaRoJCBt5Q3QMq2Via9Bvms5Iiw285phbAxIAQP6-KAExAAAAKQ&dpr=2&fn=h_768" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
-            </div>
           </div>
 
           <div class="ll-otd__likes">
@@ -541,13 +550,12 @@
           </div>
         </article>
 
-        <!-- 4. Групповой пост Super.ru с подпиской, галереей и комментом -- -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://super.ru/apple-touch-icon.png" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Super.ru</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
+              <div class="ds-title-s">Идеи для сада и огорода своими руками с фото</div>
+              <div class="ds-caption-s text-feed__time">14:02</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe">
               <input type="checkbox" hidden>
@@ -558,108 +566,70 @@
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body">
-              «Титькастая бестия». Настя Ивлеева заявила о новом этапе в жизни.<span class="text-feed__body-full"><br><br>Кажется, Настюшка Опасность возвращается в свой прайм, о чём поспешила сообщить подписчикам, выложив пляжные фото в купальнике.<br><br>«Всё, прошла эпоха, пора прощаться. Мы говорим этому этапу спасибо, он был лечебным, он был важным, нужным. Но с ним покончено. Поэтому загорелая, белобрысая, титькастая бестия стоит на аватарке», — заявила Ивлеева в запрещённой соцсети.<br><br>А вы рады таким переменам?<br><br>#шоубизнес #ивлеева #настяивлеева #настюшка #блогеры #пляж</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+              Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды. Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно<span class="text-feed__body-full"> спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
           </label>
-
-          <div class="text-feed__media __row">
-            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Jv_ArRmnnV-Mu8g0tkIIzPmaI68tQlQoQkJum3tfxVm_JYWvfgvy9g60IauG9zqrEUmoW8Nnv5dLVgmxX9OxZXWYDO9WucAAAAKQ&dpr=2&fn=h_768" alt="" style="width:100%; height:100%; object-fit:cover; display:block"></div>
-            <div class="text-feed__media-cell" style="aspect-ratio: 1"><img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Jsqh_te0YYQSTW-xPa2ODF_9n3QE2EcGgWawgAnnM9ZTY0IWqKvKtTG6525W9VgWK0lVDV9z24dheZr8qveyAWKFXGssQRAAAAKQ&dpr=2" alt="" style="width:100%; height:100%; object-fit:cover; display:block"></div>
-          </div>
-
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&amp;dpr=2" alt=""></div>
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">234</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">18</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 1247;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">43</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">12</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 112;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-
-          <hr class="ds-divider">
-
-          <div class="comment __type-compact">
-            <div class="avatar __size-36 __type-initials" style="background:#018DEB;color:#fff">СИ</div>
-            <div class="comment__body">
-              <div class="comment__header"><b>Светлана Иванова</b>· 5 минут назад</div>
-              <p class="comment__text">Явилась не запылилась мы не соскучились ужасс</p>
-              <div class="comment__actions">
-                <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><img class="button-inline__icon ll-icon" src="assets/icons/arrow-left.svg" width="16" height="16" alt="">Ответить</span></button></span>
-                <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><img class="button-inline__icon ll-icon" src="assets/icons/klass_16_20.svg" width="16" height="16" alt="">12</span></button></span>
-              </div>
-            </div>
           </div>
         </article>
 
-        <!-- 5. Плашка «↗ Соседи СПб» + текст + фото --------------------- -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Ирина Кузнецова</div>
-              <div class="ds-caption-s text-feed__time">пн, 12:03</div>
+              <div class="ds-title-s">Магазин снастей</div>
+              <div class="ds-caption-s text-feed__time">Покупки • Реклама 0+</div>
             </div>
           </div></div></div>
 
-          <div class="text-feed__reshare">
-            <img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">
-            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=20" alt=""></div>
-            <div class="ds-body-m text-feed__reshare-name">Соседи СПб</div>
-          </div>
-
-          <p class="ds-body-m text-feed__body">Нашли мастера по окнам — рекомендую, цены адекватные, приехал на следующий день после звонка. Контакт скину в личку.</p>
-
-          <div class="text-feed__media __single"><img src="https://vki9.okcdn.ru/i?r=CHFAm_VFBkioSGBqh1IU1ntx7vRlDbDGeIPySQIjaSgcWz0lmA6yTds8BSSO1qviQyL2h9TB4e0bG_vJ5mSljBZvtMRg07HcTaxxlxkHjilvX5Sto0rUL-nXthN2D40Rc1lM1nL5QvRz2diKD7ASfoYDAAAAKQ&dpr=2" alt="" style="width:100%; height:100%; object-fit:cover; display:block"></div>
-
+          <p class="ds-body-m text-feed__body">Новые японские спининги Belleza UX уже в продаже</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://domopravitelnitsa.com/wp-content/uploads/2023/04/luchshie-spinningi.jpg" alt=""></div>
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">9</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">4</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 22;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-secondary" style="width:100%"><span class="button-content">Перейти</span></button>
+            </div>
           </div>
         </article>
 
-        <!-- 6. Репост-фид: автор шапки + встроенная карточка (бордер) -- -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александра Миксунова</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
+              <div class="ds-title-s">Виктор Бондарев</div>
+              <div class="ds-caption-s text-feed__time">7:30</div>
             </div>
           </div></div></div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
-              <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=52" alt=""></div>
-              <div class="ds-body-m text-feed__reshare-card-author-name">Борис Фрол</div>
+              <div class="avatar __size-24 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+              <div class="ds-body-m text-feed__reshare-card-author-name">Александр Мещеряков</div>
             </div>
 
-            <label class="text-feed__body-toggle">
-              <input type="checkbox" hidden>
-              <p class="ds-body-m text-feed__body">
-                Новый день! Ходила в дом культуры на йогу, очень понравилось.<span class="text-feed__body-full"> Ещё какой-то текст про йогу, дом культуры и хороший день.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
-              </p>
-            </label>
-
+          <p class="ds-body-m text-feed__body">6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!</p>
             <div class="text-feed__reshare-card-media" style="aspect-ratio: 4/3; overflow: hidden">
-              <img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IZmF3cPXzoSbOO8uqX-yxXrUd7o-uI-JxsyOWxGUbyN3ARsnUNWHz-JkVs6WcczXfhQrjhnT-hckcSiJalWNfucRsDaQojAAAAKQ&dpr=2" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
+              <img style="width:100%; height:100%; object-fit:cover; display:block" src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&amp;dpr=2" alt="">
             </div>
           </div>
-
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">14</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">73</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 16;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">12</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
-        <!-- 7. Added Friend — добавил в друзья (встроенная карточка) ----- -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александр Миксунов</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
+              <div class="ds-title-s">Сергей Чернышов</div>
+              <div class="ds-caption-s text-feed__time">20:10</div>
             </div>
           </div></div></div>
 
@@ -667,22 +637,22 @@
 
           <div class="text-feed__reshare-card">
             <div class="ll-friend-row">
-              <div class="avatar __size-96 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KlPJb2p-6eK2lnJ5zICRbTaNaonSN6tKv9jm9OP4liccV1Jgpm_D-XHaUnT4NuMNnP3vDReRbjjmJ7dZqat-wXAZKU9tVWLrcf8vhMiW0AAAAp&dpr=2" alt=""></div>
+              <div class="avatar __size-96 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&amp;dpr=2" alt=""></div>
               <div class="ll-friend-row__txt">
                 <div class="ds-body-l ll-friend-row__name">
-                  Дмитрия Поречина
+                  Александр Кириевич
                   <svg class="ll-badge-verified" width="16" height="16" viewBox="0 0 16 16" aria-label="Verified" role="img">
                     <circle cx="8" cy="8" r="8" fill="#018DEB"/>
                     <path d="M4.4 8.2 L6.9 10.6 L11.6 5.9" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
                 <div class="ds-body-m ll-friend-row__subtitle">20 общих друзей</div>
-                <div class="avatars-view __size-36 ll-friend-row__mutuals">
-                  <div class="avatars-view__stack">
-                    <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
-                    <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
-                    <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=23" alt=""></div>
-                  </div>
+            <div class="avatars-view __size-36 ll-friend-row__mutuals">
+              <div class="avatars-view__stack">
+                <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+                <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
+                <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=23" alt=""></div>
+              </div>
                 </div>
               </div>
             </div>
@@ -707,42 +677,39 @@
           </div>
         </article>
 
-        <!-- 8. Shared Link — пост со ссылкой и превью ------------------ -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александра Миксунова</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
+              <div class="ds-title-s">Александр Попов</div>
+              <div class="ds-caption-s text-feed__time">вт, 9:33</div>
             </div>
           </div></div></div>
 
-          <p class="ds-body-m text-feed__body">Ну я крайне не согласен!</p>
+          <p class="ds-body-m text-feed__body">ну не факт</p>
 
-          <a class="text-feed__reshare-card" href="https://ok.ru" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>
+          <a class="text-feed__reshare-card" href="https://www.rbc.ru/life/news/6464c4ea9a794779d9f6e39d" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://s0.rbk.ru/v6_top_pics/resized/1200xH/media/img/4/48/346843257307484.webp" alt=""></div>
             <div class="text-feed__link">
-              <div class="ds-title-m">Социальная сеть Одноклассники. Общение с друзьями в ОК. Ваше место встречи с одноклассниками</div>
-              <div class="ds-body-m">Одноклассники.ру это социальная сеть, где вы можете найти своих старых друзей. Общение, онлайн игры, подарки и открытки для друзей. Приходите</div>
-              <div class="ds-caption-m">Одноклассники | OK.ru</div>
+              <div class="ds-title-m">РБК — последние новости дня в России и мире сегодня</div>
+              <div class="ds-body-m">Главные новости политики, экономики и бизнеса, общество, технологии, спорт, мнения и интервью.</div>
+              <div class="ds-caption-m">rbc.ru</div>
             </div>
           </a>
-
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">14</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">73</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 16;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">21</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
-        <!-- 9. Открытка — получил открытку от … ------------------------- -->
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JaqMKzVCjqHIK2OWNJ5ssBLHcx_EumdtKm02Xcy3EoDOVtR0Qi5PDDAdvSEytm8rgVKhRZBqRI3iEZYQJk8Nb6taKPDy5afugnUQGYcIUAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александр Миксунов</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
+              <div class="ds-title-s">Александр Мещеряков</div>
+              <div class="ds-caption-s text-feed__time">17:46</div>
             </div>
           </div></div></div>
 
@@ -750,12 +717,12 @@
             <div class="ll-gift-from">
               <div class="ds-body-m">Получил открытку от</div>
               <div class="text-feed__reshare-card-author">
-                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
-                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Александра Москвичева</b></div>
+                <div class="avatar __size-24 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&amp;dpr=2" alt=""></div>
+                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Александра Бачурина (Душка)</b></div>
               </div>
             </div>
             <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
-              <img src="https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IEVc-2L6A99stALeGXAsfpehwjV2--7wAVSKDOAPaKRWoDqptzEtTsGITVWCeFBvMjSEJaDp8qidQOj9gSkloiKDh-jnTDAAAAKQ&dpr=2&fn=h_768" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
+              <img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.pinimg.com/originals/24/f0/0b/24f00b8520e0657c89891bb6f1d815d8.gif" alt="">
             </div>
           </div>
 
@@ -767,48 +734,16 @@
           </div>
         </article>
 
-        <!-- 10. Получила открытку — single -------------------------------- -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LTuMnskCqIRVVNmbIRQm0SyOPKRB5xqO1dDrESkvimyYk1_3Bg6yWFnHdTR3FZ6H0cpIr5ieLa6VEDiSnjOEc3ciYl1SSXw8J7D33_QccAAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Мария Маяковская</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
-            </div>
-          </div></div></div>
-
-          <div class="text-feed__reshare-card">
-            <div class="ll-gift-from">
-              <div class="ds-body-m">Получила открытку от</div>
-              <div class="text-feed__reshare-card-author">
-                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=33" alt=""></div>
-                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Бориса Малевича</b></div>
-              </div>
-            </div>
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
-              <img src="https://otkritkiok.ru/posts/big/klevaya-otkrytka-spasibo-s-kotom-139825.jpg" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
-            </div>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36">
-              <button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">Отправить открытку</span></button>
-            </div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- Годовщина дружбы — карточка-поздравление (figma 2767-134392) ---- -->
         <article class="feed-birthday island">
           <div class="feed-birthday__deco"></div>
 
           <div class="feed-birthday__avatars">
-            <div class="avatar __size-120 __type-image __border"><img src="https://i.pravatar.cc/288?img=49" alt=""></div>
-            <div class="avatar __size-120 __type-image __border"><img src="https://i.pravatar.cc/288?img=23" alt=""></div>
+            <div class="avatar __size-120 __type-image __border"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+            <div class="avatar __size-120 __type-image __border"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&amp;dpr=2" alt=""></div>
           </div>
 
           <div class="ds-title-l feed-birthday__title">Анна, поздравляем с годовщиной дружбы</div>
-          <div class="ds-body-m feed-birthday__text">Ровно 3 года назад вы добавили Ольгу в друзья OK</div>
+          <div class="ds-body-m feed-birthday__text">Ровно 3 года назад вы добавили друг друга в друзья OK</div>
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
@@ -818,75 +753,12 @@
           </div>
         </article>
 
-        <!-- 11. Получила подарок — single -------------------------------- -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LTuMnskCqIRVVNmbIRQm0SyOPKRB5xqO1dDrESkvimyYk1_3Bg6yWFnHdTR3FZ6H0cpIr5ieLa6VEDiSnjOEc3ciYl1SSXw8J7D33_QccAAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Мария Маяковская</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
-            </div>
-          </div></div></div>
-
-          <div class="text-feed__reshare-card">
-            <div class="ll-gift-from">
-              <div class="ds-body-m">Получила подарок от</div>
-              <div class="text-feed__reshare-card-author">
-                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
-                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Александра Москвичева</b></div>
-              </div>
-            </div>
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
-              <img src="https://i.pinimg.com/originals/8b/06/dd/8b06dd41f49dd3704db29b399494d759.gif" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
-            </div>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36">
-              <button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">Отправить подарок</span></button>
-            </div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- 11. ИИ подарок — с декорацией и градиентной кнопкой ---------- -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LTuMnskCqIRVVNmbIRQm0SyOPKRB5xqO1dDrESkvimyYk1_3Bg6yWFnHdTR3FZ6H0cpIr5ieLa6VEDiSnjOEc3ciYl1SSXw8J7D33_QccAAAAp&dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Мария Маяковская</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
-            </div>
-          </div></div></div>
-
-          <div class="text-feed__reshare-card">
-            <div class="ll-gift-from">
-              <div class="ds-body-m">Получила подарок на День сельскохозяйственных строителей от</div>
-              <div class="text-feed__reshare-card-author">
-                <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/128?img=44" alt=""></div>
-                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Александра Москвичева</b></div>
-              </div>
-            </div>
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
-              <img src="https://i.pinimg.com/originals/76/70/e1/7670e18394ef2c8834742d9932a19950.gif" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
-            </div>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36 __full-width ll-ai-gift-btn">
-              <button class="button-container __style-secondary"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>Создать ИИ подарок</span></button>
-            </div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- Вас отметили на фото — memory-карточка (full-bleed media + tooltip) -->
         <article class="text-feed island">
           <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/192?img=49" alt=""></div>
           <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
 
           <div class="text-feed__media ll-tagged__media">
-            <img src="https://images.unsplash.com/photo-1543007631-283050bb3e8c?w=750&q=80" alt="">
+            <img src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&amp;dpr=2" alt="">
             <div class="tooltip-wrapper __view-primary __side-bottom __alignment-start __placement-bottom-start"
                  style="top: 28px; left: 56px">
               <div class="tooltip ds-title-m">Анастасия Кащеева</div>
@@ -903,14 +775,13 @@
           </div>
         </article>
 
-        <!-- 12. Клип — full-bleed 9:16 видео с тёмными actions-overlay -- -->
         <article class="clip-feed">
           <div class="clip-feed__media"><img src="https://media.tenor.com/rImXojPJZ1IAAAAM/stars-in-the-sky-sparkle.gif" alt=""></div>
 
           <div class="clip-feed__header">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kfo9Zt3gGv4UiAElcWpOIqmTdjPAgyp40BsUSSsVon9r4FKb_aTiJNXob5mDbxorb2lrYZJCYaqDuQdGTOrovgKcx6q31ILx5KIXdZw2sAAAAp&dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
             <div class="clip-feed__txt">
-              <div class="ds-title-s">Александра Миксунова</div>
+              <div class="ds-title-s">Антонида Чекалова (Гахова)</div>
               <div class="ds-caption-s clip-feed__time">12:48</div>
             </div>
           </div>
@@ -918,12 +789,13 @@
           <div class="clip-feed__mute" aria-hidden="true">🔇</div>
 
           <div class="actions-bar clip-feed__actions">
-            <div class="button-wrapper __size-36"><button class="button-container __style-on-image"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">14</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-on-image"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">73</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 16;"><input type="checkbox" hidden><span class="button-container __style-on-image"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36"><button class="button-container __style-on-image"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">23</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-on-image"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">23</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 56;"><input type="checkbox" hidden><span class="button-container __style-on-image"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
+        <!-- FEED:END -->
 
       </div>
     </div>

@@ -168,7 +168,7 @@
     </div>
   </div>
 
-  <button class="gp__close nav-bar__back" aria-label="Закрыть">
+  <button class="gp__close nav-bar__back" data-href="notifications.html" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
   </button>
 
@@ -438,7 +438,7 @@
       setTimeout(function () {
         var closeBtn = document.querySelector('.gp__close');
         if (closeBtn) closeBtn.click();
-      }, 2200);
+      }, 2000);
     }
 
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }

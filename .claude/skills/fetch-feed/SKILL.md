@@ -1,12 +1,19 @@
 ---
 name: fetch-feed
-description: Собирает ленту New Vision (new-vision/lenta.html) из листа «Посты» Google-таблицы. Используй, когда пользователь просит обновить/перечитать/пересобрать ленту, посты, фид, «прогнать посты», или говорит, что заполнил/поправил лист «Посты» (тексты, авторы, медиа, счётчики, реклама).
+description: Собирает ленты из Google-таблицы — New Vision (new-vision/lenta.html, лист «Посты») и Q3 (lenta-q3.html, лист «Q3-посты»). Используй, когда пользователь просит обновить/перечитать/пересобрать ленту, посты, фид, «прогнать посты/Q3», или говорит, что заполнил/поправил лист «Посты» или «Q3-посты» (тексты, авторы, медиа, счётчики, реклама).
 ---
 
 # Сборка ленты из Google-таблицы
 
-Источник: таблица, лист **«Посты»**.
-Spreadsheet ID: `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y`
+Spreadsheet ID (обе ленты): `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y`
+
+Два независимых пайплайна. Определи по запросу/листу, какой нужен (можно оба):
+- **New Vision** — лист «Посты» → `new-vision/lenta.html` (см. ниже).
+- **Q3** — лист «Q3-посты» → `lenta-q3.html` (см. раздел «Q3-лента» в конце).
+
+## New Vision
+
+Источник: лист **«Посты»**.
 
 Колонки листа (порядок важен, читаются по позиции):
 `id · тип · автор · заголовок · текст · фото (ссылки через запятую) · лайки · комменты · репосты · тема · рубрика`
@@ -60,3 +67,50 @@ node scripts/fetch-feed.mjs --offline
 
 Прогнать агента `screenshot-testing` на `new-vision/lenta.html` — убедиться, что
 карточки не разъехались и аватарки/медиа подгрузились.
+
+---
+
+# Q3-лента
+
+Источник: лист **«Q3-посты»** (gid 1662648328) в той же таблице.
+Контракт типов и колонок: `data/q3-feed.schema.json`.
+
+Колонки листа (по позиции):
+`id · тип · автор · заголовок · текст · фото (через запятую) · лайки · комменты · репосты · ссылка`
+
+## Как обновить
+
+```sh
+node scripts/fetch-q3.mjs            # тянет лист → data/q3-feed.json → вставка в lenta-q3.html
+node scripts/fetch-q3.mjs --offline  # пересобрать разметку из data/q3-feed.json (без сети)
+```
+
+Скрипт: gviz-CSV → `data/q3-feed.json` (выгрузка «как есть») → рендер карточек →
+вставка в `lenta-q3.html` между `<!-- FEED:START -->` / `<!-- FEED:END -->`.
+Авторы резолвятся из `data/people.json` по id (`1`, `group-4`, `ad-1`, `my_profile`,
+`vvz-*`), поэтому держи `data/people.js`/`people.json` актуальным (скилл `fetch-people`).
+
+## Типы карточек (`тип`)
+
+`text · photo · photo-gallery · video · ad · group-post · vvz-portlet · on-this-day · reshare-group · reshare-post · added-friend · shared-link · gift-received · friendversary · tagged-photo · clip`
+
+- **text/photo/photo-gallery/video** — один компонент feed-text, разница в `media`.
+- **group-post** — feed-text с автором-сообществом (`group-*`): «Подписаться» + бейдж.
+- **ad** — рекламодатель (`ad-*`), как feed-ad в NV.
+- **автор**: id из листа «Люди»; несколько через запятую — для `vvz-portlet`,
+  `added-friend`, `friendversary`, `gift-received` (получатель, даритель).
+- **ссылка**: URL для `shared-link`.
+
+## Компаньон-данные (НЕ в листе — в коде)
+
+Вложенные куски (subtitle ВВЗ-карточек, лайки `on-this-day`, друзья/общие
+`added-friend`, мета `shared-link`, вложенный автор `reshare-post`, повод/вариант
+`gift-received`, тег `tagged-photo`, медиа `clip`) лежат в `COMPANION`/дефолтах
+`scripts/fetch-q3.mjs`, привязаны к ТИПУ/id. Правь их там — в листе их нет.
+
+## После обновления
+
+- Сверь число постов и баланс `<article>` в `lenta-q3.html`, отсутствие маркеров
+  конфликта. Баннер `ll-banner` и сторис-ряд оставлены статикой (их в листе нет).
+- Ручные правки внутри `FEED:START/END` затрёт следующий прогон.
+- Опционально: `screenshot-testing` на `lenta-q3.html`.
