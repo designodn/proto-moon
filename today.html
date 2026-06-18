@@ -105,6 +105,8 @@
     cursor: pointer;
   }
   .tg-friend:active { transform: scale(0.95); }
+  /* первый аватар выравниваем по старту хедера: гасим инсет центрирования в ячейке */
+  .tg-friend:first-child { margin-left: calc((56px - 90px) / 2); }
   .tg-friend__ava { position: relative; }
   .tg-friend__dot {
     position: absolute;
@@ -339,14 +341,14 @@
         <!-- 2. День рождения друга -->
         <section class="tg-island">
           <article class="cover-card __size-164 __fill"
-                   style="--cover-card-bg: url('assets/today/dr-segodnya-fon.png'); color: var(--base-black-100);">
+                   style="background-image: url('assets/today/dr-segodnya-fon.png'); color: var(--base-black-100);">
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-m" style="max-width: 220px;">День Рождения у Виктора Бондарева</div>
               </div>
               <div class="cover-card__bottom" style="align-items: flex-start;">
                 <span class="button-wrapper __size-36 __style-primary">
-                  <button class="button-container __style-primary"><span class="button-content">Поздравить!</span></button>
+                  <button class="button-container __style-primary"><span class="button-content">Поздравить</span></button>
                 </span>
               </div>
             </div>
@@ -360,7 +362,7 @@
         <section class="tg-island">
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
-                   style="--cover-card-bg: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer;">
+                   style="background-image: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer;">
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-xl">Колесо призов</div>
@@ -381,23 +383,10 @@
         </div>
         <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4);"></div>
 
-        <!-- 5. Какой сегодня день -->
-        <div class="tg-sec-head">
-          <header class="header"><div class="header__title ds-title-l">Какой сегодня день</div></header>
+        <!-- Картинка дня -->
+        <div class="tg-island">
+          <img src="assets/today/segodnya-day.png" alt="" style="width: 100%; display: block; border-radius: 16px;">
         </div>
-        <section class="tg-island">
-          <article class="cover-card __on-image __scrim __size-194"
-                   style="--cover-card-image: url('assets/today/segodnya-day.png'); border-radius: 16px;">
-            <div class="cover-card__body">
-              <div class="cover-card__top"></div>
-              <div class="cover-card__bottom">
-                <div class="cover-card__title ds-title-xl">Международный день культуры</div>
-                <div class="cover-card__subtitle ds-body-m">расскажите о лучших местах вашего города</div>
-              </div>
-            </div>
-            <div class="cover-card__badge __pos-tl"><span class="tg-ok-logo">ОК</span></div>
-          </article>
-        </section>
       </div>
     </div>
 
