@@ -12,7 +12,23 @@
 <script src="../components/screen-transition.js"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  html, body { margin:0; padding:0; height:100%; background:#f06a00; }
+  /* Фон крутилки — радиальный градиент из Figma (слой «back»):
+     эллипс центром в (180,367) из 360×800, точные стопы. */
+  html, body { margin:0; padding:0; height:100%;
+    background:
+      radial-gradient(ellipse 323.6% 67.1% at 50% 45.9%,
+        rgb(255,214,196) 11.06%,
+        rgb(255,182,147) 21.05%,
+        rgb(255,149,98)  31.03%,
+        rgb(255,133,73)  36.03%,
+        rgb(255,117,49)  41.02%,
+        rgb(255,101,24)  46.02%,
+        rgb(255,93,12)   48.51%,
+        rgb(255,85,0)    51.01%,
+        rgb(240,60,0)    65.51%,
+        rgb(225,35,0)    80%) no-repeat;
+    background-color:#e12300;
+  }
 
   /* ── Иммерсивный экран на оранжевом градиенте ───────────────────
      status-bar/nav-bar DS форсируют свой фон, поэтому здесь — кастомный
