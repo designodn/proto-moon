@@ -108,14 +108,10 @@
           '</section>' +
 
           /* 4 — Приглашайте всех */
-          '<section class="omar-slide">' +
+          '<section class="omar-slide omar-slide--invite">' +
             '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
             '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
-            '<div class="omar-fan">' +
-              img('invite-1.png', 'omar-fan__photo omar-fan__photo--1') +
-              img('invite-2.png', 'omar-fan__photo omar-fan__photo--2') +
-              img('invite-3.png', 'omar-fan__photo omar-fan__photo--3') +
-            '</div>' +
+            img('invite.png', 'omar-invite') +
           '</section>' +
 
         '</div>' +
