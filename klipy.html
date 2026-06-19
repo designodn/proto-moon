@@ -428,10 +428,12 @@
           .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
       function person(id) { return (window.DS_PEOPLE && window.DS_PEOPLE.get(id)) || {}; }
-      // Видео: поле video (прямая ссылка / файл) либо по конвенции <id>.mp4.
+      // Видео: поле video (прямая ссылка / путь / файл) либо по конвенции <id>.mp4.
+      // Полный URL и путь со слешем берём как есть; голое имя — из assets/clips.
       function videoSrc(c) {
         var v = c.video || (c.id + '.mp4');
-        return /^https?:/.test(v) ? v : 'assets/clips/' + v;
+        if (/^https?:/.test(v) || v.indexOf('/') !== -1) return v;
+        return 'assets/clips/' + v;
       }
 
       function clipHTML(c) {
@@ -540,14 +542,22 @@
       var params = new URLSearchParams(location.search);
       var roster = (window.DS_CLIPS_DATA || []).slice();
 
-      // Вход из ленты → синтетический «твой клип» в начало.
+      // Вход из ленты → синтетический «твой клип» в начало (именно тот клип,
+      // по которому тапнули). Лента (fetch-q3) отдаёт прямой src видео + имя/аву/
+      // счётчики: ?src=&name=&ava=&like=&reshare=. Поддерживаем и старые имена
+      // (?clip=&author=&likes=&reshares=) на случай ссылок из других экранов.
       var lead = null, memLead = null;
+      var leadSrc = params.get('src');
       var leadId = params.get('clip');
-      if (leadId) {
+      if (leadSrc || leadId) {
         lead = {
-          id: leadId, type: 'clip', author: params.get('author') || '',
-          video: leadId + '.mp4',
-          likes: params.get('likes') || '', reshares: params.get('reshares') || ''
+          id: leadId || '', type: 'clip',
+          video: leadSrc || (leadId + '.mp4'),
+          author: params.get('author') || '',
+          authorName: params.get('name') || '',
+          avatar: params.get('ava') || '',
+          likes: params.get('likes') || params.get('like') || '',
+          reshares: params.get('reshares') || params.get('reshare') || ''
         };
       } else {
         // Вход из «Создать клип» (sessionStorage newClip). Не removeItem —
