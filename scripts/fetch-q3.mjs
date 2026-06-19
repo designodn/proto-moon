@@ -785,13 +785,21 @@ ${authorHeader(aid, time)}
     case 'clip': {
       // Видео клипа. В листе («фото») можно дать:
       //   • полный URL (http…) — берём как есть;
-      //   • просто имя файла (hermitage.mp4) — подставляем assets/clips/<имя>;
+      //   • имя файла с расширением (hermitage.mp4) или БЕЗ (hermitage) —
+      //     подставляем assets/clips/<имя>, при отсутствии расширения добавляем .mp4;
       //   • относительный путь (со слешем) — берём как есть;
       //   • пусто — дефолтный клип из COMPANION (assets/clips/sable-tepa.mp4).
       const rawClip = photos[0] || (p.photosRaw && p.photosRaw[0]) || '';
-      const src = /^https?:\/\//.test(rawClip) ? rawClip
-        : rawClip ? (rawClip.includes('/') ? rawClip : `assets/clips/${rawClip}`)
-        : x.fallbackMedia;
+      let src;
+      if (/^https?:\/\//.test(rawClip)) {
+        src = rawClip;
+      } else if (rawClip) {
+        // имя без видео-расширения → дополняем .mp4 (ты вписала «hermitage»)
+        let f = /\.(mp4|webm|mov)(\?|#|$)/i.test(rawClip) ? rawClip : rawClip + '.mp4';
+        src = f.includes('/') ? f : `assets/clips/${f}`;
+      } else {
+        src = x.fallbackMedia;
+      }
       const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
         ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
         : img(src);
