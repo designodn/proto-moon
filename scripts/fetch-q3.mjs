@@ -90,7 +90,9 @@ const COMPANION = {
   },
 };
 
-// vvz-portlet: подзаголовок каждой карточки (по порядку id из колонки «автор»)
+// vvz-portlet: ФОЛБЭК подзаголовков карточек (по порядку id из «автор»), если у
+// персоны не заполнено поле subtitle в people.json (лист «Люди»). Основной
+// источник «N общих друзей» — people.json (см. case 'vvz-portlet').
 const VVZ_SUBTITLES = ['20 общих друзей', '12 общих друзей', '12 общих друзей', '10 общих друзей'];
 
 // reshare-post: автор вложенной карточки (внутренняя шапка), если не задан иначе
@@ -480,9 +482,15 @@ ${media(photos)}
         </article>`;
     }
 
-    /* ── Возможно, вы знакомы — горизонтальный ряд vvz-card + help-карточка ── */
+    /* ── Возможно, вы знакомы — горизонтальный ряд vvz-card + help-карточка ──
+       Карточки — из колонки «автор» (id персон). Подзаголовок «N общих друзей»
+       берём из people.json (поле subtitle, лист «Люди»); если пусто — фолбэк.
+       Заголовок портлета — из колонки «заголовок» (иначе дефолт). */
     case 'vvz-portlet': {
-      const cards = ids.map((pid, i) => `
+      const vvzTitle = title || 'Возможно, вы знакомы';
+      const cards = ids.map((pid, i) => {
+        const sub = (PEOPLE[String(pid)] && PEOPLE[String(pid)].subtitle) || VVZ_SUBTITLES[i] || 'Общие друзья';
+        return `
             <div class="vvz-card __default" data-dismiss-target>
               <div class="vvz-card__media">
                 <div class="vvz-card__blur" data-person-bg="${esc(pid)}"></div>
@@ -491,15 +499,16 @@ ${media(photos)}
               </div>
               <div class="vvz-card__content">
                 <div class="vvz-card__title ds-title-s" data-person-name="${esc(pid)}"></div>
-                <div class="vvz-card__subtitle ds-caption-m">${esc(VVZ_SUBTITLES[i] || '10 общих друзей')}</div>
+                <div class="vvz-card__subtitle ds-caption-m">${esc(sub)}</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
               </div>
-            </div>`).join('\n');
-      return `        <section class="vvz-portlet island" data-dismiss-row aria-label="Возможно, вы знакомы">
+            </div>`;
+      }).join('\n');
+      return `        <section class="vvz-portlet island" data-dismiss-row aria-label="${esc(vvzTitle)}">
           <header class="vvz-portlet__header">
-            <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
+            <div class="vvz-portlet__title ds-title-l">${esc(vvzTitle)}</div>
             <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
           </header>
           <div class="vvz-portlet__row">
