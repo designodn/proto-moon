@@ -120,6 +120,11 @@
     // Кнопка «назад» помечает переход как обратный: capture-перехватчик глотает
     // клик раньше bubble-обработчика .nav-bar__back, поэтому ставим флаг здесь.
     if (isBack) { try { sessionStorage.setItem('screenNavBack', '1'); } catch (_) {} }
+    // Кешируем, откуда пришли на «Сегодня», чтобы «Назад» вернул ровно туда,
+    // а не на дефолтную NV-ленту (today.html читает todayOrigin).
+    if (!isBack && /(^|\/)today\.html(\?|$)/.test(dest)) {
+      try { sessionStorage.setItem('todayOrigin', location.pathname.replace(/^\//, '') + location.search); } catch (_) {}
+    }
     location.href = dest;
   }, true);
 
