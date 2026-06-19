@@ -60,9 +60,15 @@
   top: 22px;
   bottom: -22px;
   background: var(--static-surface-brown);
+  opacity: 0.3;
 }
 .fc-comment:not(:has(~ .fc-comment))::before {
   display: none;
+}
+/* У первого коммента трунк продлеваем ВВЕРХ на 20px (через его top-padding) —
+   линия начинается выше локтя. (У одиночного коммента трунк всё равно скрыт.) */
+.fc-comment:first-child::before {
+  top: calc(22px - var(--space-5));   /* 2px = локоть(22) − padding(20) */
 }
 
 /* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
@@ -84,6 +90,7 @@
   border-left: 2px solid var(--static-surface-brown);
   border-bottom: 2px solid var(--static-surface-brown);
   border-bottom-left-radius: 8px;
+  opacity: 0.3;                     /* цвет локтя на 30% */
 }
 
 .fc-comment__body {

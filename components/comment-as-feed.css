@@ -43,9 +43,10 @@
    иконка вставала бы СВЕРХУ, а нужно СЛЕВА). */
 .text-feed__reshare-card.caf-preview {
   flex-direction: row;
-  gap: var(--space-1-5);
+  gap: var(--space-2);              /* 8 между иконкой и текстом */
   align-items: flex-start;
-  border-radius: 12px;
+  padding: var(--space-3);          /* 12 (вместо 16 из reshare-card) */
+  border-radius: 21px;
 }
 .caf-preview__icon {
   flex-shrink: 0;
