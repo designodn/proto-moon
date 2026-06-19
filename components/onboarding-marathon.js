@@ -1,18 +1,21 @@
 /* ============================================================
-   Onboarding — Фотомарафон
-   Показывается ОДИН раз при первом тапе «Перейти к фотомарафону».
+   Onboarding — Фотомарафон (листаемые слайды)
+   Показывается при тапе «Перейти к фотомарафону» из ленты.
    Перехват клика идёт на window в фазе capture — то есть РАНЬШЕ
    глобального обработчика навигации в screen-transition.js (он на document).
 
-   Подключение: на странице с кнопками data-href="marathon.html" достаточно
+   4 слайда: Участвуйте → Тематика → Голосуйте → Приглашайте.
+   • «Далее» — только на 1-м слайде (ручной переход).
+   • 2-й и 3-й слайды перелистываются сами (автопереход).
+   • На последнем слайде «Далее» нет — только «Перейти к фотомарафону».
+   Свайп влево/вправо листает вручную (отменяет автопереход).
+
+   Подключение:
      <link rel="stylesheet" href="components/onboarding-marathon.css">
      <script src="components/onboarding-marathon.js"></script>
 
    Картинки — слоты в assets/onboarding/marathon/ (кладутся отдельно):
-     photo-1/2/3.png   — фото в hero «Участвуйте»
-     icon-sport/cooking/garden.png — 3D-иконки тематик
-     stickers.png      — стикеры в блоке «Голосуйте»
-     invite-1/2/3.png  — фото в блоке «Приглашайте всех»
+     photo-1/2/3.png · icon-sport/cooking/garden.png · stickers.png · invite-1/2/3.png
    ============================================================ */
 (function () {
   'use strict';
@@ -24,6 +27,10 @@
   // true — показывать онбординг КАЖДЫЙ раз (флаг игнорируется, удобно для демо).
   // false — показывать один раз и запоминать в localStorage.
   var SHOW_EVERY_TIME = true;
+
+  // Какие слайды (0-based) перелистываются сами и через сколько мс.
+  var AUTO_SLIDES = { 1: true, 2: true };   // 2-й и 3-й
+  var AUTO_MS = 2600;
 
   function seen() {
     if (SHOW_EVERY_TIME) return false;
@@ -58,57 +65,60 @@
         '</svg>' +
       '</button>' +
 
-      '<div class="omar__scroll">' +
+      '<div class="omar__slides">' +
+        '<div class="omar__track">' +
 
-        /* 1 — Участвуйте */
-        '<section class="omar-sec omar-hero">' +
-          '<div class="omar-fan">' +
-            img('photo-1.png', 'omar-fan__photo omar-fan__photo--1') +
-            img('photo-2.png', 'omar-fan__photo omar-fan__photo--2') +
-            img('photo-3.png', 'omar-fan__photo omar-fan__photo--3') +
-          '</div>' +
-          '<h2 class="omar-sec__title omar-hero__title">Участвуйте<br>в фотомарафонах</h2>' +
-          '<p class="omar-sec__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
-        '</section>' +
+          /* 1 — Участвуйте */
+          '<section class="omar-slide omar-slide--hero">' +
+            '<div class="omar-fan">' +
+              img('photo-1.png', 'omar-fan__photo omar-fan__photo--1') +
+              img('photo-2.png', 'omar-fan__photo omar-fan__photo--2') +
+              img('photo-3.png', 'omar-fan__photo omar-fan__photo--3') +
+            '</div>' +
+            '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
+            '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
+          '</section>' +
 
-        /* 2 — Выбирайте тематику */
-        '<section class="omar-sec">' +
-          '<h2 class="omar-sec__title">Выбирайте тематику</h2>' +
-          '<p class="omar-sec__text">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
-          '<div class="omar-chips">' +
-            '<span class="omar-chip omar-chip--sport">спорт' + img('icon-sport.png', 'omar-chip__icon') + '</span>' +
-            '<span class="omar-chip omar-chip--cooking">кулинария' + img('icon-cooking.png', 'omar-chip__icon') + '</span>' +
-            '<span class="omar-chip omar-chip--garden">сад' + img('icon-garden.png', 'omar-chip__icon') + '</span>' +
-          '</div>' +
-        '</section>' +
+          /* 2 — Выбирайте тематику */
+          '<section class="omar-slide">' +
+            '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
+            '<p class="omar-slide__text">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
+            '<div class="omar-chips">' +
+              '<span class="omar-chip omar-chip--sport">спорт' + img('icon-sport.png', 'omar-chip__icon') + '</span>' +
+              '<span class="omar-chip omar-chip--cooking">кулинария' + img('icon-cooking.png', 'omar-chip__icon') + '</span>' +
+              '<span class="omar-chip omar-chip--garden">сад' + img('icon-garden.png', 'omar-chip__icon') + '</span>' +
+            '</div>' +
+          '</section>' +
 
-        /* 3 — Голосуйте за фото */
-        '<section class="omar-sec">' +
-          '<h2 class="omar-sec__title">Голосуйте за фото</h2>' +
-          '<p class="omar-sec__text">Поддержите фото друга классом — так у него будет больше шанса выиграть в фотомарафоне, или пригласите голосовать за вас.</p>' +
-          img('stickers.png', 'omar-stickers') +
-        '</section>' +
+          /* 3 — Голосуйте за фото */
+          '<section class="omar-slide">' +
+            '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
+            '<p class="omar-slide__text">Поддержите фото друга классом — так у него будет больше шанса выиграть в фотомарафоне, или пригласите голосовать за вас.</p>' +
+            img('stickers.png', 'omar-stickers') +
+          '</section>' +
 
-        /* 4 — Приглашайте всех */
-        '<section class="omar-sec">' +
-          '<h2 class="omar-sec__title">Приглашайте всех</h2>' +
-          '<p class="omar-sec__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
-          '<div class="omar-fan">' +
-            img('invite-1.png', 'omar-fan__photo omar-fan__photo--1') +
-            img('invite-2.png', 'omar-fan__photo omar-fan__photo--2') +
-            img('invite-3.png', 'omar-fan__photo omar-fan__photo--3') +
-          '</div>' +
-        '</section>' +
+          /* 4 — Приглашайте всех */
+          '<section class="omar-slide">' +
+            '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
+            '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+            '<div class="omar-fan">' +
+              img('invite-1.png', 'omar-fan__photo omar-fan__photo--1') +
+              img('invite-2.png', 'omar-fan__photo omar-fan__photo--2') +
+              img('invite-3.png', 'omar-fan__photo omar-fan__photo--3') +
+            '</div>' +
+          '</section>' +
 
+        '</div>' +
       '</div>' +
 
       '<div class="omar__footer">' +
-        '<div class="button-wrapper __size-56 __full-width omar__cta" style="display:block">' +
+        '<div class="omar__dots" aria-hidden="true"></div>' +
+        '<div class="button-wrapper __size-56 __full-width omar__cta">' +
           '<button class="button-container __style-primary" type="button" style="width:100%">' +
             '<span class="button-content">Перейти к фотомарафону</span>' +
           '</button>' +
         '</div>' +
-        '<div class="button-wrapper __size-56 __full-width omar__next" style="display:block">' +
+        '<div class="button-wrapper __size-56 __full-width omar__next">' +
           '<button class="button-container __style-secondary" type="button" style="width:100%">' +
             '<span class="button-content">Далее</span>' +
           '</button>' +
@@ -117,62 +127,76 @@
 
     document.body.appendChild(el);
 
+    /* ---------- Карусель ---------- */
+    var slidesEl = el.querySelector('.omar__slides');
+    var track    = el.querySelector('.omar__track');
+    var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
+    var dotsWrap = el.querySelector('.omar__dots');
+    var nextWrap = el.querySelector('.omar__next');
+    var last     = slides.length - 1;
+    var index    = 0;
+    var autoTimer = null;
+
+    slides.forEach(function () { var d = document.createElement('span'); d.className = 'omar__dot'; dotsWrap.appendChild(d); });
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function clearAuto() { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }
+    function scheduleAuto() { if (AUTO_SLIDES[index]) autoTimer = setTimeout(function () { goTo(index + 1); }, AUTO_MS); }
+
+    function goTo(i) {
+      i = Math.max(0, Math.min(last, i));
+      clearAuto();
+      index = i;
+      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+      nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
+      scheduleAuto();                                          // 2-й и 3-й — сами
+    }
+
     el.querySelector('.omar__close').addEventListener('click', close);
     el.querySelector('.omar__cta button').addEventListener('click', go);
+    nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
 
-    // Подъезд секций при скролле
-    var scroll = el.querySelector('.omar__scroll');
-    var footer = el.querySelector('.omar__footer');
-    var secs = Array.prototype.slice.call(el.querySelectorAll('.omar-sec'));
+    // Свайп влево/вправо (отменяет автопереход).
+    var sx = null, sdx = 0;
+    slidesEl.addEventListener('pointerdown', function (e) { sx = e.clientX; sdx = 0; clearAuto(); });
+    slidesEl.addEventListener('pointermove', function (e) { if (sx != null) sdx = e.clientX - sx; });
+    function endSwipe() {
+      if (sx == null) return;
+      var d = sdx; sx = null;
+      if (d < -40) goTo(index + 1);
+      else if (d > 40) goTo(index - 1);
+      else scheduleAuto();           // не свайп — возвращаем автотаймер, если был
+    }
+    slidesEl.addEventListener('pointerup', endSwipe);
+    slidesEl.addEventListener('pointercancel', function () { sx = null; scheduleAuto(); });
 
-    // «Далее» — плавный скролл к следующему блоку; на последнем блоке прячется.
-    el.querySelector('.omar__next button').addEventListener('click', function () {
-      var base = scroll.getBoundingClientRect().top;
-      for (var i = 0; i < secs.length; i++) {
-        if (secs[i].getBoundingClientRect().top - base > 8) {
-          secs[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
-          return;
-        }
-      }
-    });
-    scroll.addEventListener('scroll', function () {
-      var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
-      footer.classList.toggle('is-end', atEnd);
-    });
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        // помечаем секцию и все предыдущие — чтобы при резком прыжке скролла
-        // не осталось «не подъехавших» блоков между hero и текущим
-        var idx = secs.indexOf(en.target);
-        for (var i = 0; i <= idx; i++) secs[i].classList.add('is-in');
-      });
-    }, { root: scroll, threshold: 0.2 });
-    secs.forEach(function (s) { io.observe(s); });
-
+    el._reset = function () { goTo(0); };
+    el._clearAuto = clearAuto;
     return el;
   }
 
   /* ---------- Управление ---------- */
   function open() {
     if (!overlay) overlay = build();
-    markSeen();                        // показываем один раз
+    markSeen();
     overlay.hidden = false;
-    // hero виден сразу (наблюдатель сработает асинхронно)
-    var hero = overlay.querySelector('.omar-hero');
     requestAnimationFrame(function () {
       overlay.classList.add('__open');
-      if (hero) hero.classList.add('is-in');
+      overlay._reset();              // на первый слайд + запуск анимаций
     });
   }
   function close() {
     if (!overlay) return;
+    if (overlay._clearAuto) overlay._clearAuto();
     overlay.classList.remove('__open');
     var done = function () { overlay.hidden = true; overlay.removeEventListener('transitionend', done); };
     overlay.addEventListener('transitionend', done);
-    setTimeout(done, 350);             // страховка, если transitionend не прилетит
+    setTimeout(done, 350);
   }
   function go() {
+    if (overlay && overlay._clearAuto) overlay._clearAuto();
     markSeen();
     location.href = destHref;
   }
