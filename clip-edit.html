@@ -43,15 +43,9 @@
     background: transparent; cursor: pointer;
   }
   .ce-close img { filter: brightness(0) invert(1); }
-  /* Пилюля «Редактировать» — фростед-светлая на тёмном, текст белый. */
-  .ce-edit {
-    display: inline-flex; align-items: center; gap: var(--space-1-5);
-    height: 40px; padding: 0 16px;
-    border: 0; border-radius: 14px; cursor: pointer;
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff;
-  }
-  .ce-edit img { filter: brightness(0) invert(1); }
+  /* «Редактировать» — DS-кнопка (__style-secondary-on-color): фростед-светлая
+     на тёмном. Локально только не даём ей растягиваться. */
+  .ce-edit { flex: 0 0 auto; }
 
   /* Превью-кадр клипа: крупный портретный остров по центру. */
   .ce-stage {
@@ -85,6 +79,8 @@
     color: #fff;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     pointer-events: none;
+    /* Форсируем брендовый OK Sans Display (страница на Roboto). */
+    font-family: "OK Sans Display", sans-serif;
   }
   /* Кнопка play по центру кадра. */
   .ce-play {
@@ -112,39 +108,37 @@
   }
   .ce-strip {
     position: absolute;
-    left: var(--space-4); right: var(--space-4); bottom: var(--space-4);
+    left: var(--space-4); bottom: var(--space-4);
     z-index: 2;
-    display: flex;
-    gap: 4px;
-    height: 48px;
+    height: 40px;
   }
+  /* Кадры — квадраты 40×40 в ряд. */
+  .ce-strip__frames { display: flex; gap: 4px; height: 100%; }
   .ce-strip__frame {
-    flex: 1 1 0;
-    min-width: 0;
-    height: 100%;
+    flex: 0 0 40px;
+    width: 40px; height: 40px;
     border-radius: 6px;
     overflow: hidden;
     background: #222;
   }
   .ce-strip__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  /* Плейхед — тонкая белая вертикаль над лентой (слева). */
+  /* Плейхед — тонкая белая вертикаль; во время проигрывания едет по таймлайну
+     (left анимирует JS на длительность клипа). */
   .ce-playhead {
     position: absolute;
-    left: calc(var(--space-4) + 4px);
-    bottom: calc(var(--space-4) - 6px);
+    top: -8px; left: 0;
     z-index: 3;
     width: 2px;
-    height: 60px;
+    height: 56px;
     background: #fff;
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
   }
 
-  /* Нижний CTA «Создать клип» — оранжевый primary во всю ширину. */
+  /* Нижний CTA «Создать клип» — оранжевый primary во всю ширину, высота 56 (DS). */
   .ce-cta {
     padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
   }
-  .ce-cta .button-container { height: 56px; }
 </style>
 </head>
 <body>
@@ -166,9 +160,9 @@
         <button class="ce-close" id="ceClose" aria-label="Закрыть">
           <img src="assets/icons/close_24.svg" width="24" height="24" alt="">
         </button>
-        <button class="ce-edit" id="ceEdit">
-          <span class="ds-body-l">Редактировать</span>
-        </button>
+        <div class="button-wrapper __size-44 ce-edit">
+          <button class="button-container __style-secondary-on-color" id="ceEdit"><span class="button-content">Редактировать</span></button>
+        </div>
       </div>
 
       <!-- Превью клипа -->
@@ -180,14 +174,16 @@
             <img src="assets/icons/play_filled_24.svg" width="28" height="28" alt="">
           </button>
           <div class="ce-strip-grad"></div>
-          <div class="ce-strip" id="ceStrip"></div>
-          <div class="ce-playhead"></div>
+          <div class="ce-strip">
+            <div class="ce-strip__frames" id="ceStrip"></div>
+            <div class="ce-playhead" id="cePlayhead"></div>
+          </div>
         </div>
       </div>
 
       <!-- Нижний CTA → проваливаемся в полноэкранный плеер клипов (klipy.html) -->
       <div class="ce-cta">
-        <div class="button-wrapper __size-44 __full-width">
+        <div class="button-wrapper __size-56 __full-width">
           <button class="button-container __style-primary" id="ceCreate"><span class="button-content">Создать клип</span></button>
         </div>
       </div>
@@ -216,16 +212,38 @@
         return '<div class="ce-strip__frame"><img src="' + u + '" alt=""></div>';
       }).join('');
 
-      // Play прокручивает кадры в герое (имитация воспроизведения клипа).
+      // Play: прокручивает кадры в герое + двигает плейхед по таймлайну.
+      var FRAME_MS = 1200;
       var i = 0, timer = null;
       var play = document.getElementById('cePlay');
+      var playhead = document.getElementById('cePlayhead');
+
+      function resetPlayhead() {
+        playhead.style.transition = 'none';
+        playhead.style.left = '0px';
+      }
+      function stop() {
+        if (timer) { clearInterval(timer); timer = null; }
+        play.style.opacity = '';
+        resetPlayhead();
+      }
+
       play.addEventListener('click', function () {
-        if (timer) { clearInterval(timer); timer = null; play.style.opacity = ''; return; }
+        if (timer) { stop(); return; }
         play.style.opacity = '0';
+        i = 0; hero.src = photos[0];
+        // Плейхед едет от начала до конца ленты кадров за всю длину клипа.
+        var total = photos.length * FRAME_MS;
+        resetPlayhead();
+        requestAnimationFrame(function () {
+          playhead.style.transition = 'left ' + total + 'ms linear';
+          playhead.style.left = 'calc(100% - 2px)';
+        });
         timer = setInterval(function () {
-          i = (i + 1) % photos.length;
+          i += 1;
+          if (i >= photos.length) { stop(); return; }   // доиграли — стоп
           hero.src = photos[i];
-        }, 1200);
+        }, FRAME_MS);
       });
     })();
   </script>
