@@ -212,6 +212,17 @@ function authorHeader(id, time, { subscribe = false } = {}) {
           </div></div></div>`;
 }
 
+/** Хлебные крошки из колонок «тема»/«рубрика» (последняя — активная). Если обе
+ *  пусты → ''. Разметка как в комментах-как-фид и в NV-ленте. */
+function breadcrumbs(tema, rubrika) {
+  if (!tema && !rubrika) return '';
+  return `            <nav class="breadcrumbs">${tema ? `
+              <a class="breadcrumbs__item" href="#">${esc(tema)}</a>` : ''}${(tema && rubrika) ? `
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${rubrika ? `
+              <span class="breadcrumbs__item __state-on">${esc(rubrika)}</span>` : ''}
+            </nav>`;
+}
+
 /** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
  *  простой <p>. bodyClass — класс параграфа (text-feed__body по умолчанию). */
 const CLAMP = 160;
@@ -428,10 +439,28 @@ function renderPost(p, idx) {
     /* ── базовый feed-text: text / photo / photo-gallery / video / group-post ── */
     case 'text': case 'photo': case 'photo-gallery': case 'video': case 'group-post': {
       const subscribe = isGroupId(aid); // group-post → «Подписаться» в шапке
-      return `        <article class="text-feed island">
+      // Крошки «тема / рубрика» (если заданы в листе) — над шапкой автора,
+      // как в NV-ленте. Шапку заворачиваем в feed-header (тот же паттерн, что
+      // в комментах-как-фид), иначе оставляем uni-cell как есть.
+      const crumbs = breadcrumbs(p.tema, p.rubrika);
+      const header = crumbs
+        ? `          <header class="feed-header">
+${crumbs}
 ${authorHeader(aid, time, { subscribe })}
-
+          </header>`
+        : authorHeader(aid, time, { subscribe });
+      // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
+      // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
+      const body = title
+        ? `          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">${esc(title)}</h2>
 ${feedText(text)}
+          </div>`
+        : feedText(text);
+      return `        <article class="text-feed island">
+${header}
+
+${body}
 ${media(photos)}
 ${actionsBar(likes, comments, reshares)}${marathonBlock(p.marathon, isJoined(p.marathonJoined))}
         </article>`.replace(/\n\n+/g, '\n\n');
