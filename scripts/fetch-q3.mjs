@@ -675,10 +675,12 @@ ${moreBtn({ style: 'on-image' })}
       const pics = photos.length ? photos : (x.fallbackPhotos || []);
       const label = text || x.label || 'Лето 2026';
       const isVideo = pics.length === 1 && /\.(mp4|webm|mov)(\?|#|$)/i.test(pics[0]);
+      // Эффекты перехода кадр→кадр (Ken Burns): по кругу, чтобы соседние различались.
+      const MCLIP_FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
       const mediaInner = isVideo
         ? `            <video src="${esc(pics[0])}" autoplay muted loop playsinline></video>`
         : pics.map((u, i) =>
-            `            ${img(u, `class="ll-memclip__slide${i === 0 ? ' __active' : ''}" `)}`).join('\n');
+            `            ${img(u, `class="ll-memclip__slide ${MCLIP_FX[i % MCLIP_FX.length]}${i === 0 ? ' __active' : ''}" `)}`).join('\n');
       // data-clip-edit: тап по медиа (и по «Поделиться») открывает превью/редактор.
       return `        <article class="text-feed island ll-memclip">
           <div class="ll-otd__caption ds-body-m">

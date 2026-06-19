@@ -150,6 +150,9 @@
 .button-container.__style-on-image {
   --button-color: var(--static-text-and-icons-base-inverse-primary);
   --button-background-color: var(--static-surface-special-layer-tertiary);
+  /* Полупрозрачный фон → размываем подложку под пилюлей (frosted glass). */
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
 }
 
 /* В on-image текст и mask-иконки (.icon) белые через currentColor, но
