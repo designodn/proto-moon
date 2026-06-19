@@ -1,0 +1,207 @@
+/* ============================================================
+   Onboarding — Фотомарафон
+   Полноэкранный онбординг (один длинный скролл), который показывается
+   один раз при первом тапе «Перейти к фотомарафону».
+   Разметку инжектит components/onboarding-marathon.js.
+   Картинки — слоты <img>, кладутся в assets/onboarding/marathon/.
+   ============================================================ */
+
+.omar {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;                      /* выше таббара (z-60) и heads-up пушей ленты (z-1000) */
+  display: flex;
+  flex-direction: column;
+  background: var(--dynamic-surface-base-primary, #F7F4F2);
+  overflow: hidden;
+  /* появление самого оверлея */
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+.omar[hidden] { display: none; }
+.omar.__open { opacity: 1; }
+
+/* Прокручиваемая область */
+.omar__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: env(safe-area-inset-top, 0px);
+  /* запас снизу под прибитую кнопку */
+  padding-bottom: calc(56px + var(--space-6) + env(safe-area-inset-bottom, 0px));
+}
+
+/* Крестик — прибит к верху поверх скролла */
+.omar__close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-4));
+  right: var(--space-4);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--base-white-translucent-56, rgba(255,255,255,.56));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--dynamic-text-and-icons-base-primary, #2e2f33);
+  cursor: pointer;
+}
+.omar__close svg { display: block; width: 24px; height: 24px; }
+
+/* ---------- Секция (общий блок-шаг) ---------- */
+.omar-sec {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+.omar-sec__title {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--dynamic-text-and-icons-base-primary, #2e2f33);
+}
+.omar-sec__text {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-family);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: .24px;
+  color: var(--dynamic-text-and-icons-base-secondary, rgba(46,47,51,.88));
+}
+
+/* Подъезд секций при скролле */
+.omar-sec { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+.omar-sec.is-in { opacity: 1; transform: none; }
+
+/* ============================================================
+   1. HERO — «Участвуйте в фотомарафонах»
+   ============================================================ */
+.omar-hero {
+  min-height: 100svh;
+  align-items: center;
+  text-align: center;
+  justify-content: flex-start;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 96px);
+  /* градиент первого экрана из макета */
+  background-image:
+    linear-gradient(188deg,
+      #DFCED0 5%,
+      #F08652 31%,
+      var(--dynamic-surface-base-primary, #F7F4F2) 50%);
+}
+.omar-hero__title { font-size: 32px; line-height: 1.2; }
+.omar-hero .omar-sec__text { max-width: 328px; }
+
+/* Веер из 3 фото (hero и invite) */
+.omar-fan {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  margin-bottom: var(--space-6);
+}
+.omar-fan__photo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 24px;
+  border: 4px solid #F6ECE1;
+  box-shadow: 0 12px 28px rgba(46,47,51,.16);
+  background: var(--base-orange-12, #EFE0D7);
+  transition: transform .6s cubic-bezier(.2,.7,.3,1), opacity .5s ease;
+  opacity: 0;
+}
+/* стартовое (схлопнутое) состояние */
+.omar-fan__photo { transform: translate(-50%,-50%) rotate(0deg) scale(.85); }
+/* средняя — поверх соседних (как в галерее фида) */
+.omar-fan__photo--2 { z-index: 2; }
+/* разъехались веером — на одном уровне по вертикали, с нахлёстом друг на друга */
+.is-in .omar-fan__photo--1 { transform: translate(calc(-50% - 64px), -50%) rotate(-12deg); opacity: 1; transition-delay: .05s; }
+.is-in .omar-fan__photo--2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.05); opacity: 1; transition-delay: .12s; }
+.is-in .omar-fan__photo--3 { transform: translate(calc(-50% + 64px), -50%) rotate(12deg); opacity: 1; transition-delay: .19s; }
+
+/* ============================================================
+   2. ТЕМАТИКА — чипсы с 3D-иконками
+   ============================================================ */
+.omar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.omar-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-family: var(--font-family);
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  /* подлёт + покачивание */
+  opacity: 0;
+  transform: translateY(16px) rotate(-4deg);
+  transition: opacity .45s ease, transform .45s cubic-bezier(.2,.7,.3,1);
+}
+.is-in .omar-chip { opacity: 1; transform: none; }
+.is-in .omar-chip--sport   { transition-delay: .05s; }
+.is-in .omar-chip--cooking { transition-delay: .18s; }
+.is-in .omar-chip--garden  { transition-delay: .31s; }
+
+.omar-chip--sport   { background: var(--static-surface-status-accent, #F64A00); transform: translateY(16px) rotate(-6deg); }
+.omar-chip--cooking { background: var(--static-surface-status-attention, #FFB313); }
+.omar-chip--garden  { background: var(--static-surface-status-positive, #2FB675); }
+
+/* 3D-иконка тематики — выглядывает поверх правого края чипа */
+.omar-chip__icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin: -18px -14px -18px 4px;     /* вылезает за габариты чипа */
+  pointer-events: none;
+}
+
+/* ============================================================
+   3. ГОЛОСОВАНИЕ — стикеры (одна картинка)
+   ============================================================ */
+.omar-stickers {
+  align-self: center;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+  margin-top: var(--space-6);
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(.7);
+  transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.3,1.2);
+}
+.is-in .omar-stickers { opacity: 1; transform: none; transition-delay: .1s; }
+
+/* ============================================================
+   Прибитая кнопка
+   ============================================================ */
+.omar__footer {
+  flex: 0 0 auto;
+  padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg,
+    rgba(247,244,242,0) 0%,
+    var(--dynamic-surface-base-primary, #F7F4F2) 32%);
+}
+.omar__cta { width: 100%; }
+.omar__cta .button-container { width: 100%; }
