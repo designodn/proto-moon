@@ -78,13 +78,16 @@
 .omar-slide--hero {
   align-items: center;
   text-align: center;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) 0 0;   /* без боковых паддингов — фото во всю ширину */
   background-image:
     linear-gradient(188deg,
       #DFCED0 5%,
       #F08652 31%,
       var(--dynamic-surface-base-primary, #F7F4F2) 50%);
 }
+/* текстам возвращаем боковые отступы (фото — нет) */
+.omar-slide--hero .omar-slide__title,
+.omar-slide--hero .omar-slide__text { padding-left: var(--space-4); padding-right: var(--space-4); }
 .omar-slide--hero .omar-slide__title {
   font-family: "OK Sans Display", Onest, sans-serif;   /* форсируем OK Sans, а не Roboto */
   font-size: 32px;
