@@ -60,6 +60,7 @@
   top: 22px;
   bottom: -22px;
   background: var(--static-surface-brown);
+  opacity: 0.3;
 }
 .fc-comment:not(:has(~ .fc-comment))::before {
   display: none;
@@ -84,6 +85,7 @@
   border-left: 2px solid var(--static-surface-brown);
   border-bottom: 2px solid var(--static-surface-brown);
   border-bottom-left-radius: 8px;
+  opacity: 0.3;                     /* цвет локтя на 30% */
 }
 
 .fc-comment__body {
