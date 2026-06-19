@@ -96,11 +96,64 @@
     return m ? m[1] : null;
   }
 
+  /* ── Глобальный кеш-стек навигации ────────────────────────────────
+     «Хлебные крошки» посещённых экранов в sessionStorage (эфемерно, в
+     пределах вкладки). «Назад» возвращает на ФАКТИЧЕСКИ предыдущий экран
+     из стека — приоритетнее захардкоженного data-href; фолбэк — data-href,
+     затем history.back(). */
+  function navStackGet() { try { return JSON.parse(sessionStorage.getItem('navStack') || '[]'); } catch (_) { return []; } }
+  function navStackSet(s) { try { sessionStorage.setItem('navStack', JSON.stringify(s)); } catch (_) {} }
+  function curUrl() { return location.pathname + location.search; }
+  // Транзитные экраны, которые не должны попадать в «крошки» (сплеш-загрузка).
+  var NAV_TRANSIENT = /(^|\/)koleso-splash\.html$/;
+
+  /* Поддержка стека на ЗАГРУЗКЕ страницы (работает и для программных переходов
+     через location.href, т.к. referrer ставит сам браузер):
+       • приход «назад» (флаг screenNavBack) — снимаем верхнюю крошку;
+       • форвард-приход — добавляем referrer как крошку (кроме транзитных). */
+  (function () {
+    var isBack = false;
+    // отдельный флаг стека (screenNavBack принадлежит pagereveal-аниматору)
+    try { isBack = sessionStorage.getItem('navStackBack') === '1'; sessionStorage.removeItem('navStackBack'); } catch (_) {}
+    var stack = navStackGet();
+    if (isBack) {
+      stack.pop();
+    } else if (document.referrer) {
+      try {
+        var ref = new URL(document.referrer);
+        var refPath = ref.pathname + ref.search;
+        if (ref.origin === location.origin && /\.html/.test(ref.pathname) &&
+            !NAV_TRANSIENT.test(ref.pathname) && refPath !== curUrl() &&
+            stack[stack.length - 1] !== refPath) {
+          stack.push(refPath);
+          if (stack.length > 50) stack = stack.slice(-50);
+        }
+      } catch (_) {}
+    }
+    navStackSet(stack);
+  })();
+
   /* Единый перехватчик навигации NV (capture: срабатывает РАНЬШЕ tab-bar.js,
      ok-tabbar и любых инлайн-обработчиков, поэтому они не могут увести из NV). */
   document.addEventListener('click', function (e) {
     if (!e.target.closest) return;
-    var raw, isTab = false, isBack = false;
+
+    // Кнопка «назад» — приоритетно на фактический предыдущий экран из стека
+    // (верхняя крошка). Сам стек правится на загрузке след. страницы.
+    var backBtn = e.target.closest('.nav-bar__back, [data-screen-back]');
+    if (backBtn) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      try { sessionStorage.setItem('screenNavBack', '1'); sessionStorage.setItem('navStackBack', '1'); } catch (_) {}
+      var stack = navStackGet();
+      var prev = stack[stack.length - 1];
+      if (prev != null) { location.href = prev; return; }
+      var href = backBtn.getAttribute('data-href');
+      if (href) location.href = withNV(href); else history.back();
+      return;
+    }
+
+    var raw, isTab = false;
     var tabBtn = e.target.closest('.tabbar-icon');
     if (tabBtn) {
       isTab = true;
@@ -109,7 +162,6 @@
       var navEl = e.target.closest('a[href], [data-href], .tabs-tab');
       if (!navEl) return;
       raw = navEl.getAttribute('href') || navEl.getAttribute('data-href');
-      isBack = e.target.closest('.nav-bar__back, [data-screen-back]') != null;
     }
     if (raw === '#') { if (isTab) { e.preventDefault(); e.stopImmediatePropagation(); } return; }
     var dest = nvResolve(raw);
@@ -117,14 +169,7 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     if (isTab) { try { sessionStorage.setItem('nav-tab', '1'); } catch (_) {} }
-    // Кнопка «назад» помечает переход как обратный: capture-перехватчик глотает
-    // клик раньше bubble-обработчика .nav-bar__back, поэтому ставим флаг здесь.
-    if (isBack) { try { sessionStorage.setItem('screenNavBack', '1'); } catch (_) {} }
-    // Кешируем, откуда пришли на «Сегодня», чтобы «Назад» вернул ровно туда,
-    // а не на дефолтную NV-ленту (today.html читает todayOrigin).
-    if (!isBack && /(^|\/)today\.html(\?|$)/.test(dest)) {
-      try { sessionStorage.setItem('todayOrigin', location.pathname.replace(/^\//, '') + location.search); } catch (_) {}
-    }
+    location.href = dest;
     location.href = dest;
   }, true);
 
