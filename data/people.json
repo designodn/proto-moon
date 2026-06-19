@@ -117,6 +117,17 @@
       "bio": ""
     },
     {
+      "id": 11,
+      "name": "Ольга Стрельникова",
+      "subtitle": "",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&dpr=2",
+      "media": "image",
+      "gender": "",
+      "age": 92,
+      "city": "",
+      "bio": ""
+    },
+    {
       "id": "my_profile",
       "name": "Анфиса Тимирбаева(Абдуллина)",
       "subtitle": "",
@@ -220,6 +231,17 @@
       "name": "Игорь Черняков",
       "subtitle": "",
       "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1K3ZfIUJ2wQoa2mZ3cfO0RXX0hbFm3WyaSYZH-GZkyTe8xUwVTWOF-mQePtegmiCs2yTwd_JqaTz1HLT8Uv1yly8ZMlqo8ADaSxIyxvPMUAAAAp&dpr=2",
+      "media": "image",
+      "gender": "",
+      "age": null,
+      "city": "",
+      "bio": ""
+    },
+    {
+      "id": "group-6",
+      "name": "Эрмитаж",
+      "subtitle": "",
+      "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTliKRHnepvOtZ7CNiUGpgdRLczyEsZ-jI42g&s",
       "media": "image",
       "gender": "",
       "age": null,

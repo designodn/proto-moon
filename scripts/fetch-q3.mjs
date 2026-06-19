@@ -347,6 +347,73 @@ async function fetchLinkMeta(url) {
   } catch { return null; }
 }
 
+/* ── комменты под постом (компонент comment-thread, ct-*) ───────────────────── */
+/* Один верхнеуровневый коммент: аватар + имя (запекаются inline из people.json,
+ * как авторы Q3) + текст + действия «Ответить / Нравится». Времени/счётчика
+ * лайков в листе нет — поэтому мету не рисуем, а у «Нравится» текст вместо числа. */
+function commentItem(authorId, text) {
+  return `              <article class="ct-item">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image">${img(personPhoto(authorId))}</div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">${esc(personName(authorId))}</span>
+                  </div>
+                  <p class="ct-item__text">${esc(resolveNames(text))}</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                  </div>
+                </div>
+              </article>`;
+}
+
+/** Блок комментов под карточкой (ct-list). '' — если в данных нет ни одного. */
+function renderCommentThread(p) {
+  const list = p.threadComments || [];
+  if (!list.length) return '';
+  const items = list.map(c =>
+    `            <div class="ct-thread">\n${commentItem(c.authorId, c.text)}\n            </div>`).join('\n');
+  // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
+  // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
+  // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
+  const asReplies = p.type === 'comment-as-feed';
+  const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
+  const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
+  // «Посмотреть …» — когда счётчик комментов поста больше показанных (в обычной
+  // ленте), либо всегда для comment-as-feed (ответы есть → ветка длиннее).
+  const total = parseInt(p.comments, 10);
+  const showMore = asReplies || (Number.isFinite(total) && total > list.length);
+  const more = showMore
+    ? `\n            <div class="ct-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    : '';
+  // Поле ввода под веткой — отдельный ребёнок карточки (своё выравнивание),
+  // как в эталоне «Комменты Клип/Подарок». Аватар — мой профиль.
+  const input = `          <div class="comment-input ll-feed-comment-input">
+            <div class="avatar __size-36 __type-image">${img(personPhoto('my_profile'))}</div>
+            <div class="comment-input__field">
+              <input class="text-input __size-36" placeholder="${esc(placeholder)}">
+              <div class="comment-input__actions">
+                <span class="comment-input__action icon __size-24 __slot-attach"></span>
+                <span class="comment-input__action icon __size-24 __slot-smile"></span>
+              </div>
+            </div>
+          </div>`;
+  return `          <div class="ct-list ll-feed-comments">\n${items}${more}\n          </div>\n${input}`;
+}
+
+/** Прицепить комменты к готовой карточке: вставка перед последним </article>
+ *  (карточки-острова). Клип с комментами рисуется как island (см. case 'clip'),
+ *  так что отдельная обработка full-bleed не нужна. Без комментов — как есть. */
+function attachComments(card, p) {
+  const block = renderCommentThread(p);
+  if (!block) return card;
+  const i = card.lastIndexOf('</article>');
+  if (i < 0) return card;
+  return `${card.slice(0, i)}${block}\n        ${card.slice(i)}`;
+}
+
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
 function renderPost(p, idx) {
   const { id, type, author, photos, likes, comments, reshares, link } = p;
@@ -724,6 +791,28 @@ ${authorHeader(aid, time)}
         ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
       });
       const openUrl = `klipy.html?${q}`;
+
+      // Клип С комментами рисуем «как в Figma» — обычной карточкой-островом:
+      // постер/видео в стандартном медиа-блоке (4:3, object-fit cover), автор
+      // сверху, опц. лейбл из «шапка» («может быть интересно»), actions-bar.
+      // Комменты/инпут добавит attachComments (путь island, внутрь карточки).
+      // Без комментов остаётся прежний full-bleed 9:16 клип (ниже).
+      if ((p.threadComments || []).length) {
+        const subscribe = isGroupId(aid);
+        const hint = p.header
+          ? `          <div class="ds-caption-m ll-clip-hint">${esc(p.header)}</div>\n`
+          : '';
+        const cardVisual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
+          ? `<video src="${esc(src)}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video>`
+          : img(src, 'style="width:100%;height:100%;object-fit:cover;display:block" ');
+        return `        <article class="text-feed island">
+${hint}${authorHeader(aid, time, { subscribe })}
+
+          <a class="text-feed__media __single" href="${esc(openUrl)}" aria-label="Открыть клип" style="display:block">${cardVisual}</a>
+${actionsBar(likes, comments, reshares)}
+        </article>`;
+      }
+
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
 
@@ -796,6 +885,50 @@ ${mediaInner}
         </article>`;
     }
 
+    /* ── comment-as-feed: коммент как отдельная карточка ленты ──
+       feed-header (крошки + автор + «Комментарий к <автор оригинала>») →
+       крупный текст коммента (caf-text 22/26) → превью оригинального поста
+       (бордерная reshare-card: иконка-репост + заголовок + сниппет) →
+       actions-bar. Ответы (ветку) добавит attachComments (лейблы «ответы»).
+       Автор: id[0] — комментатор (шапка), id[1] — автор оригинала. */
+    case 'comment-as-feed': {
+      const commenter = aid;          // ids[0]
+      const original = ids[1] || '';
+      const crumbs = (p.tema || p.rubrika)
+        ? `
+            <nav class="breadcrumbs">${p.tema ? `
+              <a class="breadcrumbs__item" href="#">${esc(p.tema)}</a>` : ''}${(p.tema && p.rubrika) ? `
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${p.rubrika ? `
+              <span class="breadcrumbs__item __state-on">${esc(p.rubrika)}</span>` : ''}
+            </nav>`
+        : '';
+      const sub = original
+        ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
+        : 'Комментарий';
+      const preview = `          <div class="text-feed__reshare-card caf-preview">
+            <span class="icon __size-20 __slot-reshare caf-preview__icon"></span>
+            <div class="text-feed__link caf-preview__body">${text ? `
+              <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
+              <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}
+            </div>
+          </div>`;
+      return `        <article class="text-feed island">
+          <header class="feed-header">${crumbs}
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-m feed-header__name">${esc(personName(commenter))}</div>
+                <div class="ds-caption-m caf-header__sub">${sub}</div>
+              </div>
+            </div></div></div>
+          </header>
+
+          <p class="caf-text">${esc(title)}</p>
+${preview}
+${actionsBar(likes, comments, reshares)}
+        </article>`;
+    }
+
     default:
       console.warn(`  ⚠️  неизвестный тип «${type}» (${id}) — пропущен`);
       return '';
@@ -855,10 +988,15 @@ async function main() {
     };
     const I = {
       id: col('id'), type: col('тип'), author: col('автор'),
+      tema: col('тема'), rubrika: col('рубрика'), header: col('шапка'),
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
       link: col('ссылка'), desc: col('описание'),
       marathon: col('марафон'), joined: col('участвую'),
+      // Комменты под постом — до двух верхнеуровневых (автор + текст каждого).
+      // Можно дополнить парами «автор/текст коммента N» — просто расширь список.
+      c1Author: col('автор коммента 1'), c1Text: col('текст коммента 1'),
+      c2Author: col('автор коммента 2'), c2Text: col('текст коммента 2'),
     };
 
     // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор». Если
@@ -883,6 +1021,8 @@ async function main() {
       posts.push({
         id, type,
         author: cell(c, I.author),
+        tema: cell(c, I.tema), rubrika: cell(c, I.rubrika),  // крошки (breadcrumbs)
+        header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
         text: cell(c, I.text),
         photos: cell(c, I.photos).split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
@@ -896,6 +1036,12 @@ async function main() {
         // «Заголовок / Подзаголовок» (делится по « / » в renderPost). Заголовок
         // можно задать и отдельной колонкой «заголовок» — она перебивает слеш.
         desc: cell(c, I.desc),
+        // Комменты под постом: пары «автор/текст». Берём только заполненные
+        // (есть текст) — пустые пары не дают пустых карточек комментов.
+        threadComments: [
+          { authorId: cell(c, I.c1Author), text: cell(c, I.c1Text) },
+          { authorId: cell(c, I.c2Author), text: cell(c, I.c2Text) },
+        ].filter(x => x.text),
       });
     }
 
@@ -917,7 +1063,9 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const rendered = posts.map((p, i) => renderPost(p, i)).filter(Boolean);
+  const rendered = posts
+    .map((p, i) => { const card = renderPost(p, i); return card ? attachComments(card, p) : card; })
+    .filter(Boolean);
   // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
   // — не вставляем пустоту в живую ленту.
   if (rendered.length === 0)
