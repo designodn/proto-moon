@@ -320,7 +320,11 @@ function commentItem(authorId, text) {
               </div>
               <div class="fc-comment__body">
                 <div class="fc-comment__author ds-title-s">${esc(personName(authorId))}</div>
-                <p class="fc-comment__text ds-body-m">${esc(resolveNames(text))}</p>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">${esc(resolveNames(text))}</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
                 <div class="fc-comment__actions">
                   <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
                   <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>

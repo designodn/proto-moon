@@ -75,11 +75,50 @@
 .fc-comment__author {
   color: var(--dynamic-text-and-icons-base-primary);
 }
+/* Текст коммента: максимум 4 строки, дальше — «ещё» (как в фиде, по тапу
+   разворачивается). Обёртка-label с скрытым чекбоксом тогглит line-clamp. */
+.fc-comment__text-wrap {
+  display: block;
+  cursor: pointer;
+}
 .fc-comment__text {
   margin: 0;
   color: var(--dynamic-text-and-icons-base-primary);
   overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
 }
+/* развёрнутый — снимаем кламп */
+.fc-comment__text-wrap > input:checked ~ .fc-comment__text {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+/* «ещё/скрыть» — показываем только когда текст реально переполнен (класс
+   is-clampable вешает JS в lenta-q3.html по факту overflow). */
+.fc-comment__more {
+  display: none;
+  margin-top: var(--space-1);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.fc-comment__text-wrap.is-clampable .fc-comment__more {
+  display: inline-block;
+}
+.fc-comment__more-hide {
+  display: none;
+}
+.fc-comment__text-wrap > input:checked ~ .fc-comment__more .fc-comment__more-show {
+  display: none;
+}
+.fc-comment__text-wrap > input:checked ~ .fc-comment__more .fc-comment__more-hide {
+  display: inline;
+}
+
 .fc-comment__actions {
   display: flex;
   align-items: center;
