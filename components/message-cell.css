@@ -82,17 +82,3 @@
 
 .message-cell.__unread .message-cell__read { visibility: hidden; }
 .message-cell.__read   .message-cell__read { visibility: visible; }
-
-/* Чип-тег во второй строке («Вы давно не общались») — светлая плашка
-   surface-tint-asphalt с акцентным текстом. Заменяет превью в ячейках
-   механики «давно не общались» (Figma 2625:106188). */
-.message-cell__tag {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 16px;
-  background-color: var(--static-surface-tint-asphalt);
-  color: var(--static-text-and-icons-base-primary);
-  white-space: nowrap;
-}

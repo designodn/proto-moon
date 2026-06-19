@@ -42,25 +42,19 @@
 
   /* .ll-tabbar → components/app-shell.css */
 
-  /* Механика «Давно не общались» — чередуется с ВВЗ при перезаходе (A/B).
-     Состояние задаёт [data-dno] на .phone-frame (messages-dno.js):
-       A — ВВЗ «Возможно, вы знакомы»;
-       B — блок «Давно не общались» + диалоги с тегом-чипом наверху списка. */
-  [data-dno="a"] #dnoBlock,
-  [data-dno="a"] [data-dno-item] { display: none; }
-  [data-dno="b"] #vvzBlock       { display: none; }
-
-  /* Кнопка «Написать» в блоке «Давно не общались» — primary (оранжевая),
-     перебивает on-color-override модификатора .vvz-card.__message. */
-  #dnoBlock .vvz-card__btn .button-container {
-    --button-color: var(--static-text-and-icons-base-inverse-primary);
-    --button-background-color: var(--static-surface-status-accent);
-  }
+  /* Диалоги «Давно не общались» — закреплены наверху списка. Вместо превью
+     сообщения и времени показываем подпись «Давно не общались» и кнопку
+     «Написать» (primary, 28) справа. Тап по строке или по кнопке открывает
+     чат с человеком (chat.html?id=…). */
+  .ll-messages [data-dno-item] { cursor: pointer; }
+  .message-cell .uni-cell-additional-content { flex: 1 1 auto; min-width: 0; }
+  .message-cell__action { flex: 0 0 auto; }
+  .message-cell__hint { color: var(--dynamic-text-and-icons-base-secondary); }
 </style>
 </head>
 <body>
 
-  <div class="phone-frame __fullscreen" data-screen data-dno="a">
+  <div class="phone-frame __fullscreen" data-screen>
     <div class="phone-frame__feed">
 
       <!-- STATUS + NAVBAR — DS meshok-up -->
@@ -89,8 +83,7 @@
         </div>
       </div>
 
-      <!-- Возможно, вы знакомы (состояние A) — ВВЗ-стек vvz-card. Чередуется
-           с блоком «Давно не общались» при перезаходе (см. data-dno). -->
+      <!-- Возможно, вы знакомы — ВВЗ-стек vvz-card. Всегда наверху списка. -->
       <section class="vvz-portlet __messages" id="vvzBlock" data-dismiss-row aria-label="Возможно, вы знакомы">
         <header class="vvz-portlet__header">
           <header class="header __size-m"><div class="header__title">Возможно, вы знакомы</div></header>
@@ -185,120 +178,41 @@
         </div>
       </section>
 
-      <!-- Давно не общались (состояние B) — карусель vvz-card с кнопкой
-           «Написать» (primary). Показывается вместе с тег-диалогами ниже.
-           Механика «давно не общались»: components/messages-dno.js -->
-      <section class="vvz-portlet __messages" id="dnoBlock" data-dismiss-row aria-label="Давно не общались">
-        <header class="vvz-portlet__header">
-          <header class="header __size-m"><div class="header__title">Давно не общались</div></header>
-          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" data-dismiss="row"><span class="button-inline__content">Скрыть</span></button></span>
-        </header>
-        <div class="vvz-portlet__row">
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="7" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="7">Алёна Ящук</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="4" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="4">Анна Смирнова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="9" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="9">Мария Иванова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="2" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="2">Александр Фёдоров</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="10" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="10">Олег Зайцев</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="vvz-card __message" data-dismiss-target>
-            <div class="vvz-card__media">
-              <img data-person-avatar="5" alt="">
-              <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
-            </div>
-            <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="5">Светлана Орлова</div>              <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Написать</span></button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       <!-- Список диалогов -->
       <div class="ll-messages">
 
-        <!-- Давно не общались (состояние B) — диалоги с тегом-чипом, подняты
-             наверх списка. Показываются вместе с блоком #dnoBlock; скрыты в
-             состоянии A (ВВЗ). См. data-dno. -->
-        <div class="uni-cell-wrapper" data-dno-item>
+        <!-- Давно не общались — закреплены наверху списка. Без превью/времени:
+             подпись «Давно не общались» + кнопка «Написать» (primary, 28).
+             Тап по строке или кнопке → чат с человеком (chat.html?id=…). -->
+        <div class="uni-cell-wrapper" data-dno-item onclick="location.href='chat.html?id=7'">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell message-cell __read">
               <div class="avatar __size-56 __type-image"><img data-person-avatar="7" alt=""></div>
               <div class="uni-cell-additional-content">
                 <div class="message-cell__name ds-title-s" data-person-name="7">Алёна Ящук</div>
                 <div class="message-cell__row">
-                  <span class="message-cell__tag ds-caption-m-accent">Вы давно не общались</span>
+                  <span class="message-cell__hint ds-body-m">Давно не общались</span>
                 </div>
+              </div>
+              <div class="message-cell__action button-wrapper __size-28 __style-primary">
+                <button class="button-container __style-primary"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="uni-cell-wrapper" data-dno-item>
+        <div class="uni-cell-wrapper" data-dno-item onclick="location.href='chat.html?id=4'">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell message-cell __read">
               <div class="avatar __size-56 __type-image"><img data-person-avatar="4" alt=""></div>
               <div class="uni-cell-additional-content">
                 <div class="message-cell__name ds-title-s" data-person-name="4">Анна Смирнова</div>
                 <div class="message-cell__row">
-                  <span class="message-cell__tag ds-caption-m-accent">Вы давно не общались</span>
+                  <span class="message-cell__hint ds-body-m">Давно не общались</span>
                 </div>
+              </div>
+              <div class="message-cell__action button-wrapper __size-28 __style-primary">
+                <button class="button-container __style-primary"><span class="button-content">Написать</span></button>
               </div>
             </div>
           </div>
@@ -440,7 +354,6 @@
   <script src="components/dismissible.js"></script>
   <script src="components/tab-bar.js"></script>
   <script src="components/inapp-push.js"></script>
-  <script src="components/messages-dno.js"></script>
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
