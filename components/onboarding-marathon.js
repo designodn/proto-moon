@@ -99,7 +99,7 @@
               '</div>' +
               '<div class="omar-vote">' +
                 '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                '<p class="omar-slide__text">Поддержите фото друга классом — так у него будет больше шанса выиграть в фотомарафоне, или пригласите голосовать за вас.</p>' +
+                '<p class="omar-slide__text">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
                 img('smile.png', 'omar-stickers') +
               '</div>' +
             '</div>' +
@@ -159,25 +159,11 @@
     // прокрутка вниз к «Голосуйте» (подпись тематики ещё видна) → переход дальше.
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      var combo = slide.querySelector('.omar-combo');
       slide.classList.remove('__vote');
-      if (combo) {
-        combo.style.transition = 'none';
-        combo.style.transform = 'translateY(0)';
-        void combo.offsetWidth;            // сброс без анимации
-        combo.style.transition = '';
-      }
-      // 1) «Голосуйте» проявляется на своём месте — видно вместе с подписью тематики
+      // «Голосуйте» проявляется на своём месте после тегов+подписи (всё на одном экране)
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3000));
-      // 2) затем блок проматывается вниз, чтобы стикер был виден целиком
-      timers.push(setTimeout(function () {
-        if (combo) {
-          var d = Math.max(0, combo.scrollHeight - slide.clientHeight);
-          combo.style.transform = 'translateY(' + (-d) + 'px)';
-        }
-      }, 4400));
-      // 3) переход к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 7800));
+      // переход к «Приглашайте»
+      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 6200));
     }
 
     function goTo(i) {
