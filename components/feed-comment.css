@@ -61,13 +61,22 @@
   bottom: -22px;
   background: #E4DED9;
 }
-.fc-comment:not(:has(~ .fc-comment))::before {
+/* Последний коммент ИЗ НЕСКОЛЬКИХ — трунк вниз не нужен (линия приходит сверху,
+   от предыдущего коммента). */
+.fc-comment:not(:first-child):not(:has(~ .fc-comment))::before {
   display: none;
 }
 /* У первого коммента трунк продлеваем ВВЕРХ на 20px (через его top-padding) —
-   линия начинается выше локтя. (У одиночного коммента трунк всё равно скрыт.) */
+   линия начинается выше локтя. */
 .fc-comment:first-child::before {
   top: calc(22px - var(--space-5));   /* 2px = локоть(22) − padding(20) */
+}
+/* Одиночный коммент (он же первый и последний) — только риска ВВЕРХ на 20px,
+   вниз не тянем. */
+.fc-comment:first-child:not(:has(~ .fc-comment))::before {
+  top: calc(22px - var(--space-5));
+  bottom: auto;
+  height: var(--space-5);             /* 20px риски над локтем */
 }
 
 /* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
