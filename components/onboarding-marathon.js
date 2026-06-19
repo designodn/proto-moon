@@ -71,11 +71,11 @@
 
           /* 1 — Участвуйте */
           '<section class="omar-slide omar-slide--hero">' +
-            '<div class="omar-fan">' +    // фото подставляются из data/marathon.json
+            '<div class="omar-fan"><div class="omar-fan__stage">' +    // фото подставляются из data/marathon.json
               '<img class="omar-fan__photo omar-fan__photo--1" alt="" loading="lazy">' +
               '<img class="omar-fan__photo omar-fan__photo--2" alt="" loading="lazy">' +
               '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
-            '</div>' +
+            '</div></div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
             '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
           '</section>' +
@@ -183,8 +183,19 @@
     slidesEl.addEventListener('pointerup', endSwipe);
     slidesEl.addEventListener('pointercancel', function () { sy = null; scheduleAuto(); });
 
+    // Масштаб блока фото на 1-м слайде: занимает весь остаток над текстом.
+    function fitFan() {
+      var wrap = el.querySelector('.omar-slide--hero .omar-fan');
+      var stage = el.querySelector('.omar-slide--hero .omar-fan__stage');
+      if (!wrap || !stage) return;
+      var s = Math.min(wrap.clientWidth / 360, wrap.clientHeight / 396);
+      if (s > 0 && isFinite(s)) stage.style.setProperty('--omar-fan-scale', s);
+    }
+    window.addEventListener('resize', fitFan);
+
     el._reset = function () { goTo(0); };
     el._clearAuto = clearAuto;
+    el._fitFan = fitFan;
     return el;
   }
 
@@ -196,6 +207,7 @@
     requestAnimationFrame(function () {
       overlay.classList.add('__open');
       overlay._reset();              // на первый слайд + запуск анимаций
+      if (overlay._fitFan) overlay._fitFan();   // подгон масштаба фото под экран
     });
   }
   function close() {
