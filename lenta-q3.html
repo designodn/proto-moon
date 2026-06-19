@@ -274,6 +274,20 @@
     transition: opacity 0.8s ease;
   }
   .ll-memclip__slide.__active { opacity: 1; }
+  /* Эффекты перехода кадр→кадр (Ken Burns): на активном кадре проигрывается
+     анимация трансформа/блюра; класс __fx-* у соседних кадров разный. */
+  .ll-memclip__slide { will-change: transform, filter; }
+  @keyframes mclip-zoom-in  { from { transform: scale(1);    } to { transform: scale(1.12); } }
+  @keyframes mclip-zoom-out { from { transform: scale(1.12); } to { transform: scale(1);    } }
+  @keyframes mclip-pan-left { from { transform: scale(1.12) translateX(4%); } to { transform: scale(1.12) translateX(-4%); } }
+  @keyframes mclip-blur-in  { 0% { filter: blur(14px); transform: scale(1.08); } 55% { filter: blur(0); } 100% { filter: blur(0); transform: scale(1.08); } }
+  .ll-memclip__slide.__active.__fx-zoom-in  { animation: mclip-zoom-in  3.4s ease-out both; }
+  .ll-memclip__slide.__active.__fx-zoom-out { animation: mclip-zoom-out 3.4s ease-out both; }
+  .ll-memclip__slide.__active.__fx-pan-left { animation: mclip-pan-left 3.4s ease-out both; }
+  .ll-memclip__slide.__active.__fx-blur-in  { animation: mclip-blur-in 1.8s ease-out both; }
+  @media (prefers-reduced-motion: reduce) {
+    .ll-memclip__slide.__active { animation: none !important; }
+  }
   /* Подпись-период поверх медиа (слева сверху) — белая, с лёгкой тенью. */
   .ll-memclip__label {
     position: absolute;
@@ -706,11 +720,11 @@
           <div class="ds-title-xl">Ваш клип из воспоминаний</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="Лето 2026">
-            <img class="ll-memclip__slide __active" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IERVMpVnsjMQ_YRs5qVqRlxI3BzPLXYhj-M5KyROXaNyOnnbvHIirSHxKznJFWsyGUPokEmXpmDP8XQhNKJH7QXSSL4sBHF0F1P4ww024AAAAp&amp;dpr=2" alt="">
-            <img class="ll-memclip__slide" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kp4OGSbU3GN5vSxk4gOctp5N74-dvELrQD90VMWB215tv2BmFLgIIXI_bK8MTAFsNh68C-R1ov-XNxYMkCfLg-JGOUuZuSQU4LOE-AvQMAAAAp&amp;dpr=2" alt="">
-            <img class="ll-memclip__slide" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jln2G3pjQWoWpm_sdZIQTuNLzajpFoBUlFMesNVN97WjFm9P2j7K0v5VTeiJvOCxqmd9opyn_PdaZPLpYjsoNPqa6cZ2Re__-0Bp29-NwAAAAp&amp;dpr=2" alt="">
-            <img class="ll-memclip__slide" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L2krrjN9aTa7iJ4GjUFaIxMKNHSoPZAfbghn8a6J1z_K9ecsZIOxNY5iK71q3slNRc6ZJMhlG7L4354bqqMGM-zx_rKkETM-zo8-Q6ht0AAAAp&amp;dpr=2" alt="">
-            <img class="ll-memclip__slide" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IhQusVNDsLk747Uw82bPclyPRJ30hpQHAXX0on6hpczvRduO2RMf4f_hk4ZWMgdRsqjE9InlGPSAxMzSGMJShhMYfR7Zv7DGQCbJ3ac2oAAAAp&amp;dpr=2" alt="">
+            <img class="ll-memclip__slide __fx-zoom-in __active" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IERVMpVnsjMQ_YRs5qVqRlxI3BzPLXYhj-M5KyROXaNyOnnbvHIirSHxKznJFWsyGUPokEmXpmDP8XQhNKJH7QXSSL4sBHF0F1P4ww024AAAAp&amp;dpr=2" alt="">
+            <img class="ll-memclip__slide __fx-zoom-out" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kp4OGSbU3GN5vSxk4gOctp5N74-dvELrQD90VMWB215tv2BmFLgIIXI_bK8MTAFsNh68C-R1ov-XNxYMkCfLg-JGOUuZuSQU4LOE-AvQMAAAAp&amp;dpr=2" alt="">
+            <img class="ll-memclip__slide __fx-pan-left" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jln2G3pjQWoWpm_sdZIQTuNLzajpFoBUlFMesNVN97WjFm9P2j7K0v5VTeiJvOCxqmd9opyn_PdaZPLpYjsoNPqa6cZ2Re__-0Bp29-NwAAAAp&amp;dpr=2" alt="">
+            <img class="ll-memclip__slide __fx-blur-in" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L2krrjN9aTa7iJ4GjUFaIxMKNHSoPZAfbghn8a6J1z_K9ecsZIOxNY5iK71q3slNRc6ZJMhlG7L4354bqqMGM-zx_rKkETM-zo8-Q6ht0AAAAp&amp;dpr=2" alt="">
+            <img class="ll-memclip__slide __fx-zoom-in" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IhQusVNDsLk747Uw82bPclyPRJ30hpQHAXX0on6hpczvRduO2RMf4f_hk4ZWMgdRsqjE9InlGPSAxMzSGMJShhMYfR7Zv7DGQCbJ3ac2oAAAAp&amp;dpr=2" alt="">
             <div class="ll-memclip__label ll-memclip__label--ok ds-title-l">Лето 2026</div>
             <div class="actions-bar ll-memclip__actions">
               <div class="button-wrapper __size-44 __full-width">

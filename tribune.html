@@ -7,34 +7,39 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400&display=swap">
 <link rel="stylesheet" href="index.css">
 <style>
   * { -webkit-tap-highlight-color: transparent; }
 
   html, body {
     margin: 0; padding: 0; height: 100%;
-    background: var(--dynamic-surface-base-secondary);
+    background: var(--dynamic-surface-base-primary);
   }
   /* fullscreen-оболочка + скролл-фид + .ll-tabbar + .ll-icon → components/app-shell.css.
-     Здесь только фон страницы (secondary). */
-  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+     Подложка страницы — primary: на ней лежат острова-карточки (secondary). */
+  .phone-frame { background: var(--dynamic-surface-base-primary); }
 
-  /* Ряд chips под navbar внутри meshok-up: горизонтальный паддинг + воздух снизу.
-     Фон обязательно — иначе sticky meshok-up «просвечивает» ленту под чипсами. */
+  /* HEADER-остров — навбар + чипсы + вайб в ОДНОЙ карточке (один остров).
+     Сверху паддинг 0 (навбар держит свою высоту), снизу немного воздуха.
+     От ленты постов отделён gap'ом 4 (margin-bottom). */
+  .ll-header-island {
+    padding-top: 0;
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
+    /* flex-shrink:0 — иначе flex-column-родитель (.phone-frame__feed) сжимает
+       остров, а .island { overflow:hidden } обрезает навбар/чипсы/вайб. */
+    flex-shrink: 0;
+  }
+
+  /* Ряд chips внутри header-острова (фон острова — secondary). */
   .ll-chips {
-    padding: var(--space-2) 0 var(--space-3);
+    padding: var(--space-2) 0 var(--space-2);
     background-color: var(--dynamic-surface-base-secondary);
   }
   .ll-chips .chips-view__row { padding-left: var(--space-4); }
 
-  /* Vibe-карточка на острове.
-     flex-shrink: 0 — иначе flex-column-родитель (.phone-frame__feed) сжимает
-     первый остров и .island клипует контент через overflow:hidden. */
-  .ll-vibe-island {
-    padding: var(--space-6) var(--space-4);
-    flex-shrink: 0;
-  }
+  /* Vibe-блок внутри header-острова. */
+  .ll-vibe { padding: var(--space-4) var(--space-4) var(--space-2); }
   .ll-vibe-illu { display: block; width: 224px; height: auto; }
   /* Fallback-цветной градиент, если PNG не загрузилась */
   .ll-vibe-illu.__fallback {
@@ -42,6 +47,9 @@
     background: linear-gradient(135deg, #FFE3A8 0%, #F2C56A 30%, #6EBCEB 55%, #9BD16F 80%, #E07A6C 100%);
     box-shadow: 0 8px 24px -8px rgba(0,0,0,0.25);
   }
+
+  /* Таб «Трибуна» (__slot-book) → ico_book_24 задаётся глобально в
+     components/tabbar.css — здесь переопределять не нужно. */
 
   /* .ll-tabbar → components/app-shell.css */
 </style>
@@ -51,7 +59,7 @@
   <div class="phone-frame __fullscreen">
     <div class="phone-frame__feed">
 
-      <!-- STATUS + NAVBAR (search) + CHIPS — внутри meshok-up -->
+      <!-- STATUS-BAR — отдан реальной ОС (скрыт через meshok-up.css). -->
       <div class="meshok-up">
         <div class="status-bar">
           <span class="status-bar__time">9:41</span>
@@ -61,6 +69,10 @@
             <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
           </span>
         </div>
+      </div>
+
+      <!-- HEADER-остров: навбар (поиск) + чипсы + вайб -->
+      <section class="island ll-header-island">
 
         <div class="nav-bar __type-search">
           <div class="nav-bar__leading">
@@ -119,35 +131,36 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- VIBE — empty-state карточка «Здесь публикации пользователей ОК» -->
-      <section class="ll-vibe-island island">
-        <div class="vibe-wrapper">
-          <div class="vibe __context-island">
-            <div class="vibe__illustration">
-              <img class="ll-vibe-illu"
-                   src="assets/icons/Resourses.png"
-                   alt="Иллюстрация: стопка карточек с людьми"
-                   onerror="this.outerHTML='&lt;div class=&quot;ll-vibe-illu __fallback&quot; role=&quot;img&quot; aria-label=&quot;Иллюстрация: стопка карточек с людьми&quot;&gt;&lt;/div&gt;'">
+        <!-- VIBE — empty-state «Здесь публикации пользователей ОК» -->
+        <div class="ll-vibe">
+          <div class="vibe-wrapper">
+            <div class="vibe __context-island">
+              <div class="vibe__illustration">
+                <img class="ll-vibe-illu"
+                     src="assets/icons/Resourses.png"
+                     alt="Иллюстрация: стопка карточек с людьми"
+                     onerror="this.outerHTML='&lt;div class=&quot;ll-vibe-illu __fallback&quot; role=&quot;img&quot; aria-label=&quot;Иллюстрация: стопка карточек с людьми&quot;&gt;&lt;/div&gt;'">
+              </div>
+              <div class="vibe__title ds-title-xl">Здесь публикации пользователей ОК</div>
+              <div class="vibe__subtitle ds-body-l">Читайте, смотрите, находите близкие темы и общайтесь</div>
             </div>
-            <div class="vibe__title ds-title-xl">Здесь публикации пользователей ОК</div>
-            <div class="vibe__subtitle ds-body-l">Читайте, смотрите, находите близкие темы и общайтесь</div>
           </div>
         </div>
       </section>
 
-      <!-- Лента постов — реальные люди (data/people.js) + реальные посты (data/feed.json).
-           Формат text-feed нв-ленты: feed-base/feed-header/feed-text/media/actions-bar. -->
+      <!-- Лента постов — каждый пост = отдельный остров. Реальные люди (data/people.js).
+           Шапка: feed-header.__tribune (ава 20 / title-s / кнопка 28 / без времени и крошек).
+           Контроллы — Q3 (comment / reshare / klass / more). -->
       <div class="feed-container">
 
-        <!-- Стих — feed-text с .poem (Source Serif Pro 24/28, clamp 4) -->
+        <!-- Стих — feed-text с .poem (Roboto 24/28, clamp 4) -->
         <article class="feed-base island">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="1" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="1" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="1"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="1"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">3 ч</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -164,20 +177,20 @@
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 8;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">11</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">11</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 8;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
-        <!-- Новость — feed-text с .news (Roboto Regular 24/28, clamp 4) -->
+        <!-- Текстовый пост (бывш. «news») — обычный feed-text (ds-body-m, не крупный) -->
         <article class="feed-base island">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="2" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="2" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="2"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="2"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 ч</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -185,29 +198,30 @@
           </header>
 
           <div class="feed-text">
-            <p class="feed-text__body news">Сейчас новый вирус снова закроет нас по домам, потребление нефтепродуктов снизится, и цены на них упадут. Очень удобно.</p>
+            <p class="feed-text__body ds-body-m">Сейчас новый вирус снова закроет нас по домам, потребление нефтепродуктов снизится, и цены на них упадут. Очень удобно.</p>
+            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 22;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">1</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt=""></span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 22;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- VIDEO (post-1) — Игорь Черняков, Еда › Рецепты -->
         <article class="feed-base island" data-entity="group">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <nav class="breadcrumbs">
             <span class="breadcrumbs__item">Еда</span>
             <span class="breadcrumbs__separator" aria-hidden="true"></span>
             <span class="breadcrumbs__item __state-on">Рецепты</span>
           </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="group-5" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-5" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="group-5"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="group-5"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">08:15</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -225,20 +239,20 @@
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">48</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">15</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">48</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">15</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- PHOTO (post-4) — Екатерина -->
         <article class="feed-base island">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="9" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="9" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="9"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="9"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -253,25 +267,25 @@
           <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 12;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">20</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">1</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">20</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 12;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- TEXT (post-20) — Галина Гаджикулиева, Санкт-Петербург › Рядом живут -->
         <article class="feed-base island">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <nav class="breadcrumbs">
             <span class="breadcrumbs__item">Санкт-Петербург</span>
             <span class="breadcrumbs__separator" aria-hidden="true"></span>
             <span class="breadcrumbs__item __state-on">Рядом живут</span>
           </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="7" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="7"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="7"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">вчера</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -284,25 +298,25 @@
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">5</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">1</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">5</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- PHOTO (post-22) — Наталья Атаманюк | Рецепты, Еда › Рекомендации групп -->
         <article class="feed-base island" data-entity="group">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <nav class="breadcrumbs">
             <span class="breadcrumbs__item">Еда</span>
             <span class="breadcrumbs__separator" aria-hidden="true"></span>
             <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
           </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="group-1" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-1" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="group-1"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="group-1"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">вчера, 18:02</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -317,25 +331,25 @@
           <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/8220767/pub_63e9ec741b468f22ef1e7232_63ee070c3398503757765481/scale_1200" alt=""></div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 56;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">97</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">10</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">97</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">10</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 56;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- VIDEO (post-7) — Рыбалка и Охота, Рыбалка › Рекомендации групп -->
         <article class="feed-base island" data-entity="group">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <nav class="breadcrumbs">
             <span class="breadcrumbs__item">Рыбалка</span>
             <span class="breadcrumbs__separator" aria-hidden="true"></span>
             <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
           </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="group-3" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-3" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="group-3"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="group-3"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">2 дн</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -353,20 +367,20 @@
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 35;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">180</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">10</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">180</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">10</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 35;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
         <!-- GALLERY (post-14) — Александр Попов -->
         <article class="feed-base island">
-          <header class="feed-header">
+          <header class="feed-header __tribune">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img data-person-avatar="10" alt=""></div>
+            <div class="avatar __size-20 __type-image"><img data-person-avatar="10" alt=""></div>
             <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-m feed-header__name" data-person-name="10"></div>
+              <div class="ds-title-s feed-header__name" data-person-name="10"></div>
               <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">3 дн</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
@@ -386,10 +400,10 @@
           </div>
 
           <div class="actions-bar">
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/new-vision-icons/glyph_like_24.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_comment_24.svg" width="20" height="20" alt="">12</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/new-vision-icons/glyph_reshare_24.svg" width="20" height="20" alt="">1</span></button></div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" style="width: 36px;" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __slot-dots"></span></span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">12</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
@@ -398,7 +412,7 @@
 
     </div>
 
-    <!-- TABBAR — активна «Трибуна» (книга) -->
+    <!-- TABBAR — активна «Трибуна» (ico_book_24) -->
     <div class="ll-tabbar">
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
