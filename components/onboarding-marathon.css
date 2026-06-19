@@ -125,21 +125,20 @@
    выше и поверх, боковые ниже и слегка выезжают за края (как в макете). */
 /* зона фото занимает весь остаток над текстом и масштабируется пропорционально */
 .omar-slide--hero .omar-fan {
+  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 .omar-slide--hero .omar-fan__stage {
-  position: relative;
-  flex: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 360px;             /* базовый кластер (система Figma), scale считает JS */
   height: 396px;
-  transform: scale(var(--omar-fan-scale, 1));
+  transform: translate(-50%, -50%) scale(var(--omar-fan-scale, 1));
   transform-origin: center center;
 }
 .omar-slide--hero .omar-fan__photo {
