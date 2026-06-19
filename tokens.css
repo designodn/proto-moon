@@ -352,6 +352,7 @@
    ============================================================ */
 :root,
 :root.__ui-theme_enabled.__ui-theme_light {
+  --static-surface-brown: #AA8F7F;
   --dynamic-stroke-contrast-high: rgba(131, 102, 86, 0.36);
   --dynamic-stroke-contrast-low: rgba(131, 102, 86, 0.08);
   --dynamic-stroke-contrast-mid: rgba(131, 102, 86, 0.16);
@@ -405,6 +406,7 @@
    Source: Regular Dynamic Colors / Dark
    ============================================================ */
 :root.__ui-theme_enabled.__ui-theme_dark {
+  --static-surface-brown: #AA8F7F;
   --dynamic-stroke-contrast-high: rgba(124, 124, 138, 0.36);
   --dynamic-stroke-contrast-low: rgba(124, 124, 138, 0.08);
   --dynamic-stroke-contrast-mid: rgba(124, 124, 138, 0.16);

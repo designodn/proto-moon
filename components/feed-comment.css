@@ -42,10 +42,27 @@
 
 /* ── один комментарий ─────────────────────────────────────────────────────── */
 .fc-comment {
+  position: relative;               /* для трунка ::before */
   display: flex;
   gap: var(--space-2);              /* 8 между авой-блоком и телом */
   align-items: flex-start;
   padding-top: var(--space-5);      /* 20 над каждым комментом (вместо gap) */
+}
+/* Связующий трунк (как в старом comment-thread): вертикаль слева, соединяющая
+   локоть этого коммента с локтем следующего. Тянется от верха локтя (padding 20
+   + margin 2 = 22) вниз и на 22 в следующий коммент (его padding 20 + margin 2),
+   попадая ровно в верх его локтя. У последнего/одиночного коммента вниз не идёт. */
+.fc-comment::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 2px;
+  top: 22px;
+  bottom: -22px;
+  background: var(--static-surface-brown);
+}
+.fc-comment:not(:has(~ .fc-comment))::before {
+  display: none;
 }
 
 /* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
@@ -57,15 +74,15 @@
   gap: var(--space-1);
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет #AA8F7F (= static-surface-brown; токен живёт только в theme-cocktail,
-   а lenta-q3 на light-теме — поэтому литерал, иначе border невалиден и не виден). */
+   12px. Цвет --static-surface-brown (#AA8F7F) — токен продублирован в light/dark
+   темы (был только в theme-cocktail). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: 2px;
-  border-left: 2px solid #AA8F7F;
-  border-bottom: 2px solid #AA8F7F;
+  border-left: 2px solid var(--static-surface-brown);
+  border-bottom: 2px solid var(--static-surface-brown);
   border-bottom-left-radius: 8px;
 }
 
