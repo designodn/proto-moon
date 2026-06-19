@@ -409,6 +409,101 @@
           <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
         </div>
 
+        <!-- ====================================================================
+             ФОТОМАРАФОН — демо-карточки (пока вставлены вручную, вне FEED-региона;
+             когда лист в таблице будет готов — перенесём в генератор fetch-q3.mjs).
+             ==================================================================== -->
+
+        <!-- Вид 1 · обычный пост-участник + модификатор .text-feed__marathon.
+             Состояние «участвую» (joined): текст «Вы уже участвуете…» + серая кнопка. -->
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Алёна Иванова</div>
+              <div class="ds-caption-s text-feed__time">Только что</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Участвую в фотомарафоне, голосуйте за меня и внука <span class="marathon-promo__tag">#РадостьДетства</span></p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://picsum.photos/seed/fm-bike/720/540" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">3</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 24;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+
+          <div class="text-feed__marathon">
+            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">#РадостьДетства</span></p>
+              <p class="ds-body-m marathon-promo__count">11К участников</p>
+            </div>
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-secondary" style="width:100%"><span class="button-content">Перейти к фотомарафону</span></button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Вид 2 (от группы) · пост сообщества + модификатор .text-feed__marathon.
+             Без состояния «участвую»: текст «Загружайте фото…» + оранжевая primary-кнопка. -->
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Всё ОК!</div>
+              <div class="ds-caption-s text-feed__time">16:32</div>
+            </div>
+            <label class="button-wrapper __size-28 button-subscribe">
+              <input type="checkbox" hidden>
+              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+            </label>
+          </div></div></div>
+
+          <div class="ds-title-m">Фотомарафон #ЦветокПобеды2026 — сохраняем память вместе</div>
+          <p class="ds-body-m text-feed__body">Дорогие друзья! Предлагаем вам присоединиться к фотомарафону и сохранить память о близких вместе с нами.</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://picsum.photos/seed/fm-flower/720/405" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">18</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">34</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 604;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+
+          <div class="text-feed__marathon">
+            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#ЦветокПобеды2026</span></p>
+              <p class="ds-body-m marathon-promo__count">11К участников</p>
+            </div>
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-primary" style="width:100%"><span class="button-content">Перейти к фотомарафону</span></button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Вид 2 (от приложения) · отдельный фид .marathon: без автора и actions-bar,
+             заголовок + «веер» из трёх фото + промо-блок марафона. -->
+        <article class="marathon island">
+          <p class="ds-title-l marathon__title">Фотомарафон в честь Дня защиты детей</p>
+          <div class="marathon__gallery">
+            <div class="marathon__tile" style="--marathon-tile-rotate:-12.42deg"><img src="https://picsum.photos/seed/fm-kid1/306/388" alt=""></div>
+            <div class="marathon__tile" style="--marathon-tile-rotate:-4.17deg"><img src="https://picsum.photos/seed/fm-kid2/306/388" alt=""></div>
+            <div class="marathon__tile" style="--marathon-tile-rotate:6.62deg"><img src="https://picsum.photos/seed/fm-kid3/306/388" alt=""></div>
+          </div>
+          <div class="marathon__special">
+            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#ЦветокПобеды2026</span></p>
+              <p class="ds-body-m marathon-promo__count">11К участников</p>
+            </div>
+            <div class="marathon__cta">
+              <div class="button-wrapper __size-44 __full-width" style="display:block">
+                <button class="button-container __style-primary" style="width:100%"><span class="button-content">Перейти к фотомарафону</span></button>
+              </div>
+              <div class="button-wrapper __size-44"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            </div>
+          </div>
+        </article>
+
 <!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->
         <section class="vvz-portlet island" data-dismiss-row aria-label="Возможно, вы знакомы">
           <header class="vvz-portlet__header">
