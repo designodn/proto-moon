@@ -64,9 +64,10 @@
                                         rgba(0,0,0,0) 58%, rgba(0,0,0,.55) 100%);
   }
 
-  /* Верхние кнопки — назад слева, «+» справа. */
+  /* Верхние кнопки — назад слева, «+» справа. Статус-бар не показываем,
+     поэтому прижимаем их к самому верху (+ safe-area под чёлку). */
   .klipy-back, .klipy-add {
-    position: absolute; top: 48px; z-index: 31;
+    position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); z-index: 31;
     width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
     border: 0; background: transparent; cursor: pointer;
@@ -79,7 +80,8 @@
 
   /* ============================================================
      RIGHT RAIL — вертикальный стек действий у правого края.
-     Иконки белые с тенью, под ними — счётчик.
+     Иконки — mask + currentColor (а не <img>+filter), чтобы цвет можно
+     было менять: белый по умолчанию, красный у активного лайка.
      ============================================================ */
   .klip__rail {
     position: absolute; right: var(--space-3); z-index: 20;
@@ -94,21 +96,21 @@
     color: inherit;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,.45));
   }
-  .klip__rail-btn .klipy-icon { filter: brightness(0) invert(1); }
+  .klip__rail-ico {
+    width: 30px; height: 30px;
+    background: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat;
+            mask: var(--ico) center / contain no-repeat;
+  }
   .klip__rail-count {
     font-family: var(--font-family);
     font-size: 13px; line-height: 16px; font-weight: 500;
+    color: inherit;
   }
-  /* Лайк: переключение outline ↔ filled + акцентный цвет в активном. */
-  .klip__rail-btn .__icon-filled { display: none; }
-  .klip__rail-btn.__state-on .__icon-outline { display: none; }
-  .klip__rail-btn.__state-on .__icon-filled  { display: block; }
-  .klip__rail-btn.__state-on .__icon-filled.__like {
-    filter: none; /* акцентная (красная) заливка из самой svg не задаётся —
-                     красим контейнер */
-  }
-  .klip__rail-btn.__state-on .klip__rail-count { color: #ff3b5c; }
-  .klip__rail-btn.__like.__state-on .klipy-icon { filter: none; }
+  /* Лайк: outline → filled + красный (иконка и счётчик) в активном состоянии. */
+  .klip__rail-btn.__like .klip__rail-ico { --ico: url('assets/icons/like_24.svg'); }
+  .klip__rail-btn.__like.__state-on .klip__rail-ico { --ico: url('assets/icons/like_filled_24.svg'); }
+  .klip__rail-btn.__like.__state-on { color: #ff3b5c; }
 
   /* ============================================================
      BOTTOM — автор + строка аудио (слева снизу).
@@ -120,7 +122,7 @@
     display: flex; flex-direction: column; gap: var(--space-3);
     color: var(--static-text-and-icons-base-inverse-primary);
   }
-  .klip__author { display: flex; align-items: center; gap: var(--space-3); }
+  .klip__author { display: flex; align-items: center; gap: var(--space-2); }
   .klip__author-name {
     font-family: var(--font-family);
     font-size: 15px; line-height: 20px; font-weight: 500;
@@ -186,15 +188,93 @@
   .klip__vvz-cta .button-container { width: 100%; }
 
   /* ============================================================
-     TABBAR — DS-компонент, прибит к низу поверх видео.
+     TABBAR — DS-компонент, прибит к низу поверх видео. В клипах он
+     форсированно тёмный (видео всегда тёмное) — переопределяем
+     токены поверхности/иконок на dark-значения.
      ============================================================ */
   .klipy-tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 25; }
+  .klipy-tabbar .tabbar {
+    --dynamic-surface-base-secondary: #1A1A1C;
+    --dynamic-stroke-contrast-low: rgba(255, 255, 255, 0.10);
+    --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
+    --dynamic-text-and-icons-status-accent: #FF9558;
+  }
+  .klipy-tabbar .tabbar__handle { background: rgba(255, 255, 255, 0.3); }
+
+  /* ============================================================
+     SHARE SHEET — нижний шит «Поделиться» (открывается по решаре).
+     ============================================================ */
+  .klipy-sheet {
+    position: absolute; inset: 0; z-index: 40;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .klipy-sheet[hidden] { display: none; }
+  .klipy-sheet__backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    animation: klipy-fade 0.2s ease both;
+  }
+  .klipy-sheet__panel {
+    position: relative;
+    background: var(--dynamic-surface-base-primary);
+    border-radius: 20px 20px 0 0;
+    padding: var(--space-2) var(--space-4)
+             calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    animation: klipy-slide-up 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @keyframes klipy-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes klipy-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .klipy-sheet__handle {
+    width: 36px; height: 4px; border-radius: 2px; margin: 0 auto var(--space-3);
+    background: var(--dynamic-stroke-contrast-medium, rgba(124,124,138,0.24));
+  }
+  .klipy-sheet__title {
+    text-align: center; margin-bottom: var(--space-4);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .klipy-sheet__targets {
+    display: flex; gap: var(--space-4); overflow-x: auto;
+    padding-bottom: var(--space-4); scrollbar-width: none;
+  }
+  .klipy-sheet__targets::-webkit-scrollbar { display: none; }
+  .klipy-share-target {
+    flex: 0 0 auto;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    width: 64px; border: 0; background: transparent; padding: 0; cursor: pointer;
+  }
+  .klipy-share-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .klipy-share-circle .icon { color: var(--dynamic-text-and-icons-base-primary); }
+  .klipy-share-label {
+    font-family: var(--font-family); font-size: 12px; line-height: 14px;
+    color: var(--dynamic-text-and-icons-base-secondary);
+    text-align: center; white-space: nowrap;
+  }
+  .klipy-sheet__list {
+    display: flex; flex-direction: column;
+    border-top: 1px solid var(--dynamic-stroke-contrast-low);
+    margin-bottom: var(--space-3);
+  }
+  .klipy-sheet__row {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) 0; border: 0; background: transparent;
+    cursor: pointer; width: 100%; text-align: left;
+    font-family: var(--font-family); font-size: 16px; line-height: 22px;
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .klipy-sheet__row .icon { color: var(--dynamic-text-and-icons-base-secondary); }
+  .klipy-sheet__cancel .button-container { width: 100%; }
 </style>
 </head>
 <body>
   <div class="phone-frame klipy">
 
-    <!-- Назад (в ленту) + Создать клип ------------------------------- -->
+    <!-- Назад (в исходную ленту) + Создать клип. Цель возврата задаётся
+         через ?from=… (откуда пришли) или sessionStorage('klipyBack')
+         от вызывающего экрана (напр. «Создать клип»); см. скрипт ниже. -->
     <a class="klipy-back" data-screen-back data-href="lenta-q3.html" aria-label="Назад">
       <img class="klipy-icon" src="assets/icons/back_24.svg" width="24" height="24" alt="">
     </a>
@@ -205,35 +285,36 @@
     <!-- REEL --------------------------------------------------------- -->
     <div class="klipy-reel">
 
-      <!-- КЛИП 1 -->
-      <section class="klip" data-klip>
-        <div class="klip__media">
+      <!-- КЛИП 1 — слайд, на который открывается плеер из ленты.
+           media / автор / аудио переопределяются из URL-параметров
+           (?type=&src=&name=&ava=), см. скрипт внизу. -->
+      <section class="klip" data-klip data-entry>
+        <div class="klip__media" data-media>
           <img src="https://media.tenor.com/rImXojPJZ1IAAAAM/stars-in-the-sky-sparkle.gif" alt="">
         </div>
         <div class="klip__scrim" aria-hidden="true"></div>
 
         <div class="klip__rail">
           <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <img class="klipy-icon __icon-outline" src="assets/icons/like_24.svg" width="28" height="28" alt="">
-            <img class="klipy-icon __icon-filled __like" src="assets/icons/like_filled_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico"></span>
             <span class="klip__rail-count" data-like-count>1,8K</span>
           </button>
-          <button class="klip__rail-btn" aria-label="Поделиться">
-            <img class="klipy-icon" src="assets/icons/reshare_24.svg" width="28" height="28" alt="">
+          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
             <span class="klip__rail-count">143</span>
           </button>
           <button class="klip__rail-btn" aria-label="Не интересно">
-            <img class="klipy-icon" src="assets/icons/dislike_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
           </button>
           <button class="klip__rail-btn" aria-label="Ещё">
-            <img class="klipy-icon" src="assets/icons/more_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
           </button>
         </div>
 
         <div class="klip__bottom">
           <div class="klip__author">
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
-            <span class="klip__author-name">Оживляю людей в ИИ</span>
+            <div class="avatar __size-24 __type-image" data-author-ava><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+            <span class="klip__author-name" data-author-name>Оживляю людей в ИИ</span>
           </div>
           <div class="klip__audio">
             <button class="klip__mute __state-muted" data-mute aria-label="Звук">
@@ -242,7 +323,7 @@
             </button>
             <div class="klip__audio-text">
               <div class="klip__audio-title">Original audio</div>
-              <div class="klip__audio-sub">Оживляю людей в ИИ</div>
+              <div class="klip__audio-sub" data-audio-name>Оживляю людей в ИИ</div>
             </div>
           </div>
         </div>
@@ -257,25 +338,24 @@
 
         <div class="klip__rail">
           <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <img class="klipy-icon __icon-outline" src="assets/icons/like_24.svg" width="28" height="28" alt="">
-            <img class="klipy-icon __icon-filled __like" src="assets/icons/like_filled_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico"></span>
             <span class="klip__rail-count" data-like-count>542</span>
           </button>
-          <button class="klip__rail-btn" aria-label="Поделиться">
-            <img class="klipy-icon" src="assets/icons/reshare_24.svg" width="28" height="28" alt="">
+          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
             <span class="klip__rail-count">31</span>
           </button>
           <button class="klip__rail-btn" aria-label="Не интересно">
-            <img class="klipy-icon" src="assets/icons/dislike_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
           </button>
           <button class="klip__rail-btn" aria-label="Ещё">
-            <img class="klipy-icon" src="assets/icons/more_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
           </button>
         </div>
 
         <div class="klip__bottom">
           <div class="klip__author">
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=49" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=49" alt=""></div>
             <span class="klip__author-name">Александра Борщицкий</span>
           </div>
           <div class="klip__audio">
@@ -284,7 +364,7 @@
               <img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">
             </button>
             <div class="klip__audio-text">
-              <div class="klip__audio-title">Новогоднее настроение</div>
+              <div class="klip__audio-title">Original audio</div>
               <div class="klip__audio-sub">Александра Борщицкий</div>
             </div>
           </div>
@@ -307,7 +387,7 @@
 
         <div class="klip__rail">
           <button class="klip__rail-btn" aria-label="Ещё">
-            <img class="klipy-icon" src="assets/icons/more_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
           </button>
         </div>
       </section>
@@ -321,25 +401,24 @@
 
         <div class="klip__rail">
           <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <img class="klipy-icon __icon-outline" src="assets/icons/like_24.svg" width="28" height="28" alt="">
-            <img class="klipy-icon __icon-filled __like" src="assets/icons/like_filled_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico"></span>
             <span class="klip__rail-count" data-like-count>3,2K</span>
           </button>
-          <button class="klip__rail-btn" aria-label="Поделиться">
-            <img class="klipy-icon" src="assets/icons/reshare_24.svg" width="28" height="28" alt="">
+          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
             <span class="klip__rail-count">208</span>
           </button>
           <button class="klip__rail-btn" aria-label="Не интересно">
-            <img class="klipy-icon" src="assets/icons/dislike_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
           </button>
           <button class="klip__rail-btn" aria-label="Ещё">
-            <img class="klipy-icon" src="assets/icons/more_24.svg" width="28" height="28" alt="">
+            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
           </button>
         </div>
 
         <div class="klip__bottom">
           <div class="klip__author">
-            <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
+            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
             <span class="klip__author-name">Закаты России</span>
           </div>
           <div class="klip__audio">
@@ -357,7 +436,7 @@
 
     </div>
 
-    <!-- TABBAR (клипы активны) --------------------------------------- -->
+    <!-- TABBAR (клипы активны, тёмная тема) -------------------------- -->
     <div class="klipy-tabbar">
       <div class="tabbar __platform-ios">
         <div class="tabbar__row">
@@ -371,25 +450,109 @@
       </div>
     </div>
 
+    <!-- SHARE SHEET (стандартное окно «Поделиться») ------------------ -->
+    <div class="klipy-sheet" data-sheet hidden>
+      <div class="klipy-sheet__backdrop" data-sheet-close></div>
+      <div class="klipy-sheet__panel" role="dialog" aria-label="Поделиться">
+        <div class="klipy-sheet__handle" aria-hidden="true"></div>
+        <div class="klipy-sheet__title ds-title-m">Поделиться</div>
+
+        <div class="klipy-sheet__targets">
+          <button class="klipy-share-target">
+            <span class="klipy-share-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/comment_24.svg')"></span></span>
+            <span class="klipy-share-label">Сообщение</span>
+          </button>
+          <button class="klipy-share-target">
+            <span class="klipy-share-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/reshare_24.svg')"></span></span>
+            <span class="klipy-share-label">В ленту</span>
+          </button>
+          <button class="klipy-share-target">
+            <span class="klipy-share-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/users_24.svg')"></span></span>
+            <span class="klipy-share-label">Группа</span>
+          </button>
+          <button class="klipy-share-target">
+            <span class="klipy-share-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/bookmark_24.svg')"></span></span>
+            <span class="klipy-share-label">Закладки</span>
+          </button>
+          <button class="klipy-share-target">
+            <span class="klipy-share-circle"><span class="icon __size-24 __src" style="--icon-src:url('assets/icons/vk_square_24.svg')"></span></span>
+            <span class="klipy-share-label">ВКонтакте</span>
+          </button>
+        </div>
+
+        <div class="klipy-sheet__list">
+          <button class="klipy-sheet__row">
+            <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/url_24.svg')"></span>
+            Скопировать ссылку
+          </button>
+          <button class="klipy-sheet__row">
+            <span class="icon __size-24 __src" style="--icon-src:url('assets/icons/copy_24.svg')"></span>
+            Поделиться в другом приложении
+          </button>
+        </div>
+
+        <div class="klipy-sheet__cancel button-wrapper __size-44 __style-secondary">
+          <button class="button-container __style-secondary" type="button" data-sheet-close>
+            <span class="button-content">Закрыть</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // Куда возвращает «Назад»: по умолчанию lenta-q3, но вызывающий экран
-    // может задать свой возврат через sessionStorage('klipyBack') — например,
-    // клип из воспоминаний (Q3) → назад в lenta-q3.html. Ключ одноразовый.
+    // 1) Назад — в ту ленту, откуда пришли. Цель берём из ?from=… (ставит
+    //    лента при открытии клипа), либо из sessionStorage('klipyBack')
+    //    (одноразовый override от вызывающего экрана, напр. «Создать клип»).
+    //    klipyBack приоритетнее. По умолчанию остаётся lenta-q3.html.
     (function () {
       var back = document.querySelector('.klipy-back');
-      var target = null;
-      try { target = sessionStorage.getItem('klipyBack'); sessionStorage.removeItem('klipyBack'); } catch (_) {}
-      if (back && target) back.setAttribute('data-href', target);
+      if (!back) return;
+      var from = new URLSearchParams(location.search).get('from');
+      if (from) back.setAttribute('data-href', from);
+      try {
+        var t = sessionStorage.getItem('klipyBack');
+        sessionStorage.removeItem('klipyBack');
+        if (t) back.setAttribute('data-href', t);
+      } catch (_) {}
     })();
-  </script>
 
-  <script>
-    // ВВЗ-карточки — рендерим через DS-фабрику VvzCard (тот же модуль, что
-    // и в сториз-вьюере). vvz-card.js подключён с defer и отрабатывает до
-    // DOMContentLoaded, поэтому в коллбэке window.VvzCard уже готов (инлайн-
-    // скрипт без defer выполнился бы раньше внешнего defer — отсюда обёртка).
+    // 2) Открыли плеер из ленты → первый слайд = тот самый клип.
+    //    Лента передаёт ?type=img|video&src=…&name=…&ava=…. Подменяем media,
+    //    имя автора и подпись аудио (она дублирует имя загрузившего).
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var src = params.get('src');
+      if (!src) return;
+      var entry = document.querySelector('[data-entry]');
+      if (!entry) return;
+
+      var media = entry.querySelector('[data-media]');
+      if (media) {
+        if (params.get('type') === 'video') {
+          media.innerHTML = '<video src="' + src + '" autoplay muted loop playsinline></video>';
+        } else {
+          media.innerHTML = '<img src="' + src + '" alt="">';
+        }
+      }
+      var name = params.get('name');
+      if (name) {
+        var nameEl = entry.querySelector('[data-author-name]');
+        var audioEl = entry.querySelector('[data-audio-name]');
+        if (nameEl)  nameEl.textContent = name;
+        if (audioEl) audioEl.textContent = name;  // аудио дублирует имя автора
+      }
+      var ava = params.get('ava');
+      if (ava) {
+        var avaImg = entry.querySelector('[data-author-ava] img');
+        if (avaImg) avaImg.src = ava;
+      }
+    })();
+
+    // 3) ВВЗ-карточки — через DS-фабрику VvzCard. vvz-card.js подключён с
+    //    defer и отрабатывает до DOMContentLoaded, поэтому к коллбэку
+    //    window.VvzCard уже готов.
     document.addEventListener('DOMContentLoaded', function () {
       var grid = document.querySelector('[data-vvz-grid]');
       if (!grid || !window.VvzCard) return;
@@ -402,25 +565,38 @@
       grid.innerHTML = people.map(window.VvzCard.render).join('');
     });
 
-    // Лайк — переключение outline/filled + правка счётчика (демо).
+    // 4) Лайк — outline ↔ filled (красный) + правка счётчика.
     document.addEventListener('click', function (e) {
       var like = e.target.closest && e.target.closest('[data-like]');
       if (!like) return;
       like.classList.toggle('__state-on');
       var count = like.querySelector('[data-like-count]');
       if (count && count.dataset.base == null) count.dataset.base = count.textContent;
-      // Только для числовых счётчиков без «K» — двигаем на ±1, иначе оставляем.
       if (count && /^\d+$/.test(count.dataset.base)) {
         var base = parseInt(count.dataset.base, 10);
         count.textContent = like.classList.contains('__state-on') ? (base + 1) : base;
       }
     });
 
-    // Звук — переключение mute (визуальное, для прототипа).
+    // 5) Звук — переключение mute (+ реальный mute видео, если оно есть).
     document.addEventListener('click', function (e) {
       var mute = e.target.closest && e.target.closest('[data-mute]');
       if (!mute) return;
       mute.classList.toggle('__state-muted');
+      var slide = mute.closest('.klip');
+      var video = slide && slide.querySelector('.klip__media video');
+      if (video) {
+        video.muted = mute.classList.contains('__state-muted');
+        if (!video.muted) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+      }
+    });
+
+    // 6) Решара — открываем/закрываем стандартный нижний шит.
+    var sheet = document.querySelector('[data-sheet]');
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      if (e.target.closest('[data-reshare]')) { if (sheet) sheet.hidden = false; return; }
+      if (e.target.closest('[data-sheet-close]')) { if (sheet) sheet.hidden = true; }
     });
   </script>
 
