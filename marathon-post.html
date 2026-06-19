@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Фотомарафон — публикация</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+  .meshok-up .status-bar,
+  .meshok-up .nav-bar {
+    background-color: var(--dynamic-surface-base-secondary) !important;
+  }
+
+  /* Заголовок навбара по центру (back слева, ⚙ справа). */
+  .ll-fp-nav { position: relative; }
+  .ll-fp-nav__title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--dynamic-text-and-icons-base-primary);
+    pointer-events: none;
+  }
+
+  /* ── Тело формы ── */
+  .ll-fp-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  /* Зона загрузки фото. Пусто — кремовый фон, по центру кружок + подсказка + чип.
+     С фото (.__filled) — само фото, чип оверлеем снизу. */
+  .ll-fp-drop {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--dynamic-surface-tint-orange, #EFE0D7);
+    min-height: 344px;
+    cursor: pointer;
+  }
+  .ll-fp-drop__empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    text-align: center;
+  }
+  .ll-fp-drop__upload {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .ll-fp-drop__upload img { width: 28px; height: 28px; }
+  .ll-fp-drop__hint {
+    max-width: 240px;
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .ll-fp-drop__photo { display: none; }
+  .ll-fp-drop__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  .ll-fp-drop.__filled { background: var(--dynamic-surface-contrast-low); }
+  .ll-fp-drop.__filled .ll-fp-drop__empty { display: none; }
+  .ll-fp-drop.__filled .ll-fp-drop__photo {
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Чип хэштега. В пустом — статичный по центру; с фото — оверлей снизу-слева. */
+  .ll-fp-chip {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    padding: var(--space-2) var(--space-3);
+    border-radius: 12px;
+    background: var(--dynamic-surface-base-secondary);
+    color: var(--dynamic-text-and-icons-status-accent);
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+  .ll-fp-drop.__filled .ll-fp-chip {
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
+    z-index: 1;
+  }
+
+  /* Поле подписи */
+  .ll-fp-caption {
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    outline: none;
+    background: transparent;
+    padding: var(--space-2) var(--space-1);
+    font-family: var(--font-family);
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--dynamic-text-and-icons-base-primary);
+    text-align: center;
+  }
+  .ll-fp-caption::placeholder { color: var(--dynamic-text-and-icons-base-secondary); }
+
+  /* ── Нижняя панель кнопок ── */
+  .ll-fp-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4) var(--space-5);
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .ll-fp-publish[disabled] { opacity: 0.4; pointer-events: none; }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed ll-fp-nav">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-action="back" data-back-fallback="marathon.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+          </div>
+          <span class="ll-fp-nav__title ds-title-l">Фотомарафон</span>
+          <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Настройки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/settings_24.svg" width="24" height="24" alt=""></span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ТЕЛО ФОРМЫ -->
+      <div class="ll-fp-body">
+        <div class="ll-fp-drop" id="fpDrop" role="button" tabindex="0" aria-label="Загрузить фото">
+          <div class="ll-fp-drop__empty">
+            <span class="ll-fp-drop__upload"><img src="assets/icons/photo_add_24.svg" width="28" height="28" alt=""></span>
+            <div class="ll-fp-drop__hint ds-title-s">Загрузите хотя бы одно фото для участия</div>
+            <span class="ll-fp-chip">#РадостьДетства</span>
+          </div>
+          <div class="ll-fp-drop__photo">
+            <img src="https://picsum.photos/seed/fp-photo/640/640" alt="">
+          </div>
+          <span class="ll-fp-chip">#РадостьДетства</span>
+        </div>
+
+        <input class="ll-fp-caption" type="text" placeholder="Подпись к фото">
+      </div>
+
+      <!-- НИЖНИЕ КНОПКИ -->
+      <div class="ll-fp-actions">
+        <div class="button-wrapper __size-44 __full-width" style="display:block; width:100%" id="fpMore">
+          <button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Подробнее о фотомарафоне</span></button>
+        </div>
+        <div class="button-wrapper __size-56 __full-width" style="display:block; width:100%">
+          <button class="button-container __style-primary ll-fp-publish" style="width:100%" id="fpPublish" disabled><span class="button-content">Опубликовать</span></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="components/back-button.js"></script>
+  <script>
+    // Прототип: тап по зоне «загружает» заготовленное фото — форма переходит
+    // в состояние с фото, «Опубликовать» становится активной, «Подробнее» скрыта.
+    (function () {
+      var drop = document.getElementById('fpDrop');
+      var publish = document.getElementById('fpPublish');
+      var more = document.getElementById('fpMore');
+      if (!drop) return;
+      function fill() {
+        if (drop.classList.contains('__filled')) return;
+        drop.classList.add('__filled');
+        if (publish) publish.disabled = false;
+        if (more) more.style.display = 'none';
+      }
+      drop.addEventListener('click', fill);
+      drop.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fill(); }
+      });
+      // «Опубликовать» в прототипе ведёт обратно на страницу марафона.
+      if (publish) publish.addEventListener('click', function () {
+        if (!publish.disabled) window.location.href = 'marathon.html';
+      });
+    })();
+  </script>
+</body>
+</html>
