@@ -716,10 +716,13 @@ ${actionsBar(likes, comments, reshares)}
       const caption = title || 'Получил подарок от';
       const giverId = ids[1] || ids[0];
       // CTA по содержимому подписи: подарок / ИИ / открытка (по умолчанию).
-      let cta, btnWrap, icon;
+      // ИИ — отдельный стиль кнопки __style-ai-gift (градиент из ИИ-подарков NV).
+      let cta, btnWrap, icon, btnStyle = '__style-secondary', cardMod = '';
       if (/ии|нейро/i.test(caption)) {
         cta = 'Создать ИИ подарок';
-        btnWrap = ' __full-width ll-ai-gift-btn';
+        btnWrap = ' __full-width';
+        btnStyle = '__style-ai-gift';
+        cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
         icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>`;
       } else if (/подар/i.test(caption)) {
         cta = 'Отправить подарок';
@@ -737,7 +740,7 @@ ${actionsBar(likes, comments, reshares)}
       return `        <article class="text-feed island">
 ${authorHeader(aid, time)}
 
-          <div class="text-feed__reshare-card">
+          <div class="text-feed__reshare-card${cardMod}">
             <div class="ll-gift-from">
               <div class="ds-body-m">${esc(caption)}</div>
               <div class="text-feed__reshare-card-author">
@@ -749,7 +752,7 @@ ${authorHeader(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36${btnWrap}">
-              <button class="button-container __style-secondary"><span class="button-content">${icon}${cta}</span></button>
+              <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
           </div>

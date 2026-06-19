@@ -129,16 +129,8 @@
     gap: var(--space-1);
   }
 
-  /* Градиентная кнопка «Создать ИИ подарок» — повторяет --style-secondary
-     по высоте/радиусу/паддингам, но фон — диагональный неон-градиент. */
-  .ll-ai-gift-btn .button-container {
-    background: linear-gradient(
-      to right,
-      rgba(0, 183, 255, 0.24) 0%,
-      rgba(255, 0, 221, 0.24) 60%,
-      rgba(5, 0, 153, 0.24) 100%
-    );
-  }
+  /* Кнопка «Создать ИИ подарок» — стиль .button-container.__style-ai-gift
+     (components/button.css), заливка из ИИ-подарков NV-ленты. */
 
   /* В тёмных пилюлях __style-on-image иконки должны быть белыми.
      В DS это решается через .icon.__src + currentColor (mask), но в
