@@ -323,8 +323,8 @@ function commentItem(authorId, text) {
                   </div>
                   <p class="ct-item__text">${esc(resolveNames(text))}</p>
                   <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/reply_16_20.svg')"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span>Класс</span></button></span>
                   </div>
                 </div>
               </article>`;
@@ -336,21 +336,28 @@ function renderCommentThread(p) {
   if (!list.length) return '';
   const items = list.map(c =>
     `            <div class="ct-thread">\n${commentItem(c.authorId, c.text)}\n            </div>`).join('\n');
-  // «Посмотреть все комментарии» — когда счётчик комментов поста больше, чем
-  // показанных тут верхнеуровневых (почти всегда: в листе максимум два).
+  // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
+  // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
+  // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
+  const asReplies = p.type === 'comment-as-feed';
+  const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
+  const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
+  // «Посмотреть …» — когда счётчик комментов поста больше показанных (в обычной
+  // ленте), либо всегда для comment-as-feed (ответы есть → ветка длиннее).
   const total = parseInt(p.comments, 10);
-  const more = (Number.isFinite(total) && total > list.length)
-    ? `\n            <div class="ct-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>\n            </div>`
+  const showMore = asReplies || (Number.isFinite(total) && total > list.length);
+  const more = showMore
+    ? `\n            <div class="ct-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
-  // Поле ввода коммента под веткой — отдельный ребёнок карточки (своё
-  // выравнивание), как в эталоне «Комменты Клип/Подарок». Аватар — мой профиль.
+  // Поле ввода под веткой — отдельный ребёнок карточки (своё выравнивание),
+  // как в эталоне «Комменты Клип/Подарок». Аватар — мой профиль.
   const input = `          <div class="comment-input ll-feed-comment-input">
             <div class="avatar __size-36 __type-image">${img(personPhoto('my_profile'))}</div>
             <div class="comment-input__field">
-              <input class="text-input __size-36" placeholder="Написать комментарий…">
+              <input class="text-input __size-36" placeholder="${esc(placeholder)}">
               <div class="comment-input__actions">
-                <span class="comment-input__action icon __size-24 __slot-attach"></span>
-                <span class="comment-input__action icon __size-24 __slot-smile"></span>
+                <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('assets/icons/attach_24.svg')"></span>
+                <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('assets/icons/smile_24.svg')"></span>
               </div>
             </div>
           </div>`;
@@ -816,6 +823,50 @@ ${mediaInner}
         </article>`;
     }
 
+    /* ── comment-as-feed: коммент как отдельная карточка ленты ──
+       feed-header (крошки + автор + «Комментарий к <автор оригинала>») →
+       крупный текст коммента (caf-text 22/26) → превью оригинального поста
+       (бордерная reshare-card: иконка-репост + заголовок + сниппет) →
+       actions-bar. Ответы (ветку) добавит attachComments (лейблы «ответы»).
+       Автор: id[0] — комментатор (шапка), id[1] — автор оригинала. */
+    case 'comment-as-feed': {
+      const commenter = aid;          // ids[0]
+      const original = ids[1] || '';
+      const crumbs = (p.tema || p.rubrika)
+        ? `
+            <nav class="breadcrumbs">${p.tema ? `
+              <a class="breadcrumbs__item" href="#">${esc(p.tema)}</a>` : ''}${(p.tema && p.rubrika) ? `
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${p.rubrika ? `
+              <span class="breadcrumbs__item __state-on">${esc(p.rubrika)}</span>` : ''}
+            </nav>`
+        : '';
+      const sub = original
+        ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
+        : 'Комментарий';
+      const preview = `          <div class="text-feed__reshare-card caf-preview">
+            <span class="icon __size-20 __src caf-preview__icon" style="--icon-src:url('assets/icons/reshare_16_20.svg')"></span>
+            <div class="text-feed__link caf-preview__body">${text ? `
+              <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
+              <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}
+            </div>
+          </div>`;
+      return `        <article class="text-feed island">
+          <header class="feed-header">${crumbs}
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-m feed-header__name">${esc(personName(commenter))}</div>
+                <div class="ds-caption-m caf-header__sub">${sub}</div>
+              </div>
+            </div></div></div>
+          </header>
+
+          <p class="caf-text">${esc(title)}</p>
+${preview}
+${actionsBar(likes, comments, reshares)}
+        </article>`;
+    }
+
     default:
       console.warn(`  ⚠️  неизвестный тип «${type}» (${id}) — пропущен`);
       return '';
@@ -875,7 +926,7 @@ async function main() {
     };
     const I = {
       id: col('id'), type: col('тип'), author: col('автор'),
-      header: col('шапка'),
+      tema: col('тема'), rubrika: col('рубрика'), header: col('шапка'),
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
       link: col('ссылка'), desc: col('описание'),
@@ -903,6 +954,7 @@ async function main() {
       posts.push({
         id, type,
         author: cell(c, I.author),
+        tema: cell(c, I.tema), rubrika: cell(c, I.rubrika),  // крошки (breadcrumbs)
         header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
         text: cell(c, I.text),
