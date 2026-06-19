@@ -457,6 +457,9 @@
       .then(function (d) { confettiData = d; })
       .catch(function () { /* offline / file missing — silently skip */ });
     function fireConfetti() {
+      // Тактильный отклик в момент салюта (Android-хром; iOS Vibration не
+      // поддерживает — там просто без эффекта).
+      try { if (navigator.vibrate) navigator.vibrate([0, 40, 30, 40, 30, 60]); } catch (_) {}
       if (!confettiData || !window.lottie || !confettiHost) return;
       var anim = window.lottie.loadAnimation({
         container: confettiHost,
