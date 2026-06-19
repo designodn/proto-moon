@@ -227,15 +227,16 @@
   .ll-otd__likes-text { color: var(--dynamic-text-and-icons-base-secondary); }
 
   /* «Вас отметили на фото N лет назад» — карточка-воспоминание.
-     Шапка ll-tagged__head: аватар 72 (компонент) + ds-title-xl в одну строку,
-     по центру. Паддинг text-feed получает сама шапка (а не голый аватар —
-     иначе .text-feed > :not(media) сплющивал бы круг в овал). Ниже full-bleed
+     Шапка ll-tagged__head: аватар 72 (компонент) над ds-title-xl (колонка).
+     Паддинг text-feed получает сама шапка (а не голый аватар — иначе
+     .text-feed > :not(media) сплющивал бы круг в овал). Ниже full-bleed
      фото с tooltip-овером, который указывает на отмеченного. Внизу — primary
      «Поделиться» на всю ширину (через .button-wrapper.__full-width).
      Media получает .text-feed__media — чтобы выйти из паддинга text-feed. */
   .ll-tagged__head {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-3);
   }
   .ll-tagged__media {
@@ -246,6 +247,12 @@
   }
   .ll-tagged__media > img {
     width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  /* Остриё CSS-треугольника и плоский край пилюли дают 0.5px анти-алиас-шов —
+     на глаз читается как отрыв хвоста. Перекрываем на 1px, чтобы стык был
+     бесшовным (хвост у нас __side-bottom: остриё снизу примыкает к пилюле). */
+  .ll-tagged__media .tooltip-wrapper.__side-bottom > .tooltip-tail {
+    margin-bottom: -1px;
   }
 
   /* «Ваш клип из воспоминаний» — карточка-воспоминание с видео-клипом.
