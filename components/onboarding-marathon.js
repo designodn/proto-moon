@@ -207,7 +207,10 @@
     requestAnimationFrame(function () {
       overlay.classList.add('__open');
       overlay._reset();              // на первый слайд + запуск анимаций
-      if (overlay._fitFan) overlay._fitFan();   // подгон масштаба фото под экран
+      if (overlay._fitFan) {
+        overlay._fitFan();           // подгон масштаба фото под экран
+        setTimeout(overlay._fitFan, 80);   // повтор после полной раскладки
+      }
     });
   }
   function close() {
