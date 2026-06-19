@@ -108,7 +108,9 @@
   }
   .ce-strip {
     position: absolute;
-    left: var(--space-4); bottom: var(--space-4);
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);   /* раскадровка по центру контейнера */
     z-index: 2;
     height: 40px;
   }
@@ -212,38 +214,62 @@
         return '<div class="ce-strip__frame"><img src="' + u + '" alt=""></div>';
       }).join('');
 
-      // Play: прокручивает кадры в герое + двигает плейхед по таймлайну.
+      // Воспроизведение: прокрутка кадров + плейхед по таймлайну.
+      // Тап в любую область клипа — пауза/продолжение (toggle).
       var FRAME_MS = 1200;
-      var i = 0, timer = null;
+      var TOTAL = photos.length * FRAME_MS;
+      var i = 0, timer = null, playing = false;
+      var preview = document.getElementById('cePreview');
       var play = document.getElementById('cePlay');
       var playhead = document.getElementById('cePlayhead');
 
-      function resetPlayhead() {
-        playhead.style.transition = 'none';
-        playhead.style.left = '0px';
+      function stripWidth() {
+        var r = strip.getBoundingClientRect();
+        return r.width || 1;
       }
-      function stop() {
-        if (timer) { clearInterval(timer); timer = null; }
-        play.style.opacity = '';
-        resetPlayhead();
+      function headLeftPx() {
+        return parseFloat(getComputedStyle(playhead).left) || 0;
       }
+      function setPlayIcon() { play.style.opacity = playing ? '0' : ''; }
 
-      play.addEventListener('click', function () {
-        if (timer) { stop(); return; }
-        play.style.opacity = '0';
-        i = 0; hero.src = photos[0];
-        // Плейхед едет от начала до конца ленты кадров за всю длину клипа.
-        var total = photos.length * FRAME_MS;
-        resetPlayhead();
+      function start() {
+        if (i >= photos.length) { i = 0; }   // доиграли → старт сначала
+        playing = true; setPlayIcon();
+        hero.src = photos[i];
+        // Плейхед продолжает с текущей позиции до конца за оставшееся время.
+        var frac = headLeftPx() / stripWidth();
+        if (frac >= 1 || frac < 0) frac = 0;
+        var remaining = TOTAL * (1 - frac);
+        playhead.style.transition = 'none';
+        void playhead.offsetWidth;            // reflow, чтобы зафиксировать старт
         requestAnimationFrame(function () {
-          playhead.style.transition = 'left ' + total + 'ms linear';
+          playhead.style.transition = 'left ' + remaining + 'ms linear';
           playhead.style.left = 'calc(100% - 2px)';
         });
         timer = setInterval(function () {
           i += 1;
-          if (i >= photos.length) { stop(); return; }   // доиграли — стоп
+          if (i >= photos.length) { finish(); return; }
           hero.src = photos[i];
         }, FRAME_MS);
+      }
+      function pause() {
+        playing = false; setPlayIcon();
+        if (timer) { clearInterval(timer); timer = null; }
+        var cur = getComputedStyle(playhead).left;   // замораживаем плейхед
+        playhead.style.transition = 'none';
+        playhead.style.left = cur;
+      }
+      function finish() {
+        if (timer) { clearInterval(timer); timer = null; }
+        playing = false; setPlayIcon();
+        playhead.style.transition = 'none';
+        playhead.style.left = '0px';
+        i = 0;                                 // готов к повтору сначала
+      }
+
+      // Тап в любую область превью клипа — старт/пауза.
+      preview.addEventListener('click', function () {
+        playing ? pause() : start();
       });
     })();
   </script>
