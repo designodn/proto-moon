@@ -10,8 +10,11 @@
 <link rel="stylesheet" href="index.css">
 <link rel="stylesheet" href="components/system-notifications.css">
 <link rel="stylesheet" href="components/tooltip.css">
+<link rel="stylesheet" href="components/onboarding-marathon.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
+<!-- Онбординг фотомарафона: перехват на window(capture) → раньше навигации в screen-transition.js -->
+<script src="components/onboarding-marathon.js"></script>
 <style>
   /* Убираем системный синий/серый оверлей при тапе по интерактивным
      элементам (кнопки, лейблы, ссылки) на мобильных. */
@@ -341,6 +344,9 @@
   .mp-sheet__subtitle { margin: 8px 0 16px; color: var(--dynamic-text-and-icons-base-secondary); }
   .mp-sheet__list { overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: var(--space-4); }
   .mp-sheet__list::-webkit-scrollbar { display: none; }
+  /* Лотти-конфетти поверх панели шторки (после публикации) */
+  .mp-confetti { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; border-radius: 24px 24px 0 0; }
+  .mp-confetti svg { width: 100%; height: 100%; }
   .mp-toast { position: fixed; left: 50%; bottom: 16px; z-index: 120; transform: translateX(-50%) translateY(16px);
     width: calc(100% - 24px); box-sizing: border-box; padding: var(--space-3) var(--space-4); border-radius: 14px;
     background: #1F1F22; color: #fff; font: 600 15px/20px var(--font-family); box-shadow: 0 12px 32px -10px rgba(0,0,0,0.5);
@@ -1929,6 +1935,7 @@
   <div class="mp-sheet" id="mpSheet" aria-hidden="true">
     <div class="mp-sheet__scrim" data-sheet-close></div>
     <div class="mp-sheet__panel" role="dialog" aria-label="Вы участвуете в фотомарафоне">
+      <div class="mp-confetti" id="mpConfetti" aria-hidden="true"></div>
       <div class="mp-sheet__head">
         <div class="ds-title-l mp-sheet__title">Вы участвуете<br>в фотомарафоне!</div>
         <span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span>
@@ -1958,6 +1965,7 @@
       try { return JSON.parse(sessionStorage.getItem('mp_published') || 'null'); } catch (e) { return null; }
     }
     var pub = getPublished();
+    var myPost = null;   // ссылка на вставленный пост пользователя (для скролла к нему)
 
     // 1) Пост пользователя с участием в марафоне — первым в ленте (после баннера).
     if (pub) {
@@ -1987,15 +1995,49 @@
       if (feed) {
         if (banner && banner.nextSibling) feed.insertBefore(art, banner.nextSibling);
         else feed.insertBefore(art, feed.firstChild);
+        // отступ под sticky-навбар, чтобы при скролле пост не уезжал под шапку
+        art.style.scrollMarginTop = '72px';
+        myPost = art;
       }
+    }
+
+    // Подвести пост пользователя во вьюпорт (он вставлен в самый верх ленты и
+    // частично прячется под sticky-навбаром — после закрытия шторки показываем его).
+    function revealMyPost() {
+      if (myPost) myPost.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // 2) Шторка приглашений (механика рулетки).
     var sheet = document.getElementById('mpSheet');
     var list = document.getElementById('mpList');
     var toastEl = document.getElementById('mpToast');
-    function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); }
-    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); }
+    function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); setTimeout(playConfetti, 300); }
+    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); revealMyPost(); }
+
+    // Конфетти-лотти поверх панели шторки (lottie-web грузим лениво из CDN).
+    var confettiHost = document.getElementById('mpConfetti');
+    function ensureLottie() {
+      if (window.lottie) return Promise.resolve(window.lottie);
+      return new Promise(function (res, rej) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+        s.onload = function () { res(window.lottie); };
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    function playConfetti() {
+      if (!confettiHost) return;
+      ensureLottie().then(function (lottie) {
+        confettiHost.innerHTML = '';
+        var anim = lottie.loadAnimation({
+          container: confettiHost, renderer: 'svg', loop: false, autoplay: true,
+          rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+          path: 'assets/lottie/confetti.json'
+        });
+        anim.addEventListener('complete', function () { anim.destroy(); confettiHost.innerHTML = ''; });
+      }).catch(function () {});
+    }
 
     var ALL = window.DS_PEOPLE_DATA || [];
     var nums = ALL.filter(function (p) { return p.id >= 1 && p.id <= 10; }).sort(function (a, b) { return a.id - b.id; });
