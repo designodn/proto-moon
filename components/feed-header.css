@@ -106,8 +106,14 @@
 
 /* Ава ↔ название канала = 8 (в базе 12). */
 .feed-header.__tribune .uni-cell {
-  align-items: center;        /* высота строки по аве, всё остальное центрируем */
+  align-items: center;        /* всё центрируем по вертикали */
   gap: var(--space-2) !important;
+  height: 20px;               /* высота строки = аватарка (20), не растёт под кнопку 28 */
+}
+/* Кнопка «Подписаться» 28px центрируется и слегка выходит за 20px-строку
+   в верхний паддинг острова — поэтому шапке нужен видимый overflow. */
+.feed-header.__tribune .uni-cell-container {
+  overflow: visible;
 }
 
 /* Шапка ↔ текст = 8. Общий gap feed-base = 12 (space-3), поэтому
