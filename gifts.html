@@ -477,9 +477,26 @@
       document.body.appendChild(box);
       document.body.appendChild(hapticLabel);
     }
+    var HAPTIC_MS = 1400;  // ~длительность вылета конфетти
     function fireHaptic() {
-      try { if (navigator.vibrate) navigator.vibrate([0, 40, 30, 40, 30, 60]); } catch (_) {}
-      try { ensureHaptic(); hapticLabel.click(); } catch (_) {}
+      // Android: длинный «раскатистый» паттерн на весь период.
+      try {
+        if (navigator.vibrate) {
+          var pat = [], t = 0;
+          while (t < HAPTIC_MS) { pat.push(90, 40); t += 130; }
+          navigator.vibrate(pat);
+        }
+      } catch (_) {}
+      // iOS: системный switch «долго» не умеет — повторяем тап интервалом весь период.
+      try {
+        ensureHaptic();
+        hapticLabel.click();
+        var ticks = Math.round(HAPTIC_MS / 120), i = 0;
+        var iv = setInterval(function () {
+          try { hapticLabel.click(); } catch (_) {}
+          if (++i >= ticks) clearInterval(iv);
+        }, 120);
+      } catch (_) {}
     }
 
     function fireConfetti() {
