@@ -7,14 +7,15 @@
     {
       "id": "post-1",
       "type": "vvz-portlet",
-      "author": "vvz-1, vvz-2, vvz-3, vvz-4",
+      "author": "vvz-1, vvz-2, vvvz-3, vvz-4",
       "title": "",
       "text": "",
       "photos": [],
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-2",
@@ -26,19 +27,21 @@
       "likes": "2",
       "comments": "5",
       "reshares": "1",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-3",
       "type": "text",
       "author": "1",
       "title": "",
-      "text": "Поставили новый счётчик, а расход стал больше обычного.",
+      "text": "",
       "photos": [],
       "likes": "5",
       "comments": "20",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-4",
@@ -52,7 +55,8 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-5",
@@ -66,7 +70,8 @@
       "likes": "12",
       "comments": "20",
       "reshares": "1",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-6",
@@ -83,7 +88,8 @@
       "likes": "23",
       "comments": "6",
       "reshares": "3",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-7",
@@ -97,7 +103,8 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-8",
@@ -111,7 +118,8 @@
       "likes": "112",
       "comments": "43",
       "reshares": "12",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-9",
@@ -125,7 +133,8 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-10",
@@ -143,7 +152,8 @@
       "likes": "5",
       "comments": "12",
       "reshares": "1",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
       "id": "post-11",
@@ -161,10 +171,11 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
-      "id": "post-11b",
+      "id": "post-12",
       "type": "added-friend",
       "author": "2, 6",
       "title": "",
@@ -173,10 +184,11 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
-      "id": "post-12",
+      "id": "post-13",
       "type": "shared-link",
       "author": "10",
       "title": "",
@@ -187,24 +199,26 @@
       "likes": "2",
       "comments": "21",
       "reshares": "",
-      "link": "https://www.rbc.ru/life/news/6464c4ea9a794779d9f6e39d"
+      "link": "https://www.rbc.ru/life/news/6464c4ea9a794779d9f6e39d",
+      "desc": "Как сажать розы на даче, чтобы они зацвели в первый год. Правила пересадки роз в открытый грунт: чего нельзя делать / «Семена роз нужно хранить в холодильнике»: ландшафтный дизайнер Полина Евсеева — о правильной высадке цветов"
     },
     {
-      "id": "post-13",
+      "id": "post-14",
       "type": "gift-received",
       "author": "8, 1",
-      "title": "Получил открытку от",
-      "text": "",
+      "title": "",
+      "text": "Получил открытку от",
       "photos": [
         "https://i.pinimg.com/originals/24/f0/0b/24f00b8520e0657c89891bb6f1d815d8.gif"
       ],
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
-      "id": "post-14",
+      "id": "post-15",
       "type": "friendversary",
       "author": "8, my_profile",
       "title": "my_profile_name, поздравляем с годовщиной дружбы",
@@ -213,24 +227,26 @@
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
-      "id": "post-15",
+      "id": "post-16",
       "type": "tagged-photo",
       "author": "my_profile",
       "title": "Вас отметили на фото 2 года назад",
       "text": "",
       "photos": [
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=750&q=80"
+        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&dpr=2"
       ],
       "likes": "",
       "comments": "",
       "reshares": "",
-      "link": ""
+      "link": "",
+      "desc": ""
     },
     {
-      "id": "post-16",
+      "id": "post-17",
       "type": "clip",
       "author": "5",
       "title": "",
@@ -239,7 +255,8 @@
       "likes": "56",
       "comments": "23",
       "reshares": "23",
-      "link": ""
+      "link": "",
+      "desc": ""
     }
   ]
 }

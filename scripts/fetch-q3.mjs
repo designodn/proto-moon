@@ -27,14 +27,22 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
-const SHEET_NAME = 'Q3-посты';
+const SHEET_NAME = 'Q3-посты';            // человекочитаемое имя листа (для логов)
+const SHEET_GID = '1662648328';           // стабильный gid листа Q3-постов
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
+// Тянем по gid, а НЕ по имени листа: имя («Q3-посты») переименовали в таблице,
+// и gviz при ненайденном имени молча отдаёт первый лист («Люди») — из-за чего
+// раньше лента собиралась из чужой схемы и обнулялась. gid переживает переименования.
+//
+// headers=1 — принудительно одна строка шапки. Без него gviz авто-детектит шапку
+// и для post-1 (vvz-portlet без счётчиков лайков/комментов/репостов) ошибочно
+// считает ДВЕ строки шапки → склеивает их в подписи колонок, а post-1 теряется.
 const csvUrl =
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
 
 /* ── Компаньон-данные (то, чего нет в плоских колонках листа) ──────────────── */
 /* Вложенные куски не лезут в колонки таблицы, поэтому держим их здесь и вешаем
@@ -506,6 +514,18 @@ ${authorHeader(aid, time)}
     case 'shared-link': {
       const domain = linkDomain(link);
       const href = link || '#';
+      // Заголовок/описание превью из таблицы. В колонке «описание» допускаем
+      // «Заголовок / Подзаголовок» — делим по первому « / ». Отдельная колонка
+      // «заголовок», если заполнена, перебивает заголовок из слеша.
+      // Приоритет: таблица → авто-мета со страницы → companion-заглушка → домен.
+      let mTitle = title, mDesc = (p.desc || '').trim();
+      const slash = mDesc.indexOf(' / ');
+      if (slash !== -1) {
+        if (!mTitle) mTitle = mDesc.slice(0, slash).trim();
+        mDesc = mDesc.slice(slash + 3).trim();
+      }
+      const linkTitle = mTitle || p.linkMeta?.title || x.title || domain;
+      const linkDescr = mDesc || p.linkMeta?.description || x.description || '';
       const preview = photos[0]
         ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
@@ -517,8 +537,8 @@ ${feedText(text)}
           <a class="text-feed__reshare-card" href="${esc(href)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
 ${preview}
             <div class="text-feed__link">
-              <div class="ds-title-m">${esc(p.linkMeta?.title || x.title || domain)}</div>
-              <div class="ds-body-m">${esc(p.linkMeta?.description || x.description || '')}</div>
+              <div class="ds-title-m">${esc(linkTitle)}</div>
+              <div class="ds-body-m">${esc(linkDescr)}</div>
               <div class="ds-caption-m">${esc(domain)}</div>
             </div>
           </a>
@@ -635,7 +655,13 @@ ${authorHeader(aid, time)}
         : img(src);
       // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
       // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
-      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
+      // Прокидываем аватар/имя/счётчики — klipy.html подставляет их в шапку
+      // и actions плеера (data-author-ava / data-like-count / data-reshare-count).
+      const q = new URLSearchParams({
+        type: 'video', src, name: personName(aid), from: 'lenta-q3.html',
+        ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
+      });
+      const openUrl = `klipy.html?${q}`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
 
@@ -752,33 +778,66 @@ async function main() {
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
     const rows = parseCsv(await res.text());
-    const [, ...body] = rows;
+    const [header = [], ...body] = rows;
 
+    // Колонки матчим ПО ИМЕНИ заголовка, а не по позиции — так столбцы можно
+    // вставлять/двигать в таблице, не ломая парсинг (как раз случай «описание»
+    // между «текст» и «фото»). Сравниваем по началу заголовка (учёт «фото (…)»).
+    const head = header.map(h => String(h || '').trim().toLowerCase());
+    const col = (...names) => {
+      for (const n of names) {
+        const i = head.findIndex(h => h === n || h.startsWith(n + ' '));
+        if (i >= 0) return i;
+      }
+      return -1;
+    };
+    const I = {
+      id: col('id'), type: col('тип'), author: col('автор'),
+      title: col('заголовок'), text: col('текст'), photos: col('фото'),
+      likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
+      link: col('ссылка'), desc: col('описание'),
+    };
+
+    // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор». Если
+    // их нет (например, gviz отдал не тот лист) — НЕ трогаем ленту, чтобы
+    // деплой-реген не обнулил живой фид.
+    if (I.type < 0 || I.author < 0) {
+      throw new Error(
+        `лист по gid=${SHEET_GID} не похож на Q3-посты (нет колонок «тип»/«автор»): ` +
+        `${head.join(' | ')}. Лента НЕ перегенерирована — проверь доступ/лист в таблице.`);
+    }
+
+    const cell = (c, i) => (i >= 0 ? (c[i] || '').trim() : '');
     posts = [];
     for (const c of body) {
-      const id = (c[0] || '').trim();
-      const type = (c[1] || '').trim();
+      const id = cell(c, I.id);
+      const type = cell(c, I.type);
       if (!id || !type) continue;
       posts.push({
         id, type,
-        author: (c[2] || '').trim(),
-        title: (c[3] || '').trim(),
-        text: (c[4] || '').trim(),
-        photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
-        likes: (c[6] || '').trim(),
-        comments: (c[7] || '').trim(),
-        reshares: (c[8] || '').trim(),
-        link: (c[9] || '').trim(),
+        author: cell(c, I.author),
+        title: cell(c, I.title),
+        text: cell(c, I.text),
+        photos: cell(c, I.photos).split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        likes: cell(c, I.likes),
+        comments: cell(c, I.comments),
+        reshares: cell(c, I.reshares),
+        link: cell(c, I.link),
+        // shared-link: превью ссылки. В колонке «описание» можно писать
+        // «Заголовок / Подзаголовок» (делится по « / » в renderPost). Заголовок
+        // можно задать и отдельной колонкой «заголовок» — она перебивает слеш.
+        desc: cell(c, I.desc),
       });
     }
 
-    // shared-link: тянем заголовок + первый абзац прямо со страницы (og:/title),
-    // кладём в post.linkMeta — попадёт в json и переживёт офлайн-реген.
+    // shared-link: если ни «заголовок», ни «описание» не вписаны вручную —
+    // пробуем вытянуть og:-мету со страницы. Если текст уже есть в таблице —
+    // фетч не нужен (не упираемся в блокировки сайтов вроде RBC).
     for (const p of posts) {
-      if (p.type === 'shared-link' && p.link) {
+      if (p.type === 'shared-link' && p.link && !(p.title || p.desc)) {
         const meta = await fetchLinkMeta(p.link);
         if (meta) { p.linkMeta = meta; console.log(`  ↳ ${p.id}: «${meta.title}»`); }
-        else console.warn(`  ⚠️  ${p.id}: не удалось прочитать мету ${p.link} — оставляю заглушку`);
+        else console.warn(`  ⚠️  ${p.id}: мету ${p.link} прочитать не вышло — впиши «Заголовок / Подзаголовок» в колонку «описание» (или останется заглушка)`);
       }
     }
 
@@ -789,7 +848,12 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
+  const rendered = posts.map((p, i) => renderPost(p, i)).filter(Boolean);
+  // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
+  // — не вставляем пустоту в живую ленту.
+  if (rendered.length === 0)
+    throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
+  const cards = rendered.join('\n\n');
   splice(cards);
 
   console.log(`✓ ${posts.length} постов → data/q3-feed.json + вставлено в lenta-q3.html`);

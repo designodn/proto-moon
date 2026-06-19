@@ -119,7 +119,7 @@
             <div class="rt-task__icon"><img src="../assets/koleso/ruletka-lyudi.png" alt=""></div>
           </div>
           <div class="button-wrapper __size-44 __full-width">
-            <button class="button-container __style-primary" id="open-invite"><span class="button-content">Пригласить</span></button>
+            <button class="button-container __style-primary" data-href="koleso-friends.html"><span class="button-content">Пригласить</span></button>
           </div>
         </div>
 
@@ -184,34 +184,9 @@
     </div>
   </div>
 
-  <!-- Шторка «Пригласи друга» -->
-  <div class="rt-sheet" id="invite-sheet" aria-hidden="true">
-    <div class="rt-sheet__scrim" data-sheet-close></div>
-    <div class="rt-sheet__panel" role="dialog" aria-label="Пригласи друга">
-      <div class="rt-sheet__handle"><span></span></div>
-      <div class="rt-sheet__emoji"><img src="../assets/koleso/ruletka-lyudi.png" alt=""></div>
-      <div class="ds-title-l rt-sheet__title">Пригласи друга</div>
-      <p class="ds-body-m rt-sheet__text">Пригласи друга и за каждого получи 1 билетик в подарок</p>
-      <div class="rt-sheet__btns">
-        <div class="button-wrapper __size-56 __full-width">
-          <button class="button-container __style-primary" data-href="koleso-friends.html"><span class="button-content">Выполнить</span></button>
-        </div>
-        <div class="button-wrapper __size-56 __full-width">
-          <button class="button-container __style-secondary" data-sheet-close><span class="button-content">Назад</span></button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // ── Шторка ────────────────────────────────────────────────────
-    var sheet = document.getElementById('invite-sheet');
-    function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); }
-    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); }
-
-    document.getElementById('open-invite').addEventListener('click', openSheet);
+    // Навигация по кнопкам с data-href (карточка «Пригласить» → люди).
     document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-sheet-close]')) { closeSheet(); return; }
       var nav = e.target.closest('[data-href]');
       if (!nav || nav.classList.contains('nav-bar__back')) return;
       e.preventDefault();
