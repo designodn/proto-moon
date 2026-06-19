@@ -52,12 +52,11 @@
   gap: 2px;
 }
 
-/* имя — одна строка с эллипсисом. !important: периодически перебивается
-   типографикой/uni-cell, поэтому форсируем (одна строка — обязательна). */
+/* имя — одна строка с эллипсисом */
 .feed-header__name {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Оверлей на медиа (клип) — весь текст шапки белый (имя + время). */

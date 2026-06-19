@@ -125,6 +125,15 @@
   gap: var(--space-3);
 }
 
+/* Имя автора/канала в шапке поста — всегда одна строка с эллипсисом.
+   У обычной шапки (uni-cell, без класса feed-header__name) своего nowrap не
+   было, поэтому длинные имена групп переносились. Контейнер уже min-width:0. */
+.text-feed .uni-cell-additional-content > .ds-title-s {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Время в шапке — secondary text (ds-caption-s даёт только размер) */
 .text-feed__time {
   color: var(--dynamic-text-and-icons-base-secondary);
