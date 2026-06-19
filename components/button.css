@@ -182,6 +182,15 @@
   --overlay-color: var(--button-custom-overlay-color, var(--button-color));
 }
 
+/* AI gift — тёплый градиент из ИИ-подарков NV-ленты (.feed-congrats.__ai:
+   коралл/малиновый → оранжевый → золотой), белый текст и иконка. Фон — gradient,
+   поэтому через background-image (а не --button-background-color). Press-оверлей
+   (::after) работает поверх. */
+.button-container.__style-ai-gift {
+  --button-color: var(--static-text-and-icons-base-inverse-primary);
+  background-image: linear-gradient(95deg, #d83f6f 0%, #f0813c 50%, #f8c659 100%);
+}
+
 /* ============================================================
    HOVER / PRESS OVERLAY (::after pseudo)
    ============================================================ */
