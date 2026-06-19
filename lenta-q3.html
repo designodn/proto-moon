@@ -227,10 +227,17 @@
   .ll-otd__likes-text { color: var(--dynamic-text-and-icons-base-secondary); }
 
   /* «Вас отметили на фото N лет назад» — карточка-воспоминание.
-     Сверху аватар 72 (без имени), ниже ds-title-xl, ниже full-bleed фото
-     с tooltip-овером, который указывает на отмеченного. Внизу — primary
+     Шапка ll-tagged__head: аватар 72 (компонент) + ds-title-xl в одну строку,
+     по центру. Паддинг text-feed получает сама шапка (а не голый аватар —
+     иначе .text-feed > :not(media) сплющивал бы круг в овал). Ниже full-bleed
+     фото с tooltip-овером, который указывает на отмеченного. Внизу — primary
      «Поделиться» на всю ширину (через .button-wrapper.__full-width).
      Media получает .text-feed__media — чтобы выйти из паддинга text-feed. */
+  .ll-tagged__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
   .ll-tagged__media {
     position: relative;
     width: 100%;
@@ -866,14 +873,16 @@
         </article>
 
         <article class="text-feed island">
-          <div class="avatar __size-72 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
-          <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
+          <div class="ll-tagged__head">
+            <div class="avatar __size-72 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
+          </div>
 
           <div class="text-feed__media ll-tagged__media">
-            <img src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&amp;dpr=2" alt="">
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-start __placement-bottom-start"
-                 style="top: 28px; left: 56px">
-              <div class="tooltip ds-title-m">Анастасия Кащеева</div>
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=750&amp;q=80" alt="">
+            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+                 style="top: 143px; left: 187.5px; transform: translateX(-50%)">
+              <div class="tooltip ds-title-m">Анфиса Тимирбаева(Абдуллина)</div>
               <div class="tooltip-tail"></div>
             </div>
           </div>
@@ -893,7 +902,7 @@
           <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
                оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
           <a class="clip-feed__open" aria-label="Открыть клип"
-             href="klipy.html?type=video&amp;src=assets%2Fclips%2Fsable-tepa.mp4&amp;name=%D0%90%D0%BD%D1%82%D0%BE%D0%BD%D0%B8%D0%B4%D0%B0%20%D0%A7%D0%B5%D0%BA%D0%B0%D0%BB%D0%BE%D0%B2%D0%B0%20(%D0%93%D0%B0%D1%85%D0%BE%D0%B2%D0%B0)&amp;from=lenta-q3.html"
+             href="klipy.html?type=video&amp;src=assets/clips/sable-tepa.mp4&amp;name=Антонида%20Чекалова%20(Гахова)&amp;from=lenta-q3.html&amp;like=56&amp;reshare=23&amp;ava=https%3A%2F%2Fvki9.okcdn.ru%2Fi%3Fr%3DCFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp%26dpr%3D2"
              style="position:absolute;inset:0;z-index:1"></a>
 
           <div class="clip-feed__header">
@@ -1238,6 +1247,37 @@
         try { sessionStorage.setItem('clipEdit', JSON.stringify(data)); } catch (_) {}
         location.href = 'clip-edit.html';
       });
+    });
+  })();
+  </script>
+
+  <!-- Сохранение/восстановление позиции скролла ленты при входе в плеер
+       клипа и возврате назад. Лента скроллится контейнером .phone-frame__feed
+       (не окном), поэтому history.back() её не восстанавливает — делаем вручную
+       через sessionStorage. Сохраняем на pagehide (срабатывает и в NV, где
+       screen-transition гасит click), восстанавливаем на pageshow/load. -->
+  <script>
+  (function () {
+    var KEY = 'feedScroll:' + location.pathname;
+    function scroller() {
+      var f = document.querySelector('.phone-frame__feed');
+      if (f && f.scrollHeight > f.clientHeight + 4) return f;
+      return document.scrollingElement || document.documentElement;
+    }
+    window.addEventListener('pagehide', function () {
+      try { sessionStorage.setItem(KEY, String(scroller().scrollTop)); } catch (_) {}
+    });
+    function restore() {
+      var v;
+      try { v = sessionStorage.getItem(KEY); } catch (_) { v = null; }
+      if (v == null) return;
+      scroller().scrollTop = parseInt(v, 10) || 0;
+    }
+    window.addEventListener('pageshow', restore);
+    document.addEventListener('DOMContentLoaded', restore);
+    window.addEventListener('load', function () {
+      restore();
+      try { sessionStorage.removeItem(KEY); } catch (_) {}
     });
   })();
   </script>

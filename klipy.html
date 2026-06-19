@@ -95,7 +95,10 @@
     border: 0; background: transparent; padding: 0; cursor: pointer;
     color: inherit;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,.45));
+    transition: transform 0.12s ease;
   }
+  /* Тап по контролу справа — ужимание до 95% к центру. */
+  .klip__rail-btn:active { transform: scale(0.95); }
   .klip__rail-ico {
     width: 30px; height: 30px;
     background: currentColor;
@@ -301,7 +304,7 @@
           </button>
           <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
             <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
-            <span class="klip__rail-count">143</span>
+            <span class="klip__rail-count" data-reshare-count>143</span>
           </button>
           <button class="klip__rail-btn" aria-label="Не интересно">
             <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
@@ -502,20 +505,35 @@
   </div>
 
   <script>
-    // 1) Назад — в ту ленту, откуда пришли. Цель берём из ?from=… (ставит
-    //    лента при открытии клипа), либо из sessionStorage('klipyBack')
-    //    (одноразовый override от вызывающего экрана, напр. «Создать клип»).
-    //    klipyBack приоритетнее. По умолчанию остаётся lenta-q3.html.
+    // 1) Назад — в ту ленту, откуда пришли.
+    //    • sessionStorage('klipyBack') — одноразовый override от вызывающего
+    //      экрана (напр. «Создать клип»): навигация на заданную ленту. Приоритет.
+    //    • ?from=… — пришли по тапу на клип в ленте: возвращаемся туда ЖЕ и на
+    //      то же место скролла. Для этого используем history.back() (браузер
+    //      восстанавливает scroll-position), а не свежую загрузку страницы.
+    //    • иначе — дефолтный data-href="lenta-q3.html".
     (function () {
       var back = document.querySelector('.klipy-back');
       if (!back) return;
-      var from = new URLSearchParams(location.search).get('from');
-      if (from) back.setAttribute('data-href', from);
+      var override = null;
       try {
-        var t = sessionStorage.getItem('klipyBack');
+        override = sessionStorage.getItem('klipyBack');
         sessionStorage.removeItem('klipyBack');
-        if (t) back.setAttribute('data-href', t);
       } catch (_) {}
+      if (override) { back.setAttribute('data-href', override); return; }
+
+      var from = new URLSearchParams(location.search).get('from');
+      if (!from) return;
+      // history.back возвращает на исходную страницу из bfcache с сохранением
+      // позиции скролла. Снимаем data-href/data-screen-back, чтобы навигацию не
+      // перехватил screen-transition (он делает свежий location.href).
+      back.removeAttribute('data-href');
+      back.removeAttribute('data-screen-back');
+      back.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (history.length > 1) history.back();
+        else location.href = from;
+      });
     })();
 
     // 2) Открыли плеер из ленты → первый слайд = тот самый клип.
@@ -547,6 +565,17 @@
       if (ava) {
         var avaImg = entry.querySelector('[data-author-ava] img');
         if (avaImg) avaImg.src = ava;
+      }
+      // Счётчики лайков/репостов — тоже из карточки в ленте.
+      var like = params.get('like');
+      if (like != null) {
+        var likeEl = entry.querySelector('[data-like-count]');
+        if (likeEl) likeEl.textContent = like;
+      }
+      var reshare = params.get('reshare');
+      if (reshare != null) {
+        var reshareEl = entry.querySelector('[data-reshare-count]');
+        if (reshareEl) reshareEl.textContent = reshare;
       }
     })();
 
