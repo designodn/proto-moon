@@ -449,15 +449,23 @@
   </script>
 
   <script>
-    // «Назад» из «Сегодня» по умолчанию ведёт в NV-ленту. Если пришли из Q3-ленты
-    // (по referrer), возвращаем туда же — иначе тап «Сегодня» из Q3 кидал бы в NV.
+    // «Назад» из «Сегодня» возвращает ровно туда, откуда пришли. Путь кешируется
+    // в sessionStorage (todayOrigin) перехватчиком навигации; фолбэк — referrer,
+    // затем дефолтный data-href (NV-лента) из разметки.
     (function () {
       var back = document.querySelector('.nav-bar__back');
-      if (!back || !document.referrer) return;
-      try {
-        if (/\/lenta-q3\.html$/.test(new URL(document.referrer).pathname))
-          back.setAttribute('data-href', 'lenta-q3.html');
-      } catch (e) {}
+      if (!back) return;
+      var origin = null;
+      try { origin = sessionStorage.getItem('todayOrigin'); } catch (_) {}
+      if (!origin && document.referrer) {
+        try {
+          var ref = new URL(document.referrer);
+          if (ref.origin === location.origin && /\.html$/.test(ref.pathname) &&
+              !/(^|\/)today\.html$/.test(ref.pathname))
+            origin = ref.pathname.replace(/^\//, '') + ref.search;
+        } catch (e) {}
+      }
+      if (origin) back.setAttribute('data-href', origin);
     })();
   </script>
 </body>

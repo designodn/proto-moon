@@ -1,0 +1,54 @@
+# SourceCraft CI — пересборка лент из Google-таблицы на деплое.
+#
+# Зачем: ленты (Q3 + New Vision) и люди должны обновляться из таблицы сами,
+# в момент публикации, без ручного запуска скилов и без GitHub Actions.
+#
+# Как работает:
+#   • триггер — push в main (на SourceCraft main приезжает через зеркало с GitHub,
+#     см. .github/workflows/mirror-sourcecraft.yml);
+#   • в контейнере node гоним три генератора по порядку (люди → Q3 → New Vision);
+#     раннер SourceCraft имеет нормальную сеть, поэтому gviz-таблица и мета ссылок
+#     (fetchLinkMeta) доступны;
+#   • если что-то изменилось — коммитим результат обратно в main, и Sites сразу
+#     раздаёт свежую статику (sites.yaml: ref=main, корень репозитория).
+#
+# Защита от петли: пуш в main снова запускает этот воркфлоу, но второй прогон при
+# неизменной таблице даёт тот же HTML → `git status` пуст → коммита и пуша нет.
+# Так процесс сходится за один лишний холостой прогон (и только когда были правки).
+
+on:
+  push:
+    - workflows: [build-feeds]
+      filter:
+        branches: ["main"]
+
+workflows:
+  build-feeds:
+    settings:
+      max_cube_duration: 10m
+    tasks:
+      - name: rebuild-feeds
+        cubes:
+          - name: render-and-publish
+            # node:22 (bookworm) — есть node 22 (нужен встроенный fetch) и git.
+            image: docker.io/library/node:22
+            script:
+              # 1) Перечитать данные из таблицы и пересобрать статику.
+              #    Порядок важен: ленты берут авторов из data/people.json.
+              - node scripts/fetch-people.mjs
+              - node scripts/fetch-q3.mjs
+              - node scripts/fetch-feed.mjs
+              # 2) Опубликовать результат обратно в main (если есть изменения).
+              - |
+                if [ -z "$(git status --porcelain)" ]; then
+                  echo "Лента не изменилась — публиковать нечего."
+                  exit 0
+                fi
+                git config user.email "ci@sourcecraft.dev"
+                git config user.name  "SourceCraft CI"
+                git add -A
+                git commit -m "chore(feeds): пересборка лент из Google-таблицы [skip ci]"
+                # SOURCECRAFT_REPO_URL = https://git@git.sourcecraft.dev/<org>/<repo>.git
+                # Меняем плейсхолдер-логин git@ на токен для авторизованного пуша.
+                push_url="https://${SOURCECRAFT_TOKEN}@${SOURCECRAFT_REPO_URL#https://git@}"
+                git push "$push_url" HEAD:main

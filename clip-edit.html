@@ -68,6 +68,19 @@
   .ce-preview > img {
     position: absolute; inset: 0;
     width: 100%; height: 100%; object-fit: cover; display: block;
+    will-change: transform, filter;
+  }
+  /* Эффекты перехода кадр→кадр (Ken Burns) при проигрывании — по кругу. */
+  @keyframes ce-zoom-in  { from { transform: scale(1);    } to { transform: scale(1.12); } }
+  @keyframes ce-zoom-out { from { transform: scale(1.12); } to { transform: scale(1);    } }
+  @keyframes ce-pan-left { from { transform: scale(1.12) translateX(4%); } to { transform: scale(1.12) translateX(-4%); } }
+  @keyframes ce-blur-in  { 0% { filter: blur(14px); transform: scale(1.08); } 60% { filter: blur(0); } 100% { filter: blur(0); transform: scale(1.08); } }
+  .ce-preview > img.__fx-zoom-in  { animation: ce-zoom-in  1.4s ease-out both; }
+  .ce-preview > img.__fx-zoom-out { animation: ce-zoom-out 1.4s ease-out both; }
+  .ce-preview > img.__fx-pan-left { animation: ce-pan-left 1.4s ease-out both; }
+  .ce-preview > img.__fx-blur-in  { animation: ce-blur-in 1.2s ease-out both; }
+  @media (prefers-reduced-motion: reduce) {
+    .ce-preview > img { animation: none !important; }
   }
   /* Подпись-период сверху по центру. */
   .ce-title {
@@ -108,7 +121,9 @@
   }
   .ce-strip {
     position: absolute;
-    left: var(--space-4); bottom: var(--space-4);
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);   /* раскадровка по центру контейнера */
     z-index: 2;
     height: 40px;
   }
@@ -204,7 +219,17 @@
 
       document.getElementById('ceTitle').textContent = label;
       var hero = document.getElementById('ceHero');
-      hero.src = photos[0];
+
+      // Эффекты перехода кадр→кадр (Ken Burns), по кругу. Снимаем класс,
+      // форсим reflow и ставим новый — так анимация перезапускается на кадре.
+      var HERO_FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
+      function showFrame(n) {
+        hero.src = photos[n];
+        HERO_FX.forEach(function (c) { hero.classList.remove(c); });
+        void hero.offsetWidth;
+        hero.classList.add(HERO_FX[n % HERO_FX.length]);
+      }
+      showFrame(0);
 
       // Раскадровка — миниатюры из тех же кадров.
       var strip = document.getElementById('ceStrip');
@@ -212,38 +237,62 @@
         return '<div class="ce-strip__frame"><img src="' + u + '" alt=""></div>';
       }).join('');
 
-      // Play: прокручивает кадры в герое + двигает плейхед по таймлайну.
+      // Воспроизведение: прокрутка кадров + плейхед по таймлайну.
+      // Тап в любую область клипа — пауза/продолжение (toggle).
       var FRAME_MS = 1200;
-      var i = 0, timer = null;
+      var TOTAL = photos.length * FRAME_MS;
+      var i = 0, timer = null, playing = false;
+      var preview = document.getElementById('cePreview');
       var play = document.getElementById('cePlay');
       var playhead = document.getElementById('cePlayhead');
 
-      function resetPlayhead() {
-        playhead.style.transition = 'none';
-        playhead.style.left = '0px';
+      function stripWidth() {
+        var r = strip.getBoundingClientRect();
+        return r.width || 1;
       }
-      function stop() {
-        if (timer) { clearInterval(timer); timer = null; }
-        play.style.opacity = '';
-        resetPlayhead();
+      function headLeftPx() {
+        return parseFloat(getComputedStyle(playhead).left) || 0;
       }
+      function setPlayIcon() { play.style.opacity = playing ? '0' : ''; }
 
-      play.addEventListener('click', function () {
-        if (timer) { stop(); return; }
-        play.style.opacity = '0';
-        i = 0; hero.src = photos[0];
-        // Плейхед едет от начала до конца ленты кадров за всю длину клипа.
-        var total = photos.length * FRAME_MS;
-        resetPlayhead();
+      function start() {
+        if (i >= photos.length) { i = 0; }   // доиграли → старт сначала
+        playing = true; setPlayIcon();
+        showFrame(i);
+        // Плейхед продолжает с текущей позиции до конца за оставшееся время.
+        var frac = headLeftPx() / stripWidth();
+        if (frac >= 1 || frac < 0) frac = 0;
+        var remaining = TOTAL * (1 - frac);
+        playhead.style.transition = 'none';
+        void playhead.offsetWidth;            // reflow, чтобы зафиксировать старт
         requestAnimationFrame(function () {
-          playhead.style.transition = 'left ' + total + 'ms linear';
+          playhead.style.transition = 'left ' + remaining + 'ms linear';
           playhead.style.left = 'calc(100% - 2px)';
         });
         timer = setInterval(function () {
           i += 1;
-          if (i >= photos.length) { stop(); return; }   // доиграли — стоп
-          hero.src = photos[i];
+          if (i >= photos.length) { finish(); return; }
+          showFrame(i);
         }, FRAME_MS);
+      }
+      function pause() {
+        playing = false; setPlayIcon();
+        if (timer) { clearInterval(timer); timer = null; }
+        var cur = getComputedStyle(playhead).left;   // замораживаем плейхед
+        playhead.style.transition = 'none';
+        playhead.style.left = cur;
+      }
+      function finish() {
+        if (timer) { clearInterval(timer); timer = null; }
+        playing = false; setPlayIcon();
+        playhead.style.transition = 'none';
+        playhead.style.left = '0px';
+        i = 0;                                 // готов к повтору сначала
+      }
+
+      // Тап в любую область превью клипа — старт/пауза.
+      preview.addEventListener('click', function () {
+        playing ? pause() : start();
       });
     })();
   </script>
