@@ -2506,7 +2506,7 @@
             if (st.type === 'bday') {
               var p = P(st.author) || {};
               var slide = MomentViewer.bdaySlide({
-                photo:          p.photo || '',
+                photo:          st.image || p.photo || '',
                 name:           p.name || '',
                 headerTitle:    'День рождения ' + firstName(p),
                 headerSubtitle: '3 часа назад',
