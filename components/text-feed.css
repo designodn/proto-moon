@@ -401,3 +401,109 @@
 .text-feed > .avatars-view {
   margin-left: -2px;
 }
+
+/* ============================================================
+   ФОТОМАРАФОН — две сущности:
+
+   1. МОДИФИКАТОР .text-feed__marathon — доп-блок под обычным постом
+      (через divider): призыв с хэштегом + счётчик участников + CTA.
+      Кладётся последним ребёнком .text-feed (после actions-bar).
+      Бывает у поста пользователя и у поста сообщества (group-post).
+
+   2. ОТДЕЛЬНЫЙ ФИД .marathon — системная карточка «от приложения»:
+      без автора и без actions-bar, заголовок + «веер» из трёх фото +
+      тот же промо-блок марафона.
+
+   Состояние «участвую» (joined): текст «Вы уже участвуете…» + вторичная
+   (серая) кнопка. Без него: «Загружайте фото…» + оранжевая primary-кнопка.
+   Стиль кнопки задаётся классом __style-* в разметке, текст — данными.
+   ============================================================ */
+
+/* — общий промо-блок (призыв + счётчик), переиспользуется в обоих видах — */
+.marathon-promo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.marathon-promo__text {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.marathon-promo__count {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.marathon-promo__tag {
+  color: var(--dynamic-text-and-icons-status-accent);
+}
+
+/* — 1. модификатор под постом: divider сверху + промо + CTA — */
+.text-feed__marathon {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--dynamic-stroke-contrast-low);
+}
+
+/* — 2. отдельная карточка «от приложения» — */
+.marathon {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+}
+.marathon__title {
+  margin: 0;
+  padding-inline: var(--space-4);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+/* «веер» из трёх вертикальных плиток: перекрываются и слегка повёрнуты,
+   у каждой белая обводка и крупное скругление (как в макете). */
+.marathon__gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--space-2);
+}
+.marathon__tile {
+  position: relative;
+  flex: 0 0 auto;
+  width: 153px;
+  height: 194px;
+  border-radius: 24px;
+  border: 3px solid var(--dynamic-surface-base-secondary, #fff);
+  overflow: hidden;
+  transform: rotate(var(--marathon-tile-rotate, 0deg));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.marathon__tile:not(:first-child) {
+  margin-left: -40px;
+}
+/* средняя плитка — поверх соседних */
+.marathon__tile:nth-child(2) {
+  z-index: 1;
+}
+.marathon__tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* промо + кнопки внизу карточки «от приложения» (без divider) */
+.marathon__special {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-inline: var(--space-4);
+}
+.marathon__cta {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+.marathon__cta > .__full-width {
+  flex: 1 1 auto;
+}

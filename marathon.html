@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Фотомарафон</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-secondary);
+  }
+  .phone-frame { background: var(--dynamic-surface-base-secondary); }
+  .meshok-up .status-bar,
+  .meshok-up .nav-bar {
+    background-color: var(--dynamic-surface-base-secondary) !important;
+  }
+
+  /* ── Шапка марафона: заголовок-хэштег + счётчик + описание + CTA, по центру ── */
+  .ll-mar-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-4) var(--space-4);
+  }
+  .ll-mar-head__titlewrap { display: flex; flex-direction: column; gap: var(--space-2); width: 100%; }
+  .ll-mar-head__title { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-mar-head__count { color: var(--dynamic-text-and-icons-base-secondary); }
+  .ll-mar-head__desc  { margin: 0; color: var(--dynamic-text-and-icons-base-primary); }
+
+  /* ── Лента работ ── */
+  .ll-mar-grid {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 0 var(--space-4) var(--space-6);
+  }
+  /* masonry-колонки для всех работ, кроме hero */
+  .ll-mar-masonry {
+    columns: 2;
+    column-gap: var(--space-2);
+  }
+  .ll-mar-masonry > .ll-mar-card {
+    break-inside: avoid;
+    margin-bottom: var(--space-2);
+  }
+
+  /* Карточка работы: media (rounded-16, тонкий бордер) + футер автор/лайки. */
+  .ll-mar-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ll-mar-card:active { transform: scale(0.98); }
+  .ll-mar-card.__hero { margin-bottom: 0; }
+
+  .ll-mar-card__media {
+    position: relative;
+    display: block;
+    border-radius: 16px;
+    border: 2px solid var(--dynamic-stroke-contrast-low);
+    overflow: hidden;
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .ll-mar-card__media img {
+    display: block;
+    width: 100%;
+    height: auto;           /* натуральная высота → masonry-эффект */
+  }
+  .ll-mar-card.__hero .ll-mar-card__media { aspect-ratio: 344 / 192; }
+  .ll-mar-card.__hero .ll-mar-card__media img { height: 100%; object-fit: cover; }
+
+  /* Бейдж-ранг: оранжевая «закладка» с уголком снизу, в правом верхнем углу. */
+  .ll-mar-card__rank {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    width: 24px;
+    height: 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 3px;
+    color: #fff;
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    background: var(--static-surface-status-accent, #F64A00);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  }
+
+  .ll-mar-card__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-left: var(--space-1);
+  }
+  .ll-mar-card__name {
+    flex: 1 1 0;
+    min-width: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ll-mar-card__likes {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-shrink: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- STATUS + NAVBAR — DS meshok-up -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-action="back" data-back-fallback="lenta-q3.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+          </div>
+          <div class="nav-bar__trailing"></div>
+        </div>
+      </div>
+
+      <!-- ШАПКА МАРАФОНА -->
+      <div class="ll-mar-head">
+        <div class="ll-mar-head__titlewrap">
+          <div class="ll-mar-head__title ds-title-xl">#РадостьДетства</div>
+          <div class="ll-mar-head__count ds-body-m">11K участников</div>
+        </div>
+        <p class="ll-mar-head__desc ds-body-m">Публикуйте фото в марафоне и выигрывайте подарки! Результаты 2 июля 2026 года</p>
+        <div class="button-wrapper __size-56 __full-width" style="display:block; width:100%">
+          <button class="button-container __style-primary" style="width:100%" data-href="marathon-post.html"><span class="button-content">Загрузить фото</span></button>
+        </div>
+      </div>
+
+      <!-- ЛЕНТА РАБОТ -->
+      <div class="ll-mar-grid">
+<!-- FEED:START (генерится scripts/fetch-marathon.mjs — не редактировать вручную) -->
+          <a class="ll-mar-card __hero" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-1/688/384" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">1</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Анна Иванова</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">671</span>
+            </span>
+          </a>
+          <div class="ll-mar-masonry">
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-2/336/300" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">2</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Максим Дружинин</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">578</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-3/336/452" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">3</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=24" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Лидия Маликова</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">495</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-4/336/424" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">4</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Олег Северов</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">402</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-5/336/300" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">5</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=27" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Галина Прохорова</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">356</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-6/336/452" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">6</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Виктор Бондарев</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">311</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-7/336/336" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">7</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=44" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Нина Соколова</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">287</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-8/336/424" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">8</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=51" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Пётр Кузьмин</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">243</span>
+            </span>
+          </a>
+          <a class="ll-mar-card" href="#">
+            <span class="ll-mar-card__media">
+              <img src="https://picsum.photos/seed/mar-9/336/300" alt="" loading="lazy">
+              <span class="ll-mar-card__rank">9</span>
+            </span>
+            <span class="ll-mar-card__footer">
+              <span class="avatar __size-20 __type-image"><img src="https://i.pravatar.cc/96?img=20" alt=""></span>
+              <span class="ll-mar-card__name ds-body-m">Светлана Орлова</span>
+              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">198</span>
+            </span>
+          </a>
+          </div>
+        <!-- FEED:END -->
+      </div>
+
+    </div>
+  </div>
+
+  <script src="components/back-button.js"></script>
+  <!-- Делегированный переход по data-href (кнопка «Загрузить фото» → форма). -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
+  </script>
+</body>
+</html>

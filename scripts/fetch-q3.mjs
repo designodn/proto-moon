@@ -153,6 +153,45 @@ const esc = s => String(s ?? '')
 
 const img = (url, attr = '') => `<img ${attr}src="${esc(url)}" alt="">`;
 
+/* ── ФОТОМАРАФОН ──────────────────────────────────────────────────────────────
+ * Колонка «марафон» = хэштег марафона (без «#» — подставим сами). Непустое
+ * значение у обычного поста → под ним рисуется блок-модификатор .text-feed__marathon.
+ * Колонка «участвую» (опц., «да») → joined-состояние: серая кнопка + текст
+ * «Вы уже участвуете…». Счётчик участников и текст CTA — реквизит шаблона. */
+const marathonHashtag = raw => {
+  const s = String(raw || '').trim();
+  return s ? (s.startsWith('#') ? s : '#' + s) : '';
+};
+const MARATHON_PARTICIPANTS = '11К участников';
+
+/** Промо-блок (призыв + счётчик), общий для модификатора и отдельного фида. */
+function marathonPromo(hashtag, joined) {
+  const text = joined
+    ? 'Вы уже участвуете, посмотрите другие фото марафона '
+    : 'Загружайте фото и участвуйте в марафоне ';
+  return `            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
+            </div>`;
+}
+
+/** Блок-модификатор под обычным постом (divider + промо + CTA). */
+function marathonBlock(raw, joined) {
+  const hashtag = marathonHashtag(raw);
+  if (!hashtag) return '';
+  const style = joined ? 'secondary' : 'primary';
+  return `
+          <div class="text-feed__marathon">
+${marathonPromo(hashtag, joined)}
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-${style}" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
+            </div>
+          </div>`;
+}
+
+/** Распознаём «да/yes/1/true» в колонке «участвую». */
+const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
+
 /** Шапка автора (uni-cell): аватар __size-44, имя ds-title-s, время text-feed__time.
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
@@ -394,8 +433,31 @@ ${authorHeader(aid, time, { subscribe })}
 
 ${feedText(text)}
 ${media(photos)}
-${actionsBar(likes, comments, reshares)}
+${actionsBar(likes, comments, reshares)}${marathonBlock(p.marathon, isJoined(p.marathonJoined))}
         </article>`.replace(/\n\n+/g, '\n\n');
+    }
+
+    /* ── Фотомарафон «от приложения» — отдельный фид: заголовок + веер фото + промо ── */
+    case 'marathon': {
+      const hashtag = marathonHashtag(p.marathon);
+      const rot = ['-12.42deg', '-4.17deg', '6.62deg'];
+      const tiles = photos.slice(0, 3).map((u, i) =>
+        `            <div class="marathon__tile" style="--marathon-tile-rotate:${rot[i] || '0deg'}">${img(u)}</div>`).join('\n');
+      return `        <article class="marathon island">
+          <p class="ds-title-l marathon__title">${esc(title)}</p>
+          <div class="marathon__gallery">
+${tiles}
+          </div>
+          <div class="marathon__special">
+${marathonPromo(hashtag, isJoined(p.marathonJoined))}
+            <div class="marathon__cta">
+              <div class="button-wrapper __size-44 __full-width" style="display:block">
+                <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
+              </div>
+              <div class="button-wrapper __size-44"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
+            </div>
+          </div>
+        </article>`;
     }
 
     /* ── реклама (feed-ad — как в NV, но в Q3-разметке text-feed) ── */
@@ -930,6 +992,7 @@ async function main() {
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
       link: col('ссылка'), desc: col('описание'),
+      marathon: col('марафон'), joined: col('участвую'),
       // Комменты под постом — до двух верхнеуровневых (автор + текст каждого).
       // Можно дополнить парами «автор/текст коммента N» — просто расширь список.
       c1Author: col('автор коммента 1'), c1Text: col('текст коммента 1'),
@@ -947,10 +1010,14 @@ async function main() {
 
     const cell = (c, i) => (i >= 0 ? (c[i] || '').trim() : '');
     posts = [];
+    // Идём строго по порядку строк. id в листе не обязателен: если пусто —
+    // подставляем порядковый (row-N), чтобы строка не выпадала из ленты.
+    let rowNum = 0;
     for (const c of body) {
-      const id = cell(c, I.id);
+      rowNum++;
       const type = cell(c, I.type);
-      if (!id || !type) continue;
+      if (!type) continue;
+      const id = cell(c, I.id) || `row-${rowNum}`;
       posts.push({
         id, type,
         author: cell(c, I.author),
@@ -963,6 +1030,8 @@ async function main() {
         comments: cell(c, I.comments),
         reshares: cell(c, I.reshares),
         link: cell(c, I.link),
+        marathon: cell(c, I.marathon),
+        marathonJoined: cell(c, I.joined),
         // shared-link: превью ссылки. В колонке «описание» можно писать
         // «Заголовок / Подзаголовок» (делится по « / » в renderPost). Заголовок
         // можно задать и отдельной колонкой «заголовок» — она перебивает слеш.
