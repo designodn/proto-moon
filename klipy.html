@@ -57,6 +57,33 @@
   .klip__media video {
     display: block; width: 100%; height: 100%; object-fit: cover;
   }
+  /* Монтаж из кадров (клип «из воспоминаний», созданный пользователем):
+     кадры лежат стопкой, сменяют друг друга по кругу с эффектом Ken Burns. */
+  .klip__frame {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    opacity: 0; transition: opacity .6s ease; will-change: transform, filter;
+  }
+  .klip__frame.__active { opacity: 1; }
+  @keyframes klip-zoom-in  { from { transform: scale(1);    } to { transform: scale(1.12); } }
+  @keyframes klip-zoom-out { from { transform: scale(1.12); } to { transform: scale(1);    } }
+  @keyframes klip-pan-left { from { transform: scale(1.12) translateX(3%); } to { transform: scale(1.12) translateX(-3%); } }
+  @keyframes klip-blur-in  { 0% { filter: blur(14px); transform: scale(1.08); } 60% { filter: blur(0); } 100% { filter: blur(0); transform: scale(1.08); } }
+  .klip__frame.__active.__fx-zoom-in  { animation: klip-zoom-in  3.4s ease-out both; }
+  .klip__frame.__active.__fx-zoom-out { animation: klip-zoom-out 3.4s ease-out both; }
+  .klip__frame.__active.__fx-pan-left { animation: klip-pan-left 3.4s ease-out both; }
+  .klip__frame.__active.__fx-blur-in  { animation: klip-blur-in 1.8s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { .klip__frame { animation: none !important; } }
+  /* Подпись-период сверху по центру (как в карточке клипа в ленте). */
+  .klip__memlabel {
+    position: absolute; top: calc(env(safe-area-inset-top, 0px) + 64px);
+    left: 0; right: 0; z-index: 2; text-align: center;
+    color: var(--static-text-and-icons-base-inverse-primary);
+    font-family: "OK Sans Display", sans-serif;
+    font-size: 22px; line-height: 28px; font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .4); pointer-events: none;
+  }
+
   /* Лёгкое затемнение снизу — чтобы белые оверлеи читались поверх любого кадра. */
   .klip__scrim {
     position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -577,6 +604,57 @@
         var reshareEl = entry.querySelector('[data-reshare-count]');
         if (reshareEl) reshareEl.textContent = reshare;
       }
+    })();
+
+    // 2b) Пришли из «Создать клип» (clip-edit.html) → первый слайд = ЭТОТ же
+    //     клип из воспоминаний: монтаж из тех же кадров + подпись-период, автор —
+    //     текущий пользователь, а лайки/репосты по нулям (только что создан).
+    //     Данные прокидывает clip-edit через sessionStorage('newClip').
+    (function () {
+      var data = null;
+      try {
+        data = JSON.parse(sessionStorage.getItem('newClip') || 'null');
+        sessionStorage.removeItem('newClip');
+      } catch (_) {}
+      if (!data) return;
+      var entry = document.querySelector('[data-entry]');
+      if (!entry) return;
+      var photos = (data.photos && data.photos.length) ? data.photos : [];
+
+      // Медиа → стопка кадров, сменяющихся по кругу с эффектом Ken Burns.
+      var media = entry.querySelector('[data-media]');
+      if (media && photos.length) {
+        var FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
+        media.innerHTML = photos.map(function (u, idx) {
+          return '<img class="klip__frame ' + FX[idx % FX.length] +
+                 (idx === 0 ? ' __active' : '') + '" src="' + u + '" alt="">';
+        }).join('') +
+        (data.label ? '<div class="klip__memlabel">' + data.label + '</div>' : '');
+
+        var frames = media.querySelectorAll('.klip__frame');
+        if (frames.length > 1) {
+          var cur = 0;
+          setInterval(function () {
+            frames[cur].classList.remove('__active');
+            cur = (cur + 1) % frames.length;
+            frames[cur].classList.add('__active');
+          }, 3000);
+        }
+      }
+
+      // Автор — текущий пользователь (имя дублируется в подписи аудио).
+      var nameEl = entry.querySelector('[data-author-name]');
+      var audioEl = entry.querySelector('[data-audio-name]');
+      if (data.name && nameEl)  nameEl.textContent = data.name;
+      if (data.name && audioEl) audioEl.textContent = data.name;
+      var avaImg = entry.querySelector('[data-author-ava] img');
+      if (data.ava && avaImg) avaImg.src = data.ava;
+
+      // Только что создан → лайки/репосты по нулям (комментов в плеере нет).
+      var likeEl = entry.querySelector('[data-like-count]');
+      if (likeEl) { likeEl.textContent = '0'; likeEl.dataset.base = '0'; }
+      var reshareEl = entry.querySelector('[data-reshare-count]');
+      if (reshareEl) reshareEl.textContent = '0';
     })();
 
     // 3) ВВЗ-карточки — через DS-фабрику VvzCard. vvz-card.js подключён с

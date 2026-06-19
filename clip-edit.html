@@ -303,9 +303,22 @@
       location.href = 'lenta-q3.html';
     });
     // «Создать клип» → проваливаемся в полноэкранный плеер клипов (леер #208).
+    // Первый слайд плеера = ЭТОТ же клип: те же кадры + подпись, автор —
+    // текущий пользователь, а лайки/комменты/репосты по нулям (только что создан).
     // Просим плеер вернуть «Назад» в ленту Q3 (одноразовый ключ).
     document.getElementById('ceCreate').addEventListener('click', function () {
-      try { sessionStorage.setItem('klipyBack', 'lenta-q3.html'); } catch (_) {}
+      var d = null;
+      try { d = JSON.parse(sessionStorage.getItem('clipEdit') || 'null'); } catch (_) {}
+      var newClip = {
+        photos: (d && d.photos && d.photos.length) ? d.photos : [],
+        label: (d && d.label) || 'Лето 2026',
+        name: 'Анфиса Тимирбаева(Абдуллина)',
+        ava: 'https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2'
+      };
+      try {
+        sessionStorage.setItem('klipyBack', 'lenta-q3.html');
+        sessionStorage.setItem('newClip', JSON.stringify(newClip));
+      } catch (_) {}
       location.href = 'klipy.html';
     });
   </script>
