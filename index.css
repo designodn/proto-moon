@@ -48,6 +48,7 @@
 @import url('./components/feed-text.css');
 @import url('./components/comment.css');
 @import url('./components/comment-thread.css');
+@import url('./components/feed-comment.css');
 @import url('./components/comment-as-feed.css');
 @import url('./components/feed-base.css');
 @import url('./components/feed-header.css');

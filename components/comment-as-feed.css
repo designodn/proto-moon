@@ -23,7 +23,13 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
-/* Подзаголовок шапки «Комментарий к <автор оригинала>» — имя чуть акцентнее. */
+/* Подзаголовок шапки «Комментарий к <автор оригинала>» — строго в одну строку
+   (ellipsis), как и имя выше (.feed-header__name). Имя оригинала чуть акцентнее. */
+.caf-header__sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .caf-header__to {
   font-weight: 500;
 }
@@ -31,11 +37,16 @@
 /* Превью оригинального поста: ряд «иконка-репост + контент».
    Базу (бордер/паддинг/overflow) даёт text-feed__reshare-card; здесь меняем
    раскладку на горизонтальную и радиус под эталон (12). */
-.caf-preview {
+/* Специфичность .text-feed__reshare-card.caf-preview (0,2,0) — чтобы перебить
+   .text-feed__reshare-card{flex-direction:column} (text-feed.css импортируется
+   ПОЗЖЕ comment-as-feed.css; при равной специфичности побеждал бы column →
+   иконка вставала бы СВЕРХУ, а нужно СЛЕВА). */
+.text-feed__reshare-card.caf-preview {
   flex-direction: row;
-  gap: var(--space-1-5);
+  gap: var(--space-2);              /* 8 между иконкой и текстом */
   align-items: flex-start;
-  border-radius: 12px;
+  padding: var(--space-3);          /* 12 (вместо 16 из reshare-card) */
+  border-radius: 21px;
 }
 .caf-preview__icon {
   flex-shrink: 0;
