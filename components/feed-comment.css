@@ -44,24 +44,22 @@
   align-items: flex-start;
 }
 
+/* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
+   сдвигают контент вправо), как в макете «comment v0.2» (reply + avatar). */
 .fc-comment__aside {
-  position: relative;
   flex-shrink: 0;
-  /* ручка слева занимает 12px до авы — сдвигаем блок, чтобы ава осталась у 16px
-     контента, а «ручка» уходила левее в паддинг. */
-  padding-left: 16px;
-  margin-left: -16px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
 }
-/* Ручка-ответ ┗ — короткий локоть слева от авы, приглушённый. */
+/* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
+   12px. Цвет: --dynamic-stroke-contrast-high (~36%) — видно, но мягко; БЕЗ
+   доп. opacity (иначе складывается с альфой токена и почти не видно). */
 .fc-comment__handle {
-  position: absolute;
-  left: 0;
-  top: -2px;
+  flex-shrink: 0;
   width: 12px;
   height: 14px;
-  /* Видимый, но мягкий локоть. Токен --dynamic-stroke-contrast-mid сам по себе
-     ~16% альфы — НЕ накладываем сверху ещё opacity (иначе ~5% и не видно).
-     contrast-high (~36%) даёт чёткую, но негромкую линию. */
+  margin-top: 2px;
   border-left: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
   border-bottom: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
   border-bottom-left-radius: 8px;
