@@ -31,7 +31,7 @@
 
   // Какие слайды (0-based) перелистываются сами и через сколько мс.
   var AUTO_SLIDES = { 1: true, 2: true };   // 2-й и 3-й
-  var AUTO_MS = 2600;
+  var AUTO_MS = 3800;                        // с запасом под пошаговое появление (800мс)
 
   function seen() {
     if (SHOW_EVERY_TIME) return false;
@@ -114,12 +114,12 @@
 
       '<div class="omar__footer">' +
         '<div class="button-wrapper __size-56 __full-width omar__cta">' +
-          '<button class="button-container __style-primary" type="button" style="width:100%">' +
+          '<button class="button-container __style-secondary" type="button" style="width:100%">' +
             '<span class="button-content">Перейти к фотомарафону</span>' +
           '</button>' +
         '</div>' +
         '<div class="button-wrapper __size-56 __full-width omar__next">' +
-          '<button class="button-container __style-secondary" type="button" style="width:100%">' +
+          '<button class="button-container __style-primary" type="button" style="width:100%">' +
             '<span class="button-content">Далее</span>' +
           '</button>' +
         '</div>' +
@@ -145,6 +145,7 @@
     var track    = el.querySelector('.omar__track');
     var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
     var nextWrap = el.querySelector('.omar__next');
+    var ctaBtn   = el.querySelector('.omar__cta button');
     var last     = slides.length - 1;
     var index    = 0;
     var autoTimer = null;
@@ -159,11 +160,13 @@
       track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — лента уходит вверх
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
       nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
+      // на последнем слайде «Перейти к фотомарафону» становится основной (оранжевой)
+      ctaBtn.className = 'button-container ' + (i === last ? '__style-primary' : '__style-secondary');
       scheduleAuto();                                          // 2-й и 3-й — сами
     }
 
     el.querySelector('.omar__close').addEventListener('click', close);
-    el.querySelector('.omar__cta button').addEventListener('click', go);
+    ctaBtn.addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
 
     // Свайп вверх/вниз (отменяет автопереход).
