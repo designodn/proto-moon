@@ -85,9 +85,18 @@
             '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
             '<p class="omar-slide__text">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
             '<div class="omar-chips">' +
-              '<span class="omar-chip omar-chip--sport">спорт' + img('icon-sport.png', 'omar-chip__icon') + '</span>' +
-              '<span class="omar-chip omar-chip--cooking">кулинария' + img('icon-cooking.png', 'omar-chip__icon') + '</span>' +
-              '<span class="omar-chip omar-chip--garden">сад' + img('icon-garden.png', 'omar-chip__icon') + '</span>' +
+              '<div class="omar-chipgrp omar-chipgrp--sport">' +
+                '<span class="omar-chip omar-chip--sport">спорт</span>' +
+                img('icon-sport.png', 'omar-chip__icon omar-chip__icon--sport') +
+              '</div>' +
+              '<div class="omar-chipgrp omar-chipgrp--cooking">' +
+                img('icon-cooking.png', 'omar-chip__icon omar-chip__icon--cooking') +
+                '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
+              '</div>' +
+              '<div class="omar-chipgrp omar-chipgrp--garden">' +
+                '<span class="omar-chip omar-chip--garden">сад</span>' +
+                img('icon-garden.png', 'omar-chip__icon omar-chip__icon--garden') +
+              '</div>' +
             '</div>' +
           '</section>' +
 
