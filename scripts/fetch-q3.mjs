@@ -630,8 +630,17 @@ ${authorHeader(aid, time)}
       const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
         ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
         : img(src);
+      // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
+      // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
+      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
+
+          <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
+               оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
+          <a class="clip-feed__open" aria-label="Открыть клип"
+             href="${esc(openUrl)}"
+             style="position:absolute;inset:0;z-index:1"></a>
 
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
@@ -641,7 +650,7 @@ ${authorHeader(aid, time)}
             </div>
           </div>
 
-          <button class="clip-feed__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
+          <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
 
           <div class="actions-bar clip-feed__actions">
 ${countBtn('comment_16_20.svg', comments, { style: 'on-image' })}
@@ -653,8 +662,9 @@ ${moreBtn({ style: 'on-image' })}
     }
 
     /* ── Клип из воспоминаний — island c full-bleed клипом + оверлеи ──
-       Шапка «Видите только вы» + крупный заголовок, ниже медиа (видео/фото)
-       с подписью-периодом и mute-кнопкой, внизу primary «Поделиться» + «···». */
+       Шапка «Видите только вы» + крупный заголовок, ниже медиа (фото-монтаж)
+       с подписью-периодом и actions-overlay (Поделиться + «···») прямо на клипе.
+       Звука нет — mute-кнопки нет. */
     case 'memories-clip': {
       // Кадры клипа: несколько фото из листа сменяют друг друга кросс-фейдом
       // (см. JS внизу lenta-q3.html). Если фото нет — companion-подборка.
@@ -666,7 +676,7 @@ ${moreBtn({ style: 'on-image' })}
         ? `            <video src="${esc(pics[0])}" autoplay muted loop playsinline></video>`
         : pics.map((u, i) =>
             `            ${img(u, `class="ll-memclip__slide${i === 0 ? ' __active' : ''}" `)}`).join('\n');
-      // data-clip-edit: тап по медиа открывает превью/редактор (это «мой» клип).
+      // data-clip-edit: тап по медиа (и по «Поделиться») открывает превью/редактор.
       return `        <article class="text-feed island ll-memclip">
           <div class="ll-otd__caption ds-body-m">
             ${EYE_SVG}
@@ -676,20 +686,18 @@ ${moreBtn({ style: 'on-image' })}
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
 ${mediaInner}
-            <div class="ll-memclip__label ds-title-l">${esc(label)}</div>
-            <button class="ll-memclip__mute" aria-label="Включить звук"><img class="ll-memclip__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
-              </span></button>
-            </div>
-            <div class="button-wrapper __size-44 __pinned-end">
-              <button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">
-                ${llIcon('more_16_20.svg')}
-              </span></button>
+            <div class="ll-memclip__label ll-memclip__label--ok ds-title-l">${esc(label)}</div>
+            <div class="actions-bar ll-memclip__actions">
+              <div class="button-wrapper __size-44 __full-width">
+                <button class="button-container __style-primary"><span class="button-content">
+                  ${SHARE_SVG}Поделиться
+                </span></button>
+              </div>
+              <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
+                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                  ${llIcon('more_16_20.svg')}
+                </span></button>
+              </div>
             </div>
           </div>
         </article>`;
