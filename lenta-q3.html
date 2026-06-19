@@ -10,8 +10,11 @@
 <link rel="stylesheet" href="index.css">
 <link rel="stylesheet" href="components/system-notifications.css">
 <link rel="stylesheet" href="components/tooltip.css">
+<link rel="stylesheet" href="components/onboarding-marathon.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
+<!-- Онбординг фотомарафона: перехват на window(capture) → раньше навигации в screen-transition.js -->
+<script src="components/onboarding-marathon.js"></script>
 <style>
   /* Убираем системный синий/серый оверлей при тапе по интерактивным
      элементам (кнопки, лейблы, ссылки) на мобильных. */
