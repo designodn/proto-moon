@@ -100,6 +100,23 @@
       "link": ""
     },
     {
+      "id": "post-7b",
+      "type": "memories-clip",
+      "author": "my_profile",
+      "title": "Ваш клип из воспоминаний",
+      "text": "Лето 2026",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200",
+        "https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200",
+        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790",
+        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&dpr=2&fn=h_768"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": ""
+    },
+    {
       "id": "post-8",
       "type": "group-post",
       "author": "group-4",

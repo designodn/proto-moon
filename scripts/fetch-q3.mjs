@@ -68,6 +68,17 @@ const COMPANION = {
   },
   // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
   clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
+  // memories-clip: подпись-период на медиа + подборка кадров, сменяющих друг
+  // друга, если в листе не задали свои фото. Подпись («Лето 2026») — из
+  // колонки «text», иначе дефолт ниже.
+  'memories-clip': {
+    label: 'Лето 2026',
+    fallbackPhotos: [
+      'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200',
+      'https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200',
+      'https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790',
+    ],
+  },
 };
 
 // vvz-portlet: подзаголовок каждой карточки (по порядку id из колонки «автор»)
@@ -637,6 +648,49 @@ ${countBtn('comment_16_20.svg', comments, { style: 'on-image' })}
 ${countBtn('reshare_16_20.svg', reshares, { style: 'on-image' })}
 ${klassBtn(likes, { style: 'on-image' })}
 ${moreBtn({ style: 'on-image' })}
+          </div>
+        </article>`;
+    }
+
+    /* ── Клип из воспоминаний — island c full-bleed клипом + оверлеи ──
+       Шапка «Видите только вы» + крупный заголовок, ниже медиа (видео/фото)
+       с подписью-периодом и mute-кнопкой, внизу primary «Поделиться» + «···». */
+    case 'memories-clip': {
+      // Кадры клипа: несколько фото из листа сменяют друг друга кросс-фейдом
+      // (см. JS внизу lenta-q3.html). Если фото нет — companion-подборка.
+      // Единственный видеофайл показываем как <video> (без слайд-шоу).
+      const pics = photos.length ? photos : (x.fallbackPhotos || []);
+      const label = text || x.label || 'Лето 2026';
+      const isVideo = pics.length === 1 && /\.(mp4|webm|mov)(\?|#|$)/i.test(pics[0]);
+      const mediaInner = isVideo
+        ? `            <video src="${esc(pics[0])}" autoplay muted loop playsinline></video>`
+        : pics.map((u, i) =>
+            `            ${img(u, `class="ll-memclip__slide${i === 0 ? ' __active' : ''}" `)}`).join('\n');
+      // data-clip-edit: тап по медиа открывает превью/редактор (это «мой» клип).
+      return `        <article class="text-feed island ll-memclip">
+          <div class="ll-otd__caption ds-body-m">
+            ${EYE_SVG}
+            <span>Видите только вы</span>
+          </div>
+          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+
+          <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
+${mediaInner}
+            <div class="ll-memclip__label ds-title-l">${esc(label)}</div>
+            <button class="ll-memclip__mute" aria-label="Включить звук"><img class="ll-memclip__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
+          </div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-44 __full-width">
+              <button class="button-container __style-primary"><span class="button-content">
+                ${SHARE_SVG}Поделиться
+              </span></button>
+            </div>
+            <div class="button-wrapper __size-44 __pinned-end">
+              <button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">
+                ${llIcon('more_16_20.svg')}
+              </span></button>
+            </div>
           </div>
         </article>`;
     }

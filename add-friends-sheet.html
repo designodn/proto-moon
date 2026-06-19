@@ -616,7 +616,18 @@
     // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
     // зазор стал ровно 48. cy задаёт центр свободного места.
     var ROW_CARD_H = 548, ROW_HALF = 230, MIN_GAP = 48;  // ROW_CARD_H уточняется по факту в attachSwipe
+    var BASE = null;  // базовые {cx,cy,s} стейтов 1(разлёт),2(вход),3(ряд) — снимаем один раз
     function recenterRow() {
+      if (!BASE) {
+        BASE = {};
+        [1, 2, 3].forEach(function (si) {
+          BASE[si] = {};
+          Object.keys(STATES[si].cards).forEach(function (k) {
+            var c = STATES[si].cards[k];
+            BASE[si][k] = { cx: c.cx, cy: c.cy, s: c.s };
+          });
+        });
+      }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
       var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
       var avail = pageH - titleBottom;
@@ -624,10 +635,28 @@
       if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
-      var cy = titleBottom + avail / 2 - (ROW_CARD_H / 2 - ROW_HALF);
+      var centerY = titleBottom + avail / 2;
+      // Ряд (стейты 2,3): все на rowCy, шаг (cx) сжимаем к центру сетки (180) на s.
+      var rowCy = centerY - (ROW_CARD_H / 2 - ROW_HALF);
       [2, 3].forEach(function (si) {
-        var cards = STATES[si].cards;
-        Object.keys(cards).forEach(function (k) { cards[k].cy = cy; cards[k].s = s; });
+        Object.keys(STATES[si].cards).forEach(function (k) {
+          var c = STATES[si].cards[k], b = BASE[si][k];
+          c.cy = rowCy;
+          c.s = s;                          // базовый масштаб в ряду = 1
+          c.cx = 180 + (b.cx - 180) * s;
+        });
+      });
+      // Стак-разлёт (стейт 1): масштабируем и размеры карточек, и шаг; на низких
+      // экранах дополнительно центрируем облако по вертикали.
+      var b1 = BASE[1], cys = [];
+      Object.keys(b1).forEach(function (k) { cys.push(b1[k].cy); });
+      var cloudC = (Math.min.apply(null, cys) + Math.max.apply(null, cys)) / 2;
+      var cloudCenterY = (s < 1) ? centerY : cloudC;
+      Object.keys(STATES[1].cards).forEach(function (k) {
+        var c = STATES[1].cards[k], b = b1[k];
+        c.cx = 180 + (b.cx - 180) * s;
+        c.cy = cloudCenterY + (b.cy - cloudC) * s;
+        c.s = b.s * s;
       });
     }
     recenterRow();
@@ -765,9 +794,23 @@
       if (scene.dataset.swipeAttached) return;
       scene.dataset.swipeAttached = '1';
 
+      // Высота карточки «принять всех» вровень с самой высокой + точный пересчёт
+      // центра/масштаба по фактической высоте карточки. Делаем ДО вычисления STEP —
+      // шаг ряда зависит от масштабированных cx.
+      var maxH = 0;
+      [1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
+        if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
+      });
+      if (maxH) {
+        if (els[8]) els[8].style.height = maxH + 'px';
+        ROW_CARD_H = maxH;
+        recenterRow();
+        applyState(current);
+      }
+
       var rowState = STATES[3].cards;
-      var STEP = rowState[IDX[1]].cx - rowState[IDX[0]].cx;  // 312
-      var firstCx = rowState[IDX[0]].cx;                     // 166 (card1, leftmost)
+      var STEP = rowState[IDX[1]].cx - rowState[IDX[0]].cx;  // масштабированный шаг
+      var firstCx = rowState[IDX[0]].cx;                     // card1, leftmost
       var liveCards = IDX.slice();                           // [1..8], слева-направо (8 — «принять всех»)
       var minSnap = -(liveCards.length - 1);
       var processing = {};
@@ -780,19 +823,6 @@
       var GUTTER = 5;
       var snapped = 0;
       var downAcceptAll = false;  // тап начат на карточке «принять всех»?
-
-      // Карточка «принять всех» — высота вровень с самой высокой карточкой друга.
-      var maxH = 0;
-      [1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
-        if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
-      });
-      if (maxH) {
-        if (els[8]) els[8].style.height = maxH + 'px';
-        // Уточняем реальную высоту карточки в ряду и пере-центрируем точно.
-        ROW_CARD_H = maxH;
-        recenterRow();
-        applyState(current);
-      }
 
       function symmetricRound(x) {
         return x < 0 ? -Math.round(-x) : Math.round(x);

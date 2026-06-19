@@ -583,6 +583,11 @@
         <article class="clip-feed">
           <div class="clip-feed__media"><img src="https://media.tenor.com/rImXojPJZ1IAAAAM/stars-in-the-sky-sparkle.gif" alt=""></div>
 
+          <!-- Тап по клипу открывает полноэкранный плеер. Лежит над media (z0),
+               но под оверлеями шапки/actions (z2) — кнопки кликаются как обычно. -->
+          <a class="clip-feed__open" href="klipy.html" aria-label="Открыть клип"
+             style="position:absolute;inset:0;z-index:1"></a>
+
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/128?img=49" alt=""></div>
             <div class="clip-feed__txt">
