@@ -59,8 +59,7 @@
   width: 2px;
   top: 22px;
   bottom: -22px;
-  background: var(--static-surface-brown);
-  opacity: 0.3;
+  background: #E4DED9;
 }
 .fc-comment:not(:has(~ .fc-comment))::before {
   display: none;
@@ -80,17 +79,15 @@
   gap: var(--space-1);
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет --static-surface-brown (#AA8F7F) — токен продублирован в light/dark
-   темы (был только в theme-cocktail). */
+   12px. Цвет #E4DED9 (сплошной, 100%). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: 2px;
-  border-left: 2px solid var(--static-surface-brown);
-  border-bottom: 2px solid var(--static-surface-brown);
+  border-left: 2px solid #E4DED9;
+  border-bottom: 2px solid #E4DED9;
   border-bottom-left-radius: 8px;
-  opacity: 0.3;                     /* цвет локтя на 30% */
 }
 
 .fc-comment__body {
