@@ -24,7 +24,8 @@
   padding-top: var(--space-4);
   padding-bottom: var(--space-4);
   background-color: var(--dynamic-surface-base-secondary);
-  border-radius: 20px;
+  /* Острова в лентах идут встык → дефолтный радиус 0 (по всему приложению). */
+  border-radius: 0;
   overflow: hidden;
 }
 
