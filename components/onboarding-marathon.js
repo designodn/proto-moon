@@ -111,7 +111,7 @@
           '<section class="omar-slide omar-slide--invite">' +
             '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
             '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
-            img('invite.png', 'omar-invite') +
+            '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
           '</section>' +
 
         '</div>' +
