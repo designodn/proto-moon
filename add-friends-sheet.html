@@ -124,8 +124,11 @@
      transform ty), освобождая место под инфо/кнопку — фото НЕ сжимается.
      В кружковых стейтах фото 300×300 центрируется (margin-top 80) в боксе 460. */
   .friend-big-card__photo { transition: margin-top 600ms ease, border-radius 600ms ease; }
+  /* В ряду карточки равной высоты (по самой высокой — задаётся из JS в
+     --fp-row-card-h). min-height только в ряд-стейтах, чтобы не ломать
+     центровку кружков в кружковых стейтах (схлоп). */
   .fp.__state-3 .friend-big-card,
-  .fp.__state-4 .friend-big-card { height: auto; }
+  .fp.__state-4 .friend-big-card { height: auto; min-height: var(--fp-row-card-h, 0px); }
 
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
      кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
@@ -847,6 +850,8 @@
       });
       if (maxH) {
         if (els[8]) els[8].style.height = maxH + 'px';
+        // Равная высота всех карточек в ряду (имя+город сверху, авы прибиты к низу).
+        root.style.setProperty('--fp-row-card-h', maxH + 'px');
         ROW_CARD_H = maxH;
         recenterRow();
         applyState(current);
