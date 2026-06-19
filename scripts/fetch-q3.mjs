@@ -27,14 +27,22 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
-const SHEET_NAME = 'Q3-посты';
+const SHEET_NAME = 'Q3-посты';            // человекочитаемое имя листа (для логов)
+const SHEET_GID = '1662648328';           // стабильный gid листа Q3-постов
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
+// Тянем по gid, а НЕ по имени листа: имя («Q3-посты») переименовали в таблице,
+// и gviz при ненайденном имени молча отдаёт первый лист («Люди») — из-за чего
+// раньше лента собиралась из чужой схемы и обнулялась. gid переживает переименования.
+//
+// headers=1 — принудительно одна строка шапки. Без него gviz авто-детектит шапку
+// и для post-1 (vvz-portlet без счётчиков лайков/комментов/репостов) ошибочно
+// считает ДВЕ строки шапки → склеивает их в подписи колонок, а post-1 теряется.
 const csvUrl =
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
 
 /* ── Компаньон-данные (то, чего нет в плоских колонках листа) ──────────────── */
 /* Вложенные куски не лезут в колонки таблицы, поэтому держим их здесь и вешаем
@@ -61,10 +69,11 @@ const COMPANION = {
     title: 'РБК — последние новости дня в России и мире сегодня',
     description: 'Главные новости политики, экономики и бизнеса, общество, технологии, спорт, мнения и интервью.',
   },
-  // tagged-photo: hero-аватар + имя на фото + координаты тултипа (как в эталоне)
+  // tagged-photo: hero-аватар + координаты тултипа. Имя в теге = имя автора
+  // поста (personName), tag.name — только фолбэк, если у автора нет имени.
   'tagged-photo': {
     heroAvatar: 'https://i.pravatar.cc/192?img=49',
-    tag: { name: 'Анастасия Кащеева', top: 28, left: 56 },
+    tag: { name: 'Анастасия Кащеева', top: 143, left: 187.5 },
   },
   // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
   clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
@@ -598,16 +607,18 @@ ${authorHeader(aid, time)}
     case 'tagged-photo': {
       // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
       const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
-      const tag = x.tag || { name: 'Анастасия Кащеева', top: 28, left: 56 };
+      const tag = x.tag || { name: 'Анастасия Кащеева', top: 143, left: 187.5 };
       return `        <article class="text-feed island">
-          <div class="avatar __size-72 __type-image">${img(hero)}</div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ll-tagged__head">
+            <div class="avatar __size-72 __type-image">${img(hero)}</div>
+            <div class="ds-title-xl">${esc(title)}</div>
+          </div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-start __placement-bottom-start"
-                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px">
-              <div class="tooltip ds-title-m">${esc(tag.name)}</div>
+            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
+              <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>
             </div>
           </div>
@@ -632,7 +643,13 @@ ${authorHeader(aid, time)}
         : img(src);
       // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
       // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
-      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
+      // Прокидываем аватар/имя/счётчики — klipy.html подставляет их в шапку
+      // и actions плеера (data-author-ava / data-like-count / data-reshare-count).
+      const q = new URLSearchParams({
+        type: 'video', src, name: personName(aid), from: 'lenta-q3.html',
+        ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
+      });
+      const openUrl = `klipy.html?${q}`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
 
@@ -672,10 +689,12 @@ ${moreBtn({ style: 'on-image' })}
       const pics = photos.length ? photos : (x.fallbackPhotos || []);
       const label = text || x.label || 'Лето 2026';
       const isVideo = pics.length === 1 && /\.(mp4|webm|mov)(\?|#|$)/i.test(pics[0]);
+      // Эффекты перехода кадр→кадр (Ken Burns): по кругу, чтобы соседние различались.
+      const MCLIP_FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
       const mediaInner = isVideo
         ? `            <video src="${esc(pics[0])}" autoplay muted loop playsinline></video>`
         : pics.map((u, i) =>
-            `            ${img(u, `class="ll-memclip__slide${i === 0 ? ' __active' : ''}" `)}`).join('\n');
+            `            ${img(u, `class="ll-memclip__slide ${MCLIP_FX[i % MCLIP_FX.length]}${i === 0 ? ' __active' : ''}" `)}`).join('\n');
       // data-clip-edit: тап по медиа (и по «Поделиться») открывает превью/редактор.
       return `        <article class="text-feed island ll-memclip">
           <div class="ll-otd__caption ds-body-m">
@@ -747,7 +766,19 @@ async function main() {
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
     const rows = parseCsv(await res.text());
-    const [, ...body] = rows;
+    const [header = [], ...body] = rows;
+
+    // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор».
+    // Если их нет (например, gviz отдал не тот лист) — НЕ трогаем ленту, чтобы
+    // деплой-реген не обнулил живой фид. Сравниваем по началу заголовка колонки:
+    // у Q3-листа первая строка склеена с post-1 → «тип vvz-portlet», «автор …».
+    const head = header.map(h => String(h || '').trim().toLowerCase());
+    const hasCol = name => head.some(h => h === name || h.startsWith(name + ' '));
+    if (!hasCol('тип') || !hasCol('автор')) {
+      throw new Error(
+        `лист по gid=${SHEET_GID} не похож на Q3-посты (нет колонок «тип»/«автор»): ` +
+        `${head.join(' | ')}. Лента НЕ перегенерирована — проверь доступ/лист в таблице.`);
+    }
 
     posts = [];
     for (const c of body) {
@@ -784,7 +815,12 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
+  const rendered = posts.map((p, i) => renderPost(p, i)).filter(Boolean);
+  // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
+  // — не вставляем пустоту в живую ленту.
+  if (rendered.length === 0)
+    throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
+  const cards = rendered.join('\n\n');
   splice(cards);
 
   console.log(`✓ ${posts.length} постов → data/q3-feed.json + вставлено в lenta-q3.html`);

@@ -253,14 +253,13 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
-/* Текстовый стиль «poem» — для стихов. Source Serif Pro, 24/28, 0.24 трекинг.
+/* Текстовый стиль «poem» — для стихов. Roboto Regular, 24/28, 0.24 трекинг.
    По спеке — клэмп 4 строки с многоточием. Переносы между строфами через <br>.
      <p class="text-feed__body __poem">…<br>…</p>
-   ВАЖНО: на странице должен быть подключён шрифт Source Serif Pro
-   (Google Fonts: family=Source+Serif+Pro:wght@400). */
+   Шрифт Roboto уже подключён в проекте (var(--font-family)). */
 .text-feed__body.__poem,
 .poem {
-  font-family: 'Source Serif Pro', Georgia, serif;
+  font-family: var(--font-family);
   font-size: 24px;
   line-height: 28px;
   letter-spacing: 0.24px;
