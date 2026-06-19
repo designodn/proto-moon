@@ -323,8 +323,8 @@ function commentItem(authorId, text) {
                   </div>
                   <p class="ct-item__text">${esc(resolveNames(text))}</p>
                   <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/reply_16_20.svg')"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __src" style="--icon-src:url('assets/icons/klass_16_20.svg')"></span>Класс</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
                   </div>
                 </div>
               </article>`;
@@ -356,8 +356,8 @@ function renderCommentThread(p) {
             <div class="comment-input__field">
               <input class="text-input __size-36" placeholder="${esc(placeholder)}">
               <div class="comment-input__actions">
-                <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('assets/icons/attach_24.svg')"></span>
-                <span class="comment-input__action icon __size-24 __src" style="--icon-src:url('assets/icons/smile_24.svg')"></span>
+                <span class="comment-input__action icon __size-24 __slot-attach"></span>
+                <span class="comment-input__action icon __size-24 __slot-smile"></span>
               </div>
             </div>
           </div>`;
@@ -844,7 +844,7 @@ ${mediaInner}
         ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
         : 'Комментарий';
       const preview = `          <div class="text-feed__reshare-card caf-preview">
-            <span class="icon __size-20 __src caf-preview__icon" style="--icon-src:url('assets/icons/reshare_16_20.svg')"></span>
+            <span class="icon __size-20 __slot-reshare caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
               <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
               <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}
