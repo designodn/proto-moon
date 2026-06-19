@@ -31,7 +31,7 @@
 
   // Какие слайды (0-based) перелистываются сами и через сколько мс.
   var AUTO_SLIDES = { 1: true, 2: true };   // 2-й и 3-й
-  var AUTO_MS = 3800;                        // с запасом под пошаговое появление (800мс)
+  var AUTO_MS = 4400;                        // с запасом под пошаговое появление тегов + подзаголовок
 
   function seen() {
     if (SHOW_EVERY_TIME) return false;
@@ -81,7 +81,7 @@
           '</section>' +
 
           /* 2 — Выбирайте тематику */
-          '<section class="omar-slide">' +
+          '<section class="omar-slide omar-slide--topics">' +
             '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
             '<p class="omar-slide__text">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
             '<div class="omar-chips">' +
