@@ -49,18 +49,12 @@
 
   .rl-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
 
-  /* ── Хром: навбар (статус-бар отдан реальной ОС) ───────────────── */
-  .rl-nav {
-    position: absolute; top: 44px; left: 0; right: 0; z-index: 20;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 56px; padding: 0 16px;
+  /* ── Навбар крутилки (DS nav-bar): прибит к верху, прозрачный
+     поверх оранжевого, белые глифы через __view-primary-on-color. ── */
+  .nav-bar.rl-navbar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+    background: transparent !important;
   }
-  .rl-nav__btn {
-    width: 40px; height: 40px; border: 0; padding: 0; background: transparent;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    color: #fff;
-  }
-  .rl-nav__btn .rl-icon { filter: brightness(0) invert(1); }
 
   /* ── «Колесо» — вертикальный барабан призов ────────────────────── */
   .rl-wheel {
@@ -195,14 +189,14 @@
 <body>
   <div class="rl" data-screen>
 
-    <!-- Хром -->
-    <div class="rl-nav">
-      <button class="rl-nav__btn nav-bar__back" aria-label="Назад" data-href="../today.html">
-        <img class="rl-icon" src="../assets/icons/arrow_left_24.svg" width="24" height="24" alt="">
-      </button>
-      <button class="rl-nav__btn" aria-label="Поделиться">
-        <img class="rl-icon" src="../assets/icons/reshare_24.svg" width="24" height="24" alt="">
-      </button>
+    <!-- Навбар: назад + поделиться -->
+    <div class="nav-bar __type-feed rl-navbar">
+      <div class="nav-bar__leading">
+        <span class="button-inline-wrapper __size-24 __view-primary-on-color"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад" data-href="../today.html"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+      </div>
+      <div class="nav-bar__trailing">
+        <span class="button-inline-wrapper __size-24 __view-primary-on-color"><button class="button-inline __size-24" aria-label="Поделиться"><span class="button-inline__content"><span class="icon __size-24 __slot-reshare"></span></span></button></span>
+      </div>
     </div>
 
     <!-- Колесо -->
