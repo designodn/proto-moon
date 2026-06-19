@@ -12,7 +12,12 @@
   z-index: 1100;                      /* выше таббара (z-60) и heads-up пушей ленты (z-1000) */
   display: flex;
   flex-direction: column;
-  background: var(--dynamic-surface-base-primary, #F7F4F2);
+  /* градиент на фоне всей страницы (как в кадрах макета) */
+  background:
+    linear-gradient(188deg,
+      #DFCED0 5%,
+      #F08652 31%,
+      var(--dynamic-surface-base-primary, #F7F4F2) 50%);
   overflow: hidden;
   opacity: 0;
   transition: opacity .28s ease;
@@ -79,11 +84,6 @@
   align-items: center;
   text-align: center;
   padding: calc(env(safe-area-inset-top, 0px) + 8px) 0 0;   /* без боковых паддингов — фото во всю ширину */
-  background-image:
-    linear-gradient(188deg,
-      #DFCED0 5%,
-      #F08652 31%,
-      var(--dynamic-surface-base-primary, #F7F4F2) 50%);
 }
 /* текстам возвращаем боковые отступы (фото — нет) */
 .omar-slide--hero .omar-slide__title,
@@ -163,10 +163,8 @@
 .omar-chips {
   position: relative;
   width: 360px;
-  max-width: 360px;
   height: 132px;
-  margin-top: var(--space-6);
-  margin-left: calc(-1 * var(--space-4));   /* выходим из паддинга слайда — координаты как во фрейме */
+  margin: var(--space-6) auto 0;   /* кластер центрируется относительно экрана */
 }
 .omar-chipgrp {
   position: absolute;
