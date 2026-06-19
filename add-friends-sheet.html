@@ -677,10 +677,34 @@
       .then(function (r) { return r.json(); })
       .then(function (d) { confettiData = d; })
       .catch(function () { /* offline / file missing — silently skip */ });
-    function fireConfetti() {
-      // Тактильный отклик в момент салюта (Android-хром; iOS Vibration не
-      // поддерживает — там просто без эффекта).
+    // Хаптик в момент салюта. Android — navigator.vibrate. iOS Safari (нет
+    // Vibration API) — трюк с системным переключателем <input switch>: его
+    // программное переключение даёт системный тактильный отклик (iOS 17.4+).
+    var hapticLabel = null;
+    function ensureHaptic() {
+      if (hapticLabel) return;
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.setAttribute('switch', '');
+      box.id = 'hapticSwitch';
+      box.tabIndex = -1;
+      box.setAttribute('aria-hidden', 'true');
+      hapticLabel = document.createElement('label');
+      hapticLabel.setAttribute('for', 'hapticSwitch');
+      hapticLabel.setAttribute('aria-hidden', 'true');
+      var hide = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0;';
+      box.style.cssText = hide;
+      hapticLabel.style.cssText = hide;
+      document.body.appendChild(box);
+      document.body.appendChild(hapticLabel);
+    }
+    function fireHaptic() {
       try { if (navigator.vibrate) navigator.vibrate([0, 40, 30, 40, 30, 60]); } catch (_) {}
+      try { ensureHaptic(); hapticLabel.click(); } catch (_) {}
+    }
+
+    function fireConfetti() {
+      fireHaptic();
       if (!confettiData || !window.lottie || !confettiHost) return;
       var anim = window.lottie.loadAnimation({
         container: confettiHost,
