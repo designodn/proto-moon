@@ -110,10 +110,9 @@
     font-size: 13px; line-height: 16px; font-weight: 500;
     color: inherit;
   }
-  /* Лайк: outline → filled + красный (иконка и счётчик) в активном состоянии. */
+  /* Лайк: outline → filled, цвет не меняется (остаётся белым), размер тот же. */
   .klip__rail-btn.__like .klip__rail-ico { --ico: url('assets/icons/like_24.svg'); }
   .klip__rail-btn.__like.__state-on .klip__rail-ico { --ico: url('assets/icons/like_filled_24.svg'); }
-  .klip__rail-btn.__like.__state-on { color: #ff3b5c; }
 
   /* ============================================================
      BOTTOM — автор + строка аудио (слева снизу).
@@ -274,6 +273,13 @@
 </head>
 <body>
   <div class="phone-frame klipy">
+
+    <!-- Скрытый switch для тактильной отдачи на iOS (Safari 17.4+): программный
+         тап по нему вызывает системный haptic. На Android используем vibrate. -->
+    <input type="checkbox" id="klipy-haptic" switch aria-hidden="true"
+           tabindex="-1" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+    <label for="klipy-haptic" id="klipy-haptic-label" aria-hidden="true"
+           style="position:absolute;opacity:0;pointer-events:none;width:0;height:0"></label>
 
     <!-- Назад (в исходную ленту) + Создать клип. Цель возврата задаётся
          через ?from=… (откуда пришли) или sessionStorage('klipyBack')
@@ -505,6 +511,23 @@
   </div>
 
   <script>
+    // 0) Тактильная отдача (haptic). На Android — navigator.vibrate. На iOS
+    //    Safari (17.4+) vibrate не поддержан, но программный тап по скрытому
+    //    <input switch> вызывает системный haptic. Дёргаем оба пути.
+    var hapticSwitch = document.getElementById('klipy-haptic');
+    function haptic() {
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (_) {}
+      try { if (hapticSwitch) hapticSwitch.checked = !hapticSwitch.checked; } catch (_) {}
+    }
+    // Лёгкий haptic на тап по любому контролу плеера.
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      if (e.target.closest('.klip__rail-btn, .klip__mute, .klipy-back, .klipy-add, ' +
+                            '.klipy-share-target, .klipy-sheet__row, [data-sheet-close]')) {
+        haptic();
+      }
+    });
+
     // 1) Назад — в ту ленту, откуда пришли.
     //    • sessionStorage('klipyBack') — одноразовый override от вызывающего
     //      экрана (напр. «Создать клип»): навигация на заданную ленту. Приоритет.
