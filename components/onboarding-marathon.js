@@ -87,15 +87,15 @@
             '<div class="omar-chips">' +
               '<div class="omar-chipgrp omar-chipgrp--sport">' +
                 '<span class="omar-chip omar-chip--sport">спорт</span>' +
-                img('icon-sport.png', 'omar-chip__icon omar-chip__icon--sport') +
+                img('weight.png', 'omar-chip__icon omar-chip__icon--sport') +
               '</div>' +
               '<div class="omar-chipgrp omar-chipgrp--cooking">' +
-                img('icon-cooking.png', 'omar-chip__icon omar-chip__icon--cooking') +
+                img('pizza.png', 'omar-chip__icon omar-chip__icon--cooking') +
                 '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
               '</div>' +
               '<div class="omar-chipgrp omar-chipgrp--garden">' +
                 '<span class="omar-chip omar-chip--garden">сад</span>' +
-                img('icon-garden.png', 'omar-chip__icon omar-chip__icon--garden') +
+                img('plant.png', 'omar-chip__icon omar-chip__icon--garden') +
               '</div>' +
             '</div>' +
           '</section>' +
@@ -104,7 +104,7 @@
           '<section class="omar-slide">' +
             '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
             '<p class="omar-slide__text">Поддержите фото друга классом — так у него будет больше шанса выиграть в фотомарафоне, или пригласите голосовать за вас.</p>' +
-            img('stickers.png', 'omar-stickers') +
+            img('smile.png', 'omar-stickers') +
           '</section>' +
 
           /* 4 — Приглашайте всех */
