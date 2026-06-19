@@ -60,11 +60,11 @@
     el.className = 'omar';
     el.hidden = true;
     el.innerHTML =
-      '<button class="omar__close" type="button" aria-label="Закрыть">' +
-        '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-          '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>' +
-        '</svg>' +
-      '</button>' +
+      '<span class="button-inline-wrapper __size-24 __view-secondary omar__close">' +
+        '<button class="button-inline __size-24" type="button" aria-label="Закрыть">' +
+          '<span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span>' +
+        '</button>' +
+      '</span>' +
 
       '<div class="omar__slides">' +
         '<div class="omar__track">' +
@@ -113,7 +113,6 @@
       '</div>' +
 
       '<div class="omar__footer">' +
-        '<div class="omar__dots" aria-hidden="true"></div>' +
         '<div class="button-wrapper __size-56 __full-width omar__cta">' +
           '<button class="button-container __style-primary" type="button" style="width:100%">' +
             '<span class="button-content">Перейти к фотомарафону</span>' +
@@ -145,14 +144,10 @@
     var slidesEl = el.querySelector('.omar__slides');
     var track    = el.querySelector('.omar__track');
     var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
-    var dotsWrap = el.querySelector('.omar__dots');
     var nextWrap = el.querySelector('.omar__next');
     var last     = slides.length - 1;
     var index    = 0;
     var autoTimer = null;
-
-    slides.forEach(function () { var d = document.createElement('span'); d.className = 'omar__dot'; dotsWrap.appendChild(d); });
-    var dots = Array.prototype.slice.call(dotsWrap.children);
 
     function clearAuto() { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } }
     function scheduleAuto() { if (AUTO_SLIDES[index]) autoTimer = setTimeout(function () { goTo(index + 1); }, AUTO_MS); }
@@ -163,7 +158,6 @@
       index = i;
       track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — лента уходит вверх
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
       nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
       scheduleAuto();                                          // 2-й и 3-й — сами
     }
