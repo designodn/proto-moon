@@ -73,7 +73,7 @@
    Single place to swap icons used by the tabbar.
    ============================================================ */
 .tabbar-icon.__slot-feed       { --tabbar-icon-src: url('../assets/icons/feed_24.svg'); }
-.tabbar-icon.__slot-book       { --tabbar-icon-src: url('../assets/icons/book_24.svg'); }
+.tabbar-icon.__slot-book       { --tabbar-icon-src: url('../assets/icons/glyph_tribune_24.svg'); }
 .tabbar-icon.__slot-message    { --tabbar-icon-src: url('../assets/icons/message_24.svg'); }
 .tabbar-icon.__slot-discussion { --tabbar-icon-src: url('../assets/icons/discussions_24.svg'); }
 .tabbar-icon.__slot-clip       { --tabbar-icon-src: url('../assets/icons/clips_24.svg'); }

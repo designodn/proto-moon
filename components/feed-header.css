@@ -72,3 +72,46 @@
 :not([data-entity="group"]) > .feed-header .feed-header__name {
   cursor: pointer;
 }
+
+/* ============================================================
+   MODIFIER __no-breadcrumbs — прячем хлебные крошки.
+   feed-header — единый компонент и для New Vision, и для Q3-ленты.
+   В Q3-Трибуне крошки не показываем — навешиваем этот модификатор
+   (см. также __tribune ниже, который его включает).
+   ============================================================ */
+.feed-header.__no-breadcrumbs .breadcrumbs {
+  display: none;
+}
+
+/* ============================================================
+   MODIFIER __tribune — компактная вариация шапки для постов Трибуны.
+   Отличия от базовой шапки:
+     • ава 20 (вместо 44);
+     • имя — title-s (вместо title-m);
+     • кнопка справа — 28 (как в базе Трибуны, остаётся);
+     • ВРЕМЯ не показываем;
+     • хлебные крошки не показываем (наследует __no-breadcrumbs).
+   Разметка: <header class="feed-header __tribune"> + ава .__size-20 +
+   имя .ds-title-s + кнопка .__size-28.
+   ============================================================ */
+.feed-header.__tribune .breadcrumbs {
+  display: none;
+}
+
+/* Время — это вторая строка в .uni-cell-additional-content (.ds-caption-m).
+   Прячем её, оставляя только имя. */
+.feed-header.__tribune .uni-cell-additional-content > .ds-caption-m {
+  display: none;
+}
+
+/* Ава ↔ название канала = 8 (в базе 12). */
+.feed-header.__tribune .uni-cell {
+  align-items: center;        /* высота строки по аве, всё остальное центрируем */
+  gap: var(--space-2) !important;
+}
+
+/* Шапка ↔ текст = 8. Общий gap feed-base = 12 (space-3), поэтому
+   подтягиваем следующий за шапкой элемент на -4 (space-2 − space-3). */
+.feed-base > .feed-header.__tribune {
+  margin-bottom: calc(var(--space-2) - var(--space-3));
+}

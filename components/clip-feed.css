@@ -125,3 +125,6 @@
   color: var(--static-text-and-icons-base-inverse-primary);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.32));
 }
+/* Вариант с <img>-иконкой (вместо mask-спана .icon __src): svg несёт свой
+   fill, поэтому белим CSS-фильтром. <img> резолвит путь от документа → без 404. */
+.clip-feed__mute-icon { display: block; filter: brightness(0) invert(1); }
