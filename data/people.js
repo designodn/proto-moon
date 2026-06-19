@@ -254,6 +254,17 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": "group-8",
+    "name": "ПОЛИТИЧЕСКОЕ АССОРТИ",
+    "subtitle": "",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LOq1mV1VM0SsGoA_Sd70rdjZFHO2-kwmN51_d9qI2JSXs5H4k_qE2b2HChbBydn2WY5ufrQZkC2l7TevUF6nv1VuuJLMn0CRh0MEExyJcAAAAp&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
     "id": "ad-1",
     "name": "Квартал бизнес-класса «Б15»",
     "subtitle": "Покупки • Реклама 0+",
@@ -290,8 +301,8 @@ window.DS_PEOPLE_DATA = [
     "id": "ad-4",
     "name": "Магазин цветов Фантазия",
     "subtitle": "Покупки • Реклама 0+",
-    "photo": null,
-    "media": null,
+    "photo": "https://www.fiesta.ru/uploads/slider_image/image/103173/v880_DSC_9880.jpg",
+    "media": "image",
     "gender": "",
     "age": null,
     "city": "",
