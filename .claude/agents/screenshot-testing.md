@@ -84,7 +84,7 @@ cd /tmp && NODE_PATH=/opt/node22/lib/node_modules node <name>.js 2>&1 | tail -15
 ### 4. Прокликать поверхность
 - Тап в произвольное место: `page.mouse.click(x, y)`
 - По селектору: `page.locator(sel).click({ force: true })` — `force:true` обходит intercept от оверлеев (актуально, если на экране пуш или сплеш)
-- Подождать класс/нав: `page.waitForFunction(() => document.getElementById('device').classList.contains('unlocked'))`, `page.waitForURL('**/lenta-light.html')`
+- Подождать класс/нав: `page.waitForFunction(() => document.getElementById('device').classList.contains('unlocked'))`, `page.waitForURL('**/lenta-q3.html')`
 - Свайп: `page.mouse.move(x1,y1); page.mouse.down(); page.mouse.move(x2,y2,{steps:N}); page.mouse.up()`
 
 ### 5. Снять доказательства — и кадр, и числа
@@ -130,12 +130,12 @@ console.log('frame:', JSON.stringify(data));
 
 ## Project-specific tips
 
-- Страницы: `start.html` (локскрин/меню/сплеш), `lenta-light.html` (лента), `start-lenta.html` (вариант стартового).
+- Страницы: `start.html` (локскрин/меню/сплеш), `lenta-q3.html` (лента), `start-lenta.html` (вариант стартового).
 - Unlock = клик по локскрину НИЖЕ области уведомлений (например, `page.mouse.click(195, 720)`), потому что пуш в верхней зоне ловит клик первым.
-- Тап по иконке приложения в меню → splash-анимация ~1150 ms → переход в `lenta-light.html`. Жди `page.waitForURL('**/lenta-light.html', { timeout: 6000 })`.
+- Тап по иконке приложения в меню → splash-анимация ~1150 ms → переход в `lenta-q3.html`. Жди `page.waitForURL('**/lenta-q3.html', { timeout: 6000 })`.
 - Стрим уведомлений в `sessionStorage`: ключи `ok_notif_idx`, `ok_notif_next_at`, `okstart_at_home`. Их значения говорят, продвинулся ли стрим/в каком состоянии экран.
 - Контейнер пушей `#notifs` имеет модификаторы `.__mode-lock` (плоский на локскрине) и `.__mode-heads-up` (колода на меню/в ленте). По классу можно проверить активный режим.
-- Splash/launch element (`#launch`) живёт во время анимации тапа — после `window.location.href` он исчезает с DOM. Чтобы наблюдать всю анимацию, перехвати навигацию: `await page.route('**/lenta-light.html', r => r.abort('aborted'))`.
+- Splash/launch element (`#launch`) живёт во время анимации тапа — после `window.location.href` он исчезает с DOM. Чтобы наблюдать всю анимацию, перехвати навигацию: `await page.route('**/lenta-q3.html', r => r.abort('aborted'))`.
 
 ## Чего НЕ делать
 

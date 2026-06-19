@@ -61,13 +61,25 @@ const COMPANION = {
     title: 'РБК — последние новости дня в России и мире сегодня',
     description: 'Главные новости политики, экономики и бизнеса, общество, технологии, спорт, мнения и интервью.',
   },
-  // tagged-photo: hero-аватар + имя на фото + координаты тултипа (как в эталоне)
+  // tagged-photo: hero-аватар + координаты тултипа. Имя в теге = имя автора
+  // поста (personName), tag.name — только фолбэк, если у автора нет имени.
   'tagged-photo': {
     heroAvatar: 'https://i.pravatar.cc/192?img=49',
-    tag: { name: 'Анастасия Кащеева', top: 28, left: 56 },
+    tag: { name: 'Анастасия Кащеева', top: 143, left: 187.5 },
   },
   // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
   clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
+  // memories-clip: подпись-период на медиа + подборка кадров, сменяющих друг
+  // друга, если в листе не задали свои фото. Подпись («Лето 2026») — из
+  // колонки «text», иначе дефолт ниже.
+  'memories-clip': {
+    label: 'Лето 2026',
+    fallbackPhotos: [
+      'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200',
+      'https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200',
+      'https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790',
+    ],
+  },
 };
 
 // vvz-portlet: подзаголовок каждой карточки (по порядку id из колонки «автор»)
@@ -110,6 +122,22 @@ const isGroupId = id => /^group-/.test(String(id));
 const personName = id => PEOPLE[String(id)]?.name || '';
 const personPhoto = id => PEOPLE[String(id)]?.photo || '';
 const splitIds = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+
+/* Подстановка имени: токен «<id>_name» в заголовках/текстах → имя человека из
+ * people.json (только имя — без фамилии и скобок). Так в листе можно писать
+ * «my_profile_name, поздравляем …», а реальное имя проставит скрипт сам.
+ * Ids сортируем по длине убыванием, чтобы длинные («my_profile») матчились
+ * раньше коротких. */
+const firstName = id => personName(id).split(/[ (]/)[0];
+const NAME_IDS = Object.keys(PEOPLE).sort((a, b) => b.length - a.length);
+const resolveNames = str => {
+  let s = String(str ?? '');
+  for (const id of NAME_IDS) {
+    const token = id + '_name';
+    if (s.includes(token)) s = s.split(token).join(firstName(id));
+  }
+  return s;
+};
 
 /* ── helpers разметки ───────────────────────────────────────────────────────── */
 const esc = s => String(s ?? '')
@@ -166,8 +194,8 @@ function media(photos) {
   // максимум 4 ячейки, на 4-й — плашка «Ещё N», если фото больше четырёх.
   // text-feed__media выводит грид из паддинга карточки (full-bleed).
   const cells = photos.slice(0, 4).map((u, i) => {
-    const more = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}` : '"';
-    return `            <div class="media__cell${more}>${img(u)}</div>`;
+    const attrs = (i === 3 && photos.length > 4) ? ` __more" data-more="${photos.length - 3}"` : '"';
+    return `            <div class="media__cell${attrs}>${img(u)}</div>`;
   }).join('\n');
   return `          <div class="text-feed__media media __type-gallery">
 ${cells}
@@ -274,7 +302,9 @@ async function fetchLinkMeta(url) {
 
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
 function renderPost(p, idx) {
-  const { id, type, author, title, text, photos, likes, comments, reshares, link } = p;
+  const { id, type, author, photos, likes, comments, reshares, link } = p;
+  const title = resolveNames(p.title);   // «<id>_name» → имя из people.json
+  const text = resolveNames(p.text);
   const ids = splitIds(author);
   const aid = ids[0];
   const time = TIMES[idx % TIMES.length];
@@ -565,17 +595,20 @@ ${authorHeader(aid, time)}
 
     /* ── Вас отметили на фото — full-bleed media + tooltip ── */
     case 'tagged-photo': {
-      const hero = x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
-      const tag = x.tag || { name: 'Анастасия Кащеева', top: 28, left: 56 };
+      // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
+      const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
+      const tag = x.tag || { name: 'Анастасия Кащеева', top: 143, left: 187.5 };
       return `        <article class="text-feed island">
-          <div class="avatar __size-72 __type-image">${img(hero)}</div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ll-tagged__head">
+            <div class="avatar __size-72 __type-image">${img(hero)}</div>
+            <div class="ds-title-xl">${esc(title)}</div>
+          </div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-start __placement-bottom-start"
-                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px">
-              <div class="tooltip ds-title-m">${esc(tag.name)}</div>
+            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
+              <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>
             </div>
           </div>
@@ -598,8 +631,17 @@ ${authorHeader(aid, time)}
       const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
         ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
         : img(src);
+      // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
+      // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
+      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
+
+          <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
+               оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
+          <a class="clip-feed__open" aria-label="Открыть клип"
+             href="${esc(openUrl)}"
+             style="position:absolute;inset:0;z-index:1"></a>
 
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
@@ -609,13 +651,55 @@ ${authorHeader(aid, time)}
             </div>
           </div>
 
-          <button class="clip-feed__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
+          <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
 
           <div class="actions-bar clip-feed__actions">
 ${countBtn('comment_16_20.svg', comments, { style: 'on-image' })}
 ${countBtn('reshare_16_20.svg', reshares, { style: 'on-image' })}
 ${klassBtn(likes, { style: 'on-image' })}
 ${moreBtn({ style: 'on-image' })}
+          </div>
+        </article>`;
+    }
+
+    /* ── Клип из воспоминаний — island c full-bleed клипом + оверлеи ──
+       Шапка «Видите только вы» + крупный заголовок, ниже медиа (фото-монтаж)
+       с подписью-периодом и actions-overlay (Поделиться + «···») прямо на клипе.
+       Звука нет — mute-кнопки нет. */
+    case 'memories-clip': {
+      // Кадры клипа: несколько фото из листа сменяют друг друга кросс-фейдом
+      // (см. JS внизу lenta-q3.html). Если фото нет — companion-подборка.
+      // Единственный видеофайл показываем как <video> (без слайд-шоу).
+      const pics = photos.length ? photos : (x.fallbackPhotos || []);
+      const label = text || x.label || 'Лето 2026';
+      const isVideo = pics.length === 1 && /\.(mp4|webm|mov)(\?|#|$)/i.test(pics[0]);
+      const mediaInner = isVideo
+        ? `            <video src="${esc(pics[0])}" autoplay muted loop playsinline></video>`
+        : pics.map((u, i) =>
+            `            ${img(u, `class="ll-memclip__slide${i === 0 ? ' __active' : ''}" `)}`).join('\n');
+      // data-clip-edit: тап по медиа (и по «Поделиться») открывает превью/редактор.
+      return `        <article class="text-feed island ll-memclip">
+          <div class="ll-otd__caption ds-body-m">
+            ${EYE_SVG}
+            <span>Видите только вы</span>
+          </div>
+          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+
+          <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
+${mediaInner}
+            <div class="ll-memclip__label ll-memclip__label--ok ds-title-l">${esc(label)}</div>
+            <div class="actions-bar ll-memclip__actions">
+              <div class="button-wrapper __size-44 __full-width">
+                <button class="button-container __style-primary"><span class="button-content">
+                  ${SHARE_SVG}Поделиться
+                </span></button>
+              </div>
+              <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
+                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                  ${llIcon('more_16_20.svg')}
+                </span></button>
+              </div>
+            </div>
           </div>
         </article>`;
     }

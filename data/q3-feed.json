@@ -91,7 +91,26 @@
       "author": "my_profile",
       "title": "7 лет назад в этот день",
       "text": "Посадили розы на даче вместе с Ольгой. Тогда казалось, что не приживутся, а они до сих пор цветут",
-      "photos": [],
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": ""
+    },
+    {
+      "id": "post-7b",
+      "type": "memories-clip",
+      "author": "my_profile",
+      "title": "Ваш клип из воспоминаний",
+      "text": "Лето 2026",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200",
+        "https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200",
+        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790",
+        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&dpr=2&fn=h_768"
+      ],
       "likes": "",
       "comments": "",
       "reshares": "",
@@ -102,7 +121,7 @@
       "type": "group-post",
       "author": "group-4",
       "title": "",
-      "text": "Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды. Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.",
+      "text": "Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.",
       "photos": [
         "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&dpr=2"
       ],
@@ -132,7 +151,11 @@
       "title": "",
       "text": "6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!",
       "photos": [
-        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2"
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1dXYFWACup8JRxzeCQOqt-LiOzIaU2mB4w49pHZEl-KYse8Nc12mfrKTKkuJ417XAI-EAUsMXxyni-Ff8_P9yzTR8mQ1-JA3B_A9TCqMAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9eEuh5Y2raEgDlsJx8Cl6m6EI3JgnPzdVSLdjcmQak7aSFf2N1VJz-eaEZPJPEQxH4n2whTxP_ry6b0HvmfetBFCgfjfihZcNDYnj0EMAAAAp&dpr=2"
       ],
       "likes": "5",
       "comments": "12",
@@ -182,8 +205,8 @@
     {
       "id": "post-14",
       "type": "friendversary",
-      "author": "8, 1",
-      "title": "Анна, поздравляем с годовщиной дружбы",
+      "author": "8, my_profile",
+      "title": "my_profile_name, поздравляем с годовщиной дружбы",
       "text": "Ровно 3 года назад вы добавили друг друга в друзья OK",
       "photos": [],
       "likes": "",
@@ -194,11 +217,11 @@
     {
       "id": "post-15",
       "type": "tagged-photo",
-      "author": "",
+      "author": "my_profile",
       "title": "Вас отметили на фото 2 года назад",
       "text": "",
       "photos": [
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&dpr=2"
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=750&q=80"
       ],
       "likes": "",
       "comments": "",

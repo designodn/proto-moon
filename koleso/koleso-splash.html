@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Загрузка — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="../components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; background:#e12300; }
+
+  /* Сплэш: фон-картинка во весь экран + текст и прогресс снизу. */
+  .sp {
+    position: relative; width:100%; height:100dvh; min-height:100dvh; overflow:hidden;
+    /* запасной градиент из Figma, если PNG ещё не подложен */
+    background:
+      radial-gradient(ellipse 323.6% 67.1% at 50% 38%,
+        rgb(255,185,147) 10%,
+        rgb(255,160,110) 18.75%,
+        rgb(255,135,73)  27.5%,
+        rgb(255,110,37)  36.25%,
+        rgb(255,97,18)   40.62%,
+        rgb(255,85,0)    45%,
+        rgb(240,60,0)    57.5%,
+        rgb(225,35,0)    70%) no-repeat;
+    color:#fff; font-family: var(--font-family);
+  }
+  .sp__bg {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:center; display:block; z-index:0;
+  }
+
+  /* Нижний блок: текст + прогресс */
+  .sp__foot {
+    position:absolute; left:32px; right:32px; bottom:48px; z-index:1;
+  }
+  .sp__title {
+    margin:0; font-size:27px; line-height:36px; font-weight:500; color:#fff;
+  }
+  .sp__subtitle {
+    margin:4px 0 0; font-size:17px; line-height:24px; font-weight:400;
+    color: rgba(255,255,255,0.64);
+  }
+  .sp__track {
+    margin-top:24px; width:100%; height:4px; border-radius:12px;
+    background: rgba(255,255,255,0.24); overflow:hidden;
+  }
+  .sp__fill {
+    height:100%; width:0; border-radius:12px; background:#fff;
+    animation: sp-load 2400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes sp-load { from { width:0; } to { width:100%; } }
+  @media (prefers-reduced-motion: reduce) {
+    .sp__fill { animation: none; width:60%; }
+  }
+</style>
+</head>
+<body>
+  <div class="sp" data-screen>
+    <!-- Фон: PNG подкладывается отдельно; при отсутствии остаётся градиент -->
+    <img class="sp__bg" src="../assets/koleso/new/splash-bg.png" alt=""
+         onerror="this.style.display='none'">
+
+    <div class="sp__foot">
+      <p class="sp__title">Чем больше<br>«Народных билетов»</p>
+      <p class="sp__subtitle">Тем ближе суперприз</p>
+      <div class="sp__track"><div class="sp__fill" id="fill"></div></div>
+    </div>
+  </div>
+
+  <script>
+    // По заполнении прогресса уходим на колесо (с сохранением query-параметров).
+    var DURATION = 2400;
+    var fill = document.getElementById('fill');
+    function go() { location.href = 'koleso.html' + location.search; }
+    if (fill) {
+      fill.addEventListener('animationend', go);
+      // подстраховка, если animationend не сработает
+      setTimeout(go, DURATION + 400);
+    } else {
+      setTimeout(go, DURATION);
+    }
+  </script>
+</body>
+</html>

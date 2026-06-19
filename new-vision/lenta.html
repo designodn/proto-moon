@@ -529,6 +529,13 @@
 
       <article class="clip-feed">
         <div class="clip-feed__media"><video src="../assets/clips/sable-tepa.mp4" autoplay muted loop playsinline></video></div>
+
+        <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
+             оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
+        <a class="clip-feed__open" aria-label="Открыть клип"
+           href="../klipy.html?type=video&amp;src=assets/clips/sable-tepa.mp4&amp;name=Галина%20Гаджикулиева&amp;from=new-vision/lenta.html&amp;like=14&amp;reshare=&amp;ava=https%3A%2F%2Fvki9.okcdn.ru%2Fi%3Fr%3DCFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp%26dpr%3D2"
+           style="position:absolute;inset:0;z-index:1"></a>
+
         <header class="feed-header __on-media">
         <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
@@ -1248,6 +1255,34 @@
     });
 
     sync();
+  });
+})();
+</script>
+
+<!-- Сохранение/восстановление позиции скролла ленты при входе в плеер клипа
+     и возврате назад (лента скроллится .phone-frame__feed, не окном). -->
+<script>
+(function () {
+  var KEY = 'feedScroll:' + location.pathname;
+  function scroller() {
+    var f = document.querySelector('.phone-frame__feed');
+    if (f && f.scrollHeight > f.clientHeight + 4) return f;
+    return document.scrollingElement || document.documentElement;
+  }
+  window.addEventListener('pagehide', function () {
+    try { sessionStorage.setItem(KEY, String(scroller().scrollTop)); } catch (_) {}
+  });
+  function restore() {
+    var v;
+    try { v = sessionStorage.getItem(KEY); } catch (_) { v = null; }
+    if (v == null) return;
+    scroller().scrollTop = parseInt(v, 10) || 0;
+  }
+  window.addEventListener('pageshow', restore);
+  document.addEventListener('DOMContentLoaded', restore);
+  window.addEventListener('load', function () {
+    restore();
+    try { sessionStorage.removeItem(KEY); } catch (_) {}
   });
 })();
 </script>

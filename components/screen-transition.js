@@ -100,7 +100,7 @@
      ok-tabbar и любых инлайн-обработчиков, поэтому они не могут увести из NV). */
   document.addEventListener('click', function (e) {
     if (!e.target.closest) return;
-    var raw, isTab = false;
+    var raw, isTab = false, isBack = false;
     var tabBtn = e.target.closest('.tabbar-icon');
     if (tabBtn) {
       isTab = true;
@@ -109,6 +109,7 @@
       var navEl = e.target.closest('a[href], [data-href], .tabs-tab');
       if (!navEl) return;
       raw = navEl.getAttribute('href') || navEl.getAttribute('data-href');
+      isBack = e.target.closest('.nav-bar__back, [data-screen-back]') != null;
     }
     if (raw === '#') { if (isTab) { e.preventDefault(); e.stopImmediatePropagation(); } return; }
     var dest = nvResolve(raw);
@@ -116,6 +117,9 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     if (isTab) { try { sessionStorage.setItem('nav-tab', '1'); } catch (_) {} }
+    // Кнопка «назад» помечает переход как обратный: capture-перехватчик глотает
+    // клик раньше bubble-обработчика .nav-bar__back, поэтому ставим флаг здесь.
+    if (isBack) { try { sessionStorage.setItem('screenNavBack', '1'); } catch (_) {} }
     location.href = dest;
   }, true);
 

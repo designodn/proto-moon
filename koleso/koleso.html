@@ -12,7 +12,23 @@
 <script src="../components/screen-transition.js"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  html, body { margin:0; padding:0; height:100%; background:#f06a00; }
+  /* Фон крутилки — радиальный градиент из Figma (слой «back»):
+     эллипс центром в (180,367) из 360×800, точные стопы. */
+  html, body { margin:0; padding:0; height:100%;
+    background:
+      radial-gradient(ellipse 323.6% 67.1% at 50% 45.9%,
+        rgb(255,214,196) 11.06%,
+        rgb(255,182,147) 21.05%,
+        rgb(255,149,98)  31.03%,
+        rgb(255,133,73)  36.03%,
+        rgb(255,117,49)  41.02%,
+        rgb(255,101,24)  46.02%,
+        rgb(255,93,12)   48.51%,
+        rgb(255,85,0)    51.01%,
+        rgb(240,60,0)    65.51%,
+        rgb(225,35,0)    80%) no-repeat;
+    background-color:#e12300;
+  }
 
   /* ── Иммерсивный экран на оранжевом градиенте ───────────────────
      status-bar/nav-bar DS форсируют свой фон, поэтому здесь — кастомный
@@ -32,19 +48,8 @@
   }
 
   .rl-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
-  /* status-иконки нарисованы тёмным → выбеливаем для оранжевого фона */
-  .rl-status-ico { filter: brightness(0) invert(1); }
 
-  /* ── Хром: статус-бар + навбар ─────────────────────────────────── */
-  .rl-status {
-    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    height: 44px; padding: 8px 24px;
-    color: #fff;
-  }
-  .rl-status__time { font-size: 15px; line-height: 1; font-weight: 600; letter-spacing: -0.3px; }
-  .rl-status__ind { display:flex; align-items:center; gap: 7px; }
-
+  /* ── Хром: навбар (статус-бар отдан реальной ОС) ───────────────── */
   .rl-nav {
     position: absolute; top: 44px; left: 0; right: 0; z-index: 20;
     display: flex; align-items: center; justify-content: space-between;
@@ -121,7 +126,12 @@
     position: relative;
     width: 106px; height: 110px;
     cursor: pointer;
+    transform-origin: center;
+    transition: transform 200ms cubic-bezier(0, -0.3, 0.5, 1.3);
   }
+  /* press feedback — лёгкий «бамп» к центру, как у аватаров/кнопок */
+  .rl-action:active,
+  .rl-action.__clicked { transform: scale(0.95); }
   /* белая «подложка» с наклоном — размеры/угол из макета: 99.66×96.9, −6.73° */
   .rl-action::before {
     content: ''; position: absolute;
@@ -180,23 +190,12 @@
     text-align: center; font-size: 13px; line-height: 16px; color: #fff;
   }
   .rl-disclaimer a { color: #fff; text-decoration: underline; }
-  /* home-indicator */
-  .rl-handle { display:flex; justify-content:center; padding: 10px 0 8px; }
-  .rl-handle span { width: 108px; height: 4px; border-radius: 12px; background: rgba(255,255,255,0.9); }
 </style>
 </head>
 <body>
   <div class="rl" data-screen>
 
     <!-- Хром -->
-    <div class="rl-status">
-      <span class="rl-status__time">9:41</span>
-      <span class="rl-status__ind">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-wifi.svg"    width="16" height="12" alt="">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-signal.svg"  width="17" height="12" alt="">
-        <img class="rl-icon rl-status-ico" src="../assets/icons/status-battery.svg" width="25" height="12" alt="">
-      </span>
-    </div>
     <div class="rl-nav">
       <button class="rl-nav__btn nav-bar__back" aria-label="Назад" data-href="../today.html">
         <img class="rl-icon" src="../assets/icons/arrow_left_24.svg" width="24" height="24" alt="">
@@ -221,7 +220,7 @@
       <div class="rl-action" role="button" tabindex="0" aria-label="Задания" data-href="koleso-tasks.html">
         <img class="rl-action__img" src="../assets/koleso/zadaniia.png" alt="">
         <span class="rl-action__label">Задания</span>
-        <span class="rl-action__badge">2</span>
+        <span class="rl-action__badge">4</span>
       </div>
       <div class="rl-coin" aria-label="Билеты">
         <span id="coin-count">1</span>
@@ -240,33 +239,29 @@
         Нажимая «Крутить колесо», вы соглашаетесь<br>
         с <a href="#" onclick="return false">Условиями&nbsp;акции</a>
       </p>
-      <div class="rl-handle"><span></span></div>
     </div>
   </div>
 
   <script>
     // ── Призы барабана (картинки из ../assets/koleso) ─────────────
     var PRIZES = [
-      { img: 'aifon.png',            c: 'iPhone' },
-      { img: 'ozon-promokod.png',    c: 'Промокод Ozon' },
-      { img: 'telefon.png',          c: 'Смартфон' },
-      { img: 'pylesos.png',          c: 'Пылесос' },
-      { img: 'fen.png',              c: 'Фен' },
-      { img: 'chainik.png',          c: 'Чайник' },
-      { img: 'chainik-igrushka.png', c: 'Игрушка' },
-      { img: 'gril.png',             c: 'Гриль' },
-      { img: 'barbekiu.png',         c: 'Барбекю' },
-      { img: 'shveinaia.png',        c: 'Швейная машина' },
-      { img: 'mebel.png',            c: 'Мебель' },
-      { img: 'podarok.png',          c: 'Подарок' },
-      { img: 'oki.png',              c: 'ОКи' }
+      { img: 'new/pic_ozon.png' },
+      { img: 'new/pic_ok_10-1.png' },
+      { img: 'new/pic_multicooker.png' },
+      { img: 'new/pic_tele.png' },
+      { img: 'new/pic_rubies.png' },
+      { img: 'new/pic_kaspersky_20pr.png' },
+      { img: 'new/pic_shok-cookir.png' },
+      { img: 'new/pic_all_included_1-1.png' },
+      { img: 'new/pic_invisible_1-1.png' },
+      { img: 'new/pic_ticket-ruletka.png' }
     ];
 
     function prizeNode(p) {
       var el = document.createElement('div');
       el.className = 'rl-prize';
       el.innerHTML = '<img class="rl-prize__img" src="../assets/koleso/' +
-                     p.img + '" alt="' + p.c + '">';
+                     p.img + '" alt="">';
       return el;
     }
 
