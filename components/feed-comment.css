@@ -33,11 +33,11 @@
      чтобы отступ был частью бокса коммента, а не «пустым» гэпом. */
   padding: 0 var(--space-4);        /* 16 — выравнивание по контенту карточки */
 }
-/* actions-bar поста → первый коммент = 8. Каждый коммент несёт padding-top 12,
-   поэтому fc-list поднимаем так, чтобы у первого вышло 8: gap стопки text-feed
-   (12) − 16 = −4, плюс padding-top 12 = 8. */
+/* Зазор actions-bar поста → первый коммент = 8 (без нахлёста). Стопка text-feed
+   даёт gap 12 между actions и fc-list — тянем на −4, чтобы вышло ровно 8. Сверху
+   у первого коммента ещё свой padding-top 20 (как у всех). */
 .text-feed > .fc-list {
-  margin-top: calc(-1 * var(--space-4));
+  margin-top: calc(var(--space-2) - var(--space-3));   /* −4 → зазор 8 */
 }
 
 /* ── один комментарий ─────────────────────────────────────────────────────── */
@@ -45,7 +45,7 @@
   display: flex;
   gap: var(--space-2);              /* 8 между авой-блоком и телом */
   align-items: flex-start;
-  padding-top: var(--space-3);      /* 12 над каждым комментом (вместо gap) */
+  padding-top: var(--space-5);      /* 20 над каждым комментом (вместо gap) */
 }
 
 /* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
@@ -57,14 +57,15 @@
   gap: var(--space-1);
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет: --static-surface-brown (#AA8F7F). БЕЗ доп. opacity. */
+   12px. Цвет #AA8F7F (= static-surface-brown; токен живёт только в theme-cocktail,
+   а lenta-q3 на light-теме — поэтому литерал, иначе border невалиден и не виден). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: 2px;
-  border-left: 2px solid var(--static-surface-brown);
-  border-bottom: 2px solid var(--static-surface-brown);
+  border-left: 2px solid #AA8F7F;
+  border-bottom: 2px solid #AA8F7F;
   border-bottom-left-radius: 8px;
 }
 
