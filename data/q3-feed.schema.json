@@ -25,7 +25,8 @@
       "reshare-post":   { "author": true, "innerPost": true, "stats": true, "_note": "вложенная карточка с бордером: автор+текст(clamp)+медиа" },
       "added-friend":   { "author": true, "text": true, "friend": true, "_note": "friend-row: большой аватар, verified, общие друзья, CTA «Добавить в друзья»" },
       "shared-link":    { "author": true, "text": true, "link": true, "stats": true },
-      "gift-received":  { "author": true, "gift": true, "_variants": "postcard | gift | ai-gift", "_note": "повод + даритель + медиа; CTA по подвиду (Отправить открытку/подарок / Создать ИИ подарок)" },
+      "gift-received":  { "author": true, "gift": true, "_variants": "postcard | gift", "_note": "повод + даритель + медиа; CTA по подписи (Отправить открытку/подарок)" },
+      "ai-gift-received": { "author": true, "gift": true, "_note": "ИИ-подарок: кнопка __style-ai-gift (градиент из ИИ-подарков NV) + подложка #FFEFE5 бордерного блока, CTA «Создать ИИ подарок»" },
       "friendversary":  { "avatars": 2, "title": true, "text": true, "_note": "спец-класс feed-birthday, CTA «Поздравить друга»" },
       "tagged-photo":   { "heroAvatar": true, "title": true, "media": "image", "tag": true, "_note": "full-bleed media + tooltip с именем, CTA «Поделиться»" },
       "clip":           { "author": true, "media": "clip", "stats": true, "_note": "спец-класс clip-feed, 9:16, тёмные actions" },
@@ -45,7 +46,7 @@
       "колонки": "id · тип · тема · рубрика · шапка · автор · заголовок · текст · описание · фото (ссылки через запятую) · лайки · комменты · репосты · ссылка · автор коммента 1 · текст коммента 1 · автор коммента 2 · текст коммента 2. Колонки скрипт матчит ПО ИМЕНИ заголовка, а не по позиции — порядок/вставку столбцов можно менять. тема/рубрика — крошки feed-header (нужны comment-as-feed); шапка — лейбл над клипом-карточкой («может быть интересно»); пары «автор/текст коммента N» — ветка комментов (см. слот_comments).",
       "маппинг": {
         "id": "post-1, post-2 … (ключ строки; порядок строк = порядок в ленте)",
-        "тип": "text|photo|photo-gallery|video|ad|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip|memories-clip|comment-as-feed. text/photo/photo-gallery/video — один компонент feed-text (см. базовый_text)",
+        "тип": "text|photo|photo-gallery|video|ad|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|ai-gift-received|friendversary|tagged-photo|clip|memories-clip|comment-as-feed. text/photo/photo-gallery/video — один компонент feed-text (см. базовый_text)",
         "тема": "крошка-1 (breadcrumbs) для comment-as-feed, напр. «Еда». У остальных типов обычно пусто",
         "рубрика": "крошка-2 активная (breadcrumbs) для comment-as-feed, напр. «Вторые блюда»",
         "шапка": "лейбл над карточкой: для клипа-с-комментами — «может быть интересно». У остальных типов пусто",
@@ -199,7 +200,7 @@
       }
     },
     {
-      "id": "q11", "type": "gift-received", "variant": "ai-gift",
+      "id": "q11", "type": "ai-gift-received",
       "author": { "name": "Мария Маяковская", "avatar": "https://i.okcdn.ru/...mayak.jpg", "time": "12:48" },
       "gift": {
         "caption": "Получила подарок на День сельскохозяйственных строителей от",

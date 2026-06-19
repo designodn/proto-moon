@@ -712,13 +712,15 @@ ${actionsBar(likes, comments, reshares)}
     }
 
     /* ── Подарок/открытка — получил … от … ── */
-    case 'gift-received': {
-      const caption = title || 'Получил подарок от';
+    /* gift-received — обычный подарок/открытка; ai-gift-received — ИИ-подарок
+       (кнопка __style-ai-gift + тёплая подложка #FFEFE5 бордерного блока).
+       Разметка общая, отличается кнопкой/иконкой/подложкой. */
+    case 'gift-received': case 'ai-gift-received': {
+      const isAi = type === 'ai-gift-received';
+      const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
-      // CTA по содержимому подписи: подарок / ИИ / открытка (по умолчанию).
-      // ИИ — отдельный стиль кнопки __style-ai-gift (градиент из ИИ-подарков NV).
       let cta, btnWrap, icon, btnStyle = '__style-secondary', cardMod = '';
-      if (/ии|нейро/i.test(caption)) {
+      if (isAi) {
         cta = 'Создать ИИ подарок';
         btnWrap = ' __full-width';
         btnStyle = '__style-ai-gift';
@@ -726,11 +728,9 @@ ${actionsBar(likes, comments, reshares)}
         icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>`;
       } else if (/подар/i.test(caption)) {
         cta = 'Отправить подарок';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       } else {
         cta = 'Отправить открытку';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
