@@ -131,18 +131,26 @@
         if (s.src) {
           media.src = s.src;
           media.style.display = '';
-        } else if (s.color) {
-          // Сториз без картинки — просто цветная заливка карточки
+        } else {
+          // Сториз без картинки (цвет/фон/ВВЗ-body) — гасим media, иначе фото
+          // предыдущего слайда осталось бы лежать поверх фона (например,
+          // именинное фото перекрывало бы фон-картинку ВВЗ).
           media.removeAttribute('src');
           media.style.display = 'none';
         }
       }
       if (s.background) {
-        // Произвольный CSS-background (например radial/linear gradient).
+        // Произвольный CSS-background (например картинка ВВЗ или градиент).
         this.root.style.background = s.background;
       } else if (s.color) {
         this.root.style.background = '';
         this.root.style.backgroundColor = s.color;
+      } else {
+        // Ни фона, ни цвета (например именинный слайд с фото) — сбрасываем
+        // инлайновый фон к дефолту .moment (#000 static), чтобы не «протекал»
+        // фон-картинка от предыдущего ВВЗ-слайда.
+        this.root.style.background = '';
+        this.root.style.backgroundColor = '';
       }
       // s.duration — опциональный override длительности сегмента (CSS-переменная
       // --moment-duration). Используется, например, в bdaySlide, чтобы после
