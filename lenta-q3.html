@@ -227,10 +227,17 @@
   .ll-otd__likes-text { color: var(--dynamic-text-and-icons-base-secondary); }
 
   /* «Вас отметили на фото N лет назад» — карточка-воспоминание.
-     Сверху аватар 72 (без имени), ниже ds-title-xl, ниже full-bleed фото
-     с tooltip-овером, который указывает на отмеченного. Внизу — primary
+     Шапка ll-tagged__head: аватар 72 (компонент) + ds-title-xl в одну строку,
+     по центру. Паддинг text-feed получает сама шапка (а не голый аватар —
+     иначе .text-feed > :not(media) сплющивал бы круг в овал). Ниже full-bleed
+     фото с tooltip-овером, который указывает на отмеченного. Внизу — primary
      «Поделиться» на всю ширину (через .button-wrapper.__full-width).
      Media получает .text-feed__media — чтобы выйти из паддинга text-feed. */
+  .ll-tagged__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
   .ll-tagged__media {
     position: relative;
     width: 100%;
@@ -764,8 +771,10 @@
         </article>
 
         <article class="text-feed island">
-          <div class="avatar __size-72 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
-          <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
+          <div class="ll-tagged__head">
+            <div class="avatar __size-72 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
+          </div>
 
           <div class="text-feed__media ll-tagged__media">
             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=750&amp;q=80" alt="">

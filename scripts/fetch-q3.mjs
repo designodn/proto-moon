@@ -590,8 +590,10 @@ ${authorHeader(aid, time)}
       const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
       const tag = x.tag || { name: 'Анастасия Кащеева', top: 143, left: 187.5 };
       return `        <article class="text-feed island">
-          <div class="avatar __size-72 __type-image">${img(hero)}</div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ll-tagged__head">
+            <div class="avatar __size-72 __type-image">${img(hero)}</div>
+            <div class="ds-title-xl">${esc(title)}</div>
+          </div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
