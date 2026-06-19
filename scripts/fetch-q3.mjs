@@ -514,6 +514,11 @@ ${authorHeader(aid, time)}
     case 'shared-link': {
       const domain = linkDomain(link);
       const href = link || '#';
+      // Заголовок/описание превью: сперва ручные значения из таблицы
+      // (заголовок = колонка «заголовок», описание = новая колонка), затем
+      // авто-мета со страницы, затем companion-заглушка, затем домен.
+      const linkTitle = title || p.linkMeta?.title || x.title || domain;
+      const linkDescr = p.linkDesc || p.linkMeta?.description || x.description || '';
       const preview = photos[0]
         ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
@@ -525,8 +530,8 @@ ${feedText(text)}
           <a class="text-feed__reshare-card" href="${esc(href)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
 ${preview}
             <div class="text-feed__link">
-              <div class="ds-title-m">${esc(p.linkMeta?.title || x.title || domain)}</div>
-              <div class="ds-body-m">${esc(p.linkMeta?.description || x.description || '')}</div>
+              <div class="ds-title-m">${esc(linkTitle)}</div>
+              <div class="ds-body-m">${esc(linkDescr)}</div>
               <div class="ds-caption-m">${esc(domain)}</div>
             </div>
           </a>
@@ -795,16 +800,21 @@ async function main() {
         comments: (c[7] || '').trim(),
         reshares: (c[8] || '').trim(),
         link: (c[9] || '').trim(),
+        // shared-link: описание превью, вписанное в таблицу вручную (новая колонка
+        // после «ссылка»). Заголовок превью берём из колонки «заголовок» (c[3]).
+        linkDesc: (c[10] || '').trim(),
       });
     }
 
     // shared-link: тянем заголовок + первый абзац прямо со страницы (og:/title),
     // кладём в post.linkMeta — попадёт в json и переживёт офлайн-реген.
     for (const p of posts) {
-      if (p.type === 'shared-link' && p.link) {
+      // Если заголовок (колонка «заголовок») и описание (новая колонка) вписаны
+      // в таблицу вручную — фетч не нужен (и не словим блок от сайтов вроде RBC).
+      if (p.type === 'shared-link' && p.link && !(p.title && p.linkDesc)) {
         const meta = await fetchLinkMeta(p.link);
         if (meta) { p.linkMeta = meta; console.log(`  ↳ ${p.id}: «${meta.title}»`); }
-        else console.warn(`  ⚠️  ${p.id}: не удалось прочитать мету ${p.link} — оставляю заглушку`);
+        else console.warn(`  ⚠️  ${p.id}: не удалось прочитать мету ${p.link} — впиши заголовок+описание в таблицу (или останется заглушка)`);
       }
     }
 
