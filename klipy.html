@@ -611,11 +611,13 @@
     //     текущий пользователь, а лайки/репосты по нулям (только что создан).
     //     Данные прокидывает clip-edit через sessionStorage('newClip').
     (function () {
+      // ?src (открыли конкретный клип из ленты) имеет приоритет — он сам
+      // восстанавливается из URL при refresh, поэтому newClip тут не применяем.
+      if (new URLSearchParams(location.search).get('src')) return;
+      // Не removeItem: оставляем newClip в sessionStorage, чтобы обновление
+      // страницы плеера не сбрасывало только что созданный клип на дефолтный.
       var data = null;
-      try {
-        data = JSON.parse(sessionStorage.getItem('newClip') || 'null');
-        sessionStorage.removeItem('newClip');
-      } catch (_) {}
+      try { data = JSON.parse(sessionStorage.getItem('newClip') || 'null'); } catch (_) {}
       if (!data) return;
       var entry = document.querySelector('[data-entry]');
       if (!entry) return;
@@ -707,5 +709,6 @@
     });
   </script>
 
+  <script src="components/smart-crop.js" defer></script>
 </body>
 </html>
