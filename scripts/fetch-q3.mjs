@@ -514,11 +514,18 @@ ${authorHeader(aid, time)}
     case 'shared-link': {
       const domain = linkDomain(link);
       const href = link || '#';
-      // Заголовок/описание превью: сперва ручные значения из таблицы
-      // (заголовок = колонка «заголовок», описание = новая колонка), затем
-      // авто-мета со страницы, затем companion-заглушка, затем домен.
-      const linkTitle = title || p.linkMeta?.title || x.title || domain;
-      const linkDescr = p.linkDesc || p.linkMeta?.description || x.description || '';
+      // Заголовок/описание превью из таблицы. В колонке «описание» допускаем
+      // «Заголовок / Подзаголовок» — делим по первому « / ». Отдельная колонка
+      // «заголовок», если заполнена, перебивает заголовок из слеша.
+      // Приоритет: таблица → авто-мета со страницы → companion-заглушка → домен.
+      let mTitle = title, mDesc = (p.desc || '').trim();
+      const slash = mDesc.indexOf(' / ');
+      if (slash !== -1) {
+        if (!mTitle) mTitle = mDesc.slice(0, slash).trim();
+        mDesc = mDesc.slice(slash + 3).trim();
+      }
+      const linkTitle = mTitle || p.linkMeta?.title || x.title || domain;
+      const linkDescr = mDesc || p.linkMeta?.description || x.description || '';
       const preview = photos[0]
         ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
@@ -773,48 +780,64 @@ async function main() {
     const rows = parseCsv(await res.text());
     const [header = [], ...body] = rows;
 
-    // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор».
-    // Если их нет (например, gviz отдал не тот лист) — НЕ трогаем ленту, чтобы
-    // деплой-реген не обнулил живой фид. Сравниваем по началу заголовка колонки:
-    // у Q3-листа первая строка склеена с post-1 → «тип vvz-portlet», «автор …».
+    // Колонки матчим ПО ИМЕНИ заголовка, а не по позиции — так столбцы можно
+    // вставлять/двигать в таблице, не ломая парсинг (как раз случай «описание»
+    // между «текст» и «фото»). Сравниваем по началу заголовка (учёт «фото (…)»).
     const head = header.map(h => String(h || '').trim().toLowerCase());
-    const hasCol = name => head.some(h => h === name || h.startsWith(name + ' '));
-    if (!hasCol('тип') || !hasCol('автор')) {
+    const col = (...names) => {
+      for (const n of names) {
+        const i = head.findIndex(h => h === n || h.startsWith(n + ' '));
+        if (i >= 0) return i;
+      }
+      return -1;
+    };
+    const I = {
+      id: col('id'), type: col('тип'), author: col('автор'),
+      title: col('заголовок'), text: col('текст'), photos: col('фото'),
+      likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
+      link: col('ссылка'), desc: col('описание'),
+    };
+
+    // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор». Если
+    // их нет (например, gviz отдал не тот лист) — НЕ трогаем ленту, чтобы
+    // деплой-реген не обнулил живой фид.
+    if (I.type < 0 || I.author < 0) {
       throw new Error(
         `лист по gid=${SHEET_GID} не похож на Q3-посты (нет колонок «тип»/«автор»): ` +
         `${head.join(' | ')}. Лента НЕ перегенерирована — проверь доступ/лист в таблице.`);
     }
 
+    const cell = (c, i) => (i >= 0 ? (c[i] || '').trim() : '');
     posts = [];
     for (const c of body) {
-      const id = (c[0] || '').trim();
-      const type = (c[1] || '').trim();
+      const id = cell(c, I.id);
+      const type = cell(c, I.type);
       if (!id || !type) continue;
       posts.push({
         id, type,
-        author: (c[2] || '').trim(),
-        title: (c[3] || '').trim(),
-        text: (c[4] || '').trim(),
-        photos: (c[5] || '').split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
-        likes: (c[6] || '').trim(),
-        comments: (c[7] || '').trim(),
-        reshares: (c[8] || '').trim(),
-        link: (c[9] || '').trim(),
-        // shared-link: описание превью, вписанное в таблицу вручную (новая колонка
-        // после «ссылка»). Заголовок превью берём из колонки «заголовок» (c[3]).
-        linkDesc: (c[10] || '').trim(),
+        author: cell(c, I.author),
+        title: cell(c, I.title),
+        text: cell(c, I.text),
+        photos: cell(c, I.photos).split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        likes: cell(c, I.likes),
+        comments: cell(c, I.comments),
+        reshares: cell(c, I.reshares),
+        link: cell(c, I.link),
+        // shared-link: превью ссылки. В колонке «описание» можно писать
+        // «Заголовок / Подзаголовок» (делится по « / » в renderPost). Заголовок
+        // можно задать и отдельной колонкой «заголовок» — она перебивает слеш.
+        desc: cell(c, I.desc),
       });
     }
 
-    // shared-link: тянем заголовок + первый абзац прямо со страницы (og:/title),
-    // кладём в post.linkMeta — попадёт в json и переживёт офлайн-реген.
+    // shared-link: если ни «заголовок», ни «описание» не вписаны вручную —
+    // пробуем вытянуть og:-мету со страницы. Если текст уже есть в таблице —
+    // фетч не нужен (не упираемся в блокировки сайтов вроде RBC).
     for (const p of posts) {
-      // Если заголовок (колонка «заголовок») и описание (новая колонка) вписаны
-      // в таблицу вручную — фетч не нужен (и не словим блок от сайтов вроде RBC).
-      if (p.type === 'shared-link' && p.link && !(p.title && p.linkDesc)) {
+      if (p.type === 'shared-link' && p.link && !(p.title || p.desc)) {
         const meta = await fetchLinkMeta(p.link);
         if (meta) { p.linkMeta = meta; console.log(`  ↳ ${p.id}: «${meta.title}»`); }
-        else console.warn(`  ⚠️  ${p.id}: не удалось прочитать мету ${p.link} — впиши заголовок+описание в таблицу (или останется заглушка)`);
+        else console.warn(`  ⚠️  ${p.id}: мету ${p.link} прочитать не вышло — впиши «Заголовок / Подзаголовок» в колонку «описание» (или останется заглушка)`);
       }
     }
 
