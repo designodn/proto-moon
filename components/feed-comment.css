@@ -53,15 +53,14 @@
   gap: var(--space-1);
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет: --dynamic-stroke-contrast-high (~36%) — видно, но мягко; БЕЗ
-   доп. opacity (иначе складывается с альфой токена и почти не видно). */
+   12px. Цвет: --static-surface-brown (#AA8F7F). БЕЗ доп. opacity. */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: 2px;
-  border-left: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
-  border-bottom: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
+  border-left: 2px solid var(--static-surface-brown);
+  border-bottom: 2px solid var(--static-surface-brown);
   border-bottom-left-radius: 8px;
 }
 
