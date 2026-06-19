@@ -1,15 +1,14 @@
 {
   "_readme": {
     "что_это": "Данные страницы фотомарафона (marathon.html): шапка + лента работ участников (Pinterest-masonry).",
-    "источник": "Google-таблица, лист «Марафон» (gid — проставить, когда лист будет готов)",
+    "источник": "Google-таблица, лист «Марафон» (gid 123647512)",
     "как_обновить": "node scripts/fetch-marathon.mjs  (офлайн-реген из этого файла: node scripts/fetch-marathon.mjs --offline)",
-    "ранг": "Позиция в массиве entries = ранг (1, 2, 3 …). Первая работа рисуется крупной hero-карточкой во всю ширину, остальные — masonry в 2 колонки.",
+    "ранг": "Колонка «место» = ранг (1, 2, 3 …); скрипт сортирует по ней. Место 1 рисуется крупной hero-карточкой во всю ширину, остальные — masonry в 2 колонки.",
     "колонки_листа": {
-      "id": "m-1, m-2 … (ключ строки; порядок строк = ранг)",
-      "имя": "имя автора работы",
-      "аватар": "URL аватара автора",
+      "место": "ранг работы (1, 2, 3 …) — по нему сортировка",
+      "автор": "id человека из реестра «Люди» — имя и аватар подставляет скрипт из data/people.json",
       "фото": "URL фотографии-работы (одна ссылка)",
-      "лайки": "счётчик «класс» под работой"
+      "классы": "счётчик «класс» под работой"
     }
   },
   "meta": {
@@ -18,14 +17,85 @@
     "description": "Публикуйте фото в марафоне и выигрывайте подарки! Результаты 2 июля 2026 года"
   },
   "entries": [
-    { "id": "m-1", "name": "Анна Иванова",       "avatar": "https://i.pravatar.cc/96?img=45", "photo": "https://picsum.photos/seed/mar-1/688/384", "likes": "671", "ratio": "16:9" },
-    { "id": "m-2", "name": "Максим Дружинин",    "avatar": "https://i.pravatar.cc/96?img=12", "photo": "https://picsum.photos/seed/mar-2/336/300", "likes": "578", "ratio": "1:1" },
-    { "id": "m-3", "name": "Лидия Маликова",     "avatar": "https://i.pravatar.cc/96?img=24", "photo": "https://picsum.photos/seed/mar-3/336/452", "likes": "495", "ratio": "9:16" },
-    { "id": "m-4", "name": "Олег Северов",       "avatar": "https://i.pravatar.cc/96?img=33", "photo": "https://picsum.photos/seed/mar-4/336/424", "likes": "402", "ratio": "9:16" },
-    { "id": "m-5", "name": "Галина Прохорова",   "avatar": "https://i.pravatar.cc/96?img=27", "photo": "https://picsum.photos/seed/mar-5/336/300", "likes": "356", "ratio": "1:1" },
-    { "id": "m-6", "name": "Виктор Бондарев",    "avatar": "https://i.pravatar.cc/96?img=15", "photo": "https://picsum.photos/seed/mar-6/336/452", "likes": "311", "ratio": "9:16" },
-    { "id": "m-7", "name": "Нина Соколова",      "avatar": "https://i.pravatar.cc/96?img=44", "photo": "https://picsum.photos/seed/mar-7/336/336", "likes": "287", "ratio": "1:1" },
-    { "id": "m-8", "name": "Пётр Кузьмин",       "avatar": "https://i.pravatar.cc/96?img=51", "photo": "https://picsum.photos/seed/mar-8/336/424", "likes": "243", "ratio": "16:9" },
-    { "id": "m-9", "name": "Светлана Орлова",    "avatar": "https://i.pravatar.cc/96?img=20", "photo": "https://picsum.photos/seed/mar-9/336/300", "likes": "198", "ratio": "1:1" }
+    {
+      "place": 1,
+      "authorId": "1",
+      "name": "Александра Бачурина (Душка)",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LNHghIbUSU5s_LhOcIiuzIw3Owk08GGSBenXQIrxJ5xMjqcgrBW6MnmHOKRu5bNyHYpoFULL3O7LtZ40IeNptq9tpnVu6OjGRB-uWbJBkAAAAp&dpr=2",
+      "likes": "123"
+    },
+    {
+      "place": 2,
+      "authorId": "2",
+      "name": "Сергей Чернышов",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LEGn0-KWkeOmoKBiWoAVKJoi-7ZSf-GExCcLj6lTnlvhIsLYzigdJfSRZx7HyOZmSOliXgzxK2Ez-QWDCybZozRO_bBn9A1OrQK2DBjpYAAAAp&dpr=2",
+      "likes": "119"
+    },
+    {
+      "place": 3,
+      "authorId": "3",
+      "name": "Зинаида Халина(Стребкова)",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KPNKLupGxcWGYH7ttQnGgPKkhF4Xsfkt56mOR_HgWTSUSsXWMd3rMH-QmsmZdAlIhX3Lf_YoihYa891zHkoAH4xJJTZEqgmRLneNHre1kAAAAp&dpr=2",
+      "likes": "89"
+    },
+    {
+      "place": 4,
+      "authorId": "4",
+      "name": "Виктор Бондарев",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ITMjPCXtBv0lP_rg4HxrcmsLs8AjkNFLpJikZ5x3R-duEXb-Gpfnxqb7J0WGXhrdwchTpjd5M5VuNyTLoRwtw9sV9_BOGbyPsOWALz_8cAAAAp&dpr=2",
+      "likes": "78"
+    },
+    {
+      "place": 5,
+      "authorId": "5",
+      "name": "Антонида Чекалова (Гахова)",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IOme7JZh1fOE5LyczDqHUPzHmdftrEnEe4NIFM975omgqDbuf2fQmUaZlsBqqtlp8DH0Nd8NvCq3Xmf-e-E2HFd14sIT3GUvp_8bxkL4kAAAAp&dpr=2",
+      "likes": "77"
+    },
+    {
+      "place": 6,
+      "authorId": "6",
+      "name": "Александр Кириевич",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JVnUxCjsIqCWpVtBq_S1oM_vepUbSIE0LpGmMMpczrPonJ-xgW5JPgJxwf2QEHsj8DiCL9jFHEJlGb-bte_FCVMPbaib_ywUIjJHQPF-kAAAAp&dpr=2",
+      "likes": "60"
+    },
+    {
+      "place": 7,
+      "authorId": "7",
+      "name": "Галина Гаджикулиева",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IxB49TJy3BybydA22XgBFEptYqb64svChS7DOssdvxPMZArm41HfE1-xSjgHmyrztJ4u9P3lhhQS6S4kSpwPZ8seC0gkbZanig6yndcGYAAAAp&dpr=2",
+      "likes": "43"
+    },
+    {
+      "place": 8,
+      "authorId": "8",
+      "name": "Александр Мещеряков",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KPM5ibz6-XxYTfmG0VkXO86cyOQ2lBO3I5fdNYDId-IkiWSffYrYjj5GO-FQc06SN5rISOeJQJ6PdCJP5FeyLH2zfeQUFIwGm6HCqRTEEAAAAp&dpr=2",
+      "likes": "33"
+    },
+    {
+      "place": 9,
+      "authorId": "9",
+      "name": "Екатерина )))))",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IJlHcIXQbyEeVyperJ4ep9WDOn5dEItJr9ybxr8DJwOuQ_t0NojqlSQOel-aax2zLObeL85YFw0WFtALmJHMQAckM7HaF6CaJX1oTDp10AAAAp&dpr=2",
+      "likes": "32"
+    },
+    {
+      "place": 10,
+      "authorId": "10",
+      "name": "Александр Попов",
+      "avatar": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&dpr=2",
+      "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMxjvkPzaPfwc9qOdIlCsnZFwxdifLo9QfRZg01hdIZDDFF5CB2xd7Lw-o_3S0RuehmfYyKEIF4n09pLuW_rnUsWY6YUfNS3_79aC7so0AAAAp&dpr=2",
+      "likes": "12"
+    }
   ]
 }
