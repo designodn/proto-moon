@@ -23,7 +23,13 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
-/* Подзаголовок шапки «Комментарий к <автор оригинала>» — имя чуть акцентнее. */
+/* Подзаголовок шапки «Комментарий к <автор оригинала>» — строго в одну строку
+   (ellipsis), как и имя выше (.feed-header__name). Имя оригинала чуть акцентнее. */
+.caf-header__sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .caf-header__to {
   font-weight: 500;
 }
