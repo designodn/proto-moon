@@ -65,11 +65,11 @@
 .omar-slide__text {
   margin: var(--space-3) 0 0;            /* 12px между заголовком и текстом (Figma) */
   font-family: var(--font-family);
-  font-size: 17px;
+  font-size: 17px;                       /* Body L */
   line-height: 24px;
   font-weight: 400;
   letter-spacing: .24px;
-  color: var(--dynamic-text-and-icons-base-secondary, rgba(46,47,51,.88));
+  color: var(--dynamic-text-and-icons-base-primary, #2e2f33);   /* primary */
 }
 
 /* ============================================================
@@ -85,7 +85,11 @@
       #F08652 31%,
       var(--dynamic-surface-base-primary, #F7F4F2) 50%);
 }
-.omar-slide--hero .omar-slide__title { font-size: 32px; line-height: 1.2; }
+.omar-slide--hero .omar-slide__title {
+  font-family: "OK Sans Display", Onest, sans-serif;   /* форсируем OK Sans, а не Roboto */
+  font-size: 32px;
+  line-height: 110%;
+}
 .omar-slide--hero .omar-slide__text { max-width: 328px; }
 
 /* Веер из 3 фото (hero и invite) */
