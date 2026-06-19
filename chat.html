@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Диалог — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; background: var(--dynamic-surface-base-primary); }
+  .phone-frame { width:100%; max-width:none; height:100dvh; min-height:100dvh; overflow:hidden;
+                 background: var(--dynamic-surface-base-primary);
+                 display:flex; flex-direction:column; }
+  .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
+
+  /* ── Навбар с именем/статусом и аватаркой ─────────────────────── */
+  .ch-nav { display:flex; align-items:center; gap: var(--space-3);
+            height:52px; padding: 0 var(--space-2) 0 var(--space-4);
+            background: var(--dynamic-surface-base-secondary);
+            border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
+  .ch-nav__head { flex:1 1 0; min-width:0; text-align:center; }
+  .ch-nav__name { color: var(--dynamic-text-and-icons-base-primary);
+                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ch-nav__status { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 1px; }
+
+  /* ── Лента сообщений ──────────────────────────────────────────── */
+  /* justify-content:flex-end — переписка прижата к низу (последние сообщения
+     были давно, поэтому весь диалог «упирается» в gift-блок и инпут). */
+  .ch-feed { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+             display:flex; flex-direction:column; justify-content:flex-end; gap: var(--space-2);
+             padding: var(--space-3) var(--space-3) var(--space-4); }
+  .ch-feed::-webkit-scrollbar { display:none; }
+
+  /* дата-разделитель */
+  .ch-day { align-self:center; margin: var(--space-2) 0;
+            background: var(--dynamic-surface-base-inverse-tertiary, rgba(46,47,51,0.48));
+            color:#fff; border-radius: 12px; padding: 4px 12px; }
+
+  /* пузырь сообщения: по умолчанию исходящее (вправо), .__in — входящее (влево) */
+  .ch-msg { align-self:flex-end; max-width: 76%;
+            background: var(--dynamic-surface-base-secondary);
+            border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
+  .ch-msg.__in { align-self:flex-start;
+                 background: var(--static-surface-status-accent, #ff8224);
+                 color:#fff; }
+  .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
+  .ch-msg.__in .ch-msg__text { color:#fff; }
+  .ch-msg__time { position:absolute; right:8px; bottom:4px;
+                  font-size:11px; line-height:14px;
+                  color: var(--dynamic-text-and-icons-base-tertiary, rgba(46,47,51,0.48)); }
+  .ch-msg.__in .ch-msg__time { color: rgba(255,255,255,0.72); }
+
+  /* ── «Возобновите общение с подарка» — над инпутом ───────────────── */
+  .ch-revive { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
+               border-top: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12));
+               padding: var(--space-3) 0 var(--space-3) var(--space-4); }
+  .ch-revive__title { color: var(--dynamic-text-and-icons-base-primary);
+                      margin-bottom: var(--space-2-5, 10px); padding-right: var(--space-4); }
+  .ch-revive__row { display:flex; gap: var(--space-2); overflow-x:auto;
+                    padding-right: var(--space-4); -webkit-overflow-scrolling:touch; }
+  .ch-revive__row::-webkit-scrollbar { display:none; }
+  /* подарок-заглушка 120×80 */
+  .ch-gift { flex:0 0 auto; width:120px; height:80px; border-radius: 12px; cursor:pointer;
+             display:flex; align-items:center; justify-content:center;
+             font-size: 34px; color:#fff;
+             box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+             transition: transform 240ms cubic-bezier(0, -0.3, 0.5, 1.3); }
+  .ch-gift:active { transform: scale(0.95); }
+  .ch-gift.__g1 { background: radial-gradient(120% 90% at 50% 30%, #ffd36b, #ff8224); }
+  .ch-gift.__g2 { background: radial-gradient(120% 90% at 50% 30%, #ff9aa8, #ff4d6d); }
+  .ch-gift.__g3 { background: radial-gradient(120% 90% at 50% 30%, #a0c4ff, #5b8def); }
+  .ch-gift.__g4 { background: radial-gradient(120% 90% at 50% 30%, #b8f1c0, #34c759); }
+
+  /* ── Поле ввода ───────────────────────────────────────────────── */
+  .ch-input { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
+              border-top: 0.5px solid var(--dynamic-surface-contrast-mid, rgba(131,102,86,0.24));
+              display:flex; align-items:center; gap: var(--space-3);
+              height:48px; padding: 0 12px; padding-bottom: env(safe-area-inset-bottom); }
+  .ch-input__ph { flex:1 1 0; min-width:0; color: var(--dynamic-text-and-icons-base-secondary); }
+  .ch-input__icons { display:flex; align-items:center; gap: var(--space-4); }
+  .ch-input img { width:24px; height:24px; display:block; }
+</style>
+</head>
+<body>
+  <div class="phone-frame __fullscreen" data-screen>
+
+    <!-- STATUS + NAVBAR — DS meshok-up -->
+    <div class="meshok-up">
+      <div class="status-bar">
+        <span class="status-bar__time">9:41</span>
+        <span class="status-bar__indicators">
+          <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+        </span>
+      </div>
+      <div class="ch-nav">
+        <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+        <div class="ch-nav__head">
+          <div class="ds-title-l ch-nav__name" id="peer-name" data-person-name="">Собеседник</div>
+          <div class="ds-caption-m ch-nav__status">был(а) 2 года назад</div>
+        </div>
+        <div class="avatar __size-36 __type-image" id="peer-ava"><img data-person-avatar="" src="" alt=""></div>
+      </div>
+    </div>
+
+    <!-- ЛЕНТА — переписка двухлетней давности -->
+    <div class="ch-feed">
+      <div class="ds-caption-m ch-day" id="ch-day">14 июня 2024</div>
+
+      <div class="ch-msg __in">
+        <div class="ds-body-l ch-msg__text">Привет! Сто лет не общались 🙂 Как ты?</div>
+        <span class="ch-msg__time">12:04</span>
+      </div>
+
+      <div class="ch-msg">
+        <div class="ds-body-l ch-msg__text">Привет! Всё хорошо, столько всего поменялось. А у тебя как?</div>
+        <span class="ch-msg__time">12:09</span>
+      </div>
+
+      <div class="ch-msg __in">
+        <div class="ds-body-l ch-msg__text">Тоже потихоньку 🙂 Переехали, работы много. Надо как-нибудь пересечься!</div>
+        <span class="ch-msg__time">12:11</span>
+      </div>
+
+      <div class="ch-msg">
+        <div class="ds-body-l ch-msg__text">Обязательно! Давай ближе к выходным спишемся 👍</div>
+        <span class="ch-msg__time">12:15</span>
+      </div>
+
+      <div class="ch-msg __in">
+        <div class="ds-body-l ch-msg__text">Договорились! Хорошего дня ✨</div>
+        <span class="ch-msg__time">12:16</span>
+      </div>
+    </div>
+
+    <!-- ВОЗОБНОВИТЕ ОБЩЕНИЕ С ПОДАРКА -->
+    <div class="ch-revive">
+      <div class="ds-title-s ch-revive__title">Возобновите общение с подарка</div>
+      <div class="ch-revive__row">
+        <div class="ch-gift __g1" role="button" aria-label="Подарок">🎁</div>
+        <div class="ch-gift __g2" role="button" aria-label="Подарок">💐</div>
+        <div class="ch-gift __g3" role="button" aria-label="Подарок">🧸</div>
+        <div class="ch-gift __g4" role="button" aria-label="Подарок">☕</div>
+      </div>
+    </div>
+
+    <!-- ПОЛЕ ВВОДА -->
+    <div class="ch-input">
+      <img src="assets/icons/smile_24.svg" alt="">
+      <span class="ds-body-l ch-input__ph">Текст сообщения</span>
+      <span class="ch-input__icons">
+        <img src="assets/icons/attach_24.svg" alt="">
+        <img src="assets/icons/microphone_24.svg" alt="">
+      </span>
+    </div>
+  </div>
+
+  <!-- Реальные люди из Google-таблицы (data-person-*) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
+  <script>
+    // Собеседник берётся по ?id=… из листа «Люди» (DS_PEOPLE).
+    (function () {
+      var id = new URLSearchParams(location.search).get('id');
+      if (!id) return;
+      document.getElementById('peer-name').setAttribute('data-person-name', id);
+      document.querySelector('#peer-ava img').setAttribute('data-person-avatar', id);
+      // people-data.js уже отработал на DOMContentLoaded — до-применяем точечно.
+      if (window.DS_PEOPLE) window.DS_PEOPLE.apply(document);
+    })();
+  </script>
+</body>
+</html>
