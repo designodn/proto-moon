@@ -398,31 +398,9 @@
             <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
         </div>
-        <!-- Не просмотренные (оранжевое кольцо). -->
-        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Александра">
-          <img data-person-avatar="1" alt="">
-          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Виктор"><img data-person-avatar="4" alt=""></div>
-
-        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
-             CTA-кнопка снизу — только у ВВЗ. -->
-        <div class="avatar __size-56 __type-image __ring-active"
-             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
-             aria-label="Возможно, вы знакомы">
-          <img src="assets/icons/vvz_stories.png" alt="">
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Галина"><img data-person-avatar="7" alt=""></div>
-
-        <!-- Сториз годовщины дружбы убрана из стака — открывается тапом
-             по постеру «Годовщина дружбы» в фиде (см. скрипт ниже). -->
-        <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Антонида"><img data-person-avatar="5" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Екатерина"><img data-person-avatar="9" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Сергей"><img data-person-avatar="2" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Александр"><img data-person-avatar="10" alt=""></div>
+        <!-- Остальные сториз генерируются из листа «Сториз» (window.DS_STORIES)
+             скриптом ниже и дописываются сюда. По умолчанию все активные
+             (оранжевое кольцо, не просмотрены). -->
       </div>
 
 
@@ -2448,117 +2426,104 @@
     // На странице остаётся: создать узел viewer'а, описать данные ВВЗ и
     // отдать колбэк, как собирать слайды.
     (function () {
-      var row  = document.getElementById('ll-stories-row');
-      var slot = document.getElementById('ll-moment-slot');
-      if (!row || !slot) return;
+      function init() {
+        var row  = document.getElementById('ll-stories-row');
+        var slot = document.getElementById('ll-moment-slot');
+        if (!row || !slot) return;
 
-      var viewer = MomentViewer.create({ duration: '4s' });
-      slot.replaceWith(viewer);
+        var viewer = MomentViewer.create({ duration: '4s' });
+        slot.replaceWith(viewer);
 
-      var VVZ_PEOPLE = [
-        { name: 'Карина Затонская', sub: '28 лет, Рига, Латвия',  img: 'https://i.pravatar.cc/192?img=47', mutuals: 18, m: [44, 12, 5] },
-        { name: 'Илья Воронов',     sub: '31 год, Москва',         img: 'https://i.pravatar.cc/192?img=33' },
-        { name: 'Анна Соколова',    sub: '25 лет, Санкт-Петербург',img: 'https://i.pravatar.cc/192?img=44', mutuals: 12, m: [12, 5, 23] },
-        { name: 'Мария Лебедева',   sub: '29 лет, Казань',         img: 'https://i.pravatar.cc/192?img=45' }
-      ];
+        function esc(s) {
+          return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function P(id) { return (window.DS_PEOPLE && window.DS_PEOPLE.get(id)) || null; }
+        // «28 лет» / «1 год» / «44 года» — выбор формы по числу.
+        function plural(n, f) {
+          n = Math.abs(n) % 100; var d = n % 10;
+          if (n > 10 && n < 20) return f[2];
+          if (d > 1 && d < 5) return f[1];
+          if (d === 1) return f[0];
+          return f[2];
+        }
+        // Подзаголовок карточки ВВЗ — «возраст, город» из листа «Люди».
+        function ageCity(p) {
+          if (!p) return '';
+          var a = [];
+          if (p.age) a.push(p.age + ' ' + plural(p.age, ['год', 'года', 'лет']));
+          if (p.city) a.push(p.city);
+          return a.join(', ');
+        }
+        function firstName(p) { return ((p && p.name) || '').split(/\s+/)[0] || ''; }
 
-      var FRIENDSHIP_AVATARS = ['https://i.pravatar.cc/192?img=47', 'https://i.pravatar.cc/192?img=49'];
+        // Аватарка-входная точка для каждой сториз (в ряду карусели).
+        function avatarHTML(st) {
+          if (st.type === 'vvz') {
+            return '<div class="avatar __size-56 __type-image __ring-active" data-story-id="' + esc(st.id) + '"' +
+              ' data-vvz data-stories="1" data-name="Возможно, вы знакомы" aria-label="Возможно, вы знакомы">' +
+              '<img src="assets/icons/vvz_stories.png" alt=""></div>';
+          }
+          var nm = esc(firstName(P(st.author)));
+          if (st.type === 'bday') {
+            return '<div class="avatar __size-56 __type-image __ring-active __has-addon" data-story-id="' + esc(st.id) + '"' +
+              ' data-bday data-stories="1" data-name="' + nm + '">' +
+              '<img data-person-avatar="' + esc(st.author) + '" alt="">' +
+              '<div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div></div>';
+          }
+          return '<div class="avatar __size-56 __type-image __ring-active" data-story-id="' + esc(st.id) + '"' +
+            ' data-stories="1" data-name="' + nm + '">' +
+            '<img data-person-avatar="' + esc(st.author) + '" alt=""></div>';
+        }
 
-      // ВВЗ-фабрика — один и тот же slide-объект и для тапа на аватарку
-      // ВВЗ, и для рекламной вставки между сторизами.
-      function makeVvzSlide() {
-        return MomentViewer.vvzSlide({
-          title:  'Возможно, вы знакомы',
-          people: VVZ_PEOPLE,
-          cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
+        // Рендер ряда из листа «Сториз» (window.DS_STORIES). «Ваша история» (+)
+        // остаётся первой — она в разметке и помечена data-skip-viewer.
+        var STORIES = (window.DS_STORIES || []);
+        var byId = {};
+        STORIES.forEach(function (s) { byId[s.id] = s; });
+        row.insertAdjacentHTML('beforeend', STORIES.map(avatarHTML).join(''));
+        if (window.DS_PEOPLE) window.DS_PEOPLE.apply(row);
+
+        // Слайды сториз — по data-story-id. Полей, которых нет в листе
+        // (склонение имени, подзаголовки ВВЗ, длительность), берём из листа
+        // «Люди» и дефолтов.
+        MomentViewer.bindRow(row, viewer, {
+          slides: function (ava) {
+            var st = byId[ava.getAttribute('data-story-id')];
+            if (!st) return null;
+            if (st.type === 'vvz') {
+              var people = (st.people || []).map(function (id) {
+                var p = P(id) || {};
+                return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
+              });
+              return [MomentViewer.vvzSlide({
+                title:  'Возможно, вы знакомы',
+                people: people,
+                cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
+              })];
+            }
+            if (st.type === 'bday') {
+              var p = P(st.author) || {};
+              var slide = MomentViewer.bdaySlide({
+                photo:          p.photo || '',
+                name:           p.name || '',
+                headerTitle:    'День рождения ' + firstName(p),
+                headerSubtitle: '3 часа назад',
+                cta:            'Поздравить'
+              });
+              slide.cta.onClick = function () { location.href = 'gifts-catalog.html'; };
+              return [slide];
+            }
+            // Обычная сториз — картинка-слайд; если фото в листе нет, fallback
+            // на дефолтную цветную заливку (bindRow → palette).
+            if (st.image) return [{ src: st.image }];
+            return null;
+          }
         });
       }
-
-      // Правило «ВВЗ как реклама»:
-      //  - если в карусели ≥2 обычных сториз (= не data-skip-viewer / vvz /
-      //    friendship / bday) — между обычными сторизами одной из аватарок
-      //    ОДИН раз за сессию случайно вставляется ВВЗ-слайд (как реклама).
-      //  - ВВЗ-аватарка в карусели остаётся всегда — это вторая точка входа.
-      // Глобальный флаг VVZ_AD_ENABLED включает/выключает рекламу.
-      var VVZ_AD_ENABLED = false; // ⇦ on/off для правила «ВВЗ-ад между сториз»
-      var regularStoriesCount = Array.prototype.filter.call(
-        row.querySelectorAll('.avatar'),
-        function (a) {
-          return !a.hasAttribute('data-skip-viewer')
-              && !a.hasAttribute('data-vvz')
-              && !a.hasAttribute('data-friendship')
-              && !a.hasAttribute('data-bday');
-        }
-      ).length;
-      var vvzAsAd = VVZ_AD_ENABLED && regularStoriesCount >= 2;
-      var vvzAdShown = false;
-      // ВВЗ-аватарка остаётся в карусели даже когда ≥2 обычных сториз — это
-      // дополнительная точка входа. ВВЗ-ад всё равно показывается случайно
-      // между обычными сторизами (один раз за сессию).
-
-      var momentApi = MomentViewer.bindRow(row, viewer, {
-        slides: function (ava) {
-          // ВВЗ-сториз — собирается из готового хелпера, иначе null → fallback
-          // на дефолтную палитру из bindRow (см. MomentViewer.palette).
-          if (ava.hasAttribute('data-vvz')) {
-            return [makeVvzSlide()];
-          }
-          // Именинная сториз — фото-фон именинника + блюр снизу + текст.
-          // Фото берём прямо с аватарки из стака.
-          if (ava.hasAttribute('data-bday')) {
-            var img = ava.querySelector('img');
-            var name = ava.getAttribute('data-name') || '';
-            // ФИ в род. падеже под "День рождения …" (большим текстом — полностью,
-            // в шапке — только имя, чтобы не вылазить за ширину).
-            var FULL = { 'Лиза': ['Лизы', 'Михайловой'], 'Алексей': ['Алексея', 'Орлова'], 'Дима': ['Димы', 'Соколова'] };
-            var pair = FULL[name] || [name, ''];
-            var firstGen = pair[0];
-            var fullGen = (pair[0] + ' ' + pair[1]).trim();
-            var slide = MomentViewer.bdaySlide({
-              photo:          img ? img.src : '',
-              name:           fullGen,
-              headerTitle:    'День рождения ' + firstGen,
-              headerSubtitle: '3 часа назад',
-              cta:            'Поздравить'
-            });
-            // CTA «Поздравить» уводит в каталог подарков.
-            slide.cta.onClick = function () { location.href = 'gifts-catalog.html'; };
-            return [slide];
-          }
-          // Годовщина дружбы — пакет из 2 слайдов
-          if (ava.hasAttribute('data-friendship')) {
-            return [
-              MomentViewer.friendshipSlide({
-                title:   '7 лет дружбы',
-                sub:     'С 1 июня 2023 года',
-                avatars: FRIENDSHIP_AVATARS,
-                cta:     { label: 'Отправить другу' }
-              }),
-              MomentViewer.friendshipSlide({
-                title:   '478 подарков',
-                sub:     'С 1 июня 2023 года',
-                avatars: FRIENDSHIP_AVATARS,
-                cta:     { label: 'Отправить видео' }
-              })
-            ];
-          }
-          // Обычная сториз с цветной заливкой. Если ВВЗ работает в режиме
-          // рекламы и ещё не показывался — вставляем ВВЗ-слайд в случайную
-          // позицию (не самом начале, чтобы был между обычными).
-          var count = parseInt(ava.getAttribute('data-stories'), 10) || 1;
-          var palette = MomentViewer.palette;
-          var slides = [];
-          for (var i = 0; i < count; i++) {
-            slides.push({ color: palette[i % palette.length] });
-          }
-          if (vvzAsAd && !vvzAdShown && slides.length >= 2) {
-            vvzAdShown = true;
-            var pos = 1 + Math.floor(Math.random() * (slides.length - 1));
-            slides.splice(pos, 0, makeVvzSlide());
-          }
-          return slides;
-        }
-      });
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
     })();
   </script>
 
@@ -2606,6 +2571,8 @@
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+  <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
+  <script src="data/stories.js"></script>
 
   <!-- Клип: тап по кнопке справа снизу включает/выключает звук (как в NV-клипе). -->
   <script>
