@@ -14,7 +14,7 @@
   * { -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0; height: 100%;
-    background: var(--dynamic-surface-base-secondary);
+    background: var(--dynamic-surface-base-primary);
   }
 
   .fp-scene {
@@ -23,7 +23,7 @@
     height: 100dvh;
     min-height: 100dvh;
     overflow: hidden;
-    background: var(--dynamic-surface-base-secondary);
+    background: var(--dynamic-surface-base-primary);
     touch-action: pan-y;
   }
 
@@ -872,6 +872,19 @@
         return x < 0 ? -Math.round(-x) : Math.round(x);
       }
 
+      // pan для снапа. Обычно target*STEP. Для ПОСЛЕДНЕГО снапа (target===minSnap,
+      // когда карточек > 1) — особый: последняя карточка («принять всех») прижата
+      // правым краем к 12px от края экрана (как крестик), а не в общей колонке.
+      function panForSnap(target) {
+        if (target !== minSnap || liveCards.length <= 1) return target * STEP;
+        var vpW = scene.clientWidth || window.innerWidth;
+        var lastI = liveCards[liveCards.length - 1];
+        var cxLast = rowState[lastI].cx;
+        var sc = rowState[lastI].s || 1;
+        // правый край карточки = vpW/2 + (cxLast-180) + pan + 150*sc  (см. applyCard)
+        return (vpW - 12) - (vpW / 2 + (cxLast - 180) + 150 * sc);
+      }
+
       function onDown(e) {
         if (animating) return;
         if (dragging) return;
@@ -911,15 +924,15 @@
           if (snapRaf) {
             cancelAnimationFrame(snapRaf);
             snapRaf = null;
-            startX = e.clientX - (panOffset - snapped * STEP);
+            startX = e.clientX - (panOffset - panForSnap(snapped));
             dx = e.clientX - startX;
           }
         } else if (e.cancelable) {
           e.preventDefault();
         }
-        var pan = snapped * STEP + dx;
+        var pan = panForSnap(snapped) + dx;
         if (pan > 0 && snapped === 0) pan = pan * 0.3;
-        var minPan = minSnap * STEP;
+        var minPan = panForSnap(minSnap);
         if (pan < minPan) pan = minPan + (pan - minPan) * 0.3;
         panOffset = pan;
         IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
@@ -938,14 +951,14 @@
         if (target > 0) target = 0;
         if (target < minSnap) target = minSnap;
         snapped = target;
-        animateSnap(target * STEP);
+        animateSnap(panForSnap(target));
       }
       function onCancel(e) {
         if (e && pointerId !== null && e.pointerId !== pointerId) return;
         var wasLocked = locked;
         endDrag();
         if (!wasLocked) return;
-        animateSnap(snapped * STEP);
+        animateSnap(panForSnap(snapped));
       }
       function animateSnap(targetPan) {
         if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
@@ -1001,7 +1014,7 @@
           liveCards.forEach(function (j) {
             els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
           });
-          var newPan = snapped * STEP;
+          var newPan = panForSnap(snapped);
           requestAnimationFrame(function () {
             panOffset = newPan;
             liveCards.forEach(function (j) {
