@@ -1,0 +1,204 @@
+/**
+ * OK Design System — FeedComment
+ *
+ * Комментарии под карточкой ленты (lenta-q3.html). Отдельный лёгкий компонент
+ * (НЕ comment-thread/ct-*): по макету «comment v0.2» — ручка-ответ + ава 20
+ * слева, имя (title-s), текст (body-m), действия «Ответить · Класс».
+ *
+ *   <div class="fc-list">
+ *     <div class="fc-comment">
+ *       <div class="fc-comment__aside">
+ *         <span class="fc-comment__handle"></span>           ← ручка-ответ (┗)
+ *         <div class="avatar __size-20 __type-image">…</div>
+ *       </div>
+ *       <div class="fc-comment__body">
+ *         <div class="fc-comment__author ds-title-s">Имя</div>
+ *         <p class="fc-comment__text ds-body-m">…текст…</p>
+ *         <div class="fc-comment__actions">…Ответить · 👍 Класс…</div>
+ *       </div>
+ *     </div>
+ *     <div class="fc-more">…Посмотреть все комментарии…</div>     ← опц.
+ *   </div>
+ *   <div class="fc-input">…поле ответа…</div>                      ← опц.
+ *
+ * Отступы (по макету): между комментами 12; actions поста → первый коммент 8;
+ * последний коммент → «Посмотреть» 12; в комменте имя↔текст 4, текст↔кнопки 4,
+ * между кнопками 12; ава↔тело 8.
+ */
+
+.fc-list {
+  display: flex;
+  flex-direction: column;
+  /* gap НЕ задаём — вертикальный ритм даёт padding-top каждого ребёнка (12),
+     чтобы отступ был частью бокса коммента, а не «пустым» гэпом. */
+  padding: 0 var(--space-4);        /* 16 — выравнивание по контенту карточки */
+}
+/* Зазор actions-bar поста → первый коммент = 8 (без нахлёста). Стопка text-feed
+   даёт gap 12 между actions и fc-list — тянем на −4, чтобы вышло ровно 8. Сверху
+   у первого коммента ещё свой padding-top 20 (как у всех). */
+.text-feed > .fc-list {
+  margin-top: calc(var(--space-2) - var(--space-3));   /* −4 → зазор 8 */
+}
+
+/* ── один комментарий ─────────────────────────────────────────────────────── */
+.fc-comment {
+  position: relative;               /* для трунка ::before */
+  display: flex;
+  gap: var(--space-2);              /* 8 между авой-блоком и телом */
+  align-items: flex-start;
+  padding-top: var(--space-5);      /* 20 над каждым комментом (вместо gap) */
+}
+/* Связующий трунк (как в старом comment-thread): вертикаль слева, соединяющая
+   локоть этого коммента с локтем следующего. Тянется от верха локтя (padding 20
+   + margin 2 = 22) вниз и на 22 в следующий коммент (его padding 20 + margin 2),
+   попадая ровно в верх его локтя. У последнего/одиночного коммента вниз не идёт. */
+.fc-comment::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 2px;
+  top: 16px;
+  bottom: -16px;
+  background: #E4DED9;
+}
+/* Первый коммент ИЗ НЕСКОЛЬКИХ — риску продлеваем ВВЕРХ на 20px (через padding). */
+.fc-comment:first-child::before {
+  top: calc(16px - var(--space-5));   /* −4: на 20 выше локтя */
+}
+/* Последний/одиночный коммент — трунк вниз не рисуем: у последнего линия приходит
+   сверху (от предыдущего), у одиночного линии нет вовсе (без риски на 20px). */
+.fc-comment:not(:has(~ .fc-comment))::before {
+  display: none;
+}
+
+/* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
+   сдвигают контент вправо), как в макете «comment v0.2» (reply + avatar). */
+.fc-comment__aside {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+/* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
+   12px. Цвет #E4DED9 (сплошной, 100%). */
+.fc-comment__handle {
+  flex-shrink: 0;
+  width: 12px;
+  height: 14px;
+  margin-top: -4px;                 /* низ локтя (загиб) попадает на центр авы 20px */
+  border-left: 2px solid #E4DED9;
+  border-bottom: 2px solid #E4DED9;
+  border-bottom-left-radius: 8px;
+}
+
+.fc-comment__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);              /* 4: имя↔текст и текст↔кнопки */
+}
+.fc-comment__author {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+/* Текст коммента: максимум 4 строки, дальше — «ещё» (как в фиде, по тапу
+   разворачивается). Обёртка-label с скрытым чекбоксом тогглит line-clamp. */
+.fc-comment__text-wrap {
+  display: block;
+  cursor: pointer;
+}
+.fc-comment__text {
+  margin: 0;
+  color: var(--dynamic-text-and-icons-base-primary);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+/* развёрнутый — снимаем кламп */
+.fc-comment__text-wrap > input:checked ~ .fc-comment__text {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+/* «ещё/скрыть» — показываем только когда текст реально переполнен (класс
+   is-clampable вешает JS в lenta-q3.html по факту overflow). */
+.fc-comment__more {
+  display: none;
+  margin-top: var(--space-1);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.fc-comment__text-wrap.is-clampable .fc-comment__more {
+  display: inline-block;
+}
+.fc-comment__more-hide {
+  display: none;
+}
+.fc-comment__text-wrap > input:checked ~ .fc-comment__more .fc-comment__more-show {
+  display: none;
+}
+.fc-comment__text-wrap > input:checked ~ .fc-comment__more .fc-comment__more-hide {
+  display: inline;
+}
+
+.fc-comment__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);              /* 12 между кнопками */
+}
+
+/* «Посмотреть все комментарии / ответы» — 12 от последнего коммента (gap убран). */
+.fc-more {
+  display: flex;
+  padding-top: var(--space-3);
+}
+
+/* ── поле ответа ──────────────────────────────────────────────────────────── */
+/* Ава 44 + gap 8 + поле size-44 (радиус = высота/4 = 11px) + иконка send справа. */
+.fc-input {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);              /* 8 */
+  padding: 0 var(--space-4);
+}
+.fc-input__field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 44px;
+  padding: 0 var(--space-4);
+  background: var(--dynamic-surface-base-tertiary);
+  border: 1px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 11px;              /* высота / 4 */
+}
+.fc-input__text {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.fc-input__text::placeholder {
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+.fc-input__send {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--dynamic-text-and-icons-accent-primary, var(--dynamic-text-and-icons-base-secondary));
+}

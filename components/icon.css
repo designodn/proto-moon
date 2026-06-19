@@ -90,8 +90,10 @@
 .icon.__slot-play          { --icon-src: url('../assets/icons/play.svg'); }
 .icon.__slot-plus          { --icon-src: url('../assets/icons/plus.svg'); }
 .icon.__slot-reply         { --icon-src: url('../assets/icons/reply_24.svg'); }
+.icon.__slot-repost        { --icon-src: url('../assets/icons/repost_16_20.svg'); }
 .icon.__slot-reshare       { --icon-src: url('../assets/icons/reshare_24.svg'); }
 .icon.__slot-search        { --icon-src: url('../assets/icons/search.svg'); }
+.icon.__slot-send          { --icon-src: url('../assets/icons/send_24.svg'); }
 .icon.__slot-smile         { --icon-src: url('../assets/icons/smile_24.svg'); }
 .icon.__slot-status-wifi    { --icon-src: url('../assets/icons/status-wifi.svg'); }
 .icon.__slot-status-signal  { --icon-src: url('../assets/icons/status-signal.svg'); }

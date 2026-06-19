@@ -128,3 +128,28 @@
 /* Вариант с <img>-иконкой (вместо mask-спана .icon __src): svg несёт свой
    fill, поэтому белим CSS-фильтром. <img> резолвит путь от документа → без 404. */
 .clip-feed__mute-icon { display: block; filter: brightness(0) invert(1); }
+
+/* ============================================================
+   КЛИП С КОММЕНТАМИ — тот же full-bleed клип (видео 9:16 + оверлей
+   автора + mute), но actions-bar и ветка комментов крепятся НИЖЕ на
+   белом (см. макет «Комменты Клип»). Плеер заворачивается в .text-feed
+   .island.ll-clipc, actions-overlay на видео НЕ рисуем.
+   ============================================================ */
+/* Плеер full-bleed: гасим горизонтальный паддинг, что .text-feed даёт детям
+   (специфичность .clip-feed.ll-clipc__player перебивает .text-feed>:not(media)). */
+.text-feed > .clip-feed.ll-clipc__player {
+  padding-left: 0;
+  padding-right: 0;
+}
+/* Нет actions-overlay → mute опускаем к низу видео (в базе он над actions, 68px). */
+.ll-clipc__player .clip-feed__mute {
+  bottom: var(--space-4);
+}
+/* «Подписаться» в шапке клипа — к правому краю. */
+.clip-feed__subscribe {
+  margin-left: auto;
+}
+/* Лейбл «Может быть интересно» над клипом — title-s, основной цвет. */
+.ll-clipc__hint {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
