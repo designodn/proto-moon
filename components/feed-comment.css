@@ -33,19 +33,36 @@
      чтобы отступ был частью бокса коммента, а не «пустым» гэпом. */
   padding: 0 var(--space-4);        /* 16 — выравнивание по контенту карточки */
 }
-/* actions-bar поста → первый коммент = 8. Каждый коммент несёт padding-top 12,
-   поэтому fc-list поднимаем так, чтобы у первого вышло 8: gap стопки text-feed
-   (12) − 16 = −4, плюс padding-top 12 = 8. */
+/* Зазор actions-bar поста → первый коммент = 8 (без нахлёста). Стопка text-feed
+   даёт gap 12 между actions и fc-list — тянем на −4, чтобы вышло ровно 8. Сверху
+   у первого коммента ещё свой padding-top 20 (как у всех). */
 .text-feed > .fc-list {
-  margin-top: calc(-1 * var(--space-4));
+  margin-top: calc(var(--space-2) - var(--space-3));   /* −4 → зазор 8 */
 }
 
 /* ── один комментарий ─────────────────────────────────────────────────────── */
 .fc-comment {
+  position: relative;               /* для трунка ::before */
   display: flex;
   gap: var(--space-2);              /* 8 между авой-блоком и телом */
   align-items: flex-start;
-  padding-top: var(--space-3);      /* 12 над каждым комментом (вместо gap) */
+  padding-top: var(--space-5);      /* 20 над каждым комментом (вместо gap) */
+}
+/* Связующий трунк (как в старом comment-thread): вертикаль слева, соединяющая
+   локоть этого коммента с локтем следующего. Тянется от верха локтя (padding 20
+   + margin 2 = 22) вниз и на 22 в следующий коммент (его padding 20 + margin 2),
+   попадая ровно в верх его локтя. У последнего/одиночного коммента вниз не идёт. */
+.fc-comment::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 2px;
+  top: 22px;
+  bottom: -22px;
+  background: var(--static-surface-brown);
+}
+.fc-comment:not(:has(~ .fc-comment))::before {
+  display: none;
 }
 
 /* Левая колонка: ручка-ответ (12px) + аватар — обе В ПОТОКЕ (влияют на лейаут,
@@ -57,7 +74,8 @@
   gap: var(--space-1);
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет: --static-surface-brown (#AA8F7F). БЕЗ доп. opacity. */
+   12px. Цвет --static-surface-brown (#AA8F7F) — токен продублирован в light/dark
+   темы (был только в theme-cocktail). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
