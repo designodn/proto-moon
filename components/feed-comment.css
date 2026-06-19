@@ -59,10 +59,12 @@
   top: -2px;
   width: 12px;
   height: 14px;
-  border-left: 2px solid var(--dynamic-stroke-contrast-mid);
-  border-bottom: 2px solid var(--dynamic-stroke-contrast-mid);
+  /* Видимый, но мягкий локоть. Токен --dynamic-stroke-contrast-mid сам по себе
+     ~16% альфы — НЕ накладываем сверху ещё opacity (иначе ~5% и не видно).
+     contrast-high (~36%) даёт чёткую, но негромкую линию. */
+  border-left: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
+  border-bottom: 2px solid var(--dynamic-stroke-contrast-high, var(--static-stroke-contrast-high));
   border-bottom-left-radius: 8px;
-  opacity: 0.3;
 }
 
 .fc-comment__body {
