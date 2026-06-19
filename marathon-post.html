@@ -41,10 +41,13 @@
     padding: var(--space-4);
   }
 
-  /* Зона загрузки фото. Пусто — кремовый фон, по центру кружок + подсказка + чип.
-     С фото (.__filled) — само фото, чип оверлеем снизу. */
+  /* Зона загрузки фото (это <label> — тап открывает выбор файла).
+     Пусто — кремовый фон, по центру кружок + подсказка. С фото (.__filled) —
+     само фото. Чип-хэштег — оверлей в нижней-центральной части в ОБОИХ
+     состояниях (позиция не меняется при прикреплении). */
   .ll-fp-drop {
     position: relative;
+    display: block;
     border-radius: 20px;
     overflow: hidden;
     background: var(--dynamic-surface-tint-orange, #EFE0D7);
@@ -59,7 +62,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-3);
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-4) 72px;
     text-align: center;
   }
   .ll-fp-drop__upload {
@@ -87,11 +90,15 @@
     inset: 0;
   }
 
-  /* Чип хэштега. В пустом — статичный по центру; с фото — оверлей снизу-слева. */
+  /* Чип хэштега — фиксированный оверлей низ-центр, виден всегда (не двигается). */
   .ll-fp-chip {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1;
     display: inline-flex;
     align-items: center;
-    align-self: center;
     padding: var(--space-2) var(--space-3);
     border-radius: 12px;
     background: var(--dynamic-surface-base-secondary);
@@ -100,15 +107,7 @@
     font-size: 13px;
     font-weight: 600;
     line-height: 16px;
-  }
-  /* Оверлейный чип (прямой ребёнок зоны) виден только когда загружено фото. */
-  .ll-fp-drop > .ll-fp-chip { display: none; }
-  .ll-fp-drop.__filled > .ll-fp-chip {
-    display: inline-flex;
-    position: absolute;
-    left: var(--space-3);
-    bottom: var(--space-3);
-    z-index: 1;
+    white-space: nowrap;
   }
 
   /* Поле подписи */
@@ -137,61 +136,6 @@
     background: var(--dynamic-surface-base-secondary);
   }
   .ll-fp-publish[disabled] { opacity: 0.4; pointer-events: none; }
-
-  /* ── Шторка «Вы участвуете в фотомарафоне!» (после публикации) ── */
-  .mp-sheet {
-    position: fixed; inset: 0; z-index: 100;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    visibility: hidden;
-  }
-  .mp-sheet.__open { visibility: visible; }
-  .mp-sheet__scrim {
-    position: absolute; inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0; transition: opacity 280ms ease;
-  }
-  .mp-sheet.__open .mp-sheet__scrim { opacity: 1; }
-  .mp-sheet__panel {
-    position: relative;
-    display: flex; flex-direction: column;
-    max-height: 88%;
-    background: var(--dynamic-surface-base-secondary);
-    border-radius: 24px 24px 0 0;
-    padding: 16px 16px 24px;
-    transform: translateY(100%);
-    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .mp-sheet.__open .mp-sheet__panel { transform: translateY(0); }
-  /* Лотти-конфетти поверх панели шторки (после публикации) */
-  .mp-confetti {
-    position: absolute; inset: 0; z-index: 3;
-    pointer-events: none; overflow: hidden;
-    border-radius: 24px 24px 0 0;
-  }
-  .mp-confetti svg { width: 100%; height: 100%; }
-  .mp-sheet__head { display: flex; align-items: flex-start; gap: var(--space-3); }
-  .mp-sheet__title { flex: 1 1 0; min-width: 0; color: var(--dynamic-text-and-icons-base-primary); }
-  .mp-sheet__close { flex-shrink: 0; }
-  .mp-sheet__subtitle { margin: 8px 0 16px; color: var(--dynamic-text-and-icons-base-secondary); }
-  .mp-sheet__list {
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-    display: flex; flex-direction: column; gap: var(--space-4);
-  }
-  .mp-sheet__list::-webkit-scrollbar { display: none; }
-
-  /* Тост (лимит приглашений) — как в рулетке */
-  .mp-toast {
-    position: fixed; left: 50%; bottom: 16px; z-index: 120;
-    transform: translateX(-50%) translateY(16px);
-    width: calc(100% - 24px); box-sizing: border-box;
-    padding: var(--space-3) var(--space-4); border-radius: 14px;
-    background: #1F1F22; color: #fff;
-    font: 600 15px/20px var(--font-family);
-    box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5);
-    opacity: 0; pointer-events: none;
-    transition: opacity 240ms ease, transform 240ms ease;
-  }
-  .mp-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -223,24 +167,24 @@
 
       <!-- ТЕЛО ФОРМЫ -->
       <div class="ll-fp-body">
-        <div class="ll-fp-drop" id="fpDrop" role="button" tabindex="0" aria-label="Загрузить фото">
+        <label class="ll-fp-drop" id="fpDrop" aria-label="Загрузить фото">
+          <input type="file" id="fpFile" accept="image/*" hidden>
           <div class="ll-fp-drop__empty">
             <span class="ll-fp-drop__upload"><img src="assets/icons/photo_add_24.svg" width="28" height="28" alt=""></span>
             <div class="ll-fp-drop__hint ds-title-s">Загрузите хотя бы одно фото для участия</div>
-            <span class="ll-fp-chip">#РадостьДетства</span>
           </div>
           <div class="ll-fp-drop__photo">
-            <img src="https://picsum.photos/seed/fp-photo/640/640" alt="">
+            <img id="fpPhoto" src="" alt="">
           </div>
-          <span class="ll-fp-chip">#РадостьДетства</span>
-        </div>
+          <span class="ll-fp-chip" id="fpChip">#РадостьДетства</span>
+        </label>
 
-        <input class="ll-fp-caption" type="text" placeholder="Подпись к фото">
+        <input class="ll-fp-caption" id="fpCaption" type="text" placeholder="Подпись к фото">
       </div>
 
       <!-- НИЖНИЕ КНОПКИ -->
       <div class="ll-fp-actions">
-        <div class="button-wrapper __size-44 __full-width" style="display:block; width:100%" id="fpMore">
+        <div class="button-wrapper __size-56 __full-width" style="display:block; width:100%" id="fpMore">
           <button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Подробнее о фотомарафоне</span></button>
         </div>
         <div class="button-wrapper __size-56 __full-width" style="display:block; width:100%">
@@ -251,63 +195,62 @@
     </div>
   </div>
 
-  <!-- ШТОРКА «Вы участвуете в фотомарафоне!» — после публикации -->
-  <div class="mp-sheet" id="mpSheet" aria-hidden="true">
-    <div class="mp-sheet__scrim" data-sheet-close></div>
-    <div class="mp-sheet__panel" role="dialog" aria-label="Вы участвуете в фотомарафоне">
-      <div class="mp-confetti" id="mpConfetti" aria-hidden="true"></div>
-      <div class="mp-sheet__head">
-        <div class="ds-title-l mp-sheet__title">Вы участвуете<br>в фотомарафоне!</div>
-        <span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span>
-      </div>
-      <p class="ds-body-m mp-sheet__subtitle">Пригласите друзей, чтобы они тоже могли поделиться своими фото и проголосовать за ваше</p>
-
-      <div class="mp-sheet__list" id="mpList">
-        <!-- «Друга нет в ОК?» — поделиться ссылкой -->
-        <div class="user-cell">
-          <div class="avatar __size-56 __type-icon"><span class="icon __size-24 __slot-reshare"></span></div>
-          <div class="user-cell__body">
-            <div class="ds-title-s user-cell__title">Друга нет в ОК?</div>
-            <div class="ds-caption-m user-cell__time">Отправьте ссылку</div>
-          </div>
-          <div class="user-cell__actions">
-            <div class="button-wrapper __size-28"><button class="button-container __style-secondary" id="mpShare"><span class="button-content">Поделиться</span></button></div>
-          </div>
-        </div>
-        <!-- строки друзей вставляются из JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Тост: превышен дневной лимит приглашений -->
-  <div class="mp-toast" id="mpToast" role="status" aria-live="polite">Вы пригласили всех друзей на сегодня</div>
-
-  <!-- Lottie для конфетти после публикации -->
-  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
-  <!-- Реальные люди из реестра (data/people.js → window.DS_PEOPLE_DATA) -->
-  <script src="data/people.js"></script>
   <script src="components/back-button.js"></script>
   <script>
-    // Прототип: тап по зоне «загружает» заготовленное фото — форма переходит
-    // в состояние с фото, «Опубликовать» становится активной, «Подробнее» скрыта.
     (function () {
-      var drop = document.getElementById('fpDrop');
-      var publish = document.getElementById('fpPublish');
-      var more = document.getElementById('fpMore');
-      if (!drop) return;
-      function fill() {
-        if (drop.classList.contains('__filled')) return;
-        drop.classList.add('__filled');
-        if (publish) publish.disabled = false;
-        if (more) more.style.display = 'none';
-      }
-      drop.addEventListener('click', fill);
-      drop.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fill(); }
+      var fileInput = document.getElementById('fpFile');
+      var drop      = document.getElementById('fpDrop');
+      var photoImg  = document.getElementById('fpPhoto');
+      var chip      = document.getElementById('fpChip');
+      var caption   = document.getElementById('fpCaption');
+      var publish   = document.getElementById('fpPublish');
+      var more      = document.getElementById('fpMore');
+      var HASHTAG   = '#РадостьДетства';
+      var photoData = '';
+
+      // Тема марафона — из data/marathon.json (meta.hashtag).
+      fetch('data/marathon.json').then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.meta && d.meta.hashtag) { HASHTAG = d.meta.hashtag; chip.textContent = HASHTAG; }
+      }).catch(function () {});
+
+      // Подпись сохраняется в кеше (sessionStorage) — переживает переходы до обновления.
+      try { var c = sessionStorage.getItem('mp_caption'); if (c) caption.value = c; } catch (e) {}
+      caption.addEventListener('input', function () {
+        try { sessionStorage.setItem('mp_caption', caption.value); } catch (e) {}
       });
-      // «Опубликовать» → показываем шторку «Вы участвуете» (а не уходим со страницы).
-      if (publish) publish.addEventListener('click', function () {
-        if (!publish.disabled) openSheet();
+
+      // Выбор реального фото → уменьшаем (canvas) и показываем в зоне.
+      fileInput.addEventListener('change', function () {
+        var f = fileInput.files && fileInput.files[0];
+        if (!f) return;
+        var rd = new FileReader();
+        rd.onload = function () {
+          var im = new Image();
+          im.onload = function () {
+            var max = 1000, w = im.width, h = im.height;
+            if (Math.max(w, h) > max) { var s = max / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+            var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(im, 0, 0, w, h);
+            try { photoData = cv.toDataURL('image/jpeg', 0.85); } catch (e) { photoData = rd.result; }
+            photoImg.src = photoData;
+            drop.classList.add('__filled');
+            publish.disabled = false;
+            if (more) more.style.display = 'none';
+          };
+          im.src = rd.result;
+        };
+        rd.readAsDataURL(f);
+      });
+
+      // «Опубликовать» → кладём фото/подпись/хэштег в кеш и открываем ЛЕНТУ
+      // (шторка и пост пользователя появятся уже там).
+      publish.addEventListener('click', function () {
+        if (publish.disabled) return;
+        try {
+          sessionStorage.setItem('mp_published', JSON.stringify({ photo: photoData, caption: caption.value || '', hashtag: HASHTAG }));
+          sessionStorage.setItem('mp_show_sheet', '1');
+        } catch (e) {}
+        location.href = 'lenta-q3.html?published=1';
       });
     })();
 
@@ -317,136 +260,6 @@
       if (!btn) return;
       e.preventDefault();
       location.href = btn.getAttribute('data-href');
-    });
-
-    // ── Шторка «Вы участвуете»: список друзей + приглашения (механика рулетки) ──
-    var MARATHON = 'РадостьДетства';
-    var sheet = document.getElementById('mpSheet');
-    var list = document.getElementById('mpList');
-    var toastEl = document.getElementById('mpToast');
-
-    function esc(s) {
-      return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    // Друзья из реестра «Люди» (id 1–10 + vvz-1..3); первого показываем уже приглашённым.
-    var ALL = window.DS_PEOPLE_DATA || [];
-    var nums = ALL.filter(function (p) { return p.id >= 1 && p.id <= 10; })
-                  .sort(function (a, b) { return a.id - b.id; });
-    var extra = ['vvz-1', 'vvz-2', 'vvz-3']
-      .map(function (id) { return ALL.filter(function (p) { return p.id === id; })[0]; })
-      .filter(Boolean);
-    var FRIENDS = nums.concat(extra).map(function (p, i) {
-      return { n: p.name, photo: p.photo, sent: i === 0 };
-    });
-
-    function inviteBtnHTML() {
-      return '<div class="button-wrapper __size-28 rf-invite"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
-    }
-    function goBtnHTML() {
-      return '<div class="button-wrapper __size-28 rf-go"><button class="button-container __style-secondary"><span class="button-content">Перейти</span></button></div>';
-    }
-
-    FRIENDS.forEach(function (f) {
-      var cell = document.createElement('div');
-      cell.className = 'user-cell';
-      cell.dataset.name = f.n;
-      cell.dataset.photo = f.photo || '';
-      cell.innerHTML =
-        '<div class="avatar __size-56 __type-image"><img src="' + esc(f.photo) + '" alt=""></div>' +
-        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + esc(f.n) + '</div></div>' +
-        '<div class="user-cell__actions">' + (f.sent ? goBtnHTML() : inviteBtnHTML()) + '</div>';
-      list.appendChild(cell);
-    });
-
-    // Дневной лимит приглашений (sessionStorage — переживает переходы прототипа).
-    var DAILY_LIMIT = 10;
-    var STORE_KEY = 'mp_invited_today';
-    function getInvited() {
-      var v = parseInt(sessionStorage.getItem(STORE_KEY), 10);
-      if (isNaN(v)) { v = FRIENDS.filter(function (f) { return f.sent; }).length; sessionStorage.setItem(STORE_KEY, v); }
-      return v;
-    }
-    function inviteOne() {
-      var n = getInvited();
-      if (n >= DAILY_LIMIT) return false;
-      sessionStorage.setItem(STORE_KEY, n + 1);
-      return true;
-    }
-
-    // Таймер «Приглашаем» (штатный __state-timered) → «Перейти».
-    var TIMER_SEC = 5;
-    function startTimer(wrapper) {
-      var btn = wrapper.querySelector('.button-container');
-      var label = btn.querySelector('.button-content');
-      wrapper.className = 'button-wrapper __size-28 rf-timer';
-      btn.classList.add('__state-timered');
-      btn.style.setProperty('--timered-animation-duration', TIMER_SEC + 's');
-      label.textContent = 'Приглашаем';
-      setTimeout(function () {
-        wrapper.className = 'button-wrapper __size-28 rf-go';
-        btn.classList.remove('__state-timered');
-        label.textContent = 'Перейти';
-      }, TIMER_SEC * 1000);
-    }
-
-    function goToChat(cell) {
-      location.href = 'marathon-chat.html?name=' + encodeURIComponent(cell.dataset.name || '') +
-                      '&photo=' + encodeURIComponent(cell.dataset.photo || '');
-    }
-
-    var toastTimer;
-    function showToast(msg) {
-      toastEl.textContent = msg || toastEl.textContent;
-      toastEl.classList.add('__show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
-    }
-
-    // Тап «Пригласить» → таймер (или тост при лимите); «Перейти» → диалог.
-    list.addEventListener('click', function (e) {
-      var invite = e.target.closest('.rf-invite');
-      if (invite) {
-        if (!inviteOne()) { showToast('Вы пригласили всех друзей на сегодня'); return; }
-        startTimer(invite);
-        return;
-      }
-      var go = e.target.closest('.rf-go');
-      if (go) goToChat(go.closest('.user-cell'));
-    });
-
-    // «Поделиться» — нативный шеринг / копирование ссылки.
-    var shareBtn = document.getElementById('mpShare');
-    if (shareBtn) shareBtn.addEventListener('click', function () {
-      var data = { title: 'Фотомарафон', text: 'Участвую в фотомарафоне #' + MARATHON + ' — присоединяйся и голосуй за моё фото!', url: location.href };
-      if (navigator.share) navigator.share(data).catch(function () {});
-      else if (navigator.clipboard) navigator.clipboard.writeText(data.url).then(function () { showToast('Ссылка скопирована'); }).catch(function () {});
-    });
-
-    // Конфетти-лотти поверх панели шторки (разово, при открытии).
-    var confettiHost = document.getElementById('mpConfetti');
-    function playConfetti() {
-      if (!window.lottie || !confettiHost) return;
-      confettiHost.innerHTML = '';
-      var anim = window.lottie.loadAnimation({
-        container: confettiHost, renderer: 'svg', loop: false, autoplay: true,
-        rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
-        path: 'assets/lottie/confetti.json'
-      });
-      anim.addEventListener('complete', function () { anim.destroy(); confettiHost.innerHTML = ''; });
-    }
-
-    // Открытие / закрытие шторки.
-    function openSheet() {
-      sheet.classList.add('__open');
-      sheet.setAttribute('aria-hidden', 'false');
-      // даём панели начать выезжать, затем сыплем конфетти
-      setTimeout(playConfetti, 260);
-    }
-    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); }
-    document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-sheet-close]')) closeSheet();
     });
   </script>
 </body>

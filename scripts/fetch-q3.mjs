@@ -347,34 +347,36 @@ async function fetchLinkMeta(url) {
   } catch { return null; }
 }
 
-/* ── комменты под постом (компонент comment-thread, ct-*) ───────────────────── */
-/* Один верхнеуровневый коммент: аватар + имя (запекаются inline из people.json,
- * как авторы Q3) + текст + действия «Ответить / Нравится». Времени/счётчика
- * лайков в листе нет — поэтому мету не рисуем, а у «Нравится» текст вместо числа. */
+/* ── комменты под постом (компонент feed-comment, fc-*) ──────────────────────── */
+/* Один коммент по макету «comment v0.2»: ручка-ответ + ава 20 слева, имя
+ * (title-s), текст (body-m), действия «Ответить · Класс» (кнопки size-20,
+ * у «Ответить» иконки нет). Имя/ава запекаются inline из people.json. */
 function commentItem(authorId, text) {
-  return `              <article class="ct-item">
-                <div class="ct-item__aside">
-                  <div class="avatar __size-24 __type-image">${img(personPhoto(authorId))}</div>
+  return `            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image">${img(personPhoto(authorId))}</div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">${esc(personName(authorId))}</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">${esc(resolveNames(text))}</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
                 </div>
-                <div class="ct-item__body">
-                  <div class="ct-item__head">
-                    <span class="ct-item__author ds-title-s">${esc(personName(authorId))}</span>
-                  </div>
-                  <p class="ct-item__text">${esc(resolveNames(text))}</p>
-                  <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
-                  </div>
-                </div>
-              </article>`;
+              </div>
+            </div>`;
 }
 
-/** Блок комментов под карточкой (ct-list). '' — если в данных нет ни одного. */
+/** Блок комментов под карточкой (fc-list + fc-input). '' — если нет ни одного. */
 function renderCommentThread(p) {
   const list = p.threadComments || [];
   if (!list.length) return '';
-  const items = list.map(c =>
-    `            <div class="ct-thread">\n${commentItem(c.authorId, c.text)}\n            </div>`).join('\n');
+  const items = list.map(c => commentItem(c.authorId, c.text)).join('\n');
   // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
   // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
   // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
@@ -386,21 +388,17 @@ function renderCommentThread(p) {
   const total = parseInt(p.comments, 10);
   const showMore = asReplies || (Number.isFinite(total) && total > list.length);
   const more = showMore
-    ? `\n            <div class="ct-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    ? `\n            <div class="fc-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
-  // Поле ввода под веткой — отдельный ребёнок карточки (своё выравнивание),
-  // как в эталоне «Комменты Клип/Подарок». Аватар — мой профиль.
-  const input = `          <div class="comment-input ll-feed-comment-input">
-            <div class="avatar __size-36 __type-image">${img(personPhoto('my_profile'))}</div>
-            <div class="comment-input__field">
-              <input class="text-input __size-36" placeholder="${esc(placeholder)}">
-              <div class="comment-input__actions">
-                <span class="comment-input__action icon __size-24 __slot-attach"></span>
-                <span class="comment-input__action icon __size-24 __slot-smile"></span>
-              </div>
+  // Поле ответа: ава 44 + поле size-44 (радиус = высота/4) + иконка send справа.
+  const input = `          <div class="fc-input">
+            <div class="avatar __size-44 __type-image">${img(personPhoto('my_profile'))}</div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="${esc(placeholder)}">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>`;
-  return `          <div class="ct-list ll-feed-comments">\n${items}${more}\n          </div>\n${input}`;
+  return `          <div class="fc-list">\n${items}${more}\n          </div>\n${input}`;
 }
 
 /** Прицепить комменты к готовой карточке: вставка перед последним </article>
@@ -792,23 +790,35 @@ ${authorHeader(aid, time)}
       });
       const openUrl = `klipy.html?${q}`;
 
-      // Клип С комментами рисуем «как в Figma» — обычной карточкой-островом:
-      // постер/видео в стандартном медиа-блоке (4:3, object-fit cover), автор
-      // сверху, опц. лейбл из «шапка» («может быть интересно»), actions-bar.
-      // Комменты/инпут добавит attachComments (путь island, внутрь карточки).
-      // Без комментов остаётся прежний full-bleed 9:16 клип (ниже).
+      // Клип С комментами: ТОТ ЖЕ full-bleed клип (видео 9:16 + оверлей автора +
+      // mute), но actions-bar и ветка комментов крепятся НИЖЕ на белом (эталон
+      // «Комменты Клип»). Плеер заворачиваем в island-карточку; comment-thread
+      // добавит attachComments перед </article>. Actions-overlay на видео НЕТ —
+      // счётчики уходят в белый actions-bar под клипом.
       if ((p.threadComments || []).length) {
-        const subscribe = isGroupId(aid);
-        const hint = p.header
-          ? `          <div class="ds-caption-m ll-clip-hint">${esc(p.header)}</div>\n`
+        const subBtn = isGroupId(aid)
+          ? `
+              <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-on-image"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>`
           : '';
-        const cardVisual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
-          ? `<video src="${esc(src)}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video>`
-          : img(src, 'style="width:100%;height:100%;object-fit:cover;display:block" ');
-        return `        <article class="text-feed island">
-${hint}${authorHeader(aid, time, { subscribe })}
-
-          <a class="text-feed__media __single" href="${esc(openUrl)}" aria-label="Открыть клип" style="display:block">${cardVisual}</a>
+        const hint = p.header
+          ? `          <div class="ds-title-s ll-clipc__hint">${esc(p.header)}</div>\n`
+          : '';
+        return `        <article class="text-feed island ll-clipc">
+${hint}          <div class="clip-feed ll-clipc__player">
+            <div class="clip-feed__media">${visual}</div>
+            <a class="clip-feed__open" aria-label="Открыть клип" href="${esc(openUrl)}" style="position:absolute;inset:0;z-index:1"></a>
+            <div class="clip-feed__header">
+              <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
+              <div class="clip-feed__txt">
+                <div class="ds-title-s">${esc(personName(aid))}</div>
+                <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
+              </div>${subBtn}
+            </div>
+            <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
+          </div>
 ${actionsBar(likes, comments, reshares)}
         </article>`;
       }
@@ -906,7 +916,7 @@ ${mediaInner}
         ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
         : 'Комментарий';
       const preview = `          <div class="text-feed__reshare-card caf-preview">
-            <span class="icon __size-20 __slot-reshare caf-preview__icon"></span>
+            <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
               <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
               <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}

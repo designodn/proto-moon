@@ -439,11 +439,21 @@
 
 /* — 1. модификатор под постом: divider сверху + промо + CTA — */
 .text-feed__marathon {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--dynamic-stroke-contrast-low);
+}
+/* Сепаратор сверху — с отступами 16 по бокам (не edge-to-edge). */
+.text-feed__marathon::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 1px;
+  background: var(--dynamic-stroke-contrast-low);
 }
 
 /* — 2. отдельная карточка «от приложения» — */

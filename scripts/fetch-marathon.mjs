@@ -78,10 +78,18 @@ function renderEntries(entries) {
   if (!entries.length) return '';
   const [first, ...rest] = entries;
   const hero = card(first, 1, true);
-  const masonry = rest.map((e, i) => card(e, i + 2, false)).join('\n');
+  // Раскладываем работы по двум колонкам ПОСТРОЧНО (через одну), чтобы порядок
+  // мест шёл слева-направо сверху-вниз: верхний ряд — места 2 и 3, ниже 4 и 5 и т.д.
+  const colA = [], colB = [];
+  rest.forEach((e, i) => (i % 2 === 0 ? colA : colB).push(card(e, i + 2, false)));
   return `${hero}
           <div class="ll-mar-masonry">
-${masonry}
+            <div class="ll-mar-col">
+${colA.join('\n')}
+            </div>
+            <div class="ll-mar-col">
+${colB.join('\n')}
+            </div>
           </div>`;
 }
 
