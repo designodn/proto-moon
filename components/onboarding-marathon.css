@@ -218,7 +218,7 @@
 .omar-stickers {
   align-self: center;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;                 /* Figma: стикеры 340×340 */
   aspect-ratio: 1 / 1;
   margin-top: var(--space-6);
   object-fit: contain;
@@ -227,6 +227,26 @@
   transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.3,1.2);
 }
 .omar-slide.is-active .omar-stickers { opacity: 1; transform: none; transition-delay: .1s; }
+
+/* ============================================================
+   4. ПРИГЛАШАЙТЕ — одна широкая картинка во всю ширину (image 510, 432×241)
+   ============================================================ */
+.omar-slide--invite { align-items: center; text-align: center; padding-left: 0; padding-right: 0; }
+.omar-slide--invite .omar-slide__title,
+.omar-slide--invite .omar-slide__text { padding-left: var(--space-4); padding-right: var(--space-4); }
+.omar-invite {
+  display: block;
+  align-self: stretch;
+  width: calc(100% + 72px);
+  margin: var(--space-6) -36px 0;   /* выходит за края, как в макете */
+  height: 241px;
+  object-fit: cover;
+  border-radius: 24px;
+  opacity: 0;
+  transform: scale(.92);
+  transition: opacity .5s ease, transform .55s cubic-bezier(.2,.7,.3,1);
+}
+.omar-slide--invite.is-active .omar-invite { opacity: 1; transform: none; transition-delay: .08s; }
 
 /* ============================================================
    Нижняя панель: кнопки
