@@ -365,8 +365,8 @@ function commentItem(authorId, text) {
                   <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
                 </label>
                 <div class="fc-comment__actions">
-                  <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
-                  <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
                 </div>
               </div>
             </div>`;
@@ -774,9 +774,15 @@ ${authorHeader(aid, time)}
 
     /* ── Клип — full-bleed 9:16 с тёмными actions-overlay ── */
     case 'clip': {
-      // Видео клипа — локальный файл из репы (как clip-feed в NV-ленте).
-      // Если в листе дали свою ссылку на видео — используем её, иначе дефолт.
-      const src = photos[0] || x.fallbackMedia;
+      // Видео клипа. В листе («фото») можно дать:
+      //   • полный URL (http…) — берём как есть;
+      //   • просто имя файла (hermitage.mp4) — подставляем assets/clips/<имя>;
+      //   • относительный путь (со слешем) — берём как есть;
+      //   • пусто — дефолтный клип из COMPANION (assets/clips/sable-tepa.mp4).
+      const rawClip = photos[0] || (p.photosRaw && p.photosRaw[0]) || '';
+      const src = /^https?:\/\//.test(rawClip) ? rawClip
+        : rawClip ? (rawClip.includes('/') ? rawClip : `assets/clips/${rawClip}`)
+        : x.fallbackMedia;
       const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
         ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
         : img(src);
@@ -1036,6 +1042,9 @@ async function main() {
         title: cell(c, I.title),
         text: cell(c, I.text),
         photos: cell(c, I.photos).split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        // Сырые значения «фото» (без фильтра http) — для клипа можно дать просто
+        // имя файла (hermitage.mp4), скрипт подставит assets/clips/<имя>.
+        photosRaw: cell(c, I.photos).split(',').map(s => s.trim()).filter(Boolean),
         likes: cell(c, I.likes),
         comments: cell(c, I.comments),
         reshares: cell(c, I.reshares),
