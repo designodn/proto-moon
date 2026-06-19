@@ -1,9 +1,9 @@
 /**
  * OK Design System — ActionsBar (JS-часть)
  *
- * Поведение action-кнопок в `.actions-bar`. Сейчас — единственное поведение:
- * Lottie-анимация «Класс!» при постановке лайка на любом `.button-klass`
- * на странице. На анлайк не играет.
+ * Поведение action-кнопок в `.actions-bar`:
+ *  - тактильный отклик (navigator.vibrate) на каждый тап по `.button-klass`;
+ *  - Lottie-анимация «Класс!» при постановке лайка (на анлайк не играет).
  *
  * Подключение (один раз на странице, где есть actions-bar):
  *   <script src="components/actions-bar.js"></script>
@@ -68,9 +68,14 @@
 
   document.addEventListener('change', function (e) {
     var input = e.target;
-    if (!input || input.type !== 'checkbox' || !input.checked) return;
+    if (!input || input.type !== 'checkbox') return;
     var label = input.closest ? input.closest('.button-klass') : null;
     if (!label) return;
+    // Тактильный отклик на тап по «классу» (и лайк, и снятие). Vibration API
+    // есть на Android-Chrome; iOS Safari его не поддерживает → тихий no-op.
+    if (navigator.vibrate) { try { navigator.vibrate(15); } catch (_) {} }
+    // Lottie «Класс!» — только при постановке лайка, на анлайк не играет.
+    if (!input.checked) return;
     playLike(label);
   });
 })();
