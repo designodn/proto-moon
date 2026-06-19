@@ -2829,9 +2829,10 @@
         + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
         +   '<div class="button-wrapper __size-44 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
       var feed = document.querySelector('.ll-feed');
-      var banner = feed && feed.querySelector('.ll-banner');
+      // Пост пользователя — после ВВЗ-портлета (иначе после баннера / в начало).
+      var anchor = feed && (feed.querySelector('.vvz-portlet') || feed.querySelector('.ll-banner'));
       if (feed) {
-        if (banner && banner.nextSibling) feed.insertBefore(art, banner.nextSibling);
+        if (anchor && anchor.nextSibling) feed.insertBefore(art, anchor.nextSibling);
         else feed.insertBefore(art, feed.firstChild);
         // отступ под sticky-навбар, чтобы при скролле пост не уезжал под шапку
         art.style.scrollMarginTop = '72px';
