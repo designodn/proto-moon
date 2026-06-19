@@ -43,6 +43,13 @@
     ? p.slice(0, p.indexOf('/new-vision/') + 1)
     : p.slice(0, p.lastIndexOf('/') + 1);
 
+  // Относительный префикс до корня сайта, взятый из src этого скрипта
+  // (…/components/screen-transition.js): '', '../' и т.п. Резолвится
+  // относительно документа, поэтому корректен и из подпапок (/koleso/),
+  // и при базовом пути деплоя. Используется для фолбэка «Назад» на лаунчер.
+  var SITE_ROOT = ((document.currentScript && document.currentScript.getAttribute('src')) || '')
+    .replace(/components\/screen-transition\.js.*$/, '');
+
   // Страницы, у которых в NV есть собственная версия → принудительный ремап.
   var NV_TWIN = {
     'lenta.html':    'new-vision/lenta.html',
@@ -148,8 +155,9 @@
       var stack = navStackGet();
       var prev = stack[stack.length - 1];
       if (prev != null) { location.href = prev; return; }
-      var href = backBtn.getAttribute('data-href');
-      if (href) location.href = withNV(href); else history.back();
+      // Нет истории (прямой вход в свежей вкладке) → домашний экран с иконкой
+      // приложения; тап по иконке ОК открывает NV-ленту.
+      location.href = SITE_ROOT + 'new-vision.html';
       return;
     }
 
