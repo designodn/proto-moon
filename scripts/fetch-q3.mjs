@@ -308,6 +308,66 @@ async function fetchLinkMeta(url) {
   } catch { return null; }
 }
 
+/* ── комменты под постом (компонент comment-thread, ct-*) ───────────────────── */
+/* Один верхнеуровневый коммент: аватар + имя (запекаются inline из people.json,
+ * как авторы Q3) + текст + действия «Ответить / Нравится». Времени/счётчика
+ * лайков в листе нет — поэтому мету не рисуем, а у «Нравится» текст вместо числа. */
+function commentItem(authorId, text) {
+  return `              <article class="ct-item">
+                <div class="ct-item__aside">
+                  <div class="avatar __size-24 __type-image">${img(personPhoto(authorId))}</div>
+                </div>
+                <div class="ct-item__body">
+                  <div class="ct-item__head">
+                    <span class="ct-item__author ds-title-s">${esc(personName(authorId))}</span>
+                  </div>
+                  <p class="ct-item__text">${esc(resolveNames(text))}</p>
+                  <div class="ct-item__actions">
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
+                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                  </div>
+                </div>
+              </article>`;
+}
+
+/** Блок комментов под карточкой (ct-list). '' — если в данных нет ни одного. */
+function renderCommentThread(p) {
+  const list = p.threadComments || [];
+  if (!list.length) return '';
+  const items = list.map(c =>
+    `            <div class="ct-thread">\n${commentItem(c.authorId, c.text)}\n            </div>`).join('\n');
+  // «Посмотреть все комментарии» — когда счётчик комментов поста больше, чем
+  // показанных тут верхнеуровневых (почти всегда: в листе максимум два).
+  const total = parseInt(p.comments, 10);
+  const more = (Number.isFinite(total) && total > list.length)
+    ? `\n            <div class="ct-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>\n            </div>`
+    : '';
+  // Поле ввода коммента под веткой — отдельный ребёнок карточки (своё
+  // выравнивание), как в эталоне «Комменты Клип/Подарок». Аватар — мой профиль.
+  const input = `          <div class="comment-input ll-feed-comment-input">
+            <div class="avatar __size-36 __type-image">${img(personPhoto('my_profile'))}</div>
+            <div class="comment-input__field">
+              <input class="text-input __size-36" placeholder="Написать комментарий…">
+              <div class="comment-input__actions">
+                <span class="comment-input__action icon __size-24 __slot-attach"></span>
+                <span class="comment-input__action icon __size-24 __slot-smile"></span>
+              </div>
+            </div>
+          </div>`;
+  return `          <div class="ct-list ll-feed-comments">\n${items}${more}\n          </div>\n${input}`;
+}
+
+/** Прицепить комменты к готовой карточке: вставка перед последним </article>
+ *  (карточки-острова). Клип с комментами рисуется как island (см. case 'clip'),
+ *  так что отдельная обработка full-bleed не нужна. Без комментов — как есть. */
+function attachComments(card, p) {
+  const block = renderCommentThread(p);
+  if (!block) return card;
+  const i = card.lastIndexOf('</article>');
+  if (i < 0) return card;
+  return `${card.slice(0, i)}${block}\n        ${card.slice(i)}`;
+}
+
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
 function renderPost(p, idx) {
   const { id, type, author, photos, likes, comments, reshares, link } = p;
@@ -662,6 +722,28 @@ ${authorHeader(aid, time)}
         ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
       });
       const openUrl = `klipy.html?${q}`;
+
+      // Клип С комментами рисуем «как в Figma» — обычной карточкой-островом:
+      // постер/видео в стандартном медиа-блоке (4:3, object-fit cover), автор
+      // сверху, опц. лейбл из «шапка» («может быть интересно»), actions-bar.
+      // Комменты/инпут добавит attachComments (путь island, внутрь карточки).
+      // Без комментов остаётся прежний full-bleed 9:16 клип (ниже).
+      if ((p.threadComments || []).length) {
+        const subscribe = isGroupId(aid);
+        const hint = p.header
+          ? `          <div class="ds-caption-m ll-clip-hint">${esc(p.header)}</div>\n`
+          : '';
+        const cardVisual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
+          ? `<video src="${esc(src)}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video>`
+          : img(src, 'style="width:100%;height:100%;object-fit:cover;display:block" ');
+        return `        <article class="text-feed island">
+${hint}${authorHeader(aid, time, { subscribe })}
+
+          <a class="text-feed__media __single" href="${esc(openUrl)}" aria-label="Открыть клип" style="display:block">${cardVisual}</a>
+${actionsBar(likes, comments, reshares)}
+        </article>`;
+      }
+
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
 
@@ -793,9 +875,14 @@ async function main() {
     };
     const I = {
       id: col('id'), type: col('тип'), author: col('автор'),
+      header: col('шапка'),
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
       link: col('ссылка'), desc: col('описание'),
+      // Комменты под постом — до двух верхнеуровневых (автор + текст каждого).
+      // Можно дополнить парами «автор/текст коммента N» — просто расширь список.
+      c1Author: col('автор коммента 1'), c1Text: col('текст коммента 1'),
+      c2Author: col('автор коммента 2'), c2Text: col('текст коммента 2'),
     };
 
     // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор». Если
@@ -816,6 +903,7 @@ async function main() {
       posts.push({
         id, type,
         author: cell(c, I.author),
+        header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
         text: cell(c, I.text),
         photos: cell(c, I.photos).split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
@@ -827,6 +915,12 @@ async function main() {
         // «Заголовок / Подзаголовок» (делится по « / » в renderPost). Заголовок
         // можно задать и отдельной колонкой «заголовок» — она перебивает слеш.
         desc: cell(c, I.desc),
+        // Комменты под постом: пары «автор/текст». Берём только заполненные
+        // (есть текст) — пустые пары не дают пустых карточек комментов.
+        threadComments: [
+          { authorId: cell(c, I.c1Author), text: cell(c, I.c1Text) },
+          { authorId: cell(c, I.c2Author), text: cell(c, I.c2Text) },
+        ].filter(x => x.text),
       });
     }
 
@@ -848,7 +942,9 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const rendered = posts.map((p, i) => renderPost(p, i)).filter(Boolean);
+  const rendered = posts
+    .map((p, i) => { const card = renderPost(p, i); return card ? attachComments(card, p) : card; })
+    .filter(Boolean);
   // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
   // — не вставляем пустоту в живую ленту.
   if (rendered.length === 0)
