@@ -243,6 +243,17 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": "group-7",
+    "name": "Спортс",
+    "subtitle": "",
+    "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVcq3Dq2Qwmr2nX4O6ZMrjpvUHXIAAb3eH_Q&s",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
     "id": "ad-1",
     "name": "Квартал бизнес-класса «Б15»",
     "subtitle": "Покупки • Реклама 0+",
