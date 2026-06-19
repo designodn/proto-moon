@@ -40,7 +40,12 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": []
+      "threadComments": [
+        {
+          "authorId": "4",
+          "text": "соболезную"
+        }
+      ]
     },
     {
       "id": "post-3",
@@ -143,7 +148,7 @@
     {
       "id": "post-5",
       "type": "photo",
-      "author": "4",
+      "author": "9",
       "tema": "",
       "rubrika": "",
       "header": "",
