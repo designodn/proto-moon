@@ -64,7 +64,7 @@ const COMPANION = {
   // tagged-photo: hero-аватар + имя на фото + координаты тултипа (как в эталоне)
   'tagged-photo': {
     heroAvatar: 'https://i.pravatar.cc/192?img=49',
-    tag: { name: 'Анастасия Кащеева', top: 28, left: 56 },
+    tag: { name: 'Анастасия Кащеева', top: 143, left: 187.5 },
   },
   // clip: локальное видео из репы (как clip-feed в NV-ленте), если в листе нет своего
   clip: { fallbackMedia: 'assets/clips/sable-tepa.mp4' },
@@ -587,15 +587,15 @@ ${authorHeader(aid, time)}
     case 'tagged-photo': {
       // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
       const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
-      const tag = x.tag || { name: 'Анастасия Кащеева', top: 28, left: 56 };
+      const tag = x.tag || { name: 'Анастасия Кащеева', top: 143, left: 187.5 };
       return `        <article class="text-feed island">
           <div class="avatar __size-72 __type-image">${img(hero)}</div>
           <div class="ds-title-xl">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-start __placement-bottom-start"
-                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px">
+            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">${esc(tag.name)}</div>
               <div class="tooltip-tail"></div>
             </div>
