@@ -641,7 +641,7 @@ ${authorHeader(aid, time)}
             </div>
           </div>
 
-          <button class="clip-feed__mute" aria-label="Включить звук"><span class="icon __size-32 __src" style="--icon-src:url('assets/icons/sound_off_24.svg')"></span></button>
+          <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
 
           <div class="actions-bar clip-feed__actions">
 ${countBtn('comment_16_20.svg', comments, { style: 'on-image' })}
