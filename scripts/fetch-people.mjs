@@ -62,19 +62,23 @@ function normCity(raw) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Определяет тип медиа по Content-Type ссылки. */
+/** Определяет тип медиа: сперва по Content-Type, при неудаче — по расширению.
+ *  Фолбэк нужен для хостов с бот-защитой (отдают 503/403/HTML вместо image/*),
+ *  где ссылка всё равно ведёт на картинку/видео (напр. fiesta.ru). */
 async function detectMedia(url) {
   if (!url || !/^https?:\/\//.test(url) || /\/\.\.\.|\.\.\.jpg/.test(url)) return null;
   try {
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(15000) });
-    if (!res.ok) return null;
-    const ct = (res.headers.get('content-type') || '').toLowerCase();
-    if (ct.startsWith('image/')) return 'image';
-    if (ct.startsWith('video/')) return 'video';
-    return null;
-  } catch {
-    return null;
-  }
+    if (res.ok) {
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if (ct.startsWith('image/')) return 'image';
+      if (ct.startsWith('video/')) return 'video';
+    }
+  } catch { /* падаем в эвристику по расширению ниже */ }
+  const path = url.split(/[?#]/)[0].toLowerCase();
+  if (/\.(jpe?g|png|webp|gif|avif|bmp|svg)$/.test(path)) return 'image';
+  if (/\.(mp4|webm|mov|m4v)$/.test(path)) return 'video';
+  return null;
 }
 
 async function main() {

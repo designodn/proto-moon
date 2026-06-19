@@ -352,8 +352,10 @@
   .mp-toast { position: fixed; left: 50%; bottom: 16px; z-index: 120; transform: translateX(-50%) translateY(16px);
     width: calc(100% - 24px); box-sizing: border-box; padding: var(--space-3) var(--space-4); border-radius: 14px;
     background: #1F1F22; color: #fff; font: 600 15px/20px var(--font-family); box-shadow: 0 12px 32px -10px rgba(0,0,0,0.5);
+    display: flex; align-items: center; gap: var(--space-3);   /* иконка слева, от текста до иконки 12 */
     opacity: 0; pointer-events: none; transition: opacity 240ms ease, transform 240ms ease; }
   .mp-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .mp-toast__icon { flex-shrink: 0; color: var(--static-surface-status-positive); }  /* check-circle 24, positive */
 </style>
 </head>
 <body>
@@ -400,31 +402,9 @@
             <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
           </div>
         </div>
-        <!-- Не просмотренные (оранжевое кольцо). -->
-        <!-- Сториз именинника: радужное кольцо + 🎂-бейдж + спец-шаблон в viewer'е. -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon"
-             data-bday data-stories="1" data-name="Александра">
-          <img data-person-avatar="1" alt="">
-          <div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div>
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="5" data-name="Виктор"><img data-person-avatar="4" alt=""></div>
-
-        <!-- ВВЗ-сториз: одна палочка, заголовок и сетка 2×2 карточек.
-             CTA-кнопка снизу — только у ВВЗ. -->
-        <div class="avatar __size-56 __type-image __ring-active"
-             data-stories="1" data-name="Возможно, вы знакомы" data-vvz
-             aria-label="Возможно, вы знакомы">
-          <img src="assets/icons/vvz_stories.png" alt="">
-        </div>
-        <div class="avatar __size-56 __type-image __ring-active" data-stories="2" data-name="Галина"><img data-person-avatar="7" alt=""></div>
-
-        <!-- Сториз годовщины дружбы убрана из стака — открывается тапом
-             по постеру «Годовщина дружбы» в фиде (см. скрипт ниже). -->
-        <!-- Просмотренные (серое кольцо) -->
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="4" data-name="Антонида"><img data-person-avatar="5" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="3" data-name="Екатерина"><img data-person-avatar="9" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="2" data-name="Сергей"><img data-person-avatar="2" alt=""></div>
-        <div class="avatar __size-56 __type-image __ring-viewed" data-stories="6" data-name="Александр"><img data-person-avatar="10" alt=""></div>
+        <!-- Остальные сториз генерируются из листа «Сториз» (window.DS_STORIES)
+             скриптом ниже и дописываются сюда. По умолчанию все активные
+             (оранжевое кольцо, не просмотрены). -->
       </div>
 
 
@@ -626,19 +606,22 @@
 
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s"></div>
+              <div class="ds-title-s">Александр Мещеряков</div>
               <div class="ds-caption-s text-feed__time">пн, 12:03</div>
             </div>
           </div></div></div>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Из истории моего родного Уварова</h2>
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body">
               УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на<span class="text-feed__body-full"> правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
           </label>
+          </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">1</span></button></div>
@@ -830,6 +813,12 @@
         </article>
 
         <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Спорт</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Спорт</span>
+            </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVcq3Dq2Qwmr2nX4O6ZMrjpvUHXIAAb3eH_Q&amp;s" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -841,8 +830,12 @@
               <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
             </label>
           </div></div></div>
+          </header>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Первый финал Мирры на «Ролан Гаррос» и ТБШ! 19-летняя Андреева возвращается в топ-6</h2>
           <p class="ds-body-m text-feed__body">Юная россиянка разгромила украинку Костюк и добыла путёвку в решающий матч грунтового мэйджора.</p>
+          </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">34</span></button></div>
@@ -1009,6 +1002,12 @@
         </article>
 
         <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Сделай сам</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Цветы и сад</span>
+            </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1020,8 +1019,12 @@
               <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
             </label>
           </div></div></div>
+          </header>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Соседи не верили, что лук можно выращивать без перекопки</h2>
           <p class="ds-body-m text-feed__body">Когда я впервые посадила лук без перекопки, была уверена, что осенью он обязательно взойдет, лето должно быть сухое</p>
+          </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Allium_sativum_001.JPG" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">12</span></button></div>
@@ -1269,7 +1272,7 @@
 
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KxbwaUoEwUu_eB1gSo7_F0w9HjGCF-RsElme3I_obZKlDNPdU9C0AnKj5IjaBsZ61q1dJaO0yCmUDRiwETqXt5BOvnk82vmHrc_32BCo4AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Магазин цветов Фантазия</div>
               <div class="ds-caption-s text-feed__time">Покупки • Реклама 0+</div>
@@ -1712,10 +1715,16 @@
         </article>
 
         <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Политика</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Общество</span>
+            </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTliKRHnepvOtZ7CNiUGpgdRLczyEsZ-jI42g&amp;s" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LOq1mV1VM0SsGoA_Sd70rdjZFHO2-kwmN51_d9qI2JSXs5H4k_qE2b2HChbBydn2WY5ufrQZkC2l7TevUF6nv1VuuJLMn0CRh0MEExyJcAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Эрмитаж</div>
+              <div class="ds-title-s">ПОЛИТИЧЕСКОЕ АССОРТИ</div>
               <div class="ds-caption-s text-feed__time">20:10</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe">
@@ -1723,9 +1732,13 @@
               <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
             </label>
           </div></div></div>
+          </header>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Шринкфляция отобрала у россиян сосиску</h2>
           <p class="ds-body-m text-feed__body">В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.</p>
-
+          </div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&amp;quality=96&amp;crop=0" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">35</span></button></div>
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">4</span></button></div>
@@ -1829,6 +1842,12 @@
         </article>
 
         <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Еда</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Рецепты</span>
+            </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1840,13 +1859,17 @@
               <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
             </label>
           </div></div></div>
+          </header>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Рыба под маринадом с пюре</h2>
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body">
               1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить лук пару минут, далее<span class="text-feed__body-full"> добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
           </label>
+          </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>
@@ -1933,10 +1956,16 @@
         </article>
 
         <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Политика</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Общество</span>
+            </nav>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRXwtU424YNhdd0EdU6dg0Cp51K1-5m4FS7w4i_Z7uqh4jpOPIb-KCsDlnXcjSJJvUwsQ7B6WyBwPBQUC79fx-5ye0qeEM9gwTsqgzEUAAAAp&amp;dpr=2" alt=""></div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LOq1mV1VM0SsGoA_Sd70rdjZFHO2-kwmN51_d9qI2JSXs5H4k_qE2b2HChbBydn2WY5ufrQZkC2l7TevUF6nv1VuuJLMn0CRh0MEExyJcAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Рыбалка и Охота</div>
+              <div class="ds-title-s">ПОЛИТИЧЕСКОЕ АССОРТИ</div>
               <div class="ds-caption-s text-feed__time">15:20</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe">
@@ -1944,13 +1973,17 @@
               <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
             </label>
           </div></div></div>
+          </header>
 
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Из Москвы скоро побегут</h2>
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body">
               Москва начала уезжать. Без оркестров и прощальных речей. Люди уходят и больше не возвращаются жить в этот дорогой аттракцион. Не верите? Давайте посморим на<span class="text-feed__body-full"> Москву через 100 лет</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
           </label>
+          </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.mk.ru/upload/entities/2015/12/28/articles/detailPicture/fd/6a/2d/980042405_8194598.jpg" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>
@@ -2470,117 +2503,104 @@
     // На странице остаётся: создать узел viewer'а, описать данные ВВЗ и
     // отдать колбэк, как собирать слайды.
     (function () {
-      var row  = document.getElementById('ll-stories-row');
-      var slot = document.getElementById('ll-moment-slot');
-      if (!row || !slot) return;
+      function init() {
+        var row  = document.getElementById('ll-stories-row');
+        var slot = document.getElementById('ll-moment-slot');
+        if (!row || !slot) return;
 
-      var viewer = MomentViewer.create({ duration: '4s' });
-      slot.replaceWith(viewer);
+        var viewer = MomentViewer.create({ duration: '4s' });
+        slot.replaceWith(viewer);
 
-      var VVZ_PEOPLE = [
-        { name: 'Карина Затонская', sub: '28 лет, Рига, Латвия',  img: 'https://i.pravatar.cc/192?img=47', mutuals: 18, m: [44, 12, 5] },
-        { name: 'Илья Воронов',     sub: '31 год, Москва',         img: 'https://i.pravatar.cc/192?img=33' },
-        { name: 'Анна Соколова',    sub: '25 лет, Санкт-Петербург',img: 'https://i.pravatar.cc/192?img=44', mutuals: 12, m: [12, 5, 23] },
-        { name: 'Мария Лебедева',   sub: '29 лет, Казань',         img: 'https://i.pravatar.cc/192?img=45' }
-      ];
+        function esc(s) {
+          return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function P(id) { return (window.DS_PEOPLE && window.DS_PEOPLE.get(id)) || null; }
+        // «28 лет» / «1 год» / «44 года» — выбор формы по числу.
+        function plural(n, f) {
+          n = Math.abs(n) % 100; var d = n % 10;
+          if (n > 10 && n < 20) return f[2];
+          if (d > 1 && d < 5) return f[1];
+          if (d === 1) return f[0];
+          return f[2];
+        }
+        // Подзаголовок карточки ВВЗ — «возраст, город» из листа «Люди».
+        function ageCity(p) {
+          if (!p) return '';
+          var a = [];
+          if (p.age) a.push(p.age + ' ' + plural(p.age, ['год', 'года', 'лет']));
+          if (p.city) a.push(p.city);
+          return a.join(', ');
+        }
+        function firstName(p) { return ((p && p.name) || '').split(/\s+/)[0] || ''; }
 
-      var FRIENDSHIP_AVATARS = ['https://i.pravatar.cc/192?img=47', 'https://i.pravatar.cc/192?img=49'];
+        // Аватарка-входная точка для каждой сториз (в ряду карусели).
+        function avatarHTML(st) {
+          if (st.type === 'vvz') {
+            return '<div class="avatar __size-56 __type-image __ring-active" data-story-id="' + esc(st.id) + '"' +
+              ' data-vvz data-stories="1" data-name="Возможно, вы знакомы" aria-label="Возможно, вы знакомы">' +
+              '<img src="assets/icons/vvz_stories.png" alt=""></div>';
+          }
+          var nm = esc(firstName(P(st.author)));
+          if (st.type === 'bday') {
+            return '<div class="avatar __size-56 __type-image __ring-active __has-addon" data-story-id="' + esc(st.id) + '"' +
+              ' data-bday data-stories="1" data-name="' + nm + '">' +
+              '<img data-person-avatar="' + esc(st.author) + '" alt="">' +
+              '<div class="avatar__addon __pos-br stories-row__bday-badge">🎂</div></div>';
+          }
+          return '<div class="avatar __size-56 __type-image __ring-active" data-story-id="' + esc(st.id) + '"' +
+            ' data-stories="1" data-name="' + nm + '">' +
+            '<img data-person-avatar="' + esc(st.author) + '" alt=""></div>';
+        }
 
-      // ВВЗ-фабрика — один и тот же slide-объект и для тапа на аватарку
-      // ВВЗ, и для рекламной вставки между сторизами.
-      function makeVvzSlide() {
-        return MomentViewer.vvzSlide({
-          title:  'Возможно, вы знакомы',
-          people: VVZ_PEOPLE,
-          cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
+        // Рендер ряда из листа «Сториз» (window.DS_STORIES). «Ваша история» (+)
+        // остаётся первой — она в разметке и помечена data-skip-viewer.
+        var STORIES = (window.DS_STORIES || []);
+        var byId = {};
+        STORIES.forEach(function (s) { byId[s.id] = s; });
+        row.insertAdjacentHTML('beforeend', STORIES.map(avatarHTML).join(''));
+        if (window.DS_PEOPLE) window.DS_PEOPLE.apply(row);
+
+        // Слайды сториз — по data-story-id. Полей, которых нет в листе
+        // (склонение имени, подзаголовки ВВЗ, длительность), берём из листа
+        // «Люди» и дефолтов.
+        MomentViewer.bindRow(row, viewer, {
+          slides: function (ava) {
+            var st = byId[ava.getAttribute('data-story-id')];
+            if (!st) return null;
+            if (st.type === 'vvz') {
+              var people = (st.people || []).map(function (id) {
+                var p = P(id) || {};
+                return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
+              });
+              return [MomentViewer.vvzSlide({
+                title:  'Возможно, вы знакомы',
+                people: people,
+                cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
+              })];
+            }
+            if (st.type === 'bday') {
+              var p = P(st.author) || {};
+              var slide = MomentViewer.bdaySlide({
+                photo:          st.image || p.photo || '',
+                name:           p.name || '',
+                headerTitle:    'День рождения ' + firstName(p),
+                headerSubtitle: '3 часа назад',
+                cta:            'Поздравить'
+              });
+              slide.cta.onClick = function () { location.href = 'gifts-catalog.html'; };
+              return [slide];
+            }
+            // Обычная сториз — картинка-слайд; если фото в листе нет, fallback
+            // на дефолтную цветную заливку (bindRow → palette).
+            if (st.image) return [{ src: st.image }];
+            return null;
+          }
         });
       }
-
-      // Правило «ВВЗ как реклама»:
-      //  - если в карусели ≥2 обычных сториз (= не data-skip-viewer / vvz /
-      //    friendship / bday) — между обычными сторизами одной из аватарок
-      //    ОДИН раз за сессию случайно вставляется ВВЗ-слайд (как реклама).
-      //  - ВВЗ-аватарка в карусели остаётся всегда — это вторая точка входа.
-      // Глобальный флаг VVZ_AD_ENABLED включает/выключает рекламу.
-      var VVZ_AD_ENABLED = false; // ⇦ on/off для правила «ВВЗ-ад между сториз»
-      var regularStoriesCount = Array.prototype.filter.call(
-        row.querySelectorAll('.avatar'),
-        function (a) {
-          return !a.hasAttribute('data-skip-viewer')
-              && !a.hasAttribute('data-vvz')
-              && !a.hasAttribute('data-friendship')
-              && !a.hasAttribute('data-bday');
-        }
-      ).length;
-      var vvzAsAd = VVZ_AD_ENABLED && regularStoriesCount >= 2;
-      var vvzAdShown = false;
-      // ВВЗ-аватарка остаётся в карусели даже когда ≥2 обычных сториз — это
-      // дополнительная точка входа. ВВЗ-ад всё равно показывается случайно
-      // между обычными сторизами (один раз за сессию).
-
-      var momentApi = MomentViewer.bindRow(row, viewer, {
-        slides: function (ava) {
-          // ВВЗ-сториз — собирается из готового хелпера, иначе null → fallback
-          // на дефолтную палитру из bindRow (см. MomentViewer.palette).
-          if (ava.hasAttribute('data-vvz')) {
-            return [makeVvzSlide()];
-          }
-          // Именинная сториз — фото-фон именинника + блюр снизу + текст.
-          // Фото берём прямо с аватарки из стака.
-          if (ava.hasAttribute('data-bday')) {
-            var img = ava.querySelector('img');
-            var name = ava.getAttribute('data-name') || '';
-            // ФИ в род. падеже под "День рождения …" (большим текстом — полностью,
-            // в шапке — только имя, чтобы не вылазить за ширину).
-            var FULL = { 'Лиза': ['Лизы', 'Михайловой'], 'Алексей': ['Алексея', 'Орлова'], 'Дима': ['Димы', 'Соколова'] };
-            var pair = FULL[name] || [name, ''];
-            var firstGen = pair[0];
-            var fullGen = (pair[0] + ' ' + pair[1]).trim();
-            var slide = MomentViewer.bdaySlide({
-              photo:          img ? img.src : '',
-              name:           fullGen,
-              headerTitle:    'День рождения ' + firstGen,
-              headerSubtitle: '3 часа назад',
-              cta:            'Поздравить'
-            });
-            // CTA «Поздравить» уводит в каталог подарков.
-            slide.cta.onClick = function () { location.href = 'gifts-catalog.html'; };
-            return [slide];
-          }
-          // Годовщина дружбы — пакет из 2 слайдов
-          if (ava.hasAttribute('data-friendship')) {
-            return [
-              MomentViewer.friendshipSlide({
-                title:   '7 лет дружбы',
-                sub:     'С 1 июня 2023 года',
-                avatars: FRIENDSHIP_AVATARS,
-                cta:     { label: 'Отправить другу' }
-              }),
-              MomentViewer.friendshipSlide({
-                title:   '478 подарков',
-                sub:     'С 1 июня 2023 года',
-                avatars: FRIENDSHIP_AVATARS,
-                cta:     { label: 'Отправить видео' }
-              })
-            ];
-          }
-          // Обычная сториз с цветной заливкой. Если ВВЗ работает в режиме
-          // рекламы и ещё не показывался — вставляем ВВЗ-слайд в случайную
-          // позицию (не самом начале, чтобы был между обычными).
-          var count = parseInt(ava.getAttribute('data-stories'), 10) || 1;
-          var palette = MomentViewer.palette;
-          var slides = [];
-          for (var i = 0; i < count; i++) {
-            slides.push({ color: palette[i % palette.length] });
-          }
-          if (vvzAsAd && !vvzAdShown && slides.length >= 2) {
-            vvzAdShown = true;
-            var pos = 1 + Math.floor(Math.random() * (slides.length - 1));
-            slides.splice(pos, 0, makeVvzSlide());
-          }
-          return slides;
-        }
-      });
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
     })();
   </script>
 
@@ -2628,6 +2648,8 @@
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+  <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
+  <script src="data/stories.js"></script>
 
   <!-- Клип: тап по кнопке справа снизу включает/выключает звук (как в NV-клипе). -->
   <script>
@@ -2768,7 +2790,7 @@
       </div>
     </div>
   </div>
-  <div class="mp-toast" id="mpToast" role="status" aria-live="polite">Вы пригласили всех друзей на сегодня</div>
+  <div class="mp-toast" id="mpToast" role="status" aria-live="polite"><span class="mp-toast__icon icon __size-24 __src" style="--icon-src:url('assets/icons/check_circle_on_filled_24.svg')"></span><span class="mp-toast__text">Заметка опубликована</span></div>
 
   <script>
   // ── Фотомарафон: пост пользователя первым в ленте + шторка приглашений ──
@@ -2785,7 +2807,10 @@
       var ALLp = window.DS_PEOPLE_DATA || [];
       var me = ALLp.filter(function (p) { return p.id === 'my_profile'; })[0] || { name: 'Вы', photo: '' };
       var hashtag = pub.hashtag || '#РадостьДетства';
-      var captionHTML = pub.caption ? '<p class="ds-body-m text-feed__body">' + esc(pub.caption) + '</p>' : '';
+      // В конце текста поста через пробел — хэштег марафона (оранжевым).
+      var tagSpan = '<span class="marathon-promo__tag">' + esc(hashtag) + '</span>';
+      var bodyInner = pub.caption ? (esc(pub.caption) + ' ' + tagSpan) : tagSpan;
+      var captionHTML = '<p class="ds-body-m text-feed__body">' + bodyInner + '</p>';
       var art = document.createElement('article');
       art.className = 'text-feed island';
       art.innerHTML =
@@ -2804,9 +2829,10 @@
         + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
         +   '<div class="button-wrapper __size-44 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
       var feed = document.querySelector('.ll-feed');
-      var banner = feed && feed.querySelector('.ll-banner');
+      // Пост пользователя — после ВВЗ-портлета (иначе после баннера / в начало).
+      var anchor = feed && (feed.querySelector('.vvz-portlet') || feed.querySelector('.ll-banner'));
       if (feed) {
-        if (banner && banner.nextSibling) feed.insertBefore(art, banner.nextSibling);
+        if (anchor && anchor.nextSibling) feed.insertBefore(art, anchor.nextSibling);
         else feed.insertBefore(art, feed.firstChild);
         // отступ под sticky-навбар, чтобы при скролле пост не уезжал под шапку
         art.style.scrollMarginTop = '72px';
@@ -2892,7 +2918,7 @@
                       (theme ? '&theme=' + encodeURIComponent(theme) : '');
     }
     var toastTimer;
-    function showToast(msg) { toastEl.textContent = msg || toastEl.textContent; toastEl.classList.add('__show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800); }
+    function showToast(msg) { var t = toastEl.querySelector('.mp-toast__text'); if (t && msg) t.textContent = msg; toastEl.classList.add('__show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800); }
 
     list.addEventListener('click', function (e) {
       var invite = e.target.closest('.rf-invite');
@@ -2911,9 +2937,10 @@
 
     document.addEventListener('click', function (e) { if (e.target.closest('[data-sheet-close]')) closeSheet(); });
 
-    // 3) Автопоказ шторки сразу после публикации (один раз).
+    // 3) Автопоказ шторки сразу после публикации (один раз) + тост «Заметка опубликована».
     if (sessionStorage.getItem('mp_show_sheet')) {
       sessionStorage.removeItem('mp_show_sheet');
+      showToast('Заметка опубликована');
       setTimeout(openSheet, 350);
     }
   })();

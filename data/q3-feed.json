@@ -80,7 +80,7 @@
     {
       "id": "row-4",
       "type": "photo",
-      "author": "",
+      "author": "8",
       "tema": "",
       "rubrika": "",
       "header": "id_2 поставил класс",
@@ -708,14 +708,21 @@
     {
       "id": "row-27",
       "type": "photo",
-      "author": "group-6",
+      "author": "group-8",
       "tema": "Политика",
       "rubrika": "Общество",
       "header": "",
       "title": "Шринкфляция отобрала у россиян сосиску",
       "text": "В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.",
-      "photos": [],
-      "photosRaw": [],
+      "photos": [
+        "https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&quality=96&crop=0"
+      ],
+      "photosRaw": [
+        "https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&quality=96&crop=0",
+        "0",
+        "1000",
+        "750&sign=027fb7227c85e54af66ea92f149652cb&type=news_post_photo"
+      ],
       "likes": "213",
       "comments": "35",
       "reshares": "4",
@@ -826,7 +833,7 @@
     {
       "id": "row-31",
       "type": "photo",
-      "author": "group-3",
+      "author": "group-8",
       "tema": "Политика",
       "rubrika": "Общество",
       "header": "",
