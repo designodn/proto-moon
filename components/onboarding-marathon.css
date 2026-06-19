@@ -21,26 +21,13 @@
 .omar.__open { opacity: 1; }
 
 /* Крестик — прибит к верху поверх слайдов */
+/* Крестик — обычный DS button-inline, прибит к верху поверх слайдов */
 .omar__close {
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + var(--space-4));
   right: var(--space-4);
   z-index: 2;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  padding: 0;
-  border-radius: 999px;
-  background: var(--base-white-translucent-56, rgba(255,255,255,.56));
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: var(--dynamic-text-and-icons-base-primary, #2e2f33);
-  cursor: pointer;
 }
-.omar__close svg { display: block; width: 24px; height: 24px; }
 
 /* ---------- Лента слайдов (вертикальная — «смах вниз», как в кадрах макета) ---------- */
 .omar__slides {
@@ -129,6 +116,30 @@
 .omar-slide.is-active .omar-fan__photo--2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.05); opacity: 1; transition-delay: .12s; }
 .omar-slide.is-active .omar-fan__photo--3 { transform: translate(calc(-50% + 64px), -50%) rotate(12deg); opacity: 1; transition-delay: .19s; }
 
+/* Слайд 1 — расположение карточек точно из Figma (frame 09, система 360px).
+   Каждая плитка: свой размер, наклон и абсолютная позиция; центральная (--2)
+   выше и поверх, боковые ниже и слегка выезжают за края (как в макете). */
+.omar-slide--hero .omar-fan {
+  width: 360px;
+  max-width: 100%;
+  height: 430px;
+  margin: 0 auto var(--space-4);
+}
+.omar-slide--hero .omar-fan__photo {
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  transition: transform .55s cubic-bezier(.2,.7,.3,1), opacity .5s ease;
+}
+.omar-slide--hero .omar-fan__photo--1 { left: -24px; top: 186px; width: 189px; height: 221px; border-radius: 28px; transform: rotate(-12.42deg) scale(.85); }
+.omar-slide--hero .omar-fan__photo--2 { left: 70px;  top: 55px;  width: 202px; height: 183px; border-radius: 24px; transform: rotate(14.84deg) scale(.85); z-index: 2; }
+.omar-slide--hero .omar-fan__photo--3 { left: 174px; top: 198px; width: 188px; height: 214px; border-radius: 24px; transform: rotate(10.4deg)  scale(.85); }
+.omar-slide--hero.is-active .omar-fan__photo { opacity: 1; }
+.omar-slide--hero.is-active .omar-fan__photo--1 { transform: rotate(-12.42deg) scale(1); transition-delay: .12s; }
+.omar-slide--hero.is-active .omar-fan__photo--2 { transform: rotate(14.84deg) scale(1); transition-delay: .04s; }
+.omar-slide--hero.is-active .omar-fan__photo--3 { transform: rotate(10.4deg) scale(1); transition-delay: .20s; }
+
 /* ============================================================
    2. ТЕМАТИКА — чипсы с 3D-иконками
    ============================================================ */
@@ -189,7 +200,7 @@
 .omar-slide.is-active .omar-stickers { opacity: 1; transform: none; transition-delay: .1s; }
 
 /* ============================================================
-   Нижняя панель: точки + кнопки
+   Нижняя панель: кнопки
    ============================================================ */
 .omar__footer {
   flex: 0 0 auto;
@@ -200,23 +211,6 @@
   background: linear-gradient(180deg,
     rgba(247,244,242,0) 0%,
     var(--dynamic-surface-base-primary, #F7F4F2) 24%);
-}
-.omar__dots {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-1);
-}
-.omar__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--dynamic-surface-contrast-mid, rgba(131,102,86,.24));
-  transition: width .3s ease, background .3s ease;
-}
-.omar__dot.is-active {
-  width: 20px;
-  background: var(--static-surface-status-accent, #F64A00);
 }
 .omar__cta,
 .omar__next { width: 100%; }
