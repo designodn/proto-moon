@@ -241,17 +241,28 @@
 .omar-slide--combo.__vote .omar-vote .omar-stickers { opacity: 1; transform: rotate(-15deg); transition-delay: .2s; }
 
 /* ============================================================
-   4. ПРИГЛАШАЙТЕ — одна широкая картинка во всю ширину (image 510, 432×241)
+   4. ПРИГЛАШАЙТЕ — лейаут из автолейаута фрейма 01
+   контент по центру по вертикали; gap 33 текст↔картинка; gap 6 заголовок↔подпись;
+   картинка во всю ширину (262/146); кнопка «Перейти к марафону»
    ============================================================ */
-.omar-slide--invite { align-items: center; text-align: center; padding-left: 0; padding-right: 0; }
-.omar-slide--invite .omar-slide__title,
-.omar-slide--invite .omar-slide__text { padding-left: var(--space-4); padding-right: var(--space-4); }
+.omar-slide--invite {
+  align-items: center;
+  text-align: center;
+  justify-content: center;          /* контент по центру по вертикали */
+  gap: 33px;                        /* Figma: текст ↔ картинка */
+  padding: env(safe-area-inset-top, 0px) 0 0;
+}
+.omar-invite__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;                         /* Figma: заголовок ↔ подпись */
+  padding: 0 var(--space-4);
+}
+.omar-invite__text .omar-slide__text { margin: 0; }
 .omar-invite {
   display: block;
   width: 100%;
-  max-width: 300px;
-  height: auto;
-  margin: var(--space-6) auto 0;    /* иллюстрация-вайб по центру */
+  aspect-ratio: 262 / 146;          /* Figma */
   object-fit: contain;
   opacity: 0;
   transform: scale(.92);

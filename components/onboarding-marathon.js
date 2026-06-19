@@ -105,10 +105,12 @@
             '</div>' +
           '</section>' +
 
-          /* 4 — Приглашайте всех */
+          /* 4 — Приглашайте всех (лейаут из автолейаута фрейма 01) */
           '<section class="omar-slide omar-slide--invite">' +
-            '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-            '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+            '<div class="omar-invite__text">' +
+              '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
+              '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+            '</div>' +
             '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
           '</section>' +
 
