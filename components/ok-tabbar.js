@@ -31,7 +31,7 @@
         { slot: 'feed',    href: 'lenta.html',       label: 'Лента' },
         { slot: 'tribune', href: '../tribune.html',  label: 'Трибуна' },
         { slot: 'message', href: '../messages.html', label: 'Сообщения' },
-        { slot: 'clip',    href: '#',                label: 'Клипы' },
+        { slot: 'clip',    href: '../klipy.html',    label: 'Клипы' },
         { slot: 'menu',    href: 'menu.html',         label: 'Меню' }
       ]
     }

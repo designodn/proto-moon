@@ -95,7 +95,7 @@
     tribune: 'tribune.html',
     message: 'messages.html',
     menu:    'new-vision/menu.html',
-    clip:    '#'
+    clip:    'klipy.html'
   };
 
   function slotOf(el) {

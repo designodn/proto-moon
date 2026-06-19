@@ -556,14 +556,27 @@
         if (memLead && !(memLead.photos && memLead.photos.length)) memLead = null;
       }
 
-      // [твой клип] + ростер по кругу (повторяем дважды для «бесконечной» ленты).
-      var seq = (lead ? [lead] : []).concat(roster, roster);
+      function entryHTML(c) {
+        return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
+      }
+      // Ростер из листа в исходном порядке (одна «итерация» очереди).
+      var rosterHTML = roster.map(entryHTML).join('');
 
+      // Старт: [клип из воспоминаний?] + [твой клип из ленты?] + ростер.
+      // Дальше очередь зацикливается — по мере прокрутки к концу дописываем
+      // ростер заново в том же порядке (бесконечная лента).
       reel.innerHTML =
         (memLead ? memClipHTML(memLead) : '') +
-        seq.map(function (c) {
-          return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
-        }).join('');
+        (lead ? entryHTML(lead) : '') +
+        rosterHTML;
+
+      if (rosterHTML) {
+        reel.addEventListener('scroll', function () {
+          if (reel.scrollTop + reel.clientHeight * 2 >= reel.scrollHeight) {
+            reel.insertAdjacentHTML('beforeend', rosterHTML);
+          }
+        }, { passive: true });
+      }
 
       // Монтаж кадров твоего клипа — смена по кругу с эффектом Ken Burns.
       if (memLead) {
