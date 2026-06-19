@@ -137,6 +137,54 @@
     background: var(--dynamic-surface-base-secondary);
   }
   .ll-fp-publish[disabled] { opacity: 0.4; pointer-events: none; }
+
+  /* ── Шторка «Вы участвуете в фотомарафоне!» (после публикации) ── */
+  .mp-sheet {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    visibility: hidden;
+  }
+  .mp-sheet.__open { visibility: visible; }
+  .mp-sheet__scrim {
+    position: absolute; inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0; transition: opacity 280ms ease;
+  }
+  .mp-sheet.__open .mp-sheet__scrim { opacity: 1; }
+  .mp-sheet__panel {
+    position: relative;
+    display: flex; flex-direction: column;
+    max-height: 88%;
+    background: var(--dynamic-surface-base-secondary);
+    border-radius: 24px 24px 0 0;
+    padding: 16px 16px 24px;
+    transform: translateY(100%);
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mp-sheet.__open .mp-sheet__panel { transform: translateY(0); }
+  .mp-sheet__head { display: flex; align-items: flex-start; gap: var(--space-3); }
+  .mp-sheet__title { flex: 1 1 0; min-width: 0; color: var(--dynamic-text-and-icons-base-primary); }
+  .mp-sheet__close { flex-shrink: 0; }
+  .mp-sheet__subtitle { margin: 8px 0 16px; color: var(--dynamic-text-and-icons-base-secondary); }
+  .mp-sheet__list {
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    display: flex; flex-direction: column; gap: var(--space-4);
+  }
+  .mp-sheet__list::-webkit-scrollbar { display: none; }
+
+  /* Тост (лимит приглашений) — как в рулетке */
+  .mp-toast {
+    position: fixed; left: 50%; bottom: 16px; z-index: 120;
+    transform: translateX(-50%) translateY(16px);
+    width: calc(100% - 24px); box-sizing: border-box;
+    padding: var(--space-3) var(--space-4); border-radius: 14px;
+    background: #1F1F22; color: #fff;
+    font: 600 15px/20px var(--font-family);
+    box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity 240ms ease, transform 240ms ease;
+  }
+  .mp-toast.__show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -196,6 +244,38 @@
     </div>
   </div>
 
+  <!-- ШТОРКА «Вы участвуете в фотомарафоне!» — после публикации -->
+  <div class="mp-sheet" id="mpSheet" aria-hidden="true">
+    <div class="mp-sheet__scrim" data-sheet-close></div>
+    <div class="mp-sheet__panel" role="dialog" aria-label="Вы участвуете в фотомарафоне">
+      <div class="mp-sheet__head">
+        <div class="ds-title-l mp-sheet__title">Вы участвуете<br>в фотомарафоне!</div>
+        <span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span>
+      </div>
+      <p class="ds-body-m mp-sheet__subtitle">Пригласите друзей, чтобы они тоже могли поделиться своими фото и проголосовать за ваше</p>
+
+      <div class="mp-sheet__list" id="mpList">
+        <!-- «Друга нет в ОК?» — поделиться ссылкой -->
+        <div class="user-cell">
+          <div class="avatar __size-56 __type-icon"><span class="icon __size-24 __slot-reshare"></span></div>
+          <div class="user-cell__body">
+            <div class="ds-title-s user-cell__title">Друга нет в ОК?</div>
+            <div class="ds-caption-m user-cell__time">Отправьте ссылку</div>
+          </div>
+          <div class="user-cell__actions">
+            <div class="button-wrapper __size-28"><button class="button-container __style-secondary" id="mpShare"><span class="button-content">Поделиться</span></button></div>
+          </div>
+        </div>
+        <!-- строки друзей вставляются из JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Тост: превышен дневной лимит приглашений -->
+  <div class="mp-toast" id="mpToast" role="status" aria-live="polite">Вы пригласили всех друзей на сегодня</div>
+
+  <!-- Реальные люди из реестра (data/people.js → window.DS_PEOPLE_DATA) -->
+  <script src="data/people.js"></script>
   <script src="components/back-button.js"></script>
   <script>
     // Прототип: тап по зоне «загружает» заготовленное фото — форма переходит
@@ -215,9 +295,9 @@
       drop.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fill(); }
       });
-      // «Опубликовать» в прототипе ведёт обратно на страницу марафона.
+      // «Опубликовать» → показываем шторку «Вы участвуете» (а не уходим со страницы).
       if (publish) publish.addEventListener('click', function () {
-        if (!publish.disabled) window.location.href = 'marathon.html';
+        if (!publish.disabled) openSheet();
       });
     })();
 
@@ -227,6 +307,118 @@
       if (!btn) return;
       e.preventDefault();
       location.href = btn.getAttribute('data-href');
+    });
+
+    // ── Шторка «Вы участвуете»: список друзей + приглашения (механика рулетки) ──
+    var MARATHON = 'РадостьДетства';
+    var sheet = document.getElementById('mpSheet');
+    var list = document.getElementById('mpList');
+    var toastEl = document.getElementById('mpToast');
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Друзья из реестра «Люди» (id 1–10 + vvz-1..3); первого показываем уже приглашённым.
+    var ALL = window.DS_PEOPLE_DATA || [];
+    var nums = ALL.filter(function (p) { return p.id >= 1 && p.id <= 10; })
+                  .sort(function (a, b) { return a.id - b.id; });
+    var extra = ['vvz-1', 'vvz-2', 'vvz-3']
+      .map(function (id) { return ALL.filter(function (p) { return p.id === id; })[0]; })
+      .filter(Boolean);
+    var FRIENDS = nums.concat(extra).map(function (p, i) {
+      return { n: p.name, photo: p.photo, sent: i === 0 };
+    });
+
+    function inviteBtnHTML() {
+      return '<div class="button-wrapper __size-28 rf-invite"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
+    }
+    function goBtnHTML() {
+      return '<div class="button-wrapper __size-28 rf-go"><button class="button-container __style-secondary"><span class="button-content">Перейти</span></button></div>';
+    }
+
+    FRIENDS.forEach(function (f) {
+      var cell = document.createElement('div');
+      cell.className = 'user-cell';
+      cell.dataset.name = f.n;
+      cell.dataset.photo = f.photo || '';
+      cell.innerHTML =
+        '<div class="avatar __size-56 __type-image"><img src="' + esc(f.photo) + '" alt=""></div>' +
+        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + esc(f.n) + '</div></div>' +
+        '<div class="user-cell__actions">' + (f.sent ? goBtnHTML() : inviteBtnHTML()) + '</div>';
+      list.appendChild(cell);
+    });
+
+    // Дневной лимит приглашений (sessionStorage — переживает переходы прототипа).
+    var DAILY_LIMIT = 10;
+    var STORE_KEY = 'mp_invited_today';
+    function getInvited() {
+      var v = parseInt(sessionStorage.getItem(STORE_KEY), 10);
+      if (isNaN(v)) { v = FRIENDS.filter(function (f) { return f.sent; }).length; sessionStorage.setItem(STORE_KEY, v); }
+      return v;
+    }
+    function inviteOne() {
+      var n = getInvited();
+      if (n >= DAILY_LIMIT) return false;
+      sessionStorage.setItem(STORE_KEY, n + 1);
+      return true;
+    }
+
+    // Таймер «Приглашаем» (штатный __state-timered) → «Перейти».
+    var TIMER_SEC = 5;
+    function startTimer(wrapper) {
+      var btn = wrapper.querySelector('.button-container');
+      var label = btn.querySelector('.button-content');
+      wrapper.className = 'button-wrapper __size-28 rf-timer';
+      btn.classList.add('__state-timered');
+      btn.style.setProperty('--timered-animation-duration', TIMER_SEC + 's');
+      label.textContent = 'Приглашаем';
+      setTimeout(function () {
+        wrapper.className = 'button-wrapper __size-28 rf-go';
+        btn.classList.remove('__state-timered');
+        label.textContent = 'Перейти';
+      }, TIMER_SEC * 1000);
+    }
+
+    function goToChat(cell) {
+      location.href = 'marathon-chat.html?name=' + encodeURIComponent(cell.dataset.name || '') +
+                      '&photo=' + encodeURIComponent(cell.dataset.photo || '');
+    }
+
+    var toastTimer;
+    function showToast(msg) {
+      toastEl.textContent = msg || toastEl.textContent;
+      toastEl.classList.add('__show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
+    }
+
+    // Тап «Пригласить» → таймер (или тост при лимите); «Перейти» → диалог.
+    list.addEventListener('click', function (e) {
+      var invite = e.target.closest('.rf-invite');
+      if (invite) {
+        if (!inviteOne()) { showToast('Вы пригласили всех друзей на сегодня'); return; }
+        startTimer(invite);
+        return;
+      }
+      var go = e.target.closest('.rf-go');
+      if (go) goToChat(go.closest('.user-cell'));
+    });
+
+    // «Поделиться» — нативный шеринг / копирование ссылки.
+    var shareBtn = document.getElementById('mpShare');
+    if (shareBtn) shareBtn.addEventListener('click', function () {
+      var data = { title: 'Фотомарафон', text: 'Участвую в фотомарафоне #' + MARATHON + ' — присоединяйся и голосуй за моё фото!', url: location.href };
+      if (navigator.share) navigator.share(data).catch(function () {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(data.url).then(function () { showToast('Ссылка скопирована'); }).catch(function () {});
+    });
+
+    // Открытие / закрытие шторки.
+    function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); }
+    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); }
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-sheet-close]')) closeSheet();
     });
   </script>
 </body>
