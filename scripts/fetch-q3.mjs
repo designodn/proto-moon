@@ -630,8 +630,17 @@ ${authorHeader(aid, time)}
       const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
         ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
         : img(src);
+      // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
+      // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
+      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
+
+          <!-- Тап по клипу открывает полноэкранный плеер. Над media (z0), но под
+               оверлеями шапки/mute/actions (z2) — кнопки кликаются как обычно. -->
+          <a class="clip-feed__open" aria-label="Открыть клип"
+             href="${esc(openUrl)}"
+             style="position:absolute;inset:0;z-index:1"></a>
 
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
