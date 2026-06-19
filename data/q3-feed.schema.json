@@ -26,7 +26,8 @@
       "gift-received":  { "author": true, "gift": true, "_variants": "postcard | gift | ai-gift", "_note": "повод + даритель + медиа; CTA по подвиду (Отправить открытку/подарок / Создать ИИ подарок)" },
       "friendversary":  { "avatars": 2, "title": true, "text": true, "_note": "спец-класс feed-birthday, CTA «Поздравить друга»" },
       "tagged-photo":   { "heroAvatar": true, "title": true, "media": "image", "tag": true, "_note": "full-bleed media + tooltip с именем, CTA «Поделиться»" },
-      "clip":           { "author": true, "media": "clip", "stats": true, "_note": "спец-класс clip-feed, 9:16, тёмные actions" }
+      "clip":           { "author": true, "media": "clip", "stats": true, "_note": "спец-класс clip-feed, 9:16, тёмные actions" },
+      "memories-clip":  { "author": "self", "title": true, "label": "from текст", "media": "photos→слайд-шоу", "_note": "island «Ваш клип из воспоминаний»: бейдж «Видите только вы» + заголовок, кадры (фото через запятую) сменяются кросс-фейдом, подпись-период (текст) на клипе в OK Sans Display, «Поделиться»+«···» оверлеем на клипе, без звука. Тап (по клипу/Поделиться) → clip-edit.html. Пусто: title→«Ваш клип из воспоминаний», текст→«Лето 2026», фото→fallback-подборка в COMPANION" }
     },
     "поля_автора": {
       "name": "имя/название (для группы — название сообщества)",
@@ -41,7 +42,7 @@
       "колонки": "id · тип · автор · заголовок · текст · фото (ссылки через запятую) · лайки · комменты · репосты · ссылка. Отличие от NV «Посты»: вместо тема/рубрика — колонка ссылка (для shared-link).",
       "маппинг": {
         "id": "post-1, post-2 … (ключ строки; порядок строк = порядок в ленте)",
-        "тип": "text|photo|photo-gallery|video|ad|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip. text/photo/photo-gallery/video — один компонент feed-text (см. базовый_text)",
+        "тип": "text|photo|photo-gallery|video|ad|vvz-portlet|on-this-day|group-post|reshare-group|reshare-post|added-friend|shared-link|gift-received|friendversary|tagged-photo|clip|memories-clip. text/photo/photo-gallery/video — один компонент feed-text (см. базовый_text)",
         "автор": "id из листа «Люди» (как в NV): число (1,3,6…), my_profile, group-N (сообщество → «Подписаться»+бейдж), vvz-N, ad-N (рекламодатель). Несколько id через запятую — для vvz-portlet (карточки), added-friend / friendversary / gift-received (получатель, даритель)",
         "заголовок": "title (on-this-day, friendversary, tagged-photo, повод подарка). Иначе пусто",
         "текст": "тело поста; для shared-link — подводка над превью",
@@ -216,10 +217,18 @@
       "author": { "name": "Александра Миксунова", "avatar": "https://i.okcdn.ru/...miksunova.jpg", "time": "12:48" },
       "media": "https://media.tenor.com/...clip.gif",
       "stats": { "comments": 14, "reshares": 73, "likes": 16 }
+    },
+    {
+      "id": "q-mclip", "type": "memories-clip",
+      "author": "self",
+      "title": "Ваш клип из воспоминаний",
+      "label": "Лето 2026",
+      "photos": ["https://.../1.jpg", "https://.../2.jpg", "https://.../3.jpg"],
+      "_note": "label = колонка «текст»; photos = колонка «фото» (кадры монтажа)"
     }
   ],
 
   "feeds": {
-    "q3-lenta": ["q1", "q2", "q3", "q-vvz", "q-otd", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q-fv", "q-tag", "q12"]
+    "q3-lenta": ["q1", "q2", "q3", "q-vvz", "q-otd", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q-fv", "q-tag", "q12", "q-mclip"]
   }
 }

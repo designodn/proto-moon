@@ -68,6 +68,19 @@
   .ce-preview > img {
     position: absolute; inset: 0;
     width: 100%; height: 100%; object-fit: cover; display: block;
+    will-change: transform, filter;
+  }
+  /* Эффекты перехода кадр→кадр (Ken Burns) при проигрывании — по кругу. */
+  @keyframes ce-zoom-in  { from { transform: scale(1);    } to { transform: scale(1.12); } }
+  @keyframes ce-zoom-out { from { transform: scale(1.12); } to { transform: scale(1);    } }
+  @keyframes ce-pan-left { from { transform: scale(1.12) translateX(4%); } to { transform: scale(1.12) translateX(-4%); } }
+  @keyframes ce-blur-in  { 0% { filter: blur(14px); transform: scale(1.08); } 60% { filter: blur(0); } 100% { filter: blur(0); transform: scale(1.08); } }
+  .ce-preview > img.__fx-zoom-in  { animation: ce-zoom-in  1.4s ease-out both; }
+  .ce-preview > img.__fx-zoom-out { animation: ce-zoom-out 1.4s ease-out both; }
+  .ce-preview > img.__fx-pan-left { animation: ce-pan-left 1.4s ease-out both; }
+  .ce-preview > img.__fx-blur-in  { animation: ce-blur-in 1.2s ease-out both; }
+  @media (prefers-reduced-motion: reduce) {
+    .ce-preview > img { animation: none !important; }
   }
   /* Подпись-период сверху по центру. */
   .ce-title {
@@ -206,7 +219,17 @@
 
       document.getElementById('ceTitle').textContent = label;
       var hero = document.getElementById('ceHero');
-      hero.src = photos[0];
+
+      // Эффекты перехода кадр→кадр (Ken Burns), по кругу. Снимаем класс,
+      // форсим reflow и ставим новый — так анимация перезапускается на кадре.
+      var HERO_FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
+      function showFrame(n) {
+        hero.src = photos[n];
+        HERO_FX.forEach(function (c) { hero.classList.remove(c); });
+        void hero.offsetWidth;
+        hero.classList.add(HERO_FX[n % HERO_FX.length]);
+      }
+      showFrame(0);
 
       // Раскадровка — миниатюры из тех же кадров.
       var strip = document.getElementById('ceStrip');
@@ -235,7 +258,7 @@
       function start() {
         if (i >= photos.length) { i = 0; }   // доиграли → старт сначала
         playing = true; setPlayIcon();
-        hero.src = photos[i];
+        showFrame(i);
         // Плейхед продолжает с текущей позиции до конца за оставшееся время.
         var frac = headLeftPx() / stripWidth();
         if (frac >= 1 || frac < 0) frac = 0;
@@ -249,7 +272,7 @@
         timer = setInterval(function () {
           i += 1;
           if (i >= photos.length) { finish(); return; }
-          hero.src = photos[i];
+          showFrame(i);
         }, FRAME_MS);
       }
       function pause() {
