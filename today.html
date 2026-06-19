@@ -440,7 +440,7 @@
     (function () {
       var w = document.getElementById('rouletteWidget');
       if (!w) return;
-      function open() { window.location.href = 'koleso/koleso.html' + location.search; }
+      function open() { window.location.href = 'koleso/koleso-splash.html' + location.search; }
       w.addEventListener('click', open);
       w.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
