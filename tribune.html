@@ -76,7 +76,7 @@
 
         <div class="nav-bar __type-search">
           <div class="nav-bar__leading">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад" data-href="new-vision/lenta.html"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
           </div>
           <div class="nav-bar__search">
             <span class="nav-bar__search-icon"><img class="ll-icon" src="assets/icons/search_24.svg" width="20" height="20" alt=""></span>
@@ -434,5 +434,17 @@
   <script src="components/feed-text.js"></script>
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+  <script>
+    // «Назад» из Трибуны по умолчанию ведёт в NV-ленту. Если пришли из Q3-ленты
+    // (по referrer), возвращаем туда же — чтобы не выкидывало в NV.
+    (function () {
+      var back = document.querySelector('.nav-bar__back');
+      if (!back || !document.referrer) return;
+      try {
+        if (/\/lenta-q3\.html$/.test(new URL(document.referrer).pathname))
+          back.setAttribute('data-href', 'lenta-q3.html');
+      } catch (e) {}
+    })();
+  </script>
 </body>
 </html>
