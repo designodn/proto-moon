@@ -14,6 +14,12 @@
  */
 
 /* Крупный текст коммента — кастомный стиль 22 / 26, regular, Roboto. */
+/* Крупный текст коммента: максимум 4 строки, дальше — «ещё» (оранжевое, по тапу
+   разворачивает). Обёртка-label со скрытым чекбоксом тогглит line-clamp. */
+.caf-text-wrap {
+  display: block;
+  cursor: pointer;
+}
 .caf-text {
   margin: 0;
   font-family: var(--font-family);
@@ -21,6 +27,37 @@
   line-height: 26px;
   font-weight: 400;
   color: var(--dynamic-text-and-icons-base-primary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+.caf-text-wrap > input:checked ~ .caf-text {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+/* «ещё/скрыть» — оранжевое (accent), показываем только при реальном overflow
+   (класс is-clampable вешает JS в lenta-q3.html). */
+.caf-text__more {
+  display: none;
+  margin-top: var(--space-1);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-200);
+  color: var(--dynamic-text-and-icons-status-accent);
+}
+.caf-text-wrap.is-clampable .caf-text__more {
+  display: inline-block;
+}
+.caf-text__more-hide {
+  display: none;
+}
+.caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-show {
+  display: none;
+}
+.caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-hide {
+  display: inline;
 }
 
 /* Подзаголовок шапки «Комментарий к <автор оригинала>» — строго в одну строку
@@ -32,6 +69,17 @@
 }
 .caf-header__to {
   font-weight: 500;
+}
+
+/* Доп-ава (человек/группа, к кому коммент) — маленькая ава в правом-нижнем углу
+   основной 44-авы, на абсолюте, выходит на 2px вправо и вниз за её границы.
+   Родительская ава несёт .__has-addon (overflow:visible), иначе клипнётся. */
+.caf-ava__addon {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  /* кольцо цвета карточки — визуально отделяет доп-аву от основной */
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
 }
 
 /* Превью оригинального поста: ряд «иконка-репост + контент».
