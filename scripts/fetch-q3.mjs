@@ -61,7 +61,8 @@ const COMPANION = {
     title: 'РБК — последние новости дня в России и мире сегодня',
     description: 'Главные новости политики, экономики и бизнеса, общество, технологии, спорт, мнения и интервью.',
   },
-  // tagged-photo: hero-аватар + имя на фото + координаты тултипа (как в эталоне)
+  // tagged-photo: hero-аватар + координаты тултипа. Имя в теге = имя автора
+  // поста (personName), tag.name — только фолбэк, если у автора нет имени.
   'tagged-photo': {
     heroAvatar: 'https://i.pravatar.cc/192?img=49',
     tag: { name: 'Анастасия Кащеева', top: 143, left: 187.5 },
@@ -596,7 +597,7 @@ ${authorHeader(aid, time)}
             ${img(photos[0] || '')}
             <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
                  style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
-              <div class="tooltip ds-title-m">${esc(tag.name)}</div>
+              <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>
             </div>
           </div>
