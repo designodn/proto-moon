@@ -131,9 +131,9 @@
   transition: transform .55s cubic-bezier(.2,.7,.3,1), opacity .5s ease;
 }
 /* точные размеры/позиции/наклоны из Figma (frame 09, система 360px) */
-.omar-slide--hero .omar-fan__photo--1 { left: -24px; top: 153px; width: 189px; height: 221px; border-radius: 28px; transform: rotate(-12.42deg) scale(.85); }
-.omar-slide--hero .omar-fan__photo--2 { left: 70px;  top: 23px;  width: 202px; height: 183px; border-radius: 24px; transform: rotate(14.84deg) scale(.85); z-index: 2; }
-.omar-slide--hero .omar-fan__photo--3 { left: 175px; top: 165px; width: 188px; height: 214px; border-radius: 24px; transform: rotate(10.4deg)  scale(.85); }
+.omar-slide--hero .omar-fan__photo--1 { left: -24px; top: 153px; width: 189px; height: 221px; border-radius: 28px; transform: rotate(-12.42deg) scale(.85); z-index: 1; }
+.omar-slide--hero .omar-fan__photo--2 { left: 70px;  top: 23px;  width: 202px; height: 183px; border-radius: 24px; transform: rotate(14.84deg) scale(.85); z-index: 0; }
+.omar-slide--hero .omar-fan__photo--3 { left: 175px; top: 165px; width: 188px; height: 214px; border-radius: 24px; transform: rotate(10.4deg)  scale(.85); z-index: 1; }
 .omar-slide--hero.is-active .omar-fan__photo { opacity: 1; }
 .omar-slide--hero.is-active .omar-fan__photo--1 { transform: rotate(-12.42deg) scale(1); transition-delay: .12s; }
 .omar-slide--hero.is-active .omar-fan__photo--2 { transform: rotate(14.84deg) scale(1); transition-delay: .04s; }
