@@ -27,14 +27,22 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
-const SHEET_NAME = 'Q3-посты';
+const SHEET_NAME = 'Q3-посты';            // человекочитаемое имя листа (для логов)
+const SHEET_GID = '1662648328';           // стабильный gid листа Q3-постов
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
+// Тянем по gid, а НЕ по имени листа: имя («Q3-посты») переименовали в таблице,
+// и gviz при ненайденном имени молча отдаёт первый лист («Люди») — из-за чего
+// раньше лента собиралась из чужой схемы и обнулялась. gid переживает переименования.
+//
+// headers=1 — принудительно одна строка шапки. Без него gviz авто-детектит шапку
+// и для post-1 (vvz-portlet без счётчиков лайков/комментов/репостов) ошибочно
+// считает ДВЕ строки шапки → склеивает их в подписи колонок, а post-1 теряется.
 const csvUrl =
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
 
 /* ── Компаньон-данные (то, чего нет в плоских колонках листа) ──────────────── */
 /* Вложенные куски не лезут в колонки таблицы, поэтому держим их здесь и вешаем
@@ -635,7 +643,13 @@ ${authorHeader(aid, time)}
         : img(src);
       // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
       // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
-      const openUrl = `klipy.html?type=video&src=${encodeURIComponent(src)}&name=${encodeURIComponent(personName(aid))}&from=lenta-q3.html`;
+      // Прокидываем аватар/имя/счётчики — klipy.html подставляет их в шапку
+      // и actions плеера (data-author-ava / data-like-count / data-reshare-count).
+      const q = new URLSearchParams({
+        type: 'video', src, name: personName(aid), from: 'lenta-q3.html',
+        ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
+      });
+      const openUrl = `klipy.html?${q}`;
       return `        <article class="clip-feed">
           <div class="clip-feed__media">${visual}</div>
 
@@ -750,7 +764,19 @@ async function main() {
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
     const rows = parseCsv(await res.text());
-    const [, ...body] = rows;
+    const [header = [], ...body] = rows;
+
+    // Защита от чужой схемы: лист Q3 обязан иметь колонки «тип» и «автор».
+    // Если их нет (например, gviz отдал не тот лист) — НЕ трогаем ленту, чтобы
+    // деплой-реген не обнулил живой фид. Сравниваем по началу заголовка колонки:
+    // у Q3-листа первая строка склеена с post-1 → «тип vvz-portlet», «автор …».
+    const head = header.map(h => String(h || '').trim().toLowerCase());
+    const hasCol = name => head.some(h => h === name || h.startsWith(name + ' '));
+    if (!hasCol('тип') || !hasCol('автор')) {
+      throw new Error(
+        `лист по gid=${SHEET_GID} не похож на Q3-посты (нет колонок «тип»/«автор»): ` +
+        `${head.join(' | ')}. Лента НЕ перегенерирована — проверь доступ/лист в таблице.`);
+    }
 
     posts = [];
     for (const c of body) {
@@ -787,7 +813,12 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
+  const rendered = posts.map((p, i) => renderPost(p, i)).filter(Boolean);
+  // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
+  // — не вставляем пустоту в живую ленту.
+  if (rendered.length === 0)
+    throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
+  const cards = rendered.join('\n\n');
   splice(cards);
 
   console.log(`✓ ${posts.length} постов → data/q3-feed.json + вставлено в lenta-q3.html`);
