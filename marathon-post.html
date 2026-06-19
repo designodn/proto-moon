@@ -101,7 +101,10 @@
     font-weight: 600;
     line-height: 16px;
   }
-  .ll-fp-drop.__filled .ll-fp-chip {
+  /* Оверлейный чип (прямой ребёнок зоны) виден только когда загружено фото. */
+  .ll-fp-drop > .ll-fp-chip { display: none; }
+  .ll-fp-drop.__filled > .ll-fp-chip {
+    display: inline-flex;
     position: absolute;
     left: var(--space-3);
     bottom: var(--space-3);
@@ -217,6 +220,14 @@
         if (!publish.disabled) window.location.href = 'marathon.html';
       });
     })();
+
+    // Делегированный переход по data-href (кнопка «Подробнее о фотомарафоне»).
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
   </script>
 </body>
 </html>

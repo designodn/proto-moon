@@ -273,5 +273,14 @@
   </div>
 
   <script src="components/back-button.js"></script>
+  <!-- Делегированный переход по data-href (кнопка «Загрузить фото» → форма). -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-href]');
+      if (!btn) return;
+      e.preventDefault();
+      location.href = btn.getAttribute('data-href');
+    });
+  </script>
 </body>
 </html>
