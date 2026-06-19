@@ -147,7 +147,7 @@
       i = Math.max(0, Math.min(last, i));
       clearAuto();
       index = i;
-      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — лента уходит вверх
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
       dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
       nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
@@ -158,19 +158,19 @@
     el.querySelector('.omar__cta button').addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
 
-    // Свайп влево/вправо (отменяет автопереход).
-    var sx = null, sdx = 0;
-    slidesEl.addEventListener('pointerdown', function (e) { sx = e.clientX; sdx = 0; clearAuto(); });
-    slidesEl.addEventListener('pointermove', function (e) { if (sx != null) sdx = e.clientX - sx; });
+    // Свайп вверх/вниз (отменяет автопереход).
+    var sy = null, sdy = 0;
+    slidesEl.addEventListener('pointerdown', function (e) { sy = e.clientY; sdy = 0; clearAuto(); });
+    slidesEl.addEventListener('pointermove', function (e) { if (sy != null) sdy = e.clientY - sy; });
     function endSwipe() {
-      if (sx == null) return;
-      var d = sdx; sx = null;
-      if (d < -40) goTo(index + 1);
-      else if (d > 40) goTo(index - 1);
-      else scheduleAuto();           // не свайп — возвращаем автотаймер, если был
+      if (sy == null) return;
+      var d = sdy; sy = null;
+      if (d < -40) goTo(index + 1);        // смах вверх → следующий блок снизу
+      else if (d > 40) goTo(index - 1);    // смах вниз → предыдущий
+      else scheduleAuto();                 // не свайп — возвращаем автотаймер, если был
     }
     slidesEl.addEventListener('pointerup', endSwipe);
-    slidesEl.addEventListener('pointercancel', function () { sx = null; scheduleAuto(); });
+    slidesEl.addEventListener('pointercancel', function () { sy = null; scheduleAuto(); });
 
     el._reset = function () { goTo(0); };
     el._clearAuto = clearAuto;
