@@ -26,6 +26,9 @@
     padding-top: 0;
     padding-bottom: var(--space-2);
     margin-bottom: var(--space-1);
+    /* flex-shrink:0 — иначе flex-column-родитель (.phone-frame__feed) сжимает
+       остров, а .island { overflow:hidden } обрезает навбар/чипсы/вайб. */
+    flex-shrink: 0;
   }
 
   /* Ряд chips внутри header-острова (фон острова — secondary). */
@@ -45,9 +48,14 @@
     box-shadow: 0 8px 24px -8px rgba(0,0,0,0.25);
   }
 
-  /* Таб «Трибуна» — иконка ico_book_24 (вместо дефолтной book_24 из tabbar.css). */
-  .ll-tabbar .tabbar-icon.__slot-book {
-    --tabbar-icon-src: url('assets/icons/ico_book_24.svg');
+  /* Таб «Трибуна» — иконка ico_book_24 (вместо дефолтной book_24 из tabbar.css).
+     Переопределяем mask-image НАПРЯМУЮ (а не через --tabbar-icon-src): url()
+     внутри кастом-проперти резолвится относительно components/tabbar.css, где
+     она подставляется, — путь ломается. В mask-image на странице url()
+     резолвится от документа, поэтому 'assets/...' от корня работает. */
+  .ll-tabbar .tabbar-icon.__slot-book::before {
+    -webkit-mask-image: url('assets/icons/ico_book_24.svg');
+            mask-image: url('assets/icons/ico_book_24.svg');
   }
 
   /* .ll-tabbar → components/app-shell.css */
