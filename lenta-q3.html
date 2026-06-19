@@ -2584,8 +2584,10 @@
               var p = P(st.author) || {};
               var slide = MomentViewer.bdaySlide({
                 photo:          st.image || p.photo || '',
-                name:           p.name || '',
-                headerTitle:    'День рождения ' + firstName(p),
+                // ФИ в род. падеже: большим текстом — полностью, в шапке —
+                // только имя (склонение по эвристике MomentViewer.genitive).
+                name:           MomentViewer.genitive(p.name, p.gender),
+                headerTitle:    'День рождения ' + MomentViewer.genitiveFirst(p.name, p.gender),
                 headerSubtitle: '3 часа назад',
                 cta:            'Поздравить'
               });

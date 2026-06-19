@@ -284,9 +284,16 @@
 }
 .vvz-card.__state-hidden .vvz-card__content {
   flex: 1 1 auto;
-  justify-content: center;
 }
+/* «Рекомендация скрыта» — по центру свободного места над кнопкой: title
+   забирает весь остаток (flex:1) и центрирует текст, кнопка «Отменить»
+   прижата к низу (её margin-top:auto обнуляется, т.к. свободного места нет). */
 .vvz-card.__state-hidden .vvz-card__title {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: normal;
   color: var(--static-text-and-icons-base-inverse-primary);
 }
 /* Кнопка визуально становится secondary-on-color без смены классов через JS:
@@ -294,4 +301,136 @@
 .vvz-card.__state-hidden .vvz-card__btn .button-container {
   --button-color: var(--static-text-and-icons-base-inverse-primary);
   --button-background-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ============================================================
+   STATE: REQUESTED — «Заявка в друзья отправлена» (тап по «Дружить»).
+   Общие друзья скрываются, сабтайтл меняется на «Заявка в друзья
+   отправлена» (JS), кнопка превращается в галочку secondary-on-color
+   (JS подменяет содержимое .vvz-card__btn). Повторный тап по галочке
+   открывает шторку отмены (см. vvz-card.js / vvz-sheet ниже).
+   ============================================================ */
+.vvz-card.__state-requested .vvz-card__mutuals {
+  display: none;
+}
+
+/* ============================================================
+   АДАПТИВ: устройство шире 420 — крупнее аватар, ФИО и крестик
+   (только во ВВЗ-сториз, .moment__body).
+   ============================================================ */
+@media (min-width: 421px) {
+  /* Аватар 96 → 120 */
+  .moment__body .vvz-card__media {
+    width: 120px;
+    height: 120px;
+  }
+  /* ФИО Title S → Title M (17/24) */
+  .moment__body .vvz-card__title {
+    font-size: 17px;
+    line-height: 24px;
+  }
+  /* Крест скрытия buttonInline 16 → 20 */
+  .moment__body .vvz-card__close.button-inline-wrapper {
+    height: 20px;
+  }
+  .moment__body .vvz-card__close .button-inline__icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ============================================================
+   VVZ-SHEET — шторка подтверждения отмены заявки в друзья.
+   Создаётся из vvz-card.js при повторном тапе по галочке (requested).
+   Поверх вьюера сториз (z-index 1000), сториз ставятся на паузу.
+   ============================================================ */
+.vvz-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  font-family: var(--font-family);
+}
+.vvz-sheet__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--dynamic-surface-special-layer, rgba(98, 92, 88, 0.64));
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+.vvz-sheet.__open .vvz-sheet__overlay {
+  opacity: 1;
+}
+.vvz-sheet__panel {
+  position: relative;
+  width: 100%;
+  max-width: 576px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 var(--space-4);
+  background: var(--dynamic-surface-base-secondary, #fff);
+  border-radius: 20px 20px 0 0;
+  transform: translateY(100%);
+  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vvz-sheet.__open .vvz-sheet__panel {
+  transform: translateY(0);
+}
+/* Верхняя «таскалка» */
+.vvz-sheet__handle {
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vvz-sheet__handle::before {
+  content: '';
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--static-surface-base-inverse-quaternary, rgba(0, 0, 0, 0.12));
+}
+.vvz-sheet__navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 40px;
+}
+.vvz-sheet__close {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.vvz-sheet__title {
+  margin: 4px 0 16px;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+.vvz-sheet__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.vvz-sheet__buttons .button-container {
+  width: 100%;
+}
+/* Нижний home-indicator внутри шторки */
+.vvz-sheet__home {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vvz-sheet__home::before {
+  content: '';
+  width: 108px;
+  height: 4px;
+  border-radius: 12px;
+  background: var(--dynamic-surface-base-inverse-primary, #1a1a1c);
 }
