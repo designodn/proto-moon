@@ -10,6 +10,10 @@
 <link rel="stylesheet" href="index.css">
 <script src="components/screen-transition.js"></script>
 <script src="components/vvz-card.js" defer></script>
+<script src="components/clip-vvz.js" defer></script>
+<script src="data/people.js"></script>
+<script src="components/people-data.js"></script>
+<script src="data/clips.js"></script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; background: #000; }
@@ -157,37 +161,8 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* ============================================================
-     ВВЗ-СЛАЙД — полноэкранный «клип» с оранжево-чёрным градиентом,
-     заголовком и сеткой карточек «Возможно, вы знакомы» + CTA.
-     Композиция повторяет MomentViewer.vvzSlide.
-     ============================================================ */
-  .klip.__vvz {
-    background: radial-gradient(120% 80% at 50% 0%, #4c2400 0%, #1a0a02 55%, #000 100%);
-  }
-  .klip__vvz-inner {
-    position: absolute; inset: 0; z-index: 2;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    row-gap: var(--space-4);
-    padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
-             calc(108px + env(safe-area-inset-bottom, 0px));
-  }
-  .klip__vvz-title {
-    margin: 0; text-align: center;
-    color: var(--static-text-and-icons-base-inverse-primary);
-  }
-  .klip__vvz-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    grid-auto-rows: min-content; align-content: start;
-    gap: var(--space-2); min-height: 0; overflow-y: auto;
-    scrollbar-width: none;
-  }
-  .klip__vvz-grid::-webkit-scrollbar { display: none; }
-  .klip__vvz-grid > .vvz-card { min-width: 0; }
-  .klip__vvz-cta { display: flex; }
-  .klip__vvz-cta .button-wrapper { flex: 1 1 0; }
-  .klip__vvz-cta .button-container { width: 100%; }
+  /* ВВЗ-слайд внутри ленты клипов вынесен в компонент components/clip-vvz.css
+     (.klip.__vvz, .klip__vvz-*); подключается через index.css. */
 
   /* ============================================================
      TABBAR — DS-компонент, прибит к низу поверх видео. В клипах он
@@ -291,159 +266,9 @@
       <img class="klipy-icon" src="assets/icons/add_24.svg" width="24" height="24" alt="">
     </button>
 
-    <!-- REEL --------------------------------------------------------- -->
-    <div class="klipy-reel">
-
-      <!-- КЛИП 1 — слайд, на который открывается плеер из ленты.
-           media / автор / аудио переопределяются из URL-параметров
-           (?type=&src=&name=&ava=), см. скрипт внизу. -->
-      <section class="klip" data-klip data-entry>
-        <div class="klip__media" data-media>
-          <img src="https://media.tenor.com/rImXojPJZ1IAAAAM/stars-in-the-sky-sparkle.gif" alt="">
-        </div>
-        <div class="klip__scrim" aria-hidden="true"></div>
-
-        <div class="klip__rail">
-          <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <span class="klip__rail-ico"></span>
-            <span class="klip__rail-count" data-like-count>1,8K</span>
-          </button>
-          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
-            <span class="klip__rail-count" data-reshare-count>143</span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Не интересно">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Ещё">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
-          </button>
-        </div>
-
-        <div class="klip__bottom">
-          <div class="klip__author">
-            <div class="avatar __size-24 __type-image" data-author-ava><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
-            <span class="klip__author-name" data-author-name>Оживляю людей в ИИ</span>
-          </div>
-          <div class="klip__audio">
-            <button class="klip__mute __state-muted" data-mute aria-label="Звук">
-              <img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">
-              <img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">
-            </button>
-            <div class="klip__audio-text">
-              <div class="klip__audio-title">Original audio</div>
-              <div class="klip__audio-sub" data-audio-name>Оживляю людей в ИИ</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- КЛИП 2 -->
-      <section class="klip" data-klip>
-        <div class="klip__media">
-          <img src="https://i.pravatar.cc/720?img=49" alt="">
-        </div>
-        <div class="klip__scrim" aria-hidden="true"></div>
-
-        <div class="klip__rail">
-          <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <span class="klip__rail-ico"></span>
-            <span class="klip__rail-count" data-like-count>542</span>
-          </button>
-          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
-            <span class="klip__rail-count">31</span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Не интересно">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Ещё">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
-          </button>
-        </div>
-
-        <div class="klip__bottom">
-          <div class="klip__author">
-            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=49" alt=""></div>
-            <span class="klip__author-name">Александра Борщицкий</span>
-          </div>
-          <div class="klip__audio">
-            <button class="klip__mute __state-muted" data-mute aria-label="Звук">
-              <img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">
-              <img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">
-            </button>
-            <div class="klip__audio-text">
-              <div class="klip__audio-title">Original audio</div>
-              <div class="klip__audio-sub">Александра Борщицкий</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ВВЗ-СЛАЙД (вставка между клипами) -->
-      <section class="klip __vvz" data-klip data-vvz>
-        <div class="klip__vvz-inner">
-          <h2 class="klip__vvz-title ds-title-xl">Возможно, вы знакомы</h2>
-          <div class="klip__vvz-grid" data-vvz-grid><!-- VvzCard.render --></div>
-          <div class="klip__vvz-cta">
-            <div class="button-wrapper __size-44 __style-secondary-on-color">
-              <button class="button-container __style-secondary-on-color" type="button">
-                <span class="button-content">Показать всех</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="klip__rail">
-          <button class="klip__rail-btn" aria-label="Ещё">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
-          </button>
-        </div>
-      </section>
-
-      <!-- КЛИП 3 -->
-      <section class="klip" data-klip>
-        <div class="klip__media">
-          <img src="https://i.pravatar.cc/720?img=33" alt="">
-        </div>
-        <div class="klip__scrim" aria-hidden="true"></div>
-
-        <div class="klip__rail">
-          <button class="klip__rail-btn __like" data-like aria-label="Класс">
-            <span class="klip__rail-ico"></span>
-            <span class="klip__rail-count" data-like-count>3,2K</span>
-          </button>
-          <button class="klip__rail-btn" data-reshare aria-label="Поделиться">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/reshare_24.svg')"></span>
-            <span class="klip__rail-count">208</span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Не интересно">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/dislike_24.svg')"></span>
-          </button>
-          <button class="klip__rail-btn" aria-label="Ещё">
-            <span class="klip__rail-ico" style="--ico:url('assets/icons/more_24.svg')"></span>
-          </button>
-        </div>
-
-        <div class="klip__bottom">
-          <div class="klip__author">
-            <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=33" alt=""></div>
-            <span class="klip__author-name">Закаты России</span>
-          </div>
-          <div class="klip__audio">
-            <button class="klip__mute __state-muted" data-mute aria-label="Звук">
-              <img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">
-              <img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">
-            </button>
-            <div class="klip__audio-text">
-              <div class="klip__audio-title">Original audio</div>
-              <div class="klip__audio-sub">Закаты России</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div>
+    <!-- REEL — клипы рендерятся из data/clips.js (window.DS_CLIPS_DATA)
+         скриптом ниже; между клипами вставляется ВВЗ-слайд. -->
+    <div class="klipy-reel" data-reel></div>
 
     <!-- TABBAR (клипы активны, тёмная тема) -------------------------- -->
     <div class="klipy-tabbar">
@@ -559,62 +384,100 @@
       });
     })();
 
-    // 2) Открыли плеер из ленты → первый слайд = тот самый клип.
-    //    Лента передаёт ?type=img|video&src=…&name=…&ava=…. Подменяем media,
-    //    имя автора и подпись аудио (она дублирует имя загрузившего).
-    (function () {
-      var params = new URLSearchParams(location.search);
-      var src = params.get('src');
-      if (!src) return;
-      var entry = document.querySelector('[data-entry]');
-      if (!entry) return;
-
-      var media = entry.querySelector('[data-media]');
-      if (media) {
-        if (params.get('type') === 'video') {
-          media.innerHTML = '<video src="' + src + '" autoplay muted loop playsinline></video>';
-        } else {
-          media.innerHTML = '<img src="' + src + '" alt="">';
-        }
-      }
-      var name = params.get('name');
-      if (name) {
-        var nameEl = entry.querySelector('[data-author-name]');
-        var audioEl = entry.querySelector('[data-audio-name]');
-        if (nameEl)  nameEl.textContent = name;
-        if (audioEl) audioEl.textContent = name;  // аудио дублирует имя автора
-      }
-      var ava = params.get('ava');
-      if (ava) {
-        var avaImg = entry.querySelector('[data-author-ava] img');
-        if (avaImg) avaImg.src = ava;
-      }
-      // Счётчики лайков/репостов — тоже из карточки в ленте.
-      var like = params.get('like');
-      if (like != null) {
-        var likeEl = entry.querySelector('[data-like-count]');
-        if (likeEl) likeEl.textContent = like;
-      }
-      var reshare = params.get('reshare');
-      if (reshare != null) {
-        var reshareEl = entry.querySelector('[data-reshare-count]');
-        if (reshareEl) reshareEl.textContent = reshare;
-      }
-    })();
-
-    // 3) ВВЗ-карточки — через DS-фабрику VvzCard. vvz-card.js подключён с
-    //    defer и отрабатывает до DOMContentLoaded, поэтому к коллбэку
-    //    window.VvzCard уже готов.
+    // 2) Лента клипов рендерится из data/clips.js (window.DS_CLIPS_DATA) на
+    //    DOMContentLoaded — к этому моменту готовы DS_PEOPLE (автор → имя/аватар),
+    //    VvzCard и ClipVvz (для ВВЗ-слайда). Автор клипа — id человека из «Люди».
+    //    Вход из ленты (?clip=&author=&likes=&reshares=) → твой клип первым,
+    //    дальше — ростер из таблицы по кругу. type:'vvz-clip' → ВВЗ-слайд.
     document.addEventListener('DOMContentLoaded', function () {
-      var grid = document.querySelector('[data-vvz-grid]');
-      if (!grid || !window.VvzCard) return;
-      var people = [
-        { name: 'Карина Затонская', img: 'https://i.pravatar.cc/200?img=47', mutuals: 18, m: [44, 12, 5] },
-        { name: 'Игорь Лебедев',    img: 'https://i.pravatar.cc/200?img=15', mutuals: 6,  m: [21, 33, 8] },
-        { name: 'Марина Светлова',  img: 'https://i.pravatar.cc/200?img=24' },
-        { name: 'Олег Кравцов',     img: 'https://i.pravatar.cc/200?img=52', mutuals: 3,  m: [11, 2, 9] }
-      ];
-      grid.innerHTML = people.map(window.VvzCard.render).join('');
+      var reel = document.querySelector('[data-reel]');
+      if (!reel) return;
+
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+      function person(id) { return (window.DS_PEOPLE && window.DS_PEOPLE.get(id)) || {}; }
+      // Видео: поле video (прямая ссылка / файл) либо по конвенции <id>.mp4.
+      function videoSrc(c) {
+        var v = c.video || (c.id + '.mp4');
+        return /^https?:/.test(v) ? v : 'assets/clips/' + v;
+      }
+
+      function clipHTML(c) {
+        var p = person(c.author);
+        var author = c.authorName || p.name || '';
+        var avatar = c.avatar || p.photo || '';
+        var audioTitle = c.audio ? esc(c.audio) : 'Original audio';
+        return '' +
+        '<section class="klip" data-klip>' +
+          '<div class="klip__media"><video src="' + esc(videoSrc(c)) + '" autoplay muted loop playsinline></video></div>' +
+          '<div class="klip__scrim" aria-hidden="true"></div>' +
+          '<div class="klip__rail">' +
+            '<button class="klip__rail-btn __like" data-like aria-label="Класс">' +
+              '<span class="klip__rail-ico"></span>' +
+              '<span class="klip__rail-count" data-like-count>' + esc(c.likes) + '</span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" data-reshare aria-label="Поделиться">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/reshare_24.svg\')"></span>' +
+              '<span class="klip__rail-count">' + esc(c.reshares) + '</span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" aria-label="Не интересно">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/dislike_24.svg\')"></span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" aria-label="Ещё">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/more_24.svg\')"></span>' +
+            '</button>' +
+          '</div>' +
+          '<div class="klip__bottom">' +
+            '<div class="klip__author">' +
+              '<div class="avatar __size-24 __type-image"><img src="' + esc(avatar) + '" alt=""></div>' +
+              '<span class="klip__author-name">' + esc(author) + '</span>' +
+            '</div>' +
+            '<div class="klip__audio">' +
+              '<button class="klip__mute __state-muted" data-mute aria-label="Звук">' +
+                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">' +
+                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">' +
+              '</button>' +
+              '<div class="klip__audio-text">' +
+                '<div class="klip__audio-title">' + audioTitle + '</div>' +
+                '<div class="klip__audio-sub">' + esc(author) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</section>';
+      }
+
+      // ВВЗ-слайд — через компонент ClipVvz; люди из «Люди» (vvz-1..vvz-4).
+      var vvzPeople = ['vvz-1', 'vvz-2', 'vvz-3', 'vvz-4'].map(function (id) {
+        var p = person(id);
+        return { name: p.name || '', img: p.photo || '' };
+      });
+      function vvzHTML() {
+        return window.ClipVvz ? window.ClipVvz.render({ people: vvzPeople }) : '';
+      }
+
+      var params = new URLSearchParams(location.search);
+      var roster = (window.DS_CLIPS_DATA || []).slice();
+
+      // Вход из ленты → синтетический «твой клип» в начало.
+      var lead = null;
+      var leadId = params.get('clip');
+      if (leadId) {
+        lead = {
+          id: leadId, type: 'clip', author: params.get('author') || '',
+          video: leadId + '.mp4',
+          likes: params.get('likes') || '', reshares: params.get('reshares') || ''
+        };
+      }
+
+      // [твой клип] + ростер по кругу (повторяем дважды для «бесконечной» ленты).
+      var seq = (lead ? [lead] : []).concat(roster, roster);
+
+      reel.innerHTML = seq.map(function (c) {
+        return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
+      }).join('');
     });
 
     // 4) Лайк — outline ↔ filled (красный) + правка счётчика.
