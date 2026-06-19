@@ -99,6 +99,18 @@
   padding-right: var(--space-4);
 }
 
+/* Заголовок поста (из колонки «заголовок»): крупный ds-title-xl, отступ до
+   текста — 4px. Заголовок и текст лежат в одной группе, чтобы перебить
+   общий gap карточки (space-3) локальным space-1. */
+.text-feed__titled {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.text-feed__title {
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
 /* uni-cell (шапка) внутри text-feed: горизонтальный паддинг даёт .text-feed > *,
    поэтому у самого uni-cell обнуляем собственный паддинг (по аналогии с feed-base). */
 .text-feed .uni-cell-wrapper {
