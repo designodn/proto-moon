@@ -721,8 +721,8 @@ ${actionsBar(likes, comments, reshares)}
       const giverId = ids[1] || ids[0];
       let cta, btnWrap, icon, btnStyle = '__style-secondary', cardMod = '';
       if (isAi) {
-        cta = 'Создать ИИ подарок';
-        btnWrap = ' __full-width';
+        cta = 'Создать подарок из фото';
+        btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
         btnStyle = '__style-ai-gift';
         cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
         icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>`;
