@@ -806,20 +806,38 @@
     return w;                                            // -о/-е/-и/-у — не склоняем
   }
 
+  // Эвристика пола, когда в данных он не задан: сначала по фамилии (надёжнее),
+  // затем по окончанию имени. Нужна, чтобы женские фамилии -ова/-ина/-ая
+  // склонялись в -ой, а не уходили в нейтральную ветку.
+  function inferGender(parts) {
+    for (var i = 1; i < parts.length; i++) {
+      var s = parts[i].toLowerCase();
+      if (/(ова|ева|ёва|ина|ына|ая|яя)$/.test(s)) return 'f';
+      if (/(ов|ев|ёв|ин|ын|ский|цкий|ой|ый|ий)$/.test(s)) return 'm';
+    }
+    var first = (parts[0] || '').toLowerCase();
+    if (/[ая]$/.test(first)) return 'f';
+    if (/[йь]$/.test(first) || /[бвгдзклмнпрстфхцчшщ]$/.test(first)) return 'm';
+    return '';
+  }
+
   // Полное ФИО → родительный падеж (скобочные прозвища отбрасываем).
   function genitive(name, gender) {
     if (!name) return name || '';
-    var g = normGender(gender);
     var clean = name.replace(/\([^)]*\)/g, '').trim();
     if (!clean) return '';
-    return clean.split(/\s+/).map(function (w, i) {
+    var parts = clean.split(/\s+/);
+    var g = normGender(gender) || inferGender(parts);
+    return parts.map(function (w, i) {
       return genitiveWord(w, g, i > 0);
     }).join(' ');
   }
-  // Только имя (первое слово) в родительном падеже.
+  // Только имя (первое слово) в родительном падеже. Пол выводим из всего ФИО
+  // (если передано), чтобы имена на -а/-я не путались с мужскими.
   function genitiveFirst(name, gender) {
-    var clean = (name || '').replace(/\([^)]*\)/g, '').trim().split(/\s+/)[0] || '';
-    return genitiveWord(clean, normGender(gender), false);
+    var parts = (name || '').replace(/\([^)]*\)/g, '').trim().split(/\s+/);
+    var g = normGender(gender) || inferGender(parts);
+    return genitiveWord(parts[0] || '', g, false);
   }
 
   // Экспорт
