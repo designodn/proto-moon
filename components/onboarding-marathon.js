@@ -108,6 +108,11 @@
             '<span class="button-content">Перейти к фотомарафону</span>' +
           '</button>' +
         '</div>' +
+        '<div class="button-wrapper __size-56 __full-width omar__next" style="display:block">' +
+          '<button class="button-container __style-secondary" type="button" style="width:100%">' +
+            '<span class="button-content">Далее</span>' +
+          '</button>' +
+        '</div>' +
       '</div>';
 
     document.body.appendChild(el);
@@ -117,7 +122,23 @@
 
     // Подъезд секций при скролле
     var scroll = el.querySelector('.omar__scroll');
+    var footer = el.querySelector('.omar__footer');
     var secs = Array.prototype.slice.call(el.querySelectorAll('.omar-sec'));
+
+    // «Далее» — плавный скролл к следующему блоку; на последнем блоке прячется.
+    el.querySelector('.omar__next button').addEventListener('click', function () {
+      var base = scroll.getBoundingClientRect().top;
+      for (var i = 0; i < secs.length; i++) {
+        if (secs[i].getBoundingClientRect().top - base > 8) {
+          secs[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+      }
+    });
+    scroll.addEventListener('scroll', function () {
+      var atEnd = scroll.scrollTop + scroll.clientHeight >= scroll.scrollHeight - 4;
+      footer.classList.toggle('is-end', atEnd);
+    });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
