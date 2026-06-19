@@ -409,101 +409,6 @@
           <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
         </div>
 
-        <!-- ====================================================================
-             ФОТОМАРАФОН — демо-карточки (пока вставлены вручную, вне FEED-региона;
-             когда лист в таблице будет готов — перенесём в генератор fetch-q3.mjs).
-             ==================================================================== -->
-
-        <!-- Вид 1 · обычный пост-участник + модификатор .text-feed__marathon.
-             Состояние «участвую» (joined): текст «Вы уже участвуете…» + серая кнопка. -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Алёна Иванова</div>
-              <div class="ds-caption-s text-feed__time">Только что</div>
-            </div>
-          </div></div></div>
-
-          <p class="ds-body-m text-feed__body">Участвую в фотомарафоне, голосуйте за меня и внука <span class="marathon-promo__tag">#РадостьДетства</span></p>
-          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://picsum.photos/seed/fm-bike/720/540" alt=""></div>
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">3</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 24;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-
-          <div class="text-feed__marathon">
-            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">#РадостьДетства</span></p>
-              <p class="ds-body-m marathon-promo__count">11К участников</p>
-            </div>
-            <div class="button-wrapper __size-44 __full-width" style="display:block">
-              <button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Вид 2 (от группы) · пост сообщества + модификатор .text-feed__marathon.
-             Без состояния «участвую»: текст «Загружайте фото…» + оранжевая primary-кнопка. -->
-        <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Всё ОК!</div>
-              <div class="ds-caption-s text-feed__time">16:32</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
-          </div></div></div>
-
-          <div class="ds-title-m">Фотомарафон #ЦветокПобеды2026 — сохраняем память вместе</div>
-          <p class="ds-body-m text-feed__body">Дорогие друзья! Предлагаем вам присоединиться к фотомарафону и сохранить память о близких вместе с нами.</p>
-          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://picsum.photos/seed/fm-flower/720/405" alt=""></div>
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">18</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">34</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 604;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-
-          <div class="text-feed__marathon">
-            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#ЦветокПобеды2026</span></p>
-              <p class="ds-body-m marathon-promo__count">11К участников</p>
-            </div>
-            <div class="button-wrapper __size-44 __full-width" style="display:block">
-              <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Вид 2 (от приложения) · отдельный фид .marathon: без автора и actions-bar,
-             заголовок + «веер» из трёх фото + промо-блок марафона. -->
-        <article class="marathon island">
-          <p class="ds-title-l marathon__title">Фотомарафон в честь Дня защиты детей</p>
-          <div class="marathon__gallery">
-            <div class="marathon__tile" style="--marathon-tile-rotate:-12.42deg"><img src="https://picsum.photos/seed/fm-kid1/306/388" alt=""></div>
-            <div class="marathon__tile" style="--marathon-tile-rotate:-4.17deg"><img src="https://picsum.photos/seed/fm-kid2/306/388" alt=""></div>
-            <div class="marathon__tile" style="--marathon-tile-rotate:6.62deg"><img src="https://picsum.photos/seed/fm-kid3/306/388" alt=""></div>
-          </div>
-          <div class="marathon__special">
-            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#ЦветокПобеды2026</span></p>
-              <p class="ds-body-m marathon-promo__count">11К участников</p>
-            </div>
-            <div class="marathon__cta">
-              <div class="button-wrapper __size-44 __full-width" style="display:block">
-                <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
-              </div>
-              <div class="button-wrapper __size-44"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-            </div>
-          </div>
-        </article>
-
 <!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->
         <section class="vvz-portlet island" data-dismiss-row aria-label="Возможно, вы знакомы">
           <header class="vvz-portlet__header">
@@ -514,13 +419,28 @@
 
             <div class="vvz-card __default" data-dismiss-target>
               <div class="vvz-card__media">
-                <div class="vvz-card__blur" data-person-bg="vvz-1"></div>
-                <img data-person-avatar="vvz-1" alt="">
+                <div class="vvz-card__blur" data-person-bg="vvz-4"></div>
+                <img data-person-avatar="vvz-4" alt="">
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-1"></div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-4"></div>
                 <div class="vvz-card__subtitle ds-caption-m">20 общих друзей</div>
+                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="vvz-card __default" data-dismiss-target>
+              <div class="vvz-card__media">
+                <div class="vvz-card__blur" data-person-bg="vvz-3"></div>
+                <img data-person-avatar="vvz-3" alt="">
+                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
+              </div>
+              <div class="vvz-card__content">
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-3"></div>
+                <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
                 </div>
@@ -544,27 +464,12 @@
 
             <div class="vvz-card __default" data-dismiss-target>
               <div class="vvz-card__media">
-                <div class="vvz-card__blur" data-person-bg="vvvz-3"></div>
-                <img data-person-avatar="vvvz-3" alt="">
+                <div class="vvz-card__blur" data-person-bg="vvz-1"></div>
+                <img data-person-avatar="vvz-1" alt="">
                 <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
               </div>
               <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvvz-3"></div>
-                <div class="vvz-card__subtitle ds-caption-m">12 общих друзей</div>
-                <div class="vvz-card__btn button-wrapper __size-36 __full-width">
-                  <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="vvz-card __default" data-dismiss-target>
-              <div class="vvz-card__media">
-                <div class="vvz-card__blur" data-person-bg="vvz-4"></div>
-                <img data-person-avatar="vvz-4" alt="">
-                <span class="vvz-card__close button-circle-wrapper __size-24 __style-on-image"><button class="button-circle" aria-label="Скрыть" data-dismiss><span class="icon __size-16 __slot-close"></span></button></span>
-              </div>
-              <div class="vvz-card__content">
-                <div class="vvz-card__title ds-title-s" data-person-name="vvz-4"></div>
+                <div class="vvz-card__title ds-title-s" data-person-name="vvz-1"></div>
                 <div class="vvz-card__subtitle ds-caption-m">10 общих друзей</div>
                 <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                   <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
@@ -631,6 +536,55 @@
           </div>
         </article>
 
+        <article class="marathon island">
+          <p class="ds-title-l marathon__title">Фотомарафон в честь Дня бабушек и дедушек</p>
+          <div class="marathon__gallery">
+            <div class="marathon__tile" style="--marathon-tile-rotate:-12.42deg"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ISjQT74CrkdssFHMtGP-8L2mHbtVuw9xKUK1hXCluD943RzLXrfmO7zCp_ysemAesbD0WoEXhA1UuL9IiDMpuDR-wvQWH3ThcdwiL_nisAAAAp&amp;dpr=2" alt=""></div>
+            <div class="marathon__tile" style="--marathon-tile-rotate:-4.17deg"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KOStUL676qEZ_VhhFvyPeoAykVRDQavQ4tGoGssmMq44lvz2jbk1XgxifTOeZEU7H8qfouj56pifvOxg1Pg68SHQA2PcKry_vZ2EbCW4YAAAAp&amp;dpr=2" alt=""></div>
+            <div class="marathon__tile" style="--marathon-tile-rotate:6.62deg"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KhT1PoPh9TS86Dwdp9bJQ4eD661pCHIM6_JvUTSs_pKANSOrMmifj7sP6a5SSi_Hm83nH_rJNwnE0gggSrM8rEeJmMl1AEvWP6khYcgBIAAAAp&amp;dpr=2" alt=""></div>
+          </div>
+          <div class="marathon__special">
+            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#Внуки Внучата</span></p>
+              <p class="ds-body-m marathon-promo__count">11К участников</p>
+            </div>
+            <div class="marathon__cta">
+              <div class="button-wrapper __size-44 __full-width" style="display:block">
+                <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
+              </div>
+              <div class="button-wrapper __size-44"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александр Мещеряков</div>
+              <div class="ds-caption-s text-feed__time">10:05</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Мои любимые и родные!!!!Обожаю вас</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jbvvtrl_kGOJ6yDc1AHAs7gRj8O5n9r41GJR0FRbhVeZsKmlEPhE6MBinREf5s2eLb_2WfH6B4PsNyfu1II_5K-N4YaZhjKrD3kU51i48AAAAp&amp;dpr=2" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+          <div class="text-feed__marathon">
+            <div class="marathon-promo">
+              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#Внуки Внучата</span></p>
+              <p class="ds-body-m marathon-promo__count">11К участников</p>
+            </div>
+            <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
+            </div>
+          </div>
+        </article>
+
         <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg" alt=""></div>
@@ -654,7 +608,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Виктор Бондарев</div>
-              <div class="ds-caption-s text-feed__time">10:05</div>
+              <div class="ds-caption-s text-feed__time">вчера, 21:10</div>
             </div>
           </div></div></div>
 
@@ -681,7 +635,7 @@
             <div class="avatar __size-44 __type-image"><img src="" alt=""></div>
             <div class="clip-feed__txt">
               <div class="ds-title-s"></div>
-              <div class="ds-caption-s clip-feed__time">8:42</div>
+              <div class="ds-caption-s clip-feed__time">14:02</div>
             </div>
           </div>
 
@@ -700,7 +654,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Александр Кириевич</div>
-              <div class="ds-caption-s text-feed__time">11:18</div>
+              <div class="ds-caption-s text-feed__time">20:10</div>
             </div>
           </div></div></div>
 
@@ -770,7 +724,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Идеи для сада и огорода своими руками с фото</div>
-              <div class="ds-caption-s text-feed__time">20:10</div>
+              <div class="ds-caption-s text-feed__time">17:46</div>
             </div>
             <label class="button-wrapper __size-28 button-subscribe">
               <input type="checkbox" hidden>
@@ -816,7 +770,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Виктор Бондарев</div>
-              <div class="ds-caption-s text-feed__time">17:46</div>
+              <div class="ds-caption-s text-feed__time">15:20</div>
             </div>
           </div></div></div>
 
@@ -875,7 +829,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Сергей Чернышов</div>
-              <div class="ds-caption-s text-feed__time">15:20</div>
+              <div class="ds-caption-s text-feed__time">9:12</div>
             </div>
           </div></div></div>
 
@@ -955,7 +909,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
               <div class="ds-title-s">Александр Мещеряков</div>
-              <div class="ds-caption-s text-feed__time">9:12</div>
+              <div class="ds-caption-s text-feed__time">вчера, 18:02</div>
             </div>
           </div></div></div>
 
@@ -1036,7 +990,7 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
             <div class="clip-feed__txt">
               <div class="ds-title-s">Антонида Чекалова (Гахова)</div>
-              <div class="ds-caption-s clip-feed__time">пн, 12:03</div>
+              <div class="ds-caption-s clip-feed__time">8:42</div>
             </div>
           </div>
 
