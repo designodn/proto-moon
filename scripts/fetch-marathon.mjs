@@ -25,10 +25,17 @@ import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Марафон';
-const SHEET_GID = null;            // TODO: gid листа «Марафон» (см. шапку файла)
+const SHEET_GID = 123647512;       // лист рейтинга работ (место · автор · фото · классы)
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
+
+/* ── people.json: автор в листе — id человека, имя/аватар берём из реестра «Люди» ── */
+const PEOPLE = {};
+JSON.parse(readFileSync(resolve(ROOT, 'data/people.json'), 'utf8')).people
+  .forEach(p => { PEOPLE[String(p.id)] = p; });
+const personName = id => PEOPLE[String(id)]?.name || '';
+const personPhoto = id => PEOPLE[String(id)]?.photo || '';
 
 const csvUrl = SHEET_GID == null ? null :
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
@@ -133,22 +140,30 @@ async function main() {
       return -1;
     };
     const I = {
-      id: col('id'), name: col('имя', 'автор'), avatar: col('аватар', 'ава'),
-      photo: col('фото'), likes: col('лайки', 'класс'),
+      place: col('место', 'ранг', 'rank'), author: col('автор', 'имя', 'id'),
+      photo: col('фото'), likes: col('классы', 'лайки', 'класс'),
     };
-    if (I.photo < 0)
-      throw new Error(`лист «${SHEET_NAME}» без колонки «фото»: ${head.join(' | ')}. Лента НЕ тронута.`);
+    if (I.photo < 0 || I.author < 0)
+      throw new Error(`лист «${SHEET_NAME}» без колонок «автор»/«фото»: ${head.join(' | ')}. Лента НЕ тронута.`);
     const cell = (c, i) => (i >= 0 ? (c[i] || '').trim() : '');
     entries = [];
     for (const c of body) {
-      const id = cell(c, I.id);
+      const authorId = cell(c, I.author);
       const photo = cell(c, I.photo);
-      if (!id || !/^https?:\/\//.test(photo)) continue;
+      if (!authorId || !/^https?:\/\//.test(photo)) continue;
+      const name = personName(authorId);
+      if (!name) console.warn(`  ⚠️  автор «${authorId}» не найден в people.json — имя/аватар пустые.`);
+      const place = parseInt(cell(c, I.place), 10);
       entries.push({
-        id, name: cell(c, I.name), avatar: cell(c, I.avatar),
+        place: Number.isFinite(place) ? place : null, authorId,
+        name, avatar: personPhoto(authorId),
         photo, likes: cell(c, I.likes),
       });
     }
+    // «место» из листа = ранг: сортируем по нему (если колонка заполнена),
+    // иначе сохраняем порядок строк.
+    if (entries.some(e => e.place != null))
+      entries.sort((a, b) => (a.place ?? 1e9) - (b.place ?? 1e9));
     // мету (шапку) сохраняем из существующего json — её в листе работ нет.
     const prev = JSON.parse(readFileSync(resolve(ROOT, 'data/marathon.json'), 'utf8'));
     data = { _readme: prev._readme, meta: prev.meta, entries };
