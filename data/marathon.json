@@ -18,14 +18,14 @@
     "description": "Публикуйте фото в марафоне и выигрывайте подарки! Результаты 2 июля 2026 года"
   },
   "entries": [
-    { "id": "m-1", "name": "Анна Иванова",       "avatar": "https://i.pravatar.cc/96?img=45", "photo": "https://picsum.photos/seed/mar-1/688/384", "likes": "671" },
-    { "id": "m-2", "name": "Максим Дружинин",    "avatar": "https://i.pravatar.cc/96?img=12", "photo": "https://picsum.photos/seed/mar-2/336/300", "likes": "578" },
-    { "id": "m-3", "name": "Лидия Маликова",     "avatar": "https://i.pravatar.cc/96?img=24", "photo": "https://picsum.photos/seed/mar-3/336/452", "likes": "495" },
-    { "id": "m-4", "name": "Олег Северов",       "avatar": "https://i.pravatar.cc/96?img=33", "photo": "https://picsum.photos/seed/mar-4/336/424", "likes": "402" },
-    { "id": "m-5", "name": "Галина Прохорова",   "avatar": "https://i.pravatar.cc/96?img=27", "photo": "https://picsum.photos/seed/mar-5/336/300", "likes": "356" },
-    { "id": "m-6", "name": "Виктор Бондарев",    "avatar": "https://i.pravatar.cc/96?img=15", "photo": "https://picsum.photos/seed/mar-6/336/452", "likes": "311" },
-    { "id": "m-7", "name": "Нина Соколова",      "avatar": "https://i.pravatar.cc/96?img=44", "photo": "https://picsum.photos/seed/mar-7/336/336", "likes": "287" },
-    { "id": "m-8", "name": "Пётр Кузьмин",       "avatar": "https://i.pravatar.cc/96?img=51", "photo": "https://picsum.photos/seed/mar-8/336/424", "likes": "243" },
-    { "id": "m-9", "name": "Светлана Орлова",    "avatar": "https://i.pravatar.cc/96?img=20", "photo": "https://picsum.photos/seed/mar-9/336/300", "likes": "198" }
+    { "id": "m-1", "name": "Анна Иванова",       "avatar": "https://i.pravatar.cc/96?img=45", "photo": "https://picsum.photos/seed/mar-1/688/384", "likes": "671", "ratio": "16:9" },
+    { "id": "m-2", "name": "Максим Дружинин",    "avatar": "https://i.pravatar.cc/96?img=12", "photo": "https://picsum.photos/seed/mar-2/336/300", "likes": "578", "ratio": "1:1" },
+    { "id": "m-3", "name": "Лидия Маликова",     "avatar": "https://i.pravatar.cc/96?img=24", "photo": "https://picsum.photos/seed/mar-3/336/452", "likes": "495", "ratio": "9:16" },
+    { "id": "m-4", "name": "Олег Северов",       "avatar": "https://i.pravatar.cc/96?img=33", "photo": "https://picsum.photos/seed/mar-4/336/424", "likes": "402", "ratio": "9:16" },
+    { "id": "m-5", "name": "Галина Прохорова",   "avatar": "https://i.pravatar.cc/96?img=27", "photo": "https://picsum.photos/seed/mar-5/336/300", "likes": "356", "ratio": "1:1" },
+    { "id": "m-6", "name": "Виктор Бондарев",    "avatar": "https://i.pravatar.cc/96?img=15", "photo": "https://picsum.photos/seed/mar-6/336/452", "likes": "311", "ratio": "9:16" },
+    { "id": "m-7", "name": "Нина Соколова",      "avatar": "https://i.pravatar.cc/96?img=44", "photo": "https://picsum.photos/seed/mar-7/336/336", "likes": "287", "ratio": "1:1" },
+    { "id": "m-8", "name": "Пётр Кузьмин",       "avatar": "https://i.pravatar.cc/96?img=51", "photo": "https://picsum.photos/seed/mar-8/336/424", "likes": "243", "ratio": "16:9" },
+    { "id": "m-9", "name": "Светлана Орлова",    "avatar": "https://i.pravatar.cc/96?img=20", "photo": "https://picsum.photos/seed/mar-9/336/300", "likes": "198", "ratio": "1:1" }
   ]
 }

@@ -57,19 +57,27 @@ function parseCsv(text) {
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** Карточка работы участника. rank — номер (бейдж), hero — крупная во всю ширину. */
+/** Пропорция фото → класс (16:9 | 1:1 | 9:16; дефолт 1:1). */
+function arClass(r) {
+  const s = String(r || '').trim();
+  if (s === '16:9') return '__ar-16-9';
+  if (s === '9:16') return '__ar-9-16';
+  return '__ar-1-1';
+}
+
+/** Карточка работы участника. rank — номер (бейдж 1–3), hero — крупная во всю ширину. */
 function card(e, rank, hero) {
   const cls = hero ? 'll-mar-card __hero' : 'll-mar-card';
   // Ранг-ярлык показываем только у призовых мест (1–3).
   const rankBadge = rank <= 3 ? `\n              <span class="ll-mar-card__rank">${esc(rank)}</span>` : '';
   return `          <a class="${cls}" href="#">
-            <span class="ll-mar-card__media">
+            <span class="ll-mar-card__media ${arClass(e.ratio)}">
               <img src="${esc(e.photo)}" alt="" loading="lazy">${rankBadge}
             </span>
             <span class="ll-mar-card__footer">
               <span class="avatar __size-20 __type-image"><img src="${esc(e.avatar)}" alt=""></span>
               <span class="ll-mar-card__name ds-body-m">${esc(e.name)}</span>
-              <span class="ll-mar-card__likes ds-body-m"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">${esc(e.likes || 0)}</span>
+              <span class="button-inline-wrapper __size-20 __view-secondary ll-mar-card__likes"><button class="button-inline __size-20"><span class="button-inline__content"><img class="ll-icon" src="assets/icons/klass_16_20.svg" width="20" height="20" alt="">${esc(e.likes || 0)}</span></button></span>
             </span>
           </a>`;
 }
