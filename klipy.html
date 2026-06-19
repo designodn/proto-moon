@@ -472,12 +472,24 @@
         };
       }
 
-      // [твой клип] + ростер по кругу (повторяем дважды для «бесконечной» ленты).
-      var seq = (lead ? [lead] : []).concat(roster, roster);
-
-      reel.innerHTML = seq.map(function (c) {
+      function entryHTML(c) {
         return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
-      }).join('');
+      }
+      // Ростер из листа в исходном порядке (HTML одной «итерации» очереди).
+      var rosterHTML = roster.map(entryHTML).join('');
+
+      // Старт: [твой клип из ленты] + ростер. Дальше очередь зацикливается —
+      // по мере прокрутки к концу дописываем ростер заново (бесконечная лента
+      // в том же порядке, что и в таблице).
+      reel.innerHTML = (lead ? entryHTML(lead) : '') + rosterHTML;
+
+      if (rosterHTML) {
+        reel.addEventListener('scroll', function () {
+          if (reel.scrollTop + reel.clientHeight * 2 >= reel.scrollHeight) {
+            reel.insertAdjacentHTML('beforeend', rosterHTML);
+          }
+        }, { passive: true });
+      }
     });
 
     // 4) Лайк — outline ↔ filled (красный) + правка счётчика.
