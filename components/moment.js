@@ -628,6 +628,7 @@
         '<button class="moment__nav-zone __side-prev" aria-label="Назад"></button>',
         '<button class="moment__nav-zone __side-next" aria-label="Дальше"></button>',
       '</div>',
+      '<div class="moment__cta-blur" aria-hidden="true"></div>',
       '<div class="moment__cta" style="display: none;"></div>',
       '<div class="moment__handle"></div>'
     ].join('');
@@ -659,10 +660,11 @@
     ].join('');
     var slide = {
       body: body,
-      // Фон ВВЗ-сториз — мягкий оранжево-чёрный градиент сверху-вниз
-      // (по Figma 2260:68464). Радиус и blur не воспроизводим точно,
-      // визуально близко.
-      background: opts.background || 'radial-gradient(120% 80% at 50% 0%, #4c2400 0%, #1a0a02 55%, #000 100%)'
+      // Фон ВВЗ-сториз — картинка-подложка (оранжево-чёрный градиент сверху-
+      // вниз, assets/vvz-story-back.png). Путь относительный — резолвится от
+      // URL страницы; вложенные страницы могут переопределить через
+      // opts.background. Снизу #000 на случай экранов выше картинки.
+      background: opts.background || 'center top / cover no-repeat url("assets/vvz-story-back.png") #000'
     };
     if (opts.cta) slide.cta = opts.cta;
     return slide;
@@ -751,6 +753,75 @@
     return slide;
   }
 
+  // ============================================================
+  // GENITIVE — склонение русского ФИО в родительный падеж для шаблона
+  //   «День рождения <кого>». Эвристика по окончаниям (имя + фамилия),
+  //   пол берём из данных, если есть (точнее для согласных окончаний).
+  //   Покрывает типовые случаи; редкие/иностранные фамилии остаются как есть.
+  // ============================================================
+  function normGender(g) {
+    if (g === 'ж' || g === 'f' || g === 'female') return 'f';
+    if (g === 'м' || g === 'm' || g === 'male')   return 'm';
+    return '';
+  }
+  function isConsonant(ch) { return 'бвгдзйклмнпрстфхцчшщ'.indexOf(ch) !== -1; }
+
+  function genitiveWord(w, gender, isSurname) {
+    if (!w) return w;
+    var lower = w.toLowerCase();
+    var last = lower.slice(-1);
+    var last2 = lower.slice(-2);
+    var cut = function (n) { return w.slice(0, w.length - n); };
+
+    if (isSurname) {
+      if (gender === 'f') {
+        if (last2 === 'ая') return cut(2) + 'ой';        // -ская/-цкая → -ской
+        if (last === 'а' && (last2 === 'ва' || last2 === 'на')) return cut(1) + 'ой'; // -ова/-ева/-ина → -ой
+        if (last2 === 'ия') return cut(1) + 'и';
+        return w;                                         // согласная/-ко/-их → не склоняем
+      }
+      if (last2 === 'ий' || last2 === 'ый') return cut(2) + 'ого'; // -ский → -ского
+      if (last === 'й') return cut(1) + 'я';
+      if (last === 'о' || last === 'е' || last === 'и' || last === 'у' || last === 'ы' || last === 'х') return w;
+      if (isConsonant(last)) return w + 'а';             // -ов/-ин/согласная → +а
+      if (last === 'а') return cut(1) + 'ы';
+      if (last === 'я') return cut(1) + 'и';
+      return w;
+    }
+
+    // имя (или отчество)
+    if (last2 === 'ия') return cut(1) + 'и';             // Лидия→Лидии, Анастасия→Анастасии
+    if (last === 'я') return cut(1) + 'и';               // Оля→Оли, Илья→Ильи
+    if (last === 'а') {
+      var prev = lower.slice(-2, -1);
+      if ('гкхжчшщ'.indexOf(prev) !== -1) return cut(1) + 'и'; // Луша→Луши
+      return cut(1) + 'ы';                              // Лиза→Лизы, Никита→Никиты
+    }
+    if (gender === 'f') {
+      if (last === 'ь') return cut(1) + 'и';             // Любовь→Любови
+      return w;                                          // жен. имя на согласную — не склоняем
+    }
+    if (last === 'й' || last === 'ь') return cut(1) + 'я'; // Алексей→Алексея, Игорь→Игоря
+    if (isConsonant(last)) return w + 'а';               // Иван→Ивана, Эмиль(?)
+    return w;                                            // -о/-е/-и/-у — не склоняем
+  }
+
+  // Полное ФИО → родительный падеж (скобочные прозвища отбрасываем).
+  function genitive(name, gender) {
+    if (!name) return name || '';
+    var g = normGender(gender);
+    var clean = name.replace(/\([^)]*\)/g, '').trim();
+    if (!clean) return '';
+    return clean.split(/\s+/).map(function (w, i) {
+      return genitiveWord(w, g, i > 0);
+    }).join(' ');
+  }
+  // Только имя (первое слово) в родительном падеже.
+  function genitiveFirst(name, gender) {
+    var clean = (name || '').replace(/\([^)]*\)/g, '').trim().split(/\s+/)[0] || '';
+    return genitiveWord(clean, normGender(gender), false);
+  }
+
   // Экспорт
   window.MomentViewer = {
     init:            function (root, options) { return new MomentViewer(root, options); },
@@ -759,6 +830,8 @@
     vvzSlide:        vvzSlide,
     bdaySlide:       bdaySlide,
     friendshipSlide: friendshipSlide,
+    genitive:        genitive,
+    genitiveFirst:   genitiveFirst,
     palette:         DEFAULT_PALETTE
   };
 })();

@@ -97,19 +97,145 @@
     card.classList.add('__state-hidden');
   });
 
-  // «Отменить» в state-hidden — клик по .vvz-card__btn внутри карточки с
-  // __state-hidden: снимаем класс и возвращаем оригинальные тексты.
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest && e.target.closest('.vvz-card.__state-hidden .vvz-card__btn');
-    if (!btn) return;
-    e.stopPropagation();
-    var card = btn.closest('[data-vvz-card]');
-    if (!card) return;
+  // ============================================================
+  // FRIEND-REQUEST — кнопка «Дружить».
+  //   normal    → тап «Дружить»: общие друзья скрываются, сабтайтл →
+  //               «Заявка в друзья отправлена», кнопка → галочка
+  //               (secondary-on-color), карточка в .__state-requested.
+  //   requested → тап по галочке: открывается шторка подтверждения
+  //               отмены, сториз ставятся на паузу.
+  // ============================================================
+  function enterRequested(card) {
+    var sub = card.querySelector('.vvz-card__subtitle');
+    var btnWrap = card.querySelector('.vvz-card__btn');
+    if (sub) {
+      if (sub.dataset.originalText == null) sub.dataset.originalText = sub.textContent;
+      sub.textContent = 'Заявка в друзья отправлена';
+    }
+    if (btnWrap) {
+      if (btnWrap.dataset.originalHtml == null) btnWrap.dataset.originalHtml = btnWrap.innerHTML;
+      // Галочка вместо текста: secondary-on-color, иконка done по центру.
+      btnWrap.innerHTML =
+        '<button class="button-container __style-secondary-on-color __icon" type="button" aria-label="Заявка отправлена, отменить">' +
+          '<span class="button-content">' +
+            '<span class="icon __size-20 __slot-done"></span>' +
+          '</span>' +
+        '</button>';
+    }
+    card.classList.add('__state-requested');
+  }
+
+  function revertRequested(card) {
+    var sub = card.querySelector('.vvz-card__subtitle');
+    var btnWrap = card.querySelector('.vvz-card__btn');
+    if (sub && sub.dataset.originalText != null) {
+      sub.textContent = sub.dataset.originalText;
+      delete sub.dataset.originalText;
+    }
+    if (btnWrap && btnWrap.dataset.originalHtml != null) {
+      btnWrap.innerHTML = btnWrap.dataset.originalHtml;
+      delete btnWrap.dataset.originalHtml;
+    }
+    card.classList.remove('__state-requested');
+  }
+
+  // Пауза/возобновление сториз, в которых лежит карточка (через .__state-paused
+  // на корне .moment — то же, что использует long-press в moment.js).
+  function pauseMoment(card) {
+    var m = card.closest && card.closest('.moment');
+    if (m) m.classList.add('__state-paused');
+    return m;
+  }
+  function resumeMoment(m) {
+    if (m) m.classList.remove('__state-paused');
+  }
+
+  // Шторка подтверждения отмены заявки. Confirm → откат карточки в normal.
+  // Закрытие (✕ / «Закрыть» / тап по фону) — состояние requested остаётся.
+  function openCancelSheet(card) {
+    if (document.querySelector('.vvz-sheet')) return; // уже открыта
+    var moment = pauseMoment(card);
+
+    var sheet = document.createElement('div');
+    sheet.className = 'vvz-sheet';
+    sheet.innerHTML = [
+      '<div class="vvz-sheet__overlay" data-sheet-close></div>',
+      '<div class="vvz-sheet__panel" role="dialog" aria-modal="true">',
+        '<div class="vvz-sheet__handle"></div>',
+        '<div class="vvz-sheet__navbar">',
+          '<button class="vvz-sheet__close button-inline" aria-label="Закрыть" data-sheet-close>',
+            '<span class="icon __size-24 __slot-close"></span>',
+          '</button>',
+        '</div>',
+        '<h2 class="vvz-sheet__title ds-title-xl">Вы действительно хотите отменить заявку в друзья?</h2>',
+        '<div class="vvz-sheet__buttons">',
+          '<div class="button-wrapper __size-56 __full-width">',
+            '<button class="button-container __style-destructive" type="button" data-sheet-confirm>',
+              '<span class="button-content">Отменить заявку</span>',
+            '</button>',
+          '</div>',
+          '<div class="button-wrapper __size-56 __full-width">',
+            '<button class="button-container __style-secondary" type="button" data-sheet-close>',
+              '<span class="button-content">Закрыть</span>',
+            '</button>',
+          '</div>',
+        '</div>',
+        '<div class="vvz-sheet__home"></div>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(sheet);
+    // Запуск анимации появления на следующем кадре.
+    requestAnimationFrame(function () { sheet.classList.add('__open'); });
+
+    var closing = false;
+    function close(confirm) {
+      if (closing) return;
+      closing = true;
+      if (confirm) revertRequested(card);
+      sheet.classList.remove('__open');
+      var done = function () { sheet.remove(); resumeMoment(moment); };
+      var panel = sheet.querySelector('.vvz-sheet__panel');
+      var fired = false;
+      panel.addEventListener('transitionend', function () {
+        if (!fired) { fired = true; done(); }
+      });
+      // Фолбэк, если transitionend не придёт.
+      setTimeout(function () { if (!fired) { fired = true; done(); } }, 400);
+    }
+
+    sheet.addEventListener('click', function (e) {
+      if (e.target.closest('[data-sheet-confirm]')) { e.stopPropagation(); close(true); return; }
+      if (e.target.closest('[data-sheet-close]'))   { e.stopPropagation(); close(false); }
+    });
+  }
+
+  // «Отменить» в state-hidden — возврат к исходному виду карточки.
+  function revertHidden(card) {
     var title = card.querySelector('.vvz-card__title');
     var btnContent = card.querySelector('.vvz-card__btn .button-content');
     if (title && title.dataset.originalText) title.textContent = title.dataset.originalText;
     if (btnContent && btnContent.dataset.originalText) btnContent.textContent = btnContent.dataset.originalText;
     card.classList.remove('__state-hidden');
+  }
+
+  // Единый делегированный клик по кнопке карточки. Один обработчик на все
+  // состояния, чтобы клики не «протекали» между ними (hidden → normal и т.п.):
+  //   hidden    → «Отменить» возвращает карточку;
+  //   requested → «галочка» открывает шторку отмены заявки;
+  //   normal    → «Дружить» переводит карточку в requested.
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.vvz-card__btn');
+    if (!btn) return;
+    var card = btn.closest('[data-vvz-card]');
+    if (!card) return;
+    e.stopPropagation();
+    if (card.classList.contains('__state-hidden')) {
+      revertHidden(card);
+    } else if (card.classList.contains('__state-requested')) {
+      openCancelSheet(card);
+    } else {
+      enterRequested(card);
+    }
   });
 
   window.VvzCard = { render: render };

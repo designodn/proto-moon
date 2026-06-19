@@ -238,12 +238,15 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  /* Grid 2 row'а: первая (title) занимает auto, вторая (сетка карточек)
-     забирает весь остаток через 1fr — гарантированно растягивается на
-     любой высоте экрана, без flex-grow проблем со scroll-контейнером. */
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  row-gap: var(--space-4);
+  /* Flex-колонка: заголовок + сетка карточек. justify-content: safe center
+     центрирует весь блок по вертикали между хедером и CTA — на высоких/
+     широких экранах карточки оказываются ровно посередине свободного места.
+     Ключевое слово safe не даёт обрезать верх контента, если он выше
+     контейнера (тогда блок прижимается к началу и скроллится). */
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  gap: var(--space-4);
 }
 .moment__body::-webkit-scrollbar { display: none; }
 
@@ -258,24 +261,79 @@
   margin: 0;
 }
 
-/* Сетка 2×2 для карточек ВВЗ внутри body. Ряды — по высоте контента
-   (grid-auto-rows: min-content), карточки прижаты к верху под заголовком
-   (align-content: start). Это даёт карточкам естественную высоту с
-   фиксированными отступами по дизайну (… → 12 → кнопка), а не «резиновый»
-   гэп от растягивания на всю высоту. Карточки в одном ряду всё равно равны
-   по высоте (title/subtitle — одна строка с ellipsis), поэтому кнопки ровно
-   выровнены. */
+/* Сетка 2 колонки для карточек ВВЗ внутри body. Ряды — по высоте контента
+   (grid-auto-rows: min-content): карточки обнимают свой контент, а карточки
+   в одном ряду равны по высоте (grid align-items: stretch по умолчанию).
+   Колонки 1fr тянутся в края контейнера, но ширина сетки ограничена
+   max-width = 2×220 + gap, поэтому карточка не шире 220; сетка центрируется
+   через margin-inline: auto. */
 .moment__body-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: min-content;
-  align-content: start;
   gap: var(--space-2);
-  min-height: 0;
+  width: 100%;
+  max-width: calc(220px * 2 + var(--space-2)); /* карточка ≤ 220 */
+  margin-inline: auto;
 }
 /* В сетке карточка занимает всю ячейку — ширину задаёт модификатор .__stories */
 .moment__body-grid > .vvz-card {
   min-width: 0;
+}
+
+/* ============================================================
+   VVZ-РЕЖИМ (.__view-body) — слайд «Возможно, вы знакомы».
+   В шапке прячем аватар, имя автора и время («только что») — остаётся
+   только прогресс + ✕. Кнопку «Ещё» тоже убираем (по макету в ВВЗ её нет),
+   крестик прижат к правому краю.
+   ============================================================ */
+.moment.__view-body .moment__header > .avatar,
+.moment.__view-body .moment__header > .avatars-view,
+.moment.__view-body .moment__header-text,
+.moment.__view-body .moment__header .button-inline-wrapper:has([aria-label="Ещё"]) {
+  display: none;
+}
+.moment.__view-body .moment__header {
+  justify-content: flex-end;
+}
+
+/* Тап-зоны prev/next в ВВЗ выключаем — слайд один, а по карточкам/кнопкам
+   нужно кликать. Без этого невидимые nav-зоны перехватывают тапы по
+   карточкам (лежат тем же z-index, но позже в DOM). */
+.moment.__view-body .moment__nav {
+  pointer-events: none;
+}
+
+/* CTA «Показать всех» в ВВЗ отстоит от низа на 24 (по макету), а не на 44. */
+.moment.__view-body .moment__cta {
+  bottom: 24px;
+}
+/* Body тянется до самого низа — карточки уезжают под CTA, а нижний блюр
+   (.moment__cta-blur) их размывает. padding-bottom оставляет воздух под
+   последним рядом, чтобы он не прятался под кнопкой:
+   24 (cta.bottom) + 44 (высота CTA) + 24 (воздух) = 92. */
+.moment.__view-body .moment__body {
+  bottom: 0;
+  padding-bottom: 92px;
+}
+
+/* Нижний блюр — мягкая размытая полоса под CTA. Лежит над карточками
+   (z-index 3), но под самой кнопкой (CTA z-index 4): карточки, уезжающие
+   вниз при скролле, плавно размываются. Маска снизу-вверх даёт fade. */
+.moment__cta-blur { display: none; }
+.moment.__view-body .moment__cta-blur {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  z-index: 3;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(to top, #000 30%, rgba(0, 0, 0, 0) 100%);
+          mask-image: linear-gradient(to top, #000 30%, rgba(0, 0, 0, 0) 100%);
 }
 
 
@@ -391,6 +449,40 @@
   flex-direction: column;
   justify-content: flex-end;
   pointer-events: none;
+}
+
+/* ============================================================
+   BDAY LAYOUT (.__view-bday) — фото+текст «обёрнуты» в карточку со
+   скруглёнными нижними углами, а кнопка «Поздравить» лежит ПОД карточкой
+   в отдельной полосе с внешними паддингами 16 (макет «ДР в моментах»).
+   Высота нижней полосы фиксированная (--bday-strip) — не зависит от высоты
+   экрана. Применяется только к именинному шаблону.
+   ============================================================ */
+.moment.__view-bday {
+  --bday-strip: 100px;
+}
+/* Фото не доходит до низа — оставляет полосу под кнопку, нижние углы скруглены. */
+.moment.__view-bday.__fullscreen .moment__media {
+  bottom: var(--bday-strip);
+  height: auto;
+  border-radius: 0 0 20px 20px;
+}
+/* Блок блюра-с-текстом обрезаем по тем же скруглённым нижним углам. */
+.moment.__view-bday .moment__bday {
+  bottom: var(--bday-strip);
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+/* Текст ближе к нижней кромке карточки (раньше отступ закладывался под
+   плавающую кнопку). */
+.moment.__view-bday .moment__bday-content {
+  padding-bottom: var(--space-5);
+}
+/* Кнопка «Поздравить» в полосе под карточкой: внешние паддинги 16 уже на
+   .moment__cta (padding: 0 16). bottom = strip(100) − 16(зазор от карточки)
+   − 44(высота кнопки) = 40. */
+.moment.__view-bday .moment__cta {
+  bottom: 40px;
 }
 /* Progressive blur 0 → 80px — стек из 6 слоёв backdrop-filter с
    возрастающими радиусами. У каждого слоя маска `linear-gradient(
