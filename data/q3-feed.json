@@ -100,23 +100,6 @@
       "link": ""
     },
     {
-      "id": "post-7b",
-      "type": "memories-clip",
-      "author": "my_profile",
-      "title": "Ваш клип из воспоминаний",
-      "text": "Лето 2026",
-      "photos": [
-        "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_67beb36e89ba58323c122836_67bf621e4c2ad61145bc261a/scale_1200",
-        "https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&dpr=2&fn=h_768"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": ""
-    },
-    {
       "id": "post-8",
       "type": "group-post",
       "author": "group-4",
@@ -164,6 +147,24 @@
     },
     {
       "id": "post-11",
+      "type": "memories-clip",
+      "author": "my_profile",
+      "title": "Ваш клип из воспоминаний",
+      "text": "Лето 2026",
+      "photos": [
+        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IERVMpVnsjMQ_YRs5qVqRlxI3BzPLXYhj-M5KyROXaNyOnnbvHIirSHxKznJFWsyGUPokEmXpmDP8XQhNKJH7QXSSL4sBHF0F1P4ww024AAAAp&dpr=2",
+        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kp4OGSbU3GN5vSxk4gOctp5N74-dvELrQD90VMWB215tv2BmFLgIIXI_bK8MTAFsNh68C-R1ov-XNxYMkCfLg-JGOUuZuSQU4LOE-AvQMAAAAp&dpr=2",
+        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jln2G3pjQWoWpm_sdZIQTuNLzajpFoBUlFMesNVN97WjFm9P2j7K0v5VTeiJvOCxqmd9opyn_PdaZPLpYjsoNPqa6cZ2Re__-0Bp29-NwAAAAp&dpr=2",
+        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L2krrjN9aTa7iJ4GjUFaIxMKNHSoPZAfbghn8a6J1z_K9ecsZIOxNY5iK71q3slNRc6ZJMhlG7L4354bqqMGM-zx_rKkETM-zo8-Q6ht0AAAAp&dpr=2",
+        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IhQusVNDsLk747Uw82bPclyPRJ30hpQHAXX0on6hpczvRduO2RMf4f_hk4ZWMgdRsqjE9InlGPSAxMzSGMJShhMYfR7Zv7DGQCbJ3ac2oAAAAp&dpr=2"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": ""
+    },
+    {
+      "id": "post-11b",
       "type": "added-friend",
       "author": "2, 6",
       "title": "",
