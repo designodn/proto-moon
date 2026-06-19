@@ -23,6 +23,7 @@
   var SEEN_KEY = 'omar-seen';          // флаг «онбординг уже показан»
   var TARGET   = 'marathon.html';      // целевой экран фотомарафона
   var ASSETS   = 'assets/onboarding/marathon/';
+  var MARATHON_JSON = 'data/marathon.json';   // фото первых работ для веера 1-го слайда
 
   // true — показывать онбординг КАЖДЫЙ раз (флаг игнорируется, удобно для демо).
   // false — показывать один раз и запоминать в localStorage.
@@ -70,10 +71,10 @@
 
           /* 1 — Участвуйте */
           '<section class="omar-slide omar-slide--hero">' +
-            '<div class="omar-fan">' +
-              img('photo-1.png', 'omar-fan__photo omar-fan__photo--1') +
-              img('photo-2.png', 'omar-fan__photo omar-fan__photo--2') +
-              img('photo-3.png', 'omar-fan__photo omar-fan__photo--3') +
+            '<div class="omar-fan">' +    // фото подставляются из data/marathon.json
+              '<img class="omar-fan__photo omar-fan__photo--1" alt="" loading="lazy">' +
+              '<img class="omar-fan__photo omar-fan__photo--2" alt="" loading="lazy">' +
+              '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
             '</div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
             '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
@@ -126,6 +127,19 @@
       '</div>';
 
     document.body.appendChild(el);
+
+    // Фото веера на 1-м слайде берём из data/marathon.json (первые 3 работы).
+    // Если json недоступен — остаются плейсхолдеры photo-1/2/3.png.
+    (function () {
+      var heroImgs = el.querySelectorAll('.omar-slide--hero .omar-fan__photo');
+      if (!heroImgs.length || typeof fetch !== 'function') return;
+      fetch(MARATHON_JSON).then(function (r) { return r.json(); }).then(function (d) {
+        var entries = (d && d.entries) || [];
+        for (var i = 0; i < heroImgs.length && i < entries.length; i++) {
+          if (entries[i] && entries[i].photo) heroImgs[i].src = entries[i].photo;
+        }
+      }).catch(function () {});
+    })();
 
     /* ---------- Карусель ---------- */
     var slidesEl = el.querySelector('.omar__slides');
