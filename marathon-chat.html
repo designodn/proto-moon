@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Фотомарафон — диалог</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; height:100%; background: var(--dynamic-surface-base-primary); }
+  .phone-frame { width:100%; max-width:none; height:100dvh; min-height:100dvh; overflow:hidden;
+                 background: var(--dynamic-surface-base-primary);
+                 display:flex; flex-direction:column; }
+  .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
+
+  /* ── Навбар с именем/статусом и аватаркой ─────────────────────── */
+  .ch-nav { display:flex; align-items:center; gap: var(--space-3);
+            height:52px; padding: 0 var(--space-2) 0 var(--space-4);
+            background: var(--dynamic-surface-base-secondary);
+            border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
+  .ch-nav__head { flex:1 1 0; min-width:0; text-align:left; }
+  .ch-nav__name { color: var(--dynamic-text-and-icons-base-primary);
+                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ch-nav__status { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 1px; }
+
+  /* ── Лента сообщений ──────────────────────────────────────────── */
+  .ch-feed { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+             display:flex; flex-direction:column; justify-content:flex-end; gap: var(--space-2);
+             padding: var(--space-3) var(--space-3) var(--space-4); }
+  .ch-feed::-webkit-scrollbar { display:none; }
+
+  .ch-day { align-self:center; margin: var(--space-2) 0;
+            background: var(--dynamic-surface-base-inverse-tertiary, rgba(46,47,51,0.48));
+            color:#fff; border-radius: 12px; padding: 4px 12px; }
+
+  /* пузырь исходящего сообщения (прижато вправо, акцентный фон) */
+  .ch-msg { align-self:flex-end; max-width: 80%;
+            background: var(--dynamic-surface-tint-green, #E3E7D7);
+            border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
+  .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
+  .ch-msg__time { position:absolute; right:8px; bottom:4px;
+                  font-size:11px; line-height:14px;
+                  color: var(--dynamic-text-and-icons-base-tertiary, rgba(46,47,51,0.48)); }
+
+  /* карточка расшаренного поста внутри сообщения */
+  .ch-card { margin-top: 12px; border-radius: 16px; overflow:hidden;
+             background: var(--dynamic-surface-base-secondary); }
+  .ch-card__media { display:block; width:100%; aspect-ratio: 244 / 137;
+                    object-fit: cover;
+                    background: radial-gradient(120% 90% at 50% 50%, #ff8549 0%, #ff5500 45%, #e12300 100%); }
+  .ch-card__body { padding: 0 12px 12px; }
+  .ch-card__title { color: var(--dynamic-text-and-icons-base-primary); margin: 8px 0 0; }
+  .ch-card__source { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 4px; }
+
+  /* ── Поле ввода ───────────────────────────────────────────────── */
+  .ch-input { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
+              border-top: 0.5px solid var(--dynamic-surface-contrast-mid, rgba(131,102,86,0.24));
+              display:flex; align-items:center; gap: var(--space-3);
+              height:48px; padding: 0 12px; padding-bottom: env(safe-area-inset-bottom); }
+  .ch-input__ph { flex:1 1 0; min-width:0; color: var(--dynamic-text-and-icons-base-secondary); }
+  .ch-input__icons { display:flex; align-items:center; gap: var(--space-4); }
+  .ch-input img { width:24px; height:24px; display:block; }
+</style>
+</head>
+<body>
+  <div class="phone-frame __fullscreen" data-screen>
+
+    <!-- STATUS + NAVBAR — DS meshok-up -->
+    <div class="meshok-up">
+      <div class="status-bar">
+        <span class="status-bar__time">9:41</span>
+        <span class="status-bar__indicators">
+          <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+          <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+        </span>
+      </div>
+      <div class="ch-nav">
+        <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-action="back" data-back-fallback="marathon.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+        <div class="ch-nav__head">
+          <div class="ds-title-l ch-nav__name" id="peer-name">Анфиса Пушкина</div>
+          <div class="ds-caption-m ch-nav__status">на сайте</div>
+        </div>
+        <div class="avatar __size-36 __type-image" id="peer-ava"><img src="https://i.pravatar.cc/96?img=24" alt=""></div>
+      </div>
+    </div>
+
+    <!-- ЛЕНТА -->
+    <div class="ch-feed">
+      <div class="ds-caption-m ch-day">сегодня</div>
+
+      <div class="ch-msg">
+        <div class="ds-body-l ch-msg__text">Привет! Я участвую в фотомарафоне Радость Детства. Поучаствуй тоже и голосуй за моё фото!</div>
+        <div class="ch-card">
+          <img class="ch-card__media" src="https://picsum.photos/seed/mar-share/488/274" alt="" onerror="this.style.visibility='hidden'">
+          <div class="ch-card__body">
+            <div class="ds-body-m ch-card__title">Фотомарафон #РадостьДетства</div>
+            <div class="ds-caption-m ch-card__source">Одноклассники</div>
+          </div>
+        </div>
+        <span class="ch-msg__time">12:10</span>
+      </div>
+    </div>
+
+    <!-- ПОЛЕ ВВОДА -->
+    <div class="ch-input">
+      <img src="assets/icons/smile_24.svg" alt="">
+      <span class="ds-body-l ch-input__ph">Текст сообщения</span>
+      <span class="ch-input__icons">
+        <img src="assets/icons/attach_24.svg" alt="">
+        <img src="assets/icons/microphone_24.svg" alt="">
+      </span>
+    </div>
+  </div>
+
+  <script src="components/back-button.js"></script>
+  <script>
+    // Имя/аватарка собеседника берём из query (?name=…&photo=…)
+    var params = new URLSearchParams(location.search);
+    var name = params.get('name');
+    var photo = params.get('photo');
+    if (name) document.getElementById('peer-name').textContent = name;
+    var ava = document.getElementById('peer-ava');
+    var avaImg = ava.querySelector('img');
+    if (photo) {
+      avaImg.src = photo;
+    } else if (!avaImg.getAttribute('src')) {
+      ava.classList.remove('__type-image');
+      ava.classList.add('__type-placeholder');
+      avaImg.remove();
+    }
+  </script>
+</body>
+</html>

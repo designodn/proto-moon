@@ -102,12 +102,11 @@
   line-height: 28px;
   font-weight: 700;
   max-width: 100%;
-  /* До 2 строк (длинные имена переносятся), затем многоточие. Резервируем
-     2 строки (min-height) — карточки остаются равной высоты. */
+  /* До 2 строк (длинные имена переносятся), затем многоточие. Город (caption)
+     идёт сразу под именем — без резерва высоты у имени. */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  min-height: 56px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -124,8 +123,8 @@
 /* «.friend-big-card__mutual» — модификатор-спейсер на .avatars-view,
    отступ сверху + центрирование строки (стек аватарок + текст). */
 .friend-big-card__mutual {
-  /* 14 + flex gap 2 = 16px на экране от подписи (города) до аватарок. */
-  margin-top: 14px;
+  /* Прибиваем блок общих друзей к низу инфо (над кнопкой); имя+город — сверху. */
+  margin-top: auto;
   justify-content: center;
 }
 
