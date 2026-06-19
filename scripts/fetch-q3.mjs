@@ -948,7 +948,7 @@ ${mediaInner}
       return `        <article class="text-feed island">
           <header class="feed-header">${crumbs}
             <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>
+              <div class="avatar __size-44 __type-image${original ? ' __has-addon' : ''}">${img(personPhoto(commenter))}${original ? `<div class="avatar __size-20 __type-image caf-ava__addon">${img(personPhoto(original))}</div>` : ''}</div>
               <div class="contents-view-container uni-cell-additional-content">
                 <div class="ds-title-m feed-header__name">${esc(personName(commenter))}</div>
                 <div class="ds-caption-m caf-header__sub">${sub}</div>
@@ -956,7 +956,11 @@ ${mediaInner}
             </div></div></div>
           </header>
 
-          <p class="caf-text">${esc(title)}</p>
+          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">${esc(title)}</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
+          </label>
 ${preview}
 ${actionsBar(likes, comments, reshares)}
         </article>`;
