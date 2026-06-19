@@ -301,7 +301,7 @@ window.DS_PEOPLE_DATA = [
     "id": "ad-4",
     "name": "Магазин цветов Фантазия",
     "subtitle": "Покупки • Реклама 0+",
-    "photo": "https://www.fiesta.ru/uploads/slider_image/image/103173/v880_DSC_9880.jpg",
+    "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KxbwaUoEwUu_eB1gSo7_F0w9HjGCF-RsElme3I_obZKlDNPdU9C0AnKj5IjaBsZ61q1dJaO0yCmUDRiwETqXt5BOvnk82vmHrc_32BCo4AAAAp&dpr=2",
     "media": "image",
     "gender": "",
     "age": null,
