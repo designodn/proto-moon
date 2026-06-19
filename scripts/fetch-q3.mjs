@@ -916,7 +916,7 @@ ${mediaInner}
         ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
         : 'Комментарий';
       const preview = `          <div class="text-feed__reshare-card caf-preview">
-            <span class="icon __size-20 __slot-reshare caf-preview__icon"></span>
+            <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
               <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
               <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}
