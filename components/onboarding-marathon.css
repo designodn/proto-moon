@@ -9,7 +9,7 @@
 .omar {
   position: fixed;
   inset: 0;
-  z-index: 100;                       /* выше таббара (z-60) и уведомлений (z-45) */
+  z-index: 1100;                      /* выше таббара (z-60) и heads-up пушей ленты (z-1000) */
   display: flex;
   flex-direction: column;
   background: var(--dynamic-surface-base-primary, #F7F4F2);

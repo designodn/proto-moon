@@ -112,10 +112,17 @@
 
     // Подъезд секций при скролле
     var scroll = el.querySelector('.omar__scroll');
+    var secs = Array.prototype.slice.call(el.querySelectorAll('.omar-sec'));
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) { if (en.isIntersecting) en.target.classList.add('is-in'); });
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        // помечаем секцию и все предыдущие — чтобы при резком прыжке скролла
+        // не осталось «не подъехавших» блоков между hero и текущим
+        var idx = secs.indexOf(en.target);
+        for (var i = 0; i <= idx; i++) secs[i].classList.add('is-in');
+      });
     }, { root: scroll, threshold: 0.2 });
-    el.querySelectorAll('.omar-sec').forEach(function (s) { io.observe(s); });
+    secs.forEach(function (s) { io.observe(s); });
 
     return el;
   }
