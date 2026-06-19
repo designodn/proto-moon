@@ -125,10 +125,12 @@
 }
 /* стартовое (схлопнутое) состояние */
 .omar-fan__photo { transform: translate(-50%,-50%) rotate(0deg) scale(.85); }
-/* разъехались веером */
-.is-in .omar-fan__photo--1 { transform: translate(calc(-50% - 96px), -42%) rotate(-12deg); opacity: 1; transition-delay: .05s; }
-.is-in .omar-fan__photo--2 { transform: translate(-50%, -56%) rotate(0deg) scale(1.04); opacity: 1; transition-delay: .12s; z-index: 2; }
-.is-in .omar-fan__photo--3 { transform: translate(calc(-50% + 96px), -42%) rotate(12deg); opacity: 1; transition-delay: .19s; }
+/* средняя — поверх соседних (как в галерее фида) */
+.omar-fan__photo--2 { z-index: 2; }
+/* разъехались веером — на одном уровне по вертикали, с нахлёстом друг на друга */
+.is-in .omar-fan__photo--1 { transform: translate(calc(-50% - 64px), -50%) rotate(-12deg); opacity: 1; transition-delay: .05s; }
+.is-in .omar-fan__photo--2 { transform: translate(-50%, -50%) rotate(0deg) scale(1.05); opacity: 1; transition-delay: .12s; }
+.is-in .omar-fan__photo--3 { transform: translate(calc(-50% + 64px), -50%) rotate(12deg); opacity: 1; transition-delay: .19s; }
 
 /* ============================================================
    2. ТЕМАТИКА — чипсы с 3D-иконками

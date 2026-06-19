@@ -162,6 +162,13 @@
     transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .mp-sheet.__open .mp-sheet__panel { transform: translateY(0); }
+  /* Лотти-конфетти поверх панели шторки (после публикации) */
+  .mp-confetti {
+    position: absolute; inset: 0; z-index: 3;
+    pointer-events: none; overflow: hidden;
+    border-radius: 24px 24px 0 0;
+  }
+  .mp-confetti svg { width: 100%; height: 100%; }
   .mp-sheet__head { display: flex; align-items: flex-start; gap: var(--space-3); }
   .mp-sheet__title { flex: 1 1 0; min-width: 0; color: var(--dynamic-text-and-icons-base-primary); }
   .mp-sheet__close { flex-shrink: 0; }
@@ -248,6 +255,7 @@
   <div class="mp-sheet" id="mpSheet" aria-hidden="true">
     <div class="mp-sheet__scrim" data-sheet-close></div>
     <div class="mp-sheet__panel" role="dialog" aria-label="Вы участвуете в фотомарафоне">
+      <div class="mp-confetti" id="mpConfetti" aria-hidden="true"></div>
       <div class="mp-sheet__head">
         <div class="ds-title-l mp-sheet__title">Вы участвуете<br>в фотомарафоне!</div>
         <span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span>
@@ -274,6 +282,8 @@
   <!-- Тост: превышен дневной лимит приглашений -->
   <div class="mp-toast" id="mpToast" role="status" aria-live="polite">Вы пригласили всех друзей на сегодня</div>
 
+  <!-- Lottie для конфетти после публикации -->
+  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
   <!-- Реальные люди из реестра (data/people.js → window.DS_PEOPLE_DATA) -->
   <script src="data/people.js"></script>
   <script src="components/back-button.js"></script>
@@ -414,8 +424,26 @@
       else if (navigator.clipboard) navigator.clipboard.writeText(data.url).then(function () { showToast('Ссылка скопирована'); }).catch(function () {});
     });
 
+    // Конфетти-лотти поверх панели шторки (разово, при открытии).
+    var confettiHost = document.getElementById('mpConfetti');
+    function playConfetti() {
+      if (!window.lottie || !confettiHost) return;
+      confettiHost.innerHTML = '';
+      var anim = window.lottie.loadAnimation({
+        container: confettiHost, renderer: 'svg', loop: false, autoplay: true,
+        rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+        path: 'assets/lottie/confetti.json'
+      });
+      anim.addEventListener('complete', function () { anim.destroy(); confettiHost.innerHTML = ''; });
+    }
+
     // Открытие / закрытие шторки.
-    function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); }
+    function openSheet() {
+      sheet.classList.add('__open');
+      sheet.setAttribute('aria-hidden', 'false');
+      // даём панели начать выезжать, затем сыплем конфетти
+      setTimeout(playConfetti, 260);
+    }
     function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); }
     document.addEventListener('click', function (e) {
       if (e.target.closest('[data-sheet-close]')) closeSheet();
