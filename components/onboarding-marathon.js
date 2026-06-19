@@ -71,11 +71,11 @@
 
           /* 1 — Участвуйте */
           '<section class="omar-slide omar-slide--hero">' +
-            '<div class="omar-fan">' +    // фото подставляются из data/marathon.json
+            '<div class="omar-fan"><div class="omar-fan__stage">' +    // фото подставляются из data/marathon.json
               '<img class="omar-fan__photo omar-fan__photo--1" alt="" loading="lazy">' +
               '<img class="omar-fan__photo omar-fan__photo--2" alt="" loading="lazy">' +
               '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
-            '</div>' +
+            '</div></div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
             '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
           '</section>' +
@@ -85,9 +85,18 @@
             '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
             '<p class="omar-slide__text">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
             '<div class="omar-chips">' +
-              '<span class="omar-chip omar-chip--sport">спорт' + img('icon-sport.png', 'omar-chip__icon') + '</span>' +
-              '<span class="omar-chip omar-chip--cooking">кулинария' + img('icon-cooking.png', 'omar-chip__icon') + '</span>' +
-              '<span class="omar-chip omar-chip--garden">сад' + img('icon-garden.png', 'omar-chip__icon') + '</span>' +
+              '<div class="omar-chipgrp omar-chipgrp--sport">' +
+                '<span class="omar-chip omar-chip--sport">спорт</span>' +
+                img('icon-sport.png', 'omar-chip__icon omar-chip__icon--sport') +
+              '</div>' +
+              '<div class="omar-chipgrp omar-chipgrp--cooking">' +
+                img('icon-cooking.png', 'omar-chip__icon omar-chip__icon--cooking') +
+                '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
+              '</div>' +
+              '<div class="omar-chipgrp omar-chipgrp--garden">' +
+                '<span class="omar-chip omar-chip--garden">сад</span>' +
+                img('icon-garden.png', 'omar-chip__icon omar-chip__icon--garden') +
+              '</div>' +
             '</div>' +
           '</section>' +
 
@@ -183,8 +192,19 @@
     slidesEl.addEventListener('pointerup', endSwipe);
     slidesEl.addEventListener('pointercancel', function () { sy = null; scheduleAuto(); });
 
+    // Масштаб блока фото на 1-м слайде: занимает весь остаток над текстом.
+    function fitFan() {
+      var wrap = el.querySelector('.omar-slide--hero .omar-fan');
+      var stage = el.querySelector('.omar-slide--hero .omar-fan__stage');
+      if (!wrap || !stage) return;
+      var s = Math.min(wrap.clientWidth / 360, wrap.clientHeight / 396);
+      if (s > 0 && isFinite(s)) stage.style.setProperty('--omar-fan-scale', s);
+    }
+    window.addEventListener('resize', fitFan);
+
     el._reset = function () { goTo(0); };
     el._clearAuto = clearAuto;
+    el._fitFan = fitFan;
     return el;
   }
 
@@ -196,6 +216,10 @@
     requestAnimationFrame(function () {
       overlay.classList.add('__open');
       overlay._reset();              // на первый слайд + запуск анимаций
+      if (overlay._fitFan) {
+        overlay._fitFan();           // подгон масштаба фото под экран
+        setTimeout(overlay._fitFan, 80);   // повтор после полной раскладки
+      }
     });
   }
   function close() {
