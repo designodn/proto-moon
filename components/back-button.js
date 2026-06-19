@@ -7,14 +7,14 @@
 
    Поведение клика:
      1. Если в `history.length > 1` — `history.back()`.
-     2. Иначе — навигация на `data-back-fallback` (или 'lenta-light.html'
+     2. Иначе — навигация на `data-back-fallback` (или 'lenta-q3.html'
         как разумный дефолт для этого прототипа).
 
    Пример:
      <span class="button-inline-wrapper __size-24 __view-secondary">
        <button class="button-inline __size-24"
                data-action="back"
-               data-back-fallback="lenta-light.html"
+               data-back-fallback="lenta-q3.html"
                aria-label="Назад">
          <span class="button-inline__content">
            <img class="ll-icon button-inline__icon"
@@ -25,7 +25,7 @@
      </span>
 */
 (function () {
-  var DEFAULT_FALLBACK = 'lenta-light.html';
+  var DEFAULT_FALLBACK = 'lenta-q3.html';
 
   function onClick(e) {
     var btn = e.currentTarget;
