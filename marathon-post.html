@@ -48,10 +48,12 @@
   .ll-fp-drop {
     position: relative;
     display: block;
+    height: 360px;
+    width: 100%;
+    box-sizing: border-box;
     border-radius: 20px;
     overflow: hidden;
-    background: var(--dynamic-surface-tint-orange, #EFE0D7);
-    min-height: 344px;
+    background: var(--static-surface-status-contrast-accent);
     cursor: pointer;
   }
   .ll-fp-drop__empty {
@@ -65,16 +67,9 @@
     padding: var(--space-4) var(--space-4) 72px;
     text-align: center;
   }
-  .ll-fp-drop__upload {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--dynamic-surface-base-secondary);
-  }
-  .ll-fp-drop__upload img { width: 28px; height: 28px; }
+  /* Аватар-иконка загрузки (DS avatar __type-icon), иконка внутри оранжевая. */
+  .ll-fp-drop__upload { background: var(--dynamic-surface-base-secondary); }
+  .ll-fp-drop__upload-icon { color: var(--dynamic-text-and-icons-status-accent); }
   .ll-fp-drop__hint {
     max-width: 240px;
     color: var(--dynamic-text-and-icons-base-primary);
@@ -90,11 +85,12 @@
     inset: 0;
   }
 
-  /* Чип хэштега — фиксированный оверлей низ-центр, виден всегда (не двигается). */
+  /* Чип хэштега — фиксированный оверлей низ-центр (16 от низа), виден всегда.
+     Текст ds-body-l оранжевый, паддинги 8/12. */
   .ll-fp-chip {
     position: absolute;
     left: 50%;
-    bottom: 24px;
+    bottom: 16px;
     transform: translateX(-50%);
     z-index: 1;
     display: inline-flex;
@@ -103,10 +99,6 @@
     border-radius: 12px;
     background: var(--dynamic-surface-base-secondary);
     color: var(--dynamic-text-and-icons-status-accent);
-    font-family: var(--font-family);
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 16px;
     white-space: nowrap;
   }
 
@@ -170,13 +162,13 @@
         <label class="ll-fp-drop" id="fpDrop" aria-label="Загрузить фото">
           <input type="file" id="fpFile" accept="image/*" hidden>
           <div class="ll-fp-drop__empty">
-            <span class="ll-fp-drop__upload"><img src="assets/icons/photo_add_24.svg" width="28" height="28" alt=""></span>
-            <div class="ll-fp-drop__hint ds-title-s">Загрузите хотя бы одно фото для участия</div>
+            <div class="avatar __size-56 __type-icon ll-fp-drop__upload"><span class="icon __size-24 __src ll-fp-drop__upload-icon" style="--icon-src:url('assets/icons/photo_add_24.svg')"></span></div>
+            <div class="ll-fp-drop__hint ds-title-m">Загрузите хотя бы одно фото для участия</div>
           </div>
           <div class="ll-fp-drop__photo">
             <img id="fpPhoto" src="" alt="">
           </div>
-          <span class="ll-fp-chip" id="fpChip">#РадостьДетства</span>
+          <span class="ll-fp-chip ds-body-l" id="fpChip">#РадостьДетства</span>
         </label>
 
         <input class="ll-fp-caption" id="fpCaption" type="text" placeholder="Подпись к фото">
