@@ -198,10 +198,17 @@
    ============================================================ */
 .omar__footer {
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(180deg,
     rgba(247,244,242,0) 0%,
     var(--dynamic-surface-base-primary, #F7F4F2) 32%);
 }
-.omar__cta { width: 100%; }
-.omar__cta .button-container { width: 100%; }
+.omar__cta,
+.omar__next { width: 100%; }
+.omar__cta .button-container,
+.omar__next .button-container { width: 100%; }
+/* «Далее» прячется, когда докрутили до последнего блока */
+.omar__footer.is-end .omar__next { display: none; }
