@@ -1259,5 +1259,33 @@
 })();
 </script>
 
+<!-- Сохранение/восстановление позиции скролла ленты при входе в плеер клипа
+     и возврате назад (лента скроллится .phone-frame__feed, не окном). -->
+<script>
+(function () {
+  var KEY = 'feedScroll:' + location.pathname;
+  function scroller() {
+    var f = document.querySelector('.phone-frame__feed');
+    if (f && f.scrollHeight > f.clientHeight + 4) return f;
+    return document.scrollingElement || document.documentElement;
+  }
+  window.addEventListener('pagehide', function () {
+    try { sessionStorage.setItem(KEY, String(scroller().scrollTop)); } catch (_) {}
+  });
+  function restore() {
+    var v;
+    try { v = sessionStorage.getItem(KEY); } catch (_) { v = null; }
+    if (v == null) return;
+    scroller().scrollTop = parseInt(v, 10) || 0;
+  }
+  window.addEventListener('pageshow', restore);
+  document.addEventListener('DOMContentLoaded', restore);
+  window.addEventListener('load', function () {
+    restore();
+    try { sessionStorage.removeItem(KEY); } catch (_) {}
+  });
+})();
+</script>
+
 </body>
 </html>
