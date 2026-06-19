@@ -21,7 +21,12 @@
   var TARGET   = 'marathon.html';      // целевой экран фотомарафона
   var ASSETS   = 'assets/onboarding/marathon/';
 
+  // true — показывать онбординг КАЖДЫЙ раз (флаг игнорируется, удобно для демо).
+  // false — показывать один раз и запоминать в localStorage.
+  var SHOW_EVERY_TIME = true;
+
   function seen() {
+    if (SHOW_EVERY_TIME) return false;
     try { return localStorage.getItem(SEEN_KEY) === '1'; } catch (_) { return false; }
   }
   function markSeen() {
