@@ -61,6 +61,33 @@
   .klip__media video {
     display: block; width: 100%; height: 100%; object-fit: cover;
   }
+  /* Монтаж из кадров (клип «из воспоминаний», созданный пользователем):
+     кадры лежат стопкой, сменяют друг друга по кругу с эффектом Ken Burns. */
+  .klip__frame {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    opacity: 0; transition: opacity .6s ease; will-change: transform, filter;
+  }
+  .klip__frame.__active { opacity: 1; }
+  @keyframes klip-zoom-in  { from { transform: scale(1);    } to { transform: scale(1.12); } }
+  @keyframes klip-zoom-out { from { transform: scale(1.12); } to { transform: scale(1);    } }
+  @keyframes klip-pan-left { from { transform: scale(1.12) translateX(3%); } to { transform: scale(1.12) translateX(-3%); } }
+  @keyframes klip-blur-in  { 0% { filter: blur(14px); transform: scale(1.08); } 60% { filter: blur(0); } 100% { filter: blur(0); transform: scale(1.08); } }
+  .klip__frame.__active.__fx-zoom-in  { animation: klip-zoom-in  3.4s ease-out both; }
+  .klip__frame.__active.__fx-zoom-out { animation: klip-zoom-out 3.4s ease-out both; }
+  .klip__frame.__active.__fx-pan-left { animation: klip-pan-left 3.4s ease-out both; }
+  .klip__frame.__active.__fx-blur-in  { animation: klip-blur-in 1.8s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { .klip__frame { animation: none !important; } }
+  /* Подпись-период сверху по центру (как в карточке клипа в ленте). */
+  .klip__memlabel {
+    position: absolute; top: calc(env(safe-area-inset-top, 0px) + 64px);
+    left: 0; right: 0; z-index: 2; text-align: center;
+    color: var(--static-text-and-icons-base-inverse-primary);
+    font-family: "OK Sans Display", sans-serif;
+    font-size: 22px; line-height: 28px; font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .4); pointer-events: none;
+  }
+
   /* Лёгкое затемнение снизу — чтобы белые оверлеи читались поверх любого кадра. */
   .klip__scrim {
     position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -389,6 +416,8 @@
     //    VvzCard и ClipVvz (для ВВЗ-слайда). Автор клипа — id человека из «Люди».
     //    Вход из ленты (?clip=&author=&likes=&reshares=) → твой клип первым,
     //    дальше — ростер из таблицы по кругу. type:'vvz-clip' → ВВЗ-слайд.
+    //    Вход из «Создать клип» (sessionStorage newClip, без ?clip) → твой клип
+    //    из воспоминаний: монтаж фото + подпись, автор-пользователь, счётчики 0.
     document.addEventListener('DOMContentLoaded', function () {
       var reel = document.querySelector('[data-reel]');
       if (!reel) return;
@@ -458,11 +487,61 @@
         return window.ClipVvz ? window.ClipVvz.render({ people: vvzPeople }) : '';
       }
 
+      // Клип «из воспоминаний» (создан пользователем): монтаж фото вместо видео,
+      // подпись-период, автор-пользователь, счётчики по нулям.
+      function memClipHTML(d) {
+        var photos = (d.photos && d.photos.length) ? d.photos : [];
+        var FX = ['__fx-zoom-in', '__fx-zoom-out', '__fx-pan-left', '__fx-blur-in'];
+        var frames = photos.map(function (u, i) {
+          return '<img class="klip__frame ' + FX[i % FX.length] +
+                 (i === 0 ? ' __active' : '') + '" src="' + esc(u) + '" alt="">';
+        }).join('');
+        var author = d.name || '';
+        return '' +
+        '<section class="klip" data-klip data-memclip>' +
+          '<div class="klip__media">' + frames + '</div>' +
+          (d.label ? '<div class="klip__memlabel">' + esc(d.label) + '</div>' : '') +
+          '<div class="klip__scrim" aria-hidden="true"></div>' +
+          '<div class="klip__rail">' +
+            '<button class="klip__rail-btn __like" data-like aria-label="Класс">' +
+              '<span class="klip__rail-ico"></span>' +
+              '<span class="klip__rail-count" data-like-count>0</span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" data-reshare aria-label="Поделиться">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/reshare_24.svg\')"></span>' +
+              '<span class="klip__rail-count">0</span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" aria-label="Не интересно">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/dislike_24.svg\')"></span>' +
+            '</button>' +
+            '<button class="klip__rail-btn" aria-label="Ещё">' +
+              '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/more_24.svg\')"></span>' +
+            '</button>' +
+          '</div>' +
+          '<div class="klip__bottom">' +
+            '<div class="klip__author">' +
+              '<div class="avatar __size-24 __type-image"><img src="' + esc(d.ava || '') + '" alt=""></div>' +
+              '<span class="klip__author-name">' + esc(author) + '</span>' +
+            '</div>' +
+            '<div class="klip__audio">' +
+              '<button class="klip__mute __state-muted" data-mute aria-label="Звук">' +
+                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">' +
+                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">' +
+              '</button>' +
+              '<div class="klip__audio-text">' +
+                '<div class="klip__audio-title">Original audio</div>' +
+                '<div class="klip__audio-sub">' + esc(author) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</section>';
+      }
+
       var params = new URLSearchParams(location.search);
       var roster = (window.DS_CLIPS_DATA || []).slice();
 
       // Вход из ленты → синтетический «твой клип» в начало.
-      var lead = null;
+      var lead = null, memLead = null;
       var leadId = params.get('clip');
       if (leadId) {
         lead = {
@@ -470,18 +549,26 @@
           video: leadId + '.mp4',
           likes: params.get('likes') || '', reshares: params.get('reshares') || ''
         };
+      } else {
+        // Вход из «Создать клип» (sessionStorage newClip). Не removeItem —
+        // чтобы обновление страницы не сбрасывало клип; ?clip имеет приоритет.
+        try { memLead = JSON.parse(sessionStorage.getItem('newClip') || 'null'); } catch (_) {}
+        if (memLead && !(memLead.photos && memLead.photos.length)) memLead = null;
       }
 
       function entryHTML(c) {
         return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
       }
-      // Ростер из листа в исходном порядке (HTML одной «итерации» очереди).
+      // Ростер из листа в исходном порядке (одна «итерация» очереди).
       var rosterHTML = roster.map(entryHTML).join('');
 
-      // Старт: [твой клип из ленты] + ростер. Дальше очередь зацикливается —
-      // по мере прокрутки к концу дописываем ростер заново (бесконечная лента
-      // в том же порядке, что и в таблице).
-      reel.innerHTML = (lead ? entryHTML(lead) : '') + rosterHTML;
+      // Старт: [клип из воспоминаний?] + [твой клип из ленты?] + ростер.
+      // Дальше очередь зацикливается — по мере прокрутки к концу дописываем
+      // ростер заново в том же порядке (бесконечная лента).
+      reel.innerHTML =
+        (memLead ? memClipHTML(memLead) : '') +
+        (lead ? entryHTML(lead) : '') +
+        rosterHTML;
 
       if (rosterHTML) {
         reel.addEventListener('scroll', function () {
@@ -489,6 +576,20 @@
             reel.insertAdjacentHTML('beforeend', rosterHTML);
           }
         }, { passive: true });
+      }
+
+      // Монтаж кадров твоего клипа — смена по кругу с эффектом Ken Burns.
+      if (memLead) {
+        var memSection = reel.querySelector('[data-memclip]');
+        var memFrames = memSection ? memSection.querySelectorAll('.klip__frame') : [];
+        if (memFrames.length > 1) {
+          var ci = 0;
+          setInterval(function () {
+            memFrames[ci].classList.remove('__active');
+            ci = (ci + 1) % memFrames.length;
+            memFrames[ci].classList.add('__active');
+          }, 3000);
+        }
       }
     });
 
@@ -527,5 +628,6 @@
     });
   </script>
 
+  <script src="components/smart-crop.js" defer></script>
 </body>
 </html>
