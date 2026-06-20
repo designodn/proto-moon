@@ -238,10 +238,10 @@
 /* Длинная страница: «экраны» (.omar-stage) сложены в столбик, нативный скролл
    (можно отмотать назад и дочитать; контент не обрезается overflow:hidden) */
 .omar-slide--combo {
+  position: relative;
   overflow: hidden;                 /* во время анимации скролл заблокирован */
   scroll-behavior: smooth;
-  padding-left: 0;
-  padding-right: 0;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 0;   /* верхний паддинг 64 */
 }
 .omar-slide--combo.__scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }  /* после анимации можно мотать назад */
 .omar-slide--combo::-webkit-scrollbar { display: none; }

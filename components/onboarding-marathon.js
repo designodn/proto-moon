@@ -73,7 +73,7 @@
               '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
             '</div></div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
-            '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
+            '<p class="omar-slide__text">Публикуйте фото, собирайте классы и получайте подарки</p>' +
           '</section>' +
 
           /* 2 — Длинная страница: Тематика → Голосование → Приглашайте (мотаем вниз) */
@@ -82,7 +82,7 @@
               '<div class="omar-stage">' +                 // экран 1: тематика + голосование
                 '<div class="omar-topics">' +
                   '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
-                  '<p class="omar-slide__text omar-topics__sub">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
+                  '<p class="omar-slide__text omar-topics__sub">Выберите близкую тему — спорт, кулинария, сад и другое</p>' +
                   '<div class="omar-chips">' +
                     '<div class="omar-chipgrp omar-chipgrp--sport">' +
                       '<span class="omar-chip omar-chip--sport">спорт</span>' +
@@ -99,7 +99,7 @@
                   '</div>' +
                   '<div class="omar-vote">' +
                     '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                    '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
+                    '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом — так у него больше шансов победить</p>' +
                     img('smile.png', 'omar-stickers') +
                   '</div>' +
                 '</div>' +
@@ -107,7 +107,7 @@
               '<div class="omar-stage omar-stage--invite">' +   // экран 2: приглашайте
                 '<div class="omar-invite__text">' +
                   '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-                  '<p class="omar-slide__text omar-invite__sub">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+                  '<p class="omar-slide__text omar-invite__sub">Зовите друзей — вместе интереснее</p>' +
                 '</div>' +
                 '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
               '</div>' +
@@ -185,7 +185,9 @@
       var inviteStage = slide.querySelector('.omar-stage--invite');
       slide.classList.remove('__vote', '__vote-settle', '__invite', '__scrollable');
       var stages = slide.querySelectorAll('.omar-stage');
-      for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = slide.clientHeight + 'px';
+      var cs = getComputedStyle(slide);
+      var avail = slide.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+      for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = avail + 'px';
       slide.scrollTop = 0;
       setFooter('hidden');
 
