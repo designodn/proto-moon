@@ -492,7 +492,7 @@ ${marathonPromo(hashtag, isJoined(p.marathonJoined))}
     /* ── реклама (feed-ad — как в NV, но в Q3-разметке text-feed) ── */
     case 'ad': {
       const subtitle = PEOPLE[String(aid)]?.subtitle || 'Реклама 0+';
-      return `        <article class="text-feed island">
+      return `        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
             <div class="uni-cell-additional-content">

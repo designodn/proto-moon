@@ -494,7 +494,7 @@
           </div>
         </section>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -698,7 +698,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1074,7 +1074,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1262,7 +1262,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KxbwaUoEwUu_eB1gSo7_F0w9HjGCF-RsElme3I_obZKlDNPdU9C0AnKj5IjaBsZ61q1dJaO0yCmUDRiwETqXt5BOvnk82vmHrc_32BCo4AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1688,7 +1688,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://avatars.mds.yandex.net/get-altay/910613/2a00000160da5a5d8010b004bcd9a09d2f99/L_height" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -2627,11 +2627,15 @@
         var t = e.target;
         var cell = t.closest && t.closest('.uni-cell');
         if (!cell || !cell.querySelector('.avatar.__size-44')) return;
-        if (!t.closest('.avatar') && !t.closest('.ds-title-s')) return;
-        e.preventDefault();
-        var nameEl = cell.querySelector('.ds-title-s');
-        var img    = cell.querySelector('.avatar img');
+        if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
+        // Реклама (ad-N) — не пользователь, профиль не открываем.
+        if (cell.closest('.ll-ad')) return;
+        var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
         var name = nameEl ? nameEl.textContent.trim() : '';
+        // Своё / без имени — в профиль не уводим (напр. «Вы» в карточке-комменте).
+        if (!name || name === 'Вы') return;
+        e.preventDefault();
+        var img  = cell.querySelector('.avatar img');
         var ava  = img ? (img.getAttribute('src') || '') : '';
         location.href = 'profile.html?name=' + encodeURIComponent(name) +
                         '&avatar=' + encodeURIComponent(ava);
