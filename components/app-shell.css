@@ -43,6 +43,11 @@
   right: 0;
   bottom: 0;
   z-index: 50;
+  transition: transform 0.25s ease;
+}
+/* Автоскрытие при скролле вниз (вешает components/tabbar-autohide.js). */
+.ll-tabbar.__hidden {
+  transform: translateY(100%);
 }
 
 /* Icons are <img src="…svg"> (SVGs served straight by Pages — no mask /
