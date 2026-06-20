@@ -91,12 +91,12 @@
     background: var(--dynamic-surface-base-primary);
     margin-top: var(--space-2);
   }
-  /* Сегмент-табы: выбранный — белая «пилюля», невыбранные — серый неселектед-
-     стейт (трек). На светлой теме base-secondary == base-quaternary == #FFFFFF,
-     поэтому невыбранные сливались с выбранным. Даём невыбранным contrast-low,
-     выбранный оставляем белым (quaternary). */
-  .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-contrast-low); }
+  /* Сегмент-табы: фон группы — base-primary (#F7F4F2, серый), поэтому
+     невыбранным подложка не нужна вовсе (проступает серый трек), а выбранный —
+     белая «пилюля» (quaternary). overflow на самом табе снимаем, чтобы пилюлю
+     ничто не обрезало. */
   .ll-pr-tabs .tab-wrapper.__view-primary.__selected { background: var(--dynamic-surface-base-quaternary); }
+  .ll-pr-tabs .tab-wrapper .tab { overflow: visible; }
 
   /* Лента постов в личном профиле: острова на всю ширину, встык, без скруглений */
   .ll-pr-posts { display: flex; flex-direction: column; gap: var(--space-1); }
