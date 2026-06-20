@@ -330,8 +330,14 @@
    последним рядом, чтобы он не прятался под кнопкой:
    24 (cta.bottom) + 44 (высота CTA) + 24 (воздух) = 92. */
 .moment.__view-body .moment__body {
+  /* Заголовок «Возможно, вы знакомы» — сразу под шапкой с крестиком:
+     top = низ шапки (progress 26 + header 38 = 64), padding-top 12 → 12 от
+     крестика до заголовка. Контент прижат к верху (не центрируется). */
+  top: 64px;
   bottom: 0;
+  padding-top: 12px;
   padding-bottom: 92px;
+  justify-content: flex-start;
 }
 
 /* Нижний блюр — мягкая размытая полоса под CTA. Лежит над карточками
@@ -489,11 +495,10 @@
 }
 /* Блок блюра-с-текстом обрезаем по тем же скруглённым нижним углам. */
 .moment.__view-bday .moment__bday {
-  /* Зону блюра/текста поднимаем выше середины (40% вместо 50%) — чем длиннее
-     участок прогрессивного размытия, тем мягче нарастание снизу-вверх и тем
-     меньше заметен переход от резкого верха к размытому низу. Текст всё равно
-     прижат к низу (justify-content: flex-end). */
-  top: 40%;
+  /* Слот блюра+текста = вся карточка (фото под ним), нижние углы скруглены.
+     Слои блюра — копии фото с object-fit:cover (тот же кроп, что у media),
+     поэтому совпадают с резким фото под ними. Текст прижат к низу. */
+  top: 0;
   bottom: var(--bday-strip);
   border-radius: 0 0 32px 32px;
   overflow: hidden;
@@ -521,40 +526,30 @@
   inset: 0;
   pointer-events: none;
 }
-.moment__bday-blur-step {
+/* Прогрессивный блюр через РАЗМЫТЫЕ КОПИИ ФОТО (filter: blur) + градиентные
+   маски. Каждый слой — копия фото (object-fit:cover, как media → тот же кроп),
+   размытая сильнее и видимая только в своей нижней зоне (маска
+   transparent→black). Наложение даёт непрерывное нарастание размытия
+   сверху-вниз. filter+mask надёжно композитятся в градиент (backdrop-filter
+   давал жёсткий шов). scale(1.06) прячет полупрозрачные края от blur. */
+.moment__bday-blur-img {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.06);
   -webkit-mask-image: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
-    rgba(0, 0, 0, 1) 100%);
+    rgba(0, 0, 0, 0) var(--bday-blur-from, 30%),
+    rgba(0, 0, 0, 1) var(--bday-blur-to, 55%));
           mask-image: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
-    rgba(0, 0, 0, 1) 100%);
+    rgba(0, 0, 0, 0) var(--bday-blur-from, 30%),
+    rgba(0, 0, 0, 1) var(--bday-blur-to, 55%));
 }
-.moment__bday-blur-step.__b-1 {
-  --bday-blur-p: 0%;
-  -webkit-backdrop-filter: blur(1px);  backdrop-filter: blur(1px);
-}
-.moment__bday-blur-step.__b-2 {
-  --bday-blur-p: 14%;
-  -webkit-backdrop-filter: blur(3px);  backdrop-filter: blur(3px);
-}
-.moment__bday-blur-step.__b-3 {
-  --bday-blur-p: 30%;
-  -webkit-backdrop-filter: blur(6px);  backdrop-filter: blur(6px);
-}
-.moment__bday-blur-step.__b-4 {
-  --bday-blur-p: 48%;
-  -webkit-backdrop-filter: blur(11px); backdrop-filter: blur(11px);
-}
-.moment__bday-blur-step.__b-5 {
-  --bday-blur-p: 66%;
-  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-}
-.moment__bday-blur-step.__b-6 {
-  --bday-blur-p: 83%;
-  -webkit-backdrop-filter: blur(28px); backdrop-filter: blur(28px);
-}
+.moment__bday-blur-img.__b-1 { --bday-blur-from: 28%; --bday-blur-to: 50%; filter: blur(4px);  }
+.moment__bday-blur-img.__b-2 { --bday-blur-from: 46%; --bday-blur-to: 66%; filter: blur(9px);  }
+.moment__bday-blur-img.__b-3 { --bday-blur-from: 62%; --bday-blur-to: 80%; filter: blur(18px); }
+.moment__bday-blur-img.__b-4 { --bday-blur-from: 78%; --bday-blur-to: 92%; filter: blur(32px); }
 /* Лёгкое затемнение поверх блюра — добавляет контраст белому тексту,
    повторяет фигму (bg-black/20 на блюр-слое). */
 .moment__bday-blur-tint {

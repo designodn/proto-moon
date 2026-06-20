@@ -273,7 +273,7 @@
    ============================================================ */
 .vvz-card.__state-hidden {
   background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--static-stroke-contrast-inverse-mid);
   cursor: default;
 }
 .vvz-card.__state-hidden .vvz-card__media,

@@ -89,6 +89,11 @@
     var card = dismiss.closest('[data-vvz-card]');
     if (!card || card.classList.contains('__state-hidden')) return;
 
+    // Фиксируем текущую высоту карточки, чтобы при переходе в «Рекомендация
+    // скрыта» (контент короче) высота не схлопывалась — карточка остаётся
+    // того же размера, что и до скрытия.
+    card.style.minHeight = card.offsetHeight + 'px';
+
     var title = card.querySelector('.vvz-card__title');
     var btnContent = card.querySelector('.vvz-card__btn .button-content');
     if (title) {
@@ -218,6 +223,7 @@
     if (title && title.dataset.originalText) title.textContent = title.dataset.originalText;
     if (btnContent && btnContent.dataset.originalText) btnContent.textContent = btnContent.dataset.originalText;
     card.classList.remove('__state-hidden');
+    card.style.minHeight = '';
   }
 
   // Единый делегированный клик по кнопке карточки. Один обработчик на все
