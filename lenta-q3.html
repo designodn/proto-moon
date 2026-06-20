@@ -259,8 +259,8 @@
   }
   /* Остриё CSS-треугольника и плоский край пилюли дают 0.5px анти-алиас-шов —
      на глаз читается как отрыв хвоста. Перекрываем на 1px, чтобы стык был
-     бесшовным (хвост у нас __side-bottom: остриё снизу примыкает к пилюле). */
-  .ll-tagged__media .tooltip-wrapper.__side-bottom > .tooltip-tail {
+     бесшовным (хвост у нас __side-top: остриё сверху примыкает к пилюле). */
+  .ll-tagged__media .tooltip-wrapper.__side-top > .tooltip-tail {
     margin-bottom: -1px;
   }
 
@@ -1479,7 +1479,7 @@
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36">
-              <button class="button-container __style-ai-gift"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkes_filled_24.svg')"></span>Создать подарок из фото</span></button>
+              <button class="button-container __style-ai-gift"><span class="button-content"><img class="ll-icon" src="assets/icons/sparkes_filled_24.svg" width="20" height="20" alt="">Создать подарок из фото</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
@@ -1604,7 +1604,7 @@
 
           <div class="text-feed__media ll-tagged__media">
             <img src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&amp;dpr=2" alt="">
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+            <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
                  style="top: 143px; left: 187.5px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">Анфиса Тимирбаева(Абдуллина)</div>
               <div class="tooltip-tail"></div>
