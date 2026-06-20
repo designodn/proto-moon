@@ -261,8 +261,8 @@
 /* подзаголовок скрыт, пока стикер увеличен; появляется, когда стикер встаёт на место */
 .omar-vote__sub { opacity: 0; transition: opacity .2s ease; }
 .omar-slide--combo.__vote-settle .omar-vote__sub { opacity: 1; }
-/* стикер: сначала увеличенный (×1.2), затем встаёт на место */
-.omar-vote .omar-stickers { opacity: 0; transform: rotate(-15deg) scale(1.2); transition: opacity .2s ease, transform .2s ease; }
+/* стикер: сначала увеличенный (×2), затем встаёт на место за 500мс */
+.omar-vote .omar-stickers { opacity: 0; transform: rotate(-15deg) scale(2); transition: opacity .2s ease, transform .5s ease; }
 .omar-slide--combo.__vote .omar-vote .omar-stickers { opacity: 1; }
 .omar-slide--combo.__vote-settle .omar-vote .omar-stickers { transform: rotate(-15deg) scale(1); }
 

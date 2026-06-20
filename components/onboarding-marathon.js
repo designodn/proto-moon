@@ -162,12 +162,12 @@
     function startCombo() {
       var slide = slides[COMBO_INDEX];
       slide.classList.remove('__vote', '__vote-settle');
-      // 1) заголовок «Голосуйте» + увеличенный стикер (подзаголовок скрыт)
+      // 1) заголовок «Голосуйте» + увеличенный стикер ×2 (подзаголовок скрыт)
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3800));
-      // 2) стикер уменьшается, появляется подзаголовок (всё по 200мс)
-      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 4600));
-      // 3) переход к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 7400));
+      // 2) стикер встаёт на место за 500мс, появляется подзаголовок
+      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 4500));
+      // 3) подзаголовок держится ~4с → переход к «Приглашайте»
+      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 9000));
     }
 
     function goTo(i) {
