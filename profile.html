@@ -100,6 +100,14 @@
   .ll-pr-posts { display: flex; flex-direction: column; gap: var(--space-1); }
   .ll-pr-posts[hidden] { display: none; }
   .ll-pr-posts .island { border-radius: 0; }
+
+  /* Таб-бар внутри скролла: прилипает к низу (sticky), а в конце доскролла
+     встаёт на своё место в потоке (не fixed). Перебиваем app-shell (fixed). */
+  .ll-tabbar {
+    position: sticky;
+    bottom: 0;
+    margin-top: var(--space-2);
+  }
   .ll-pr-empty[hidden] { display: none; }
 
   /* Пустое состояние с картинкой по центру */
@@ -528,23 +536,22 @@
 
       </section>
 
-      <div style="height: 96px"></div>
-
-    </div>
-
-    <!-- TABBAR (профиль открывается из «Меню», поэтому активна вкладка menu) -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+      <!-- TABBAR внутри скролла: sticky снизу (прилипает при скролле), в конце
+           доскролла встаёт в поток. Профиль открыт из «Меню» → активна menu. -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+            <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+          </div>
+          <div class="tabbar__handle"></div>
         </div>
-        <div class="tabbar__handle"></div>
       </div>
+
     </div>
 
   </div>
@@ -622,6 +629,34 @@
       if (empty)   empty.hidden = true;
       if (strangerPosts) strangerPosts.hidden = true;
       if (selfPosts)     selfPosts.hidden = false; // показываем свои посты
+
+      // Пост фотомарафона, только что опубликованный (sessionStorage mp_published),
+      // — первым среди своих постов (как в ленте; запись не удаляем, читают оба).
+      try {
+        var pub = JSON.parse(sessionStorage.getItem('mp_published') || 'null');
+        if (pub && pub.photo && selfPosts) {
+          var escH = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+          var htag = pub.hashtag || '#РадостьДетства';
+          var tagSpan = '<span class="marathon-promo__tag">' + escH(htag) + '</span>';
+          var bodyInner = pub.caption ? (escH(pub.caption) + ' ' + tagSpan) : tagSpan;
+          var art = document.createElement('article');
+          art.className = 'text-feed island';
+          art.innerHTML =
+            '<div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">'
+            + '<div class="avatar __size-44 __type-image"><img src="' + escH(me.avatarSrc || '') + '" alt=""></div>'
+            + '<div class="uni-cell-additional-content"><div class="ds-title-s">' + escH(me.name || 'Вы') + '</div><div class="ds-caption-s text-feed__time">Только что</div></div>'
+            + '</div></div></div>'
+            + '<p class="ds-body-m text-feed__body">' + bodyInner + '</p>'
+            + '<div class="text-feed__media __single"><img style="width:100%;height:100%;object-fit:cover;display:block" src="' + escH(pub.photo) + '" alt=""></div>'
+            + '<div class="actions-bar">'
+            +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
+            +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
+            +   '<label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
+            +   '<div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>'
+            + '</div>';
+          selfPosts.insertBefore(art, selfPosts.firstChild);
+        }
+      } catch (e) {}
       return;                              // флоу заявки на личном профиле не запускаем
     }
 
