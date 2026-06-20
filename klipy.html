@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="index.css">
 <script src="components/screen-transition.js"></script>
+<script src="components/tab-bar.js" defer></script>
 <script src="components/vvz-card.js" defer></script>
 <script src="components/clip-vvz.js" defer></script>
 <script src="data/people.js"></script>
@@ -203,7 +204,9 @@
     --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
     --dynamic-text-and-icons-status-accent: #FF9558;
   }
-  .klipy-tabbar .tabbar__handle { background: rgba(255, 255, 255, 0.3); }
+  /* Home-indicator (handle) в плеере не показываем вовсе — ни «пилюли», ни
+     цветной подложки (свайп-зона не нужна, навигация — по таб-иконкам). */
+  .klipy-tabbar .tabbar__handle { display: none; }
 
   /* ============================================================
      SHARE SHEET — нижний шит «Поделиться» (открывается по решаре).
