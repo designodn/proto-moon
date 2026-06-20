@@ -796,7 +796,7 @@ ${authorHeader(aid, time)}
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+            <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
                  style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>

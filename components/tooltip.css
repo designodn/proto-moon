@@ -40,11 +40,14 @@
 .tooltip-wrapper.__view-accent-orange { --background-color: var(--static-surface-status-accent, #EE8208); }
 .tooltip-wrapper.__view-custom        { --background-color: var(--tooltip-custom-background-color, #018DEB); }
 
-/* Side — какая сторона тултипа смотрит на target (там же и хвост) */
-.tooltip-wrapper.__side-top    { flex-direction: column;         margin-top:  var(--margin-tail);                  transform-origin: center top; }
-.tooltip-wrapper.__side-bottom { flex-direction: column-reverse; margin-top:  calc(var(--margin-tail) * -1);       transform-origin: center bottom; }
-.tooltip-wrapper.__side-left   { flex-direction: row;            margin-left: var(--margin-tail);                  transform-origin: center left; }
-.tooltip-wrapper.__side-right  { flex-direction: row-reverse;    margin-left: calc(var(--margin-tail) * -1);       transform-origin: center right; }
+/* Side — какая сторона тултипа смотрит на target (там же и хвост).
+   flex-direction ставит хвост (.tooltip-tail, последний ребёнок) на нужную грань:
+   column-reverse → хвост сверху, column → снизу; row-reverse → слева, row → справа.
+   Направление треугольника (border-* ниже) и срез угла (__placement) согласованы. */
+.tooltip-wrapper.__side-top    { flex-direction: column-reverse; margin-top:  calc(var(--margin-tail) * -1);   transform-origin: center top; }
+.tooltip-wrapper.__side-bottom { flex-direction: column;         margin-top:  var(--margin-tail);               transform-origin: center bottom; }
+.tooltip-wrapper.__side-left   { flex-direction: row-reverse;    margin-left: calc(var(--margin-tail) * -1);    transform-origin: center left; }
+.tooltip-wrapper.__side-right  { flex-direction: row;            margin-left: var(--margin-tail);               transform-origin: center right; }
 
 /* Alignment — выравнивание вдоль стороны */
 .tooltip-wrapper.__alignment-start  { justify-content: flex-start; align-items: flex-start; }
