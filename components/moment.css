@@ -113,10 +113,12 @@
    (свой, а не из meshok-up: там фон --dynamic-surface-base-secondary !important)
    ============================================================ */
 /* Статус-бар (фейковые 9:41) и home-индикатор скрыты во всех сториз —
-   на реальном устройстве их рисует система. */
-.moment__statusbar,
-.moment__handle {
-  display: none;
+   на реальном устройстве их рисует система. Селектор с .moment, чтобы
+   перебить идущие ниже по файлу .moment__statusbar/.moment__handle{display:flex}
+   (та же специфичность → решал бы порядок). */
+.moment .moment__statusbar,
+.moment .moment__handle {
+  display: none !important;
 }
 .moment__statusbar {
   position: absolute;
