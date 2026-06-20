@@ -148,57 +148,62 @@
     var track    = el.querySelector('.omar__track');
     var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
     var nextWrap = el.querySelector('.omar__next');
+    var ctaWrap  = el.querySelector('.omar__cta');
     var footer   = el.querySelector('.omar__footer');
     var ctaBtn   = el.querySelector('.omar__cta button');
     var ctaLabel = ctaBtn.querySelector('.button-content');
     var last     = slides.length - 1;
     var index    = 0;
-    var COMBO_INDEX = 1;       // длинная страница: тематика → голосование → приглашайте
+    var COMBO_INDEX = 1;       // тематика + голосование
     var timers = [];
+    var played = {};           // какие слайды уже проигрывали интро (чтобы не перезапускать)
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
-    // Футер по фазам: hero (Перейти+Далее) / hidden (во время автопрокрутки) /
-    // invite (одна кнопка «Перейти к марафону», появляется в конце).
+    // Футер по фазам:
+    //   hero   — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
+    //   combo  — только «Далее» (появляется после подписи «Голосуйте»)
+    //   invite — только «Перейти к марафону» (primary)
+    //   hidden — спрятан
     function setFooter(mode) {
+      footer.classList.toggle('__hidden', mode === 'hidden');
       if (mode === 'hero') {
-        footer.classList.remove('__hidden');
-        nextWrap.style.display = 'block';
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
         ctaBtn.className = 'button-container __style-secondary';
         ctaLabel.textContent = 'Перейти к фотомарафону';
+      } else if (mode === 'combo') {
+        ctaWrap.style.display = 'none'; nextWrap.style.display = 'block';
       } else if (mode === 'invite') {
-        footer.classList.remove('__hidden');
-        nextWrap.style.display = 'none';
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
         ctaBtn.className = 'button-container __style-primary';
         ctaLabel.textContent = 'Перейти к марафону';
-      } else {
-        footer.classList.add('__hidden');
-        nextWrap.style.display = 'none';
       }
     }
 
-    // Combo (тематика+голосование): чипсы → подпись (1.5с) → голосование (бамп-стикер,
-    // 3с на чтение) → авто-переход на отдельный слайд «Приглашайте».
+    // Combo: чипсы → подпись тематики (1.5с) → голосование (бамп-стикер) →
+    // подпись голосования → показываем «Далее». Без авто-перехода: читать можно сколько угодно.
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      slide.classList.remove('__vote', '__vote-settle');
-      // голосование — через 1.5с после подписи тематики (подпись ~3.0с)
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
       timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
-      // 3с на чтение голосования → переходим к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 8400));
+      timers.push(setTimeout(function () { setFooter('combo'); }, 5600));   // «Далее» после второй подписи
     }
 
     function goTo(i) {
       i = Math.max(0, Math.min(last, i));
       clearTimers();
       index = i;
-      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вверх — следующая страница
-      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-      if (i === 0) setFooter('hero');
-      else setFooter('hidden');
-      if (i === COMBO_INDEX) startCombo();
-      // последний слайд «Приглашайте»: кнопка появляется через 300мс после подзаголовка
-      if (i === last) timers.push(setTimeout(function () { setFooter('invite'); }, 900));
+      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // свайп вверх — следующая страница
+      slides[i].classList.add('is-active');   // не снимаем у предыдущих — анимации не перезапускаются
+
+      if (i === 0) {
+        setFooter('hero');
+      } else if (i === COMBO_INDEX) {
+        if (!played[i]) { played[i] = true; setFooter('hidden'); startCombo(); }
+        else { slides[i].classList.add('__vote', '__vote-settle'); setFooter('combo'); }   // уже видели — финал + «Далее»
+      } else if (i === last) {
+        if (!played[i]) { played[i] = true; setFooter('hidden'); timers.push(setTimeout(function () { setFooter('invite'); }, 900)); }
+        else { setFooter('invite'); }
+      }
     }
 
     el.querySelector('.omar__close').addEventListener('click', close);
@@ -227,7 +232,11 @@
     }
     window.addEventListener('resize', fitFan);
 
-    el._reset = function () { goTo(0); };
+    el._reset = function () {
+      played = {};
+      slides.forEach(function (s) { s.classList.remove('is-active', '__vote', '__vote-settle'); });
+      goTo(0);
+    };
     el._clearAuto = clearTimers;
     el._fitFan = fitFan;
     return el;
