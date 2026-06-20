@@ -26,9 +26,14 @@
   // занимал реальное место (через visibility:hidden на родителе).
   var PLACEHOLDER_AVATAR = '<div class="avatar __size-36 __type-placeholder"></div>';
 
-  function avatarHtml(id) {
+  function avatarHtml(src) {
+    // src — либо готовый URL фото (реальные люди из people.json), либо число
+    // (id для pravatar-заглушки, обратная совместимость).
+    var url = (typeof src === 'string' && /^(https?:|\/|data:|assets)/.test(src))
+      ? src
+      : 'https://i.pravatar.cc/72?img=' + src;
     return '<div class="avatar __size-36 __type-image">' +
-             '<img src="https://i.pravatar.cc/72?img=' + id + '" alt="">' +
+             '<img src="' + url + '" alt="">' +
            '</div>';
   }
 
@@ -98,11 +103,10 @@
   });
 
   // ============================================================
-  // FRIEND-REQUEST — кнопка «Дружить».
+  // FRIEND-REQUEST — кнопка «Дружить» (вариант СТОРИЗ, .__stories).
   //   normal    → тап «Дружить»: общие друзья скрываются, сабтайтл →
-  //               «Заявка в друзья отправлена», кнопка → галочка
-  //               (secondary-on-color), карточка в .__state-requested.
-  //   requested → тап по галочке: открывается шторка подтверждения
+  //               «Заявка в друзья отправлена», кнопка → secondary «Отменить».
+  //   requested → тап по «Отменить»: открывается шторка подтверждения
   //               отмены, сториз ставятся на паузу.
   // ============================================================
   function enterRequested(card) {
@@ -114,12 +118,10 @@
     }
     if (btnWrap) {
       if (btnWrap.dataset.originalHtml == null) btnWrap.dataset.originalHtml = btnWrap.innerHTML;
-      // Галочка вместо текста: secondary-on-color, иконка done по центру.
+      // Кнопка становится secondary-on-color «Отменить» (на тёмном фоне сториз).
       btnWrap.innerHTML =
-        '<button class="button-container __style-secondary-on-color __icon" type="button" aria-label="Заявка отправлена, отменить">' +
-          '<span class="button-content">' +
-            '<span class="icon __size-20 __slot-done"></span>' +
-          '</span>' +
+        '<button class="button-container __style-secondary-on-color" type="button">' +
+          '<span class="button-content">Отменить</span>' +
         '</button>';
     }
     card.classList.add('__state-requested');

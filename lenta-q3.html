@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>Лента (light) — прототип</title>
+<!-- При первом заходе в приложение показываем шторку «Добавить друзей»
+     (add-friends-sheet.html, её крестик возвращает сюда). Гейт по sessionStorage,
+     чтобы не зацикливаться и показывать один раз за сессию. Синхронно в head —
+     до отрисовки ленты. -->
+<script>
+  (function () {
+    try {
+      if (!sessionStorage.getItem('afs-seen')) {
+        sessionStorage.setItem('afs-seen', '1');
+        location.replace('add-friends-sheet.html');
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -2565,6 +2579,18 @@
               var people = (st.people || []).map(function (id) {
                 var p = P(id) || {};
                 return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
+              });
+              // Общие друзья у первых трёх карточек (2 / 4 / 3), аватарки —
+              // реальные фото людей из листа «Люди» (people.json).
+              var pool = (window.DS_PEOPLE_DATA || [])
+                .filter(function (pp) { return pp && pp.photo; })
+                .map(function (pp) { return pp.photo; });
+              [2, 4, 3].forEach(function (n, i) {
+                if (!people[i] || !pool.length) return;
+                var k = Math.min(n, 3);
+                people[i].mutuals = n;
+                people[i].m = [];
+                for (var j = 0; j < k; j++) people[i].m.push(pool[(i * 3 + j) % pool.length]);
               });
               return [MomentViewer.vvzSlide({
                 title:  'Возможно, вы знакомы',

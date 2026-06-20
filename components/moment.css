@@ -465,7 +465,7 @@
 .moment.__view-bday.__fullscreen .moment__media {
   bottom: var(--bday-strip);
   height: auto;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 32px 32px;
 }
 /* Блок блюра-с-текстом обрезаем по тем же скруглённым нижним углам. */
 .moment.__view-bday .moment__bday {
@@ -475,7 +475,7 @@
      прижат к низу (justify-content: flex-end). */
   top: 40%;
   bottom: var(--bday-strip);
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 32px 32px;
   overflow: hidden;
 }
 /* Текст ближе к нижней кромке карточки (раньше отступ закладывался под

@@ -303,24 +303,68 @@
     </div>
   </div>
 
+<!-- Реальные люди из Google-таблицы «Люди» (window.DS_PEOPLE_DATA) -->
+<script src="data/people.js"></script>
+<script src="components/people-data.js"></script>
+
 <script>
 (function () {
-  // Кандидаты — i.pravatar отдаёт стабильные портреты по img-id.
-  // 32-я аватарка из стека «общих друзей» подбирается из соседних,
-  // чтобы у каждой карточки была своя тройка.
-  var people = [
-    { name: 'Карина Затонская',  meta: '28 лет, Рига, Латвия',         photo: 49, mutual: 18, friends: [12, 31, 5] },
-    { name: 'Анна Смирнова',     meta: '24 года, Москва, Россия',      photo: 47, mutual: 12, friends: [15, 33, 23] },
-    { name: 'Мария Иванова',     meta: '31 год, Санкт-Петербург',       photo: 45, mutual: 10, friends: [14, 22, 18] },
-    { name: 'Алёна Ящук',        meta: '26 лет, Минск, Беларусь',      photo: 44, mutual: 20, friends: [7, 11, 27] },
-    { name: 'Светлана Орлова',   meta: '29 лет, Алматы, Казахстан',     photo: 32, mutual: 6,  friends: [21, 34, 36] },
-    /* Финальная карточка-подсказка (Figma 2453:3653) — закрывает стек.
-       Свайп/тап по кнопкам уведёт стек в empty-state. */
-    { type: 'help',
-      title:    'Найдите еще больше друзей',
-      subtitle: 'Вы можете найти еще больше друзей или одноклассников',
-      links:    ['Поиск по контактам', 'Поиск по школам'] }
-  ];
+  // Кандидаты — реальные люди из Google-таблицы «Люди» (data/people.js).
+  // Берём только числовые id с непустым photo — это «настоящие» разнообразные
+  // люди с фотографиями. Фото карточки и аватарки общих друзей — их person.photo
+  // (никакого pravatar).
+  var ALL = (window.DS_PEOPLE_DATA || []).filter(function (p) {
+    return typeof p.id === 'number' && p.photo;
+  });
+
+  // Склейка «N лет/года/год, Город» как в lenta-q3.
+  function plural(n, one, few, many) {
+    var n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return one;
+    if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return few;
+    return many;
+  }
+  function metaFor(p) {
+    var parts = [];
+    if (p.age) parts.push(p.age + ' ' + plural(p.age, 'год', 'года', 'лет'));
+    if (p.city) parts.push(p.city);
+    return parts.join(', ');
+  }
+
+  // Общие друзья карточки — реальные люди (их photo), 2–4 штуки, не сам человек.
+  function mutualFor(self) {
+    var pool = ALL.filter(function (p) { return p.id !== self.id; });
+    var count = 2 + (self.id % 3); // детерминированно 2..4
+    var start = self.id % Math.max(1, pool.length);
+    var picks = [];
+    for (var i = 0; i < count && i < pool.length; i++) {
+      picks.push(pool[(start + i) % pool.length]);
+    }
+    return picks;
+  }
+
+  // Карточки-кандидаты из реальных людей.
+  var people = ALL.map(function (p) {
+    var friends = mutualFor(p);
+    return {
+      name:    p.name,
+      meta:    metaFor(p),
+      photo:   p.photo,
+      friends: friends.map(function (f) { return f.photo; }),
+      mutual:  friends.length === 1
+                 ? '1 общий друг'
+                 : friends.length + ' ' + plural(friends.length, 'общий друг', 'общих друга', 'общих друзей')
+    };
+  });
+
+  // Финальная карточка-подсказка (Figma 2453:3653) — закрывает стек.
+  // Свайп/тап по кнопкам уведёт стек в empty-state.
+  people.push({
+    type: 'help',
+    title:    'Найдите еще больше друзей',
+    subtitle: 'Вы можете найти еще больше друзей или одноклассников',
+    links:    ['Поиск по контактам', 'Поиск по школам']
+  });
 
   var deck = document.getElementById('vk-tinder-deck');
   var btnSkip = document.getElementById('vk-tinder-skip');
@@ -379,13 +423,13 @@
       return card;
     }
 
-    var avatars = p.friends.map(function (id) {
-      return '<div class="avatar __type-image"><img src="https://i.pravatar.cc/56?img=' + id + '" alt=""></div>';
+    var avatars = p.friends.map(function (url) {
+      return '<div class="avatar __type-image"><img src="' + url + '" alt=""></div>';
     }).join('');
 
     card.innerHTML =
       '<div class="vk-tinder-card__photo">' +
-        '<img src="https://i.pravatar.cc/600?img=' + p.photo + '" alt="">' +
+        '<img src="' + p.photo + '" alt="">' +
         '<div class="vk-tinder-card__stamp __like">Дружить</div>' +
         '<div class="vk-tinder-card__stamp __nope">Пропустить</div>' +
       '</div>' +
@@ -393,7 +437,7 @@
         '<div class="vk-tinder-card__name ds-display-m">' + p.name + '</div>' +
         '<div class="vk-tinder-card__meta ds-caption-m">' + p.meta + '</div>' +
         '<div class="vk-tinder-card__friends">' +
-          '<div class="vk-tinder-card__friends-label ds-caption-m">' + p.mutual + ' общих друзей</div>' +
+          '<div class="vk-tinder-card__friends-label ds-caption-m">' + p.mutual + '</div>' +
           '<div class="vk-tinder-card__friends-list">' + avatars + '</div>' +
         '</div>' +
       '</div>';
