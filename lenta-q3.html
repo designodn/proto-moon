@@ -347,8 +347,9 @@
   /* DS-«ручка» шторки (грабер) — навбар шторки */
   .mp-sheet__handle { display: flex; justify-content: center; }
   .mp-sheet__handle span { width: 36px; height: 4px; border-radius: 999px; background: var(--dynamic-surface-contrast-low); }
-  .mp-sheet__close { position: absolute; top: 12px; right: 12px; }
-  .mp-sheet__title { margin: var(--space-2) 0 0; text-align: center; color: var(--dynamic-text-and-icons-base-primary); }   /* 8 от навбара */
+  /* навбар шторки: высота 56, крестик справа; заголовок начинается после него */
+  .mp-sheet__nav { flex: 0 0 56px; height: 56px; display: flex; align-items: center; justify-content: flex-end; }
+  .mp-sheet__title { margin: 0; text-align: center; color: var(--dynamic-text-and-icons-base-primary); }
   .mp-sheet__subtitle { margin: var(--space-3) 0 0; text-align: center; color: var(--dynamic-text-and-icons-base-primary); }  /* 12 до подзаголовка */
   .mp-sheet__list { margin-top: var(--space-4); overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: var(--space-4); }  /* 16 до первой ячейки */
   .mp-sheet__list::-webkit-scrollbar { display: none; }
@@ -2801,7 +2802,7 @@
     <div class="mp-sheet__panel" role="dialog" aria-label="Вы участвуете в фотомарафоне">
       <div class="mp-confetti" id="mpConfetti" aria-hidden="true"></div>
       <div class="mp-sheet__handle"><span></span></div>
-      <span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span>
+      <div class="mp-sheet__nav"><span class="button-inline-wrapper __size-24 __view-secondary mp-sheet__close"><button class="button-inline __size-24" data-sheet-close aria-label="Закрыть"><span class="button-inline__content"><span class="icon __size-24 __slot-close"></span></span></button></span></div>
       <div class="ds-title-xl mp-sheet__title">Вы участвуете в фотомарафоне!</div>
       <p class="ds-body-l mp-sheet__subtitle">Пригласите друзей, чтобы они тоже могли поделиться своими фото и проголосовать за ваше</p>
       <div class="mp-sheet__list" id="mpList">
