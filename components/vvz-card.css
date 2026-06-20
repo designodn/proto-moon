@@ -313,6 +313,13 @@
 .vvz-card.__state-requested .vvz-card__mutuals {
   display: none;
 }
+/* «Заявка в друзья отправлена» переносится на нужное число строк (базовый
+   сабтайтл — одна строка с ellipsis; здесь снимаем ограничение). */
+.vvz-card.__state-requested .vvz-card__subtitle {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
 
 /* ============================================================
    АДАПТИВ: устройство шире 420 — крупнее аватар, ФИО и крестик
