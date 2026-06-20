@@ -235,15 +235,20 @@
 /* ============================================================
    2+3. ОБЪЕДИНЁННЫЙ БЛОК «Тематика + Голосование» — один прокручиваемый блок
    ============================================================ */
-/* Тематика и Голосование помещаются на одном экране (как в автолейауте фрейма 04) */
-.omar-slide--combo { overflow: hidden; }
+/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, combo мотается вниз */
+.omar-slide--combo { overflow: hidden; padding-left: 0; padding-right: 0; }
 .omar-combo {
-  flex: 1 1 auto;
-  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform .6s cubic-bezier(.4, 0, .2, 1);   /* мотаем страницу вниз */
+  will-change: transform;
+}
+.omar-stage {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-8);
+  padding: 0 var(--space-4);
 }
 .omar-topics, .omar-vote { display: flex; flex-direction: column; }
 
@@ -271,23 +276,20 @@
    контент по центру по вертикали; gap 33 текст↔картинка; gap 6 заголовок↔подпись;
    картинка во всю ширину (262/146); кнопка «Перейти к марафону»
    ============================================================ */
-.omar-slide--invite {
+.omar-stage--invite {
   align-items: center;
   text-align: center;
-  justify-content: center;          /* контент по центру по вертикали */
   gap: 33px;                        /* Figma: текст ↔ картинка */
-  padding: env(safe-area-inset-top, 0px) 0 0;
 }
 .omar-invite__text {
   display: flex;
   flex-direction: column;
   gap: 6px;                         /* Figma: заголовок ↔ подпись */
-  padding: 0 var(--space-4);
 }
 .omar-invite__text .omar-slide__text { margin: 0; }
-/* подзаголовок появляется после «бампа» картинки */
+/* заголовок виден сразу; подзаголовок появляется после «бампа» картинки */
 .omar-invite__sub { opacity: 0; transition: opacity .2s ease; }
-.omar-slide--invite.is-active .omar-invite__sub { opacity: 1; transition-delay: .7s; }
+.omar-slide--combo.__invite .omar-invite__sub { opacity: 1; transition-delay: .6s; }
 /* картинка: «бампает» в центр до ×1.2, затем встаёт на место */
 @keyframes omar-bump {
   0%   { opacity: 0; transform: scale(.8); }
@@ -296,12 +298,13 @@
 }
 .omar-invite {
   display: block;
-  width: 100%;
+  width: calc(100% + 2 * var(--space-4));   /* во всю ширину (выходим из паддинга стейджа) */
+  margin-left: calc(-1 * var(--space-4));
   aspect-ratio: 262 / 146;          /* Figma */
   object-fit: contain;
   opacity: 0;
 }
-.omar-slide--invite.is-active .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both; }
+.omar-slide--combo.__invite .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both; }
 
 /* ============================================================
    Нижняя панель: кнопки
@@ -315,7 +318,10 @@
   background: linear-gradient(180deg,
     rgba(247,244,242,0) 0%,
     var(--dynamic-surface-base-primary, #F7F4F2) 24%);
+  transition: opacity .3s ease;
 }
+/* футер скрыт во время автопрокрутки (кнопка появляется в конце) */
+.omar__footer.__hidden { opacity: 0; pointer-events: none; }
 .omar__cta,
 .omar__next { width: 100%; }
 .omar__cta .button-container,
