@@ -527,18 +527,17 @@
   pointer-events: none;
 }
 /* Прогрессивный блюр через РАЗМЫТЫЕ КОПИИ ФОТО (filter: blur) + градиентные
-   маски. Каждый слой — копия фото (object-fit:cover, как media → тот же кроп),
-   размытая сильнее и видимая только в своей нижней зоне (маска
-   transparent→black). Наложение даёт непрерывное нарастание размытия
-   сверху-вниз. filter+mask надёжно композитятся в градиент (backdrop-filter
-   давал жёсткий шов). scale(1.06) прячет полупрозрачные края от blur. */
+   маски. Каждый слой — копия фото с тем же object-fit:cover и БЕЗ transform,
+   поэтому пиксель-в-пиксель совпадает с резким media под ним (иначе размытая
+   копия съезжала и лицо «двоилось»). Размытие нарастает сверху-вниз за счёт
+   масок transparent→black; наложение даёт непрерывный градиент. filter+mask
+   надёжно композитятся (backdrop-filter давал жёсткий шов). */
 .moment__bday-blur-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.06);
   -webkit-mask-image: linear-gradient(to bottom,
     rgba(0, 0, 0, 0) var(--bday-blur-from, 30%),
     rgba(0, 0, 0, 1) var(--bday-blur-to, 55%));
