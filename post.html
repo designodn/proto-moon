@@ -19,12 +19,16 @@
   }
   .phone-frame { background: var(--dynamic-surface-base-secondary); }
 
+  /* Пост-остров в детальной странице — без вертикальных паддингов острова
+     (шапка/контент прижаты к краям карточки). */
+  .ll-post-feed .text-feed.island { padding-top: 0; padding-bottom: 0; }
+
   /* Контент-стопка: пост-остров + блок комментов; нижний паддинг под
      прибитый инпут (его высота ~64px + safe-area). */
   .ll-post-feed {
     display: flex;
     flex-direction: column;
-    padding-bottom: 88px;
+    padding-bottom: var(--space-8);
   }
 
   /* Прибитый снизу инпут ответа (новый fc-input) */
@@ -100,7 +104,7 @@
 
       <!-- ПРИБИТЫЙ ИНПУТ КОММЕНТА (новый fc-input: ава 44 + send) -->
       <div class="fc-input ll-answer">
-        <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
+        <div class="avatar __size-44 __type-image"><img data-user-avatar src="https://i.pravatar.cc/96?img=15" alt=""></div>
         <div class="fc-input__field">
           <input class="fc-input__text" placeholder="Написать комментарий…">
           <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
@@ -109,6 +113,11 @@
 
     </div>
   </div>
+
+  <!-- Моя ава (data-user-avatar) в инпуте коммента + лотти «Класс!» на лайк. -->
+  <script src="data/people.js"></script>
+  <script src="components/user-data.js"></script>
+  <script src="components/actions-bar.js"></script>
 
   <!-- Контент поста приходит из ленты: тап по .text-feed кладёт его
        innerHTML в sessionStorage('openPost'), здесь подставляем в #ll-post.
