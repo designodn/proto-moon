@@ -235,22 +235,36 @@
 /* ============================================================
    2+3. ОБЪЕДИНЁННЫЙ БЛОК «Тематика + Голосование» — один прокручиваемый блок
    ============================================================ */
-/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, combo мотается вниз */
-.omar-slide--combo { overflow: hidden; padding-left: 0; padding-right: 0; }
+/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, нативный скролл
+   (можно отмотать назад и дочитать; контент не обрезается overflow:hidden) */
+.omar-slide--combo {
+  position: relative;
+  overflow: hidden;                 /* во время анимации скролл заблокирован */
+  scroll-behavior: smooth;
+  padding: 0;
+}
+.omar-slide--combo.__scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }  /* после анимации можно мотать назад */
+.omar-slide--combo::-webkit-scrollbar { display: none; }
 .omar-combo {
   display: flex;
   flex-direction: column;
-  transition: transform .6s cubic-bezier(.4, 0, .2, 1);   /* мотаем страницу вниз */
-  will-change: transform;
 }
 .omar-stage {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) var(--space-4) 0;   /* верх 64 */
+}
+/* тематика и голосование делят экран по 50% (тематика выше) */
+.omar-stage .omar-topics,
+.omar-stage .omar-vote {
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--space-8);
-  padding: 0 var(--space-4);
 }
-.omar-topics, .omar-vote { display: flex; flex-direction: column; }
+.omar-stage--invite { justify-content: center; padding-top: 0; }
 
 /* Голосование — стикер (одна картинка ~160px, наклон −15° из Figma) */
 .omar-stickers {

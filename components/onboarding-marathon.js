@@ -73,7 +73,7 @@
               '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
             '</div></div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
-            '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
+            '<p class="omar-slide__text">Публикуйте фото, собирайте классы и получайте подарки</p>' +
           '</section>' +
 
           /* 2 — Длинная страница: Тематика → Голосование → Приглашайте (мотаем вниз) */
@@ -82,7 +82,7 @@
               '<div class="omar-stage">' +                 // экран 1: тематика + голосование
                 '<div class="omar-topics">' +
                   '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
-                  '<p class="omar-slide__text omar-topics__sub">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
+                  '<p class="omar-slide__text omar-topics__sub">Выберите близкую тему — спорт, кулинария, сад и другое</p>' +
                   '<div class="omar-chips">' +
                     '<div class="omar-chipgrp omar-chipgrp--sport">' +
                       '<span class="omar-chip omar-chip--sport">спорт</span>' +
@@ -99,7 +99,7 @@
                   '</div>' +
                   '<div class="omar-vote">' +
                     '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                    '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
+                    '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом — так у него больше шансов победить</p>' +
                     img('smile.png', 'omar-stickers') +
                   '</div>' +
                 '</div>' +
@@ -107,7 +107,7 @@
               '<div class="omar-stage omar-stage--invite">' +   // экран 2: приглашайте
                 '<div class="omar-invite__text">' +
                   '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-                  '<p class="omar-slide__text omar-invite__sub">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+                  '<p class="omar-slide__text omar-invite__sub">Зовите друзей — вместе интереснее</p>' +
                 '</div>' +
                 '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
               '</div>' +
@@ -182,24 +182,26 @@
     // 3с на чтение) → мотаем вниз к «Приглашайте» (кнопка через 300мс после подписи).
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      var combo = slide.querySelector('.omar-combo');
       var inviteStage = slide.querySelector('.omar-stage--invite');
-      slide.classList.remove('__vote', '__vote-settle', '__invite');
+      slide.classList.remove('__vote', '__vote-settle', '__invite', '__scrollable');
       var stages = slide.querySelectorAll('.omar-stage');
-      for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = slide.clientHeight + 'px';
-      if (combo) { combo.style.transition = 'none'; combo.style.transform = 'translateY(0)'; void combo.offsetWidth; combo.style.transition = ''; }
+      var cs = getComputedStyle(slide);
+      var avail = slide.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0);
+      for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = avail + 'px';
+      slide.scrollTop = 0;
       setFooter('hidden');
 
       // голосование — через 1.5с после подписи тематики (подпись ~3.0с)
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
       timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
-      // приглашайте — 3с на чтение голосования, затем мотаем страницу вниз
+      // приглашайте — 3с на чтение голосования, затем мотаем страницу вниз (нативный скролл)
       timers.push(setTimeout(function () {
         slide.classList.add('__invite');
-        if (combo && inviteStage) combo.style.transform = 'translateY(' + (-inviteStage.offsetTop) + 'px)';
+        if (inviteStage) slide.scrollTo({ top: inviteStage.offsetTop, behavior: 'smooth' });
       }, 8400));
-      // кнопка «Перейти к марафону» — через 300мс после подзаголовка приглашайте
-      timers.push(setTimeout(function () { setFooter('invite'); }, 9300));
+      // кнопка «Перейти к марафону» — через 300мс после подзаголовка приглашайте;
+      // после финала разблокируем прокрутку — можно отмотать назад и дочитать
+      timers.push(setTimeout(function () { setFooter('invite'); slide.classList.add('__scrollable'); }, 9300));
     }
 
     function goTo(i) {
@@ -215,20 +217,6 @@
     el.querySelector('.omar__close').addEventListener('click', close);
     ctaBtn.addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
-
-    // Свайп вверх/вниз (отменяет автосценарий).
-    var sy = null, sdy = 0;
-    slidesEl.addEventListener('pointerdown', function (e) { sy = e.clientY; sdy = 0; clearTimers(); });
-    slidesEl.addEventListener('pointermove', function (e) { if (sy != null) sdy = e.clientY - sy; });
-    function endSwipe() {
-      if (sy == null) return;
-      var d = sdy; sy = null;
-      if (d < -40) goTo(index + 1);             // смах вверх → следующий блок снизу
-      else if (d > 40) goTo(index - 1);         // смах вниз → предыдущий
-      else if (index === COMBO_INDEX) startCombo();   // не свайп — перезапускаем сценарий блока
-    }
-    slidesEl.addEventListener('pointerup', endSwipe);
-    slidesEl.addEventListener('pointercancel', function () { sy = null; });
 
     // Масштаб блока фото на 1-м слайде: занимает весь остаток над текстом.
     function fitFan() {

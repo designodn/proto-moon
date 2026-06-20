@@ -112,6 +112,14 @@
    STATUS BAR — белый, поверх скрима, 52h
    (свой, а не из meshok-up: там фон --dynamic-surface-base-secondary !important)
    ============================================================ */
+/* Статус-бар (фейковые 9:41) и home-индикатор скрыты во всех сториз —
+   на реальном устройстве их рисует система. Селектор с .moment, чтобы
+   перебить идущие ниже по файлу .moment__statusbar/.moment__handle{display:flex}
+   (та же специфичность → решал бы порядок). */
+.moment .moment__statusbar,
+.moment .moment__handle {
+  display: none !important;
+}
 .moment__statusbar {
   position: absolute;
   top: 0;
@@ -139,12 +147,13 @@
 }
 
 /* ============================================================
-   TOPBAR — обёртка для progress + header. Лежит под status bar'ом
-   (52px от верха) и поверх скрима.
+   TOPBAR — обёртка для progress + header. Статус-бар скрыт, поэтому
+   прижата к самому верху: padding-top у .moment__progress (12) задаёт
+   нужный отступ прогресс-баров от верха экрана.
    ============================================================ */
 .moment__topbar {
   position: absolute;
-  top: 52px;
+  top: 0;
   left: 0;
   right: 0;
   z-index: 3;
@@ -246,9 +255,17 @@
   display: flex;
   flex-direction: column;
   justify-content: safe center;
-  gap: var(--space-4);
 }
 .moment__body::-webkit-scrollbar { display: none; }
+
+/* Внутренний блок ВВЗ-body (заголовок + сетка карточек). Его viewer
+   масштабирует через zoom, если он не влезает по высоте (см. _fitBody). */
+.moment__body-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
 
 /* Типографика — DS-класс .ds-title-xl, навешивается в moment.js рядом
    с .moment__body-title. Здесь только специфика: цвет, выравнивание,
@@ -313,8 +330,14 @@
    последним рядом, чтобы он не прятался под кнопкой:
    24 (cta.bottom) + 44 (высота CTA) + 24 (воздух) = 92. */
 .moment.__view-body .moment__body {
+  /* Заголовок «Возможно, вы знакомы» — сразу под шапкой с крестиком:
+     top = низ шапки (progress 26 + header 38 = 64), padding-top 12 → 12 от
+     крестика до заголовка. Контент прижат к верху (не центрируется). */
+  top: 64px;
   bottom: 0;
+  padding-top: 12px;
   padding-bottom: 92px;
+  justify-content: flex-start;
 }
 
 /* Нижний блюр — мягкая размытая полоса под CTA. Лежит над карточками
@@ -459,7 +482,10 @@
    экрана. Применяется только к именинному шаблону.
    ============================================================ */
 .moment.__view-bday {
-  --bday-strip: 100px;
+  /* Полоса под карточку = 16 (низ) + 44 (кнопка) + 16 (зазор от карточки) = 76.
+     Статус-бар/handle в сториз скрыты, поэтому кнопка прижата к самому низу
+     (16), а не висит в воздухе. */
+  --bday-strip: 76px;
 }
 /* Фото не доходит до низа — оставляет полосу под кнопку, нижние углы скруглены. */
 .moment.__view-bday.__fullscreen .moment__media {
@@ -469,11 +495,10 @@
 }
 /* Блок блюра-с-текстом обрезаем по тем же скруглённым нижним углам. */
 .moment.__view-bday .moment__bday {
-  /* Зону блюра/текста поднимаем выше середины (40% вместо 50%) — чем длиннее
-     участок прогрессивного размытия, тем мягче нарастание снизу-вверх и тем
-     меньше заметен переход от резкого верха к размытому низу. Текст всё равно
-     прижат к низу (justify-content: flex-end). */
-  top: 40%;
+  /* Слот блюра+текста = вся карточка (фото под ним), нижние углы скруглены.
+     Слои блюра — копии фото с object-fit:cover (тот же кроп, что у media),
+     поэтому совпадают с резким фото под ними. Текст прижат к низу. */
+  top: 0;
   bottom: var(--bday-strip);
   border-radius: 0 0 32px 32px;
   overflow: hidden;
@@ -484,10 +509,10 @@
   padding-bottom: var(--space-5);
 }
 /* Кнопка «Поздравить» в полосе под карточкой: внешние паддинги 16 уже на
-   .moment__cta (padding: 0 16). bottom = strip(100) − 16(зазор от карточки)
-   − 44(высота кнопки) = 40. */
+   .moment__cta (padding: 0 16), прижата к низу (bottom 16). Карточка
+   заканчивается ровно над ней (зазор 16) — кнопка не «витает». */
 .moment.__view-bday .moment__cta {
-  bottom: 40px;
+  bottom: 16px;
 }
 /* Progressive blur 0 → 80px — стек из 6 слоёв backdrop-filter с
    возрастающими радиусами. У каждого слоя маска `linear-gradient(
@@ -501,40 +526,30 @@
   inset: 0;
   pointer-events: none;
 }
-.moment__bday-blur-step {
+/* Прогрессивный блюр через РАЗМЫТЫЕ КОПИИ ФОТО (filter: blur) + градиентные
+   маски. Каждый слой — копия фото (object-fit:cover, как media → тот же кроп),
+   размытая сильнее и видимая только в своей нижней зоне (маска
+   transparent→black). Наложение даёт непрерывное нарастание размытия
+   сверху-вниз. filter+mask надёжно композитятся в градиент (backdrop-filter
+   давал жёсткий шов). scale(1.06) прячет полупрозрачные края от blur. */
+.moment__bday-blur-img {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.06);
   -webkit-mask-image: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
-    rgba(0, 0, 0, 1) 100%);
+    rgba(0, 0, 0, 0) var(--bday-blur-from, 30%),
+    rgba(0, 0, 0, 1) var(--bday-blur-to, 55%));
           mask-image: linear-gradient(to bottom,
-    rgba(0, 0, 0, 0) var(--bday-blur-p, 0%),
-    rgba(0, 0, 0, 1) 100%);
+    rgba(0, 0, 0, 0) var(--bday-blur-from, 30%),
+    rgba(0, 0, 0, 1) var(--bday-blur-to, 55%));
 }
-.moment__bday-blur-step.__b-1 {
-  --bday-blur-p: 0%;
-  -webkit-backdrop-filter: blur(2px);  backdrop-filter: blur(2px);
-}
-.moment__bday-blur-step.__b-2 {
-  --bday-blur-p: 16%;
-  -webkit-backdrop-filter: blur(5px);  backdrop-filter: blur(5px);
-}
-.moment__bday-blur-step.__b-3 {
-  --bday-blur-p: 33%;
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-}
-.moment__bday-blur-step.__b-4 {
-  --bday-blur-p: 50%;
-  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
-}
-.moment__bday-blur-step.__b-5 {
-  --bday-blur-p: 66%;
-  -webkit-backdrop-filter: blur(44px); backdrop-filter: blur(44px);
-}
-.moment__bday-blur-step.__b-6 {
-  --bday-blur-p: 83%;
-  -webkit-backdrop-filter: blur(80px); backdrop-filter: blur(80px);
-}
+.moment__bday-blur-img.__b-1 { --bday-blur-from: 28%; --bday-blur-to: 50%; filter: blur(4px);  }
+.moment__bday-blur-img.__b-2 { --bday-blur-from: 46%; --bday-blur-to: 66%; filter: blur(9px);  }
+.moment__bday-blur-img.__b-3 { --bday-blur-from: 62%; --bday-blur-to: 80%; filter: blur(18px); }
+.moment__bday-blur-img.__b-4 { --bday-blur-from: 78%; --bday-blur-to: 92%; filter: blur(32px); }
 /* Лёгкое затемнение поверх блюра — добавляет контраст белому тексту,
    повторяет фигму (bg-black/20 на блюр-слое). */
 .moment__bday-blur-tint {

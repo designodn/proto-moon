@@ -738,7 +738,7 @@ ${actionsBar(likes, comments, reshares)}
         btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
         btnStyle = '__style-ai-gift';
         cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
-        icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkes_filled_24.svg')"></span>`;
+        icon = `<img class="ll-icon" src="assets/icons/sparkes_filled_24.svg" width="20" height="20" alt="">`;
       } else if (/подар/i.test(caption)) {
         cta = 'Отправить подарок';
         icon = llIcon('gift_16_20.svg');
@@ -809,7 +809,7 @@ ${authorHeader(aid, time)}
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+            <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
                  style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>

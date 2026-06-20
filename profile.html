@@ -91,9 +91,11 @@
     background: var(--dynamic-surface-base-primary);
     margin-top: var(--space-2);
   }
-  /* «селект-пилюля» — белый фон на secondary-подложке. Достигается через __view-primary,
-     но визуально мы кладём её на secondary-сетку — поэтому подменим bg на secondary. */
-  .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-base-secondary); }
+  /* Сегмент-табы: выбранный — белая «пилюля», невыбранные — серый неселектед-
+     стейт (трек). На светлой теме base-secondary == base-quaternary == #FFFFFF,
+     поэтому невыбранные сливались с выбранным. Даём невыбранным contrast-low,
+     выбранный оставляем белым (quaternary). */
+  .ll-pr-tabs .tab-wrapper.__view-primary { background: var(--dynamic-surface-contrast-low); }
   .ll-pr-tabs .tab-wrapper.__view-primary.__selected { background: var(--dynamic-surface-base-quaternary); }
 
   /* Лента постов в личном профиле: острова на всю ширину, встык, без скруглений */
