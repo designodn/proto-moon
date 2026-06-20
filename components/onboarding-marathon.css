@@ -241,7 +241,7 @@
   position: relative;
   overflow: hidden;                 /* во время анимации скролл заблокирован */
   scroll-behavior: smooth;
-  padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 0;   /* верхний паддинг 64 */
+  padding: 0;
 }
 .omar-slide--combo.__scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }  /* после анимации можно мотать назад */
 .omar-slide--combo::-webkit-scrollbar { display: none; }
@@ -250,9 +250,10 @@
   flex-direction: column;
 }
 .omar-stage {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 0 var(--space-4);
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) var(--space-4) 0;   /* верх 64 */
 }
 /* тематика и голосование делят экран по 50% (тематика выше) */
 .omar-stage .omar-topics,
@@ -263,7 +264,7 @@
   flex-direction: column;
   justify-content: center;
 }
-.omar-stage--invite { justify-content: center; }
+.omar-stage--invite { justify-content: center; padding-top: 0; }
 
 /* Голосование — стикер (одна картинка ~160px, наклон −15° из Figma) */
 .omar-stickers {
