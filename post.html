@@ -147,8 +147,14 @@
         var html = sessionStorage.getItem('openPost');
         if (!html) return;
         var el = document.getElementById('ll-post');
-        if (el) el.innerHTML = html;
-        sessionStorage.removeItem('openPost');
+        if (el) {
+          el.innerHTML = html;
+          // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
+          // прибитый (ll-answer). Убираем дубль.
+          el.querySelectorAll('.fc-input').forEach(function (n) { n.remove(); });
+        }
+        // openPost НЕ удаляем: при обновлении страницы пост должен остаться тем же
+        // (иначе показывался бы дефолтный «Народный труд»).
       } catch (_) {}
     })();
   </script>

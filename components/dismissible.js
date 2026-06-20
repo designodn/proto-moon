@@ -42,6 +42,15 @@
 
   document.addEventListener('click', function (e) {
     if (!e.target.closest) return;
+    // ВВЗ-портлет: тап по «Дружить» внутри карточки-подсказки скрывает карточку
+    // (как и крестик). Только для карточек-целей dismiss (.vvz-card.__default
+    // в портлете) — сториз-карточки (.__stories) живут по своей логике в
+    // vvz-card.js и не являются [data-dismiss-target].
+    var friendBtn = e.target.closest('[data-dismiss-target] .vvz-card__btn');
+    if (friendBtn) {
+      dismissItem(friendBtn.closest('[data-dismiss-target]'));
+      return;
+    }
     var trigger = e.target.closest('[data-dismiss]');
     if (!trigger) return;
     if (trigger.getAttribute('data-dismiss') === 'row') {

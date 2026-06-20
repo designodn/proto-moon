@@ -73,43 +73,41 @@
               '<img class="omar-fan__photo omar-fan__photo--3" alt="" loading="lazy">' +
             '</div></div>' +
             '<h2 class="omar-slide__title">Участвуйте<br>в фотомарафонах</h2>' +
-            '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
+            '<p class="omar-slide__text">Публикуйте фото, собирайте классы и получайте подарки</p>' +
           '</section>' +
 
-          /* 2 — Тематика + Голосование: один прокручиваемый блок (как в раскадровке) */
+          /* 2 — Тематика + Голосование: один экран, 50/50 */
           '<section class="omar-slide omar-slide--combo">' +
-            '<div class="omar-combo">' +
-              '<div class="omar-topics">' +
-                '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
-                '<p class="omar-slide__text omar-topics__sub">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
-                '<div class="omar-chips">' +
-                  '<div class="omar-chipgrp omar-chipgrp--sport">' +
-                    '<span class="omar-chip omar-chip--sport">спорт</span>' +
-                    img('weight.png', 'omar-chip__icon omar-chip__icon--sport') +
-                  '</div>' +
-                  '<div class="omar-chipgrp omar-chipgrp--cooking">' +
-                    img('pizza.png', 'omar-chip__icon omar-chip__icon--cooking') +
-                    '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
-                  '</div>' +
-                  '<div class="omar-chipgrp omar-chipgrp--garden">' +
-                    '<span class="omar-chip omar-chip--garden">сад</span>' +
-                    img('plant.png', 'omar-chip__icon omar-chip__icon--garden') +
-                  '</div>' +
+            '<div class="omar-topics">' +
+              '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
+              '<p class="omar-slide__text omar-topics__sub">Выберите близкую тему — спорт, кулинария, сад и другое</p>' +
+              '<div class="omar-chips">' +
+                '<div class="omar-chipgrp omar-chipgrp--sport">' +
+                  '<span class="omar-chip omar-chip--sport">спорт</span>' +
+                  img('weight.png', 'omar-chip__icon omar-chip__icon--sport') +
+                '</div>' +
+                '<div class="omar-chipgrp omar-chipgrp--cooking">' +
+                  img('pizza.png', 'omar-chip__icon omar-chip__icon--cooking') +
+                  '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
+                '</div>' +
+                '<div class="omar-chipgrp omar-chipgrp--garden">' +
+                  '<span class="omar-chip omar-chip--garden">сад</span>' +
+                  img('plant.png', 'omar-chip__icon omar-chip__icon--garden') +
                 '</div>' +
               '</div>' +
-              '<div class="omar-vote">' +
-                '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                '<p class="omar-slide__text">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
-                img('smile.png', 'omar-stickers') +
-              '</div>' +
+            '</div>' +
+            '<div class="omar-vote">' +
+              '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
+              '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом — так у него больше шансов победить</p>' +
+              img('smile.png', 'omar-stickers') +
             '</div>' +
           '</section>' +
 
-          /* 4 — Приглашайте всех (лейаут из автолейаута фрейма 01) */
+          /* 3 — Приглашайте всех (отдельный слайд) */
           '<section class="omar-slide omar-slide--invite">' +
             '<div class="omar-invite__text">' +
               '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-              '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+              '<p class="omar-slide__text omar-invite__sub">Зовите друзей — вместе интереснее</p>' +
             '</div>' +
             '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
           '</section>' +
@@ -150,52 +148,78 @@
     var track    = el.querySelector('.omar__track');
     var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
     var nextWrap = el.querySelector('.omar__next');
+    var ctaWrap  = el.querySelector('.omar__cta');
+    var footer   = el.querySelector('.omar__footer');
     var ctaBtn   = el.querySelector('.omar__cta button');
+    var ctaLabel = ctaBtn.querySelector('.button-content');
     var last     = slides.length - 1;
     var index    = 0;
-    var COMBO_INDEX = 1;       // объединённый блок «Тематика + Голосование»
+    var COMBO_INDEX = 1;       // тематика + голосование
     var timers = [];
+    var played = {};           // какие слайды уже проигрывали интро (чтобы не перезапускать)
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
-    // Сценарий объединённого блока: тематика (чипсы → подпись) →
-    // прокрутка вниз к «Голосуйте» (подпись тематики ещё видна) → переход дальше.
+    // Футер по фазам:
+    //   hero   — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
+    //   combo  — только «Далее» (появляется после подписи «Голосуйте»)
+    //   invite — только «Перейти к марафону» (primary)
+    //   hidden — спрятан
+    function setFooter(mode) {
+      footer.classList.toggle('__hidden', mode === 'hidden');
+      if (mode === 'hero') {
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
+        ctaBtn.className = 'button-container __style-secondary';
+        ctaLabel.textContent = 'Перейти к фотомарафону';
+      } else if (mode === 'combo') {
+        ctaWrap.style.display = 'none'; nextWrap.style.display = 'block';
+      } else if (mode === 'invite') {
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
+        ctaBtn.className = 'button-container __style-primary';
+        ctaLabel.textContent = 'Перейти к марафону';
+      }
+    }
+
+    // Combo: чипсы → подпись тематики (1.5с) → голосование (бамп-стикер) →
+    // подпись голосования → показываем «Далее». Без авто-перехода: читать можно сколько угодно.
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      slide.classList.remove('__vote');
-      // «Голосуйте» проявляется на своём месте после тегов+подписи (всё на одном экране)
-      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3000));
-      // переход к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 6200));
+      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
+      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
+      timers.push(setTimeout(function () { setFooter('combo'); }, 5600));   // «Далее» после второй подписи
     }
 
     function goTo(i) {
       i = Math.max(0, Math.min(last, i));
       clearTimers();
       index = i;
-      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — лента уходит вверх
-      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-      nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
-      // на последнем слайде «Перейти к фотомарафону» становится основной (оранжевой)
-      ctaBtn.className = 'button-container ' + (i === last ? '__style-primary' : '__style-secondary');
-      if (i === COMBO_INDEX) startCombo();
+      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // свайп вверх — следующая страница
+      slides[i].classList.add('is-active');   // не снимаем у предыдущих — анимации не перезапускаются
+
+      if (i === 0) {
+        setFooter('hero');
+      } else if (i === COMBO_INDEX) {
+        if (!played[i]) { played[i] = true; setFooter('hidden'); startCombo(); }
+        else { slides[i].classList.add('__vote', '__vote-settle'); setFooter('combo'); }   // уже видели — финал + «Далее»
+      } else if (i === last) {
+        if (!played[i]) { played[i] = true; setFooter('hidden'); timers.push(setTimeout(function () { setFooter('invite'); }, 900)); }
+        else { setFooter('invite'); }
+      }
     }
 
     el.querySelector('.omar__close').addEventListener('click', close);
     ctaBtn.addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
 
-    // Свайп вверх/вниз (отменяет автосценарий).
+    // Свайп вверх → следующая страница; вниз → предыдущая.
     var sy = null, sdy = 0;
-    slidesEl.addEventListener('pointerdown', function (e) { sy = e.clientY; sdy = 0; clearTimers(); });
+    slidesEl.addEventListener('pointerdown', function (e) { sy = e.clientY; sdy = 0; });
     slidesEl.addEventListener('pointermove', function (e) { if (sy != null) sdy = e.clientY - sy; });
-    function endSwipe() {
+    slidesEl.addEventListener('pointerup', function () {
       if (sy == null) return;
       var d = sdy; sy = null;
-      if (d < -40) goTo(index + 1);             // смах вверх → следующий блок снизу
-      else if (d > 40) goTo(index - 1);         // смах вниз → предыдущий
-      else if (index === COMBO_INDEX) startCombo();   // не свайп — перезапускаем сценарий блока
-    }
-    slidesEl.addEventListener('pointerup', endSwipe);
+      if (d < -40) goTo(index + 1);
+      else if (d > 40) goTo(index - 1);
+    });
     slidesEl.addEventListener('pointercancel', function () { sy = null; });
 
     // Масштаб блока фото на 1-м слайде: занимает весь остаток над текстом.
@@ -208,7 +232,11 @@
     }
     window.addEventListener('resize', fitFan);
 
-    el._reset = function () { goTo(0); };
+    el._reset = function () {
+      played = {};
+      slides.forEach(function (s) { s.classList.remove('is-active', '__vote', '__vote-settle'); });
+      goTo(0);
+    };
     el._clearAuto = clearTimers;
     el._fitFan = fitFan;
     return el;

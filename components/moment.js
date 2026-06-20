@@ -131,18 +131,26 @@
         if (s.src) {
           media.src = s.src;
           media.style.display = '';
-        } else if (s.color) {
-          // Сториз без картинки — просто цветная заливка карточки
+        } else {
+          // Сториз без картинки (цвет/фон/ВВЗ-body) — гасим media, иначе фото
+          // предыдущего слайда осталось бы лежать поверх фона (например,
+          // именинное фото перекрывало бы фон-картинку ВВЗ).
           media.removeAttribute('src');
           media.style.display = 'none';
         }
       }
       if (s.background) {
-        // Произвольный CSS-background (например radial/linear gradient).
+        // Произвольный CSS-background (например картинка ВВЗ или градиент).
         this.root.style.background = s.background;
       } else if (s.color) {
         this.root.style.background = '';
         this.root.style.backgroundColor = s.color;
+      } else {
+        // Ни фона, ни цвета (например именинный слайд с фото) — сбрасываем
+        // инлайновый фон к дефолту .moment (#000 static), чтобы не «протекал»
+        // фон-картинка от предыдущего ВВЗ-слайда.
+        this.root.style.background = '';
+        this.root.style.backgroundColor = '';
       }
       // s.duration — опциональный override длительности сегмента (CSS-переменная
       // --moment-duration). Используется, например, в bdaySlide, чтобы после
@@ -168,25 +176,27 @@
         if (!bdayHost) {
           bdayHost = document.createElement('div');
           bdayHost.className = 'moment__bday';
-          // Кладём перед .moment__cta, чтобы CTA остался поверх.
-          var cta = this.root.querySelector('.moment__cta');
-          if (cta) {
-            cta.parentNode.insertBefore(bdayHost, cta);
+          // Кладём ВНУТРЬ .moment__card, чтобы блюр+текст обрезались её
+          // скруглениями (overflow:hidden), как и фото. Кнопка — снаружи карты.
+          var card = this.root.querySelector('.moment__card');
+          if (card) {
+            card.appendChild(bdayHost);
           } else {
             this.root.appendChild(bdayHost);
           }
         }
+        var bphoto = s.src || '';
         bdayHost.innerHTML =
-          // Progressive blur 0 → 80 px: стек из 6 слоёв с возрастающими
-          // backdrop-filter и масками-полосками. Верх слота — почти резко,
-          // низ — сильно размыто. Поверх лёгкий dark-tint для контраста.
+          // Прогрессивный блюр: стек из размытых КОПИЙ фото (filter: blur с
+          // возрастающим радиусом) + градиентные маски «снизу-сильнее».
+          // filter+mask надёжно композитятся в гадиент (в отличие от
+          // backdrop-filter, который в части браузеров давал жёсткий шов).
+          // Верх — резкое фото (media под слоями), низ — плавно размыто.
           '<div class="moment__bday-blur">' +
-            '<div class="moment__bday-blur-step __b-1"></div>' +
-            '<div class="moment__bday-blur-step __b-2"></div>' +
-            '<div class="moment__bday-blur-step __b-3"></div>' +
-            '<div class="moment__bday-blur-step __b-4"></div>' +
-            '<div class="moment__bday-blur-step __b-5"></div>' +
-            '<div class="moment__bday-blur-step __b-6"></div>' +
+            '<img class="moment__bday-blur-img __b-1" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-2" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-3" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-4" src="' + bphoto + '" alt="" aria-hidden="true">' +
             '<div class="moment__bday-blur-tint"></div>' +
           '</div>' +
           '<div class="moment__bday-content">' +
@@ -289,6 +299,7 @@
             body.appendChild(s.body);
           }
           this.root.classList.add('__view-body');
+          this._fitBody();
         } else {
           body.style.display = 'none';
           body.innerHTML = '';
@@ -326,6 +337,32 @@
 
     if (typeof this.options.onChange === 'function') {
       this.options.onChange(index);
+    }
+  };
+
+  // Если контент ВВЗ-body не влезает по высоте (маленький экран) — масштабируем
+  // его (zoom), чтобы карточки уменьшились и поместились без скролла. zoom
+  // меняет и layout, поэтому блок честно вписывается в доступную высоту.
+  MomentViewer.prototype._fitBody = function () {
+    var root = this.root;
+    var run = function () {
+      var body = root.querySelector('.moment__body');
+      var inner = body && body.querySelector('.moment__body-inner');
+      if (!inner) return;
+      inner.style.zoom = '';
+      var cs = getComputedStyle(body);
+      var avail = body.clientHeight
+        - parseFloat(cs.paddingTop || 0)
+        - parseFloat(cs.paddingBottom || 0);
+      var natural = inner.offsetHeight;
+      if (avail > 0 && natural > avail) {
+        inner.style.zoom = (avail / natural).toFixed(4);
+      }
+    };
+    requestAnimationFrame(run);
+    if (!this._onResize) {
+      this._onResize = run;
+      window.addEventListener('resize', this._onResize);
     }
   };
 
@@ -414,6 +451,7 @@
     this.root.removeEventListener('pointercancel', this._onPressEnd);
     this.root.removeEventListener('pointerleave', this._onPressEnd);
     clearTimeout(this._holdTimer);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
     if (this._prev) this._prev.removeEventListener('click', this._onPrev);
     if (this._next) this._next.removeEventListener('click', this._onNext);
   };
@@ -594,8 +632,13 @@
     el.hidden = true;
     el.style.cssText = '--moment-duration: ' + duration + '; z-index: 1000;';
     el.innerHTML = [
-      '<img class="moment__media" alt="" style="display:none;">',
-      '<div class="moment__scrim"></div>',
+      // Карточка-контейнер: фото + скрим (+ блюр/текст ДР добавляются сюда же).
+      // В ДР она получает скругления + overflow:hidden и отделяется от кнопки
+      // (кнопка лежит ниже на чёрном фоне). В остальных сториз — на весь экран.
+      '<div class="moment__card">',
+        '<img class="moment__media" alt="" style="display:none;">',
+        '<div class="moment__scrim"></div>',
+      '</div>',
       '<div class="moment__statusbar">',
         '<span class="moment__statusbar-time">9:41</span>',
       '</div>',
@@ -654,9 +697,14 @@
     var people = opts.people || [];
     var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
     var cards = people.map(renderCard).join('');
+    // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
+    // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
+    // экране (см. _fitBody в moment.js).
     var body = [
-      '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
-      '<div class="moment__body-grid">' + cards + '</div>'
+      '<div class="moment__body-inner">',
+        '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
+        '<div class="moment__body-grid">' + cards + '</div>',
+      '</div>'
     ].join('');
     var slide = {
       body: body,
@@ -664,7 +712,9 @@
       // вниз, assets/vvz-story-back.png). Путь относительный — резолвится от
       // URL страницы; вложенные страницы могут переопределить через
       // opts.background. Снизу #000 на случай экранов выше картинки.
-      background: opts.background || 'center top / cover no-repeat url("assets/vvz-story-back.png") #000'
+      background: opts.background || 'center top / cover no-repeat url("assets/vvz-story-back.png") #000',
+      // На ВВЗ-сториз держимся дольше (6с) — успеть рассмотреть карточки.
+      duration: opts.duration || '6s'
     };
     if (opts.cta) slide.cta = opts.cta;
     return slide;

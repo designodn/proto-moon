@@ -65,7 +65,11 @@
   .ll-fr-section__list {
     display: flex; flex-direction: column;
     gap: var(--space-4);
+    /* Левый паддинг = паддинг заголовка (16) + оптический left-bearing
+       шрифта ds-title-l (~2px), чтобы левый край аватара совпадал с началом
+       текста заголовка, а не выезжал левее. */
     padding: 0 var(--space-4);
+    padding-left: calc(var(--space-4) + 2px);
   }
   /* Override DS gap правого слота .user-cell: 6px вместо 16px (как просили) */
   .ll-fr-section .user-cell__actions { gap: var(--space-1-5); }
@@ -233,11 +237,11 @@
 
           <div class="user-cell">
             <div class="avatar __size-56 __type-image __has-addon">
-              <img src="https://i.pravatar.cc/112?img=49" alt="">
+              <img data-person-avatar="1" src="https://i.pravatar.cc/112?img=49" alt="">
               <span class="avatar__addon __pos-bl"><span class="user-cell__online-dot"></span></span>
             </div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Лена Катина</div>
+              <div class="ds-title-s user-cell__title" data-person-name="1">Лена Катина</div>
               <div class="ds-caption-m user-cell__time">4 минуты назад</div>
             </div>
             <div class="user-cell__actions">
@@ -247,9 +251,9 @@
           </div>
 
           <div class="user-cell">
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=32" alt=""></div>
+            <div class="avatar __size-56 __type-image"><img data-person-avatar="2" src="https://i.pravatar.cc/112?img=32" alt=""></div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Мария Иванова</div>
+              <div class="ds-title-s user-cell__title" data-person-name="2">Мария Иванова</div>
               <div class="ds-caption-m user-cell__time">сегодня в 11:30</div>
             </div>
             <div class="user-cell__actions">
@@ -267,9 +271,9 @@
         <div class="ll-fr-section__list">
 
           <div class="user-cell">
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=23" alt=""></div>
+            <div class="avatar __size-56 __type-image"><img data-person-avatar="4" src="https://i.pravatar.cc/112?img=23" alt=""></div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Виктория Соколова</div>
+              <div class="ds-title-s user-cell__title" data-person-name="4">Виктория Соколова</div>
               <div class="ds-caption-m user-cell__time">был онлайн вчера</div>
             </div>
             <div class="user-cell__actions">
@@ -279,9 +283,9 @@
           </div>
 
           <div class="user-cell">
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=5" alt=""></div>
+            <div class="avatar __size-56 __type-image"><img data-person-avatar="5" src="https://i.pravatar.cc/112?img=5" alt=""></div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Дмитрий Соколов</div>
+              <div class="ds-title-s user-cell__title" data-person-name="5">Дмитрий Соколов</div>
               <div class="ds-caption-m user-cell__time">был онлайн 2 дня назад</div>
             </div>
             <div class="user-cell__actions">
@@ -291,9 +295,9 @@
           </div>
 
           <div class="user-cell">
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=15" alt=""></div>
+            <div class="avatar __size-56 __type-image"><img data-person-avatar="8" src="https://i.pravatar.cc/112?img=15" alt=""></div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Александр Фёдоров</div>
+              <div class="ds-title-s user-cell__title" data-person-name="8">Александр Фёдоров</div>
               <div class="ds-caption-m user-cell__time">был онлайн на этой неделе</div>
             </div>
             <div class="user-cell__actions">
@@ -303,9 +307,9 @@
           </div>
 
           <div class="user-cell">
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=31" alt=""></div>
+            <div class="avatar __size-56 __type-image"><img data-person-avatar="10" src="https://i.pravatar.cc/112?img=31" alt=""></div>
             <div class="user-cell__body">
-              <div class="ds-title-s user-cell__title">Светлана Орлова</div>
+              <div class="ds-title-s user-cell__title" data-person-name="10">Светлана Орлова</div>
               <div class="ds-caption-m user-cell__time">была онлайн неделю назад</div>
             </div>
             <div class="user-cell__actions">
