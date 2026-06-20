@@ -187,6 +187,11 @@
   overflow: hidden;
 }
 
+/* ИИ-подарок — тёплая подложка бордерного блока (в тон ИИ-заливке кнопки). */
+.text-feed__reshare-card.__ai-gift {
+  background: #FFEFE5;
+}
+
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;

@@ -76,40 +76,42 @@
             '<p class="omar-slide__text">Публикуйте фото и получайте подарки! Приглашайте друзей голосовать за ваше фото и собирайте классы</p>' +
           '</section>' +
 
-          /* 2 — Тематика + Голосование: один прокручиваемый блок (как в раскадровке) */
+          /* 2 — Длинная страница: Тематика → Голосование → Приглашайте (мотаем вниз) */
           '<section class="omar-slide omar-slide--combo">' +
             '<div class="omar-combo">' +
-              '<div class="omar-topics">' +
-                '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
-                '<p class="omar-slide__text omar-topics__sub">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
-                '<div class="omar-chips">' +
-                  '<div class="omar-chipgrp omar-chipgrp--sport">' +
-                    '<span class="omar-chip omar-chip--sport">спорт</span>' +
-                    img('weight.png', 'omar-chip__icon omar-chip__icon--sport') +
+              '<div class="omar-stage">' +                 // экран 1: тематика + голосование
+                '<div class="omar-topics">' +
+                  '<h2 class="omar-slide__title">Выбирайте тематику</h2>' +
+                  '<p class="omar-slide__text omar-topics__sub">Любите готовить? Выложите свои кулинарные шедевры. Может, вы в восторге от рыбалки? Путешественник, спортсмен, делаете что-то своими руками?</p>' +
+                  '<div class="omar-chips">' +
+                    '<div class="omar-chipgrp omar-chipgrp--sport">' +
+                      '<span class="omar-chip omar-chip--sport">спорт</span>' +
+                      img('weight.png', 'omar-chip__icon omar-chip__icon--sport') +
+                    '</div>' +
+                    '<div class="omar-chipgrp omar-chipgrp--cooking">' +
+                      img('pizza.png', 'omar-chip__icon omar-chip__icon--cooking') +
+                      '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
+                    '</div>' +
+                    '<div class="omar-chipgrp omar-chipgrp--garden">' +
+                      '<span class="omar-chip omar-chip--garden">сад</span>' +
+                      img('plant.png', 'omar-chip__icon omar-chip__icon--garden') +
+                    '</div>' +
                   '</div>' +
-                  '<div class="omar-chipgrp omar-chipgrp--cooking">' +
-                    img('pizza.png', 'omar-chip__icon omar-chip__icon--cooking') +
-                    '<span class="omar-chip omar-chip--cooking">кулинария</span>' +
-                  '</div>' +
-                  '<div class="omar-chipgrp omar-chipgrp--garden">' +
-                    '<span class="omar-chip omar-chip--garden">сад</span>' +
-                    img('plant.png', 'omar-chip__icon omar-chip__icon--garden') +
+                  '<div class="omar-vote">' +
+                    '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
+                    '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
+                    img('smile.png', 'omar-stickers') +
                   '</div>' +
                 '</div>' +
               '</div>' +
-              '<div class="omar-vote">' +
-                '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                '<p class="omar-slide__text">Поддержите фото друга классом — так у него будет больше шанса выиграть в фотомарафоне, или пригласите голосовать за вас.</p>' +
-                img('smile.png', 'omar-stickers') +
+              '<div class="omar-stage omar-stage--invite">' +   // экран 2: приглашайте
+                '<div class="omar-invite__text">' +
+                  '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
+                  '<p class="omar-slide__text omar-invite__sub">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+                '</div>' +
+                '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
               '</div>' +
             '</div>' +
-          '</section>' +
-
-          /* 4 — Приглашайте всех */
-          '<section class="omar-slide omar-slide--invite">' +
-            '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-            '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
-            '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
           '</section>' +
 
         '</div>' +
@@ -148,47 +150,65 @@
     var track    = el.querySelector('.omar__track');
     var slides   = Array.prototype.slice.call(el.querySelectorAll('.omar-slide'));
     var nextWrap = el.querySelector('.omar__next');
+    var footer   = el.querySelector('.omar__footer');
     var ctaBtn   = el.querySelector('.omar__cta button');
+    var ctaLabel = ctaBtn.querySelector('.button-content');
     var last     = slides.length - 1;
     var index    = 0;
-    var COMBO_INDEX = 1;       // объединённый блок «Тематика + Голосование»
+    var COMBO_INDEX = 1;       // длинная страница: тематика → голосование → приглашайте
     var timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
-    // Сценарий объединённого блока: тематика (чипсы → подпись) →
-    // прокрутка вниз к «Голосуйте» (подпись тематики ещё видна) → переход дальше.
+    // Футер по фазам: hero (Перейти+Далее) / hidden (во время автопрокрутки) /
+    // invite (одна кнопка «Перейти к марафону», появляется в конце).
+    function setFooter(mode) {
+      if (mode === 'hero') {
+        footer.classList.remove('__hidden');
+        nextWrap.style.display = 'block';
+        ctaBtn.className = 'button-container __style-secondary';
+        ctaLabel.textContent = 'Перейти к фотомарафону';
+      } else if (mode === 'invite') {
+        footer.classList.remove('__hidden');
+        nextWrap.style.display = 'none';
+        ctaBtn.className = 'button-container __style-primary';
+        ctaLabel.textContent = 'Перейти к марафону';
+      } else {
+        footer.classList.add('__hidden');
+        nextWrap.style.display = 'none';
+      }
+    }
+
+    // Длинная страница: тематика (чипсы → подпись, 1.5с) → голосование (бамп-стикер,
+    // 3с на чтение) → мотаем вниз к «Приглашайте» (кнопка через 300мс после подписи).
     function startCombo() {
       var slide = slides[COMBO_INDEX];
       var combo = slide.querySelector('.omar-combo');
-      slide.classList.remove('__vote');
-      if (combo) {
-        combo.style.transition = 'none';
-        combo.style.transform = 'translateY(0)';
-        void combo.offsetWidth;            // сброс без анимации
-        combo.style.transition = '';
-      }
-      // 1) «Голосуйте» проявляется на своём месте — видно вместе с подписью тематики
-      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3000));
-      // 2) затем блок проматывается вниз, чтобы стикер был виден целиком
+      var inviteStage = slide.querySelector('.omar-stage--invite');
+      slide.classList.remove('__vote', '__vote-settle', '__invite');
+      var stages = slide.querySelectorAll('.omar-stage');
+      for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = slide.clientHeight + 'px';
+      if (combo) { combo.style.transition = 'none'; combo.style.transform = 'translateY(0)'; void combo.offsetWidth; combo.style.transition = ''; }
+      setFooter('hidden');
+
+      // голосование — через 1.5с после подписи тематики (подпись ~3.0с)
+      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
+      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
+      // приглашайте — 3с на чтение голосования, затем мотаем страницу вниз
       timers.push(setTimeout(function () {
-        if (combo) {
-          var d = Math.max(0, combo.scrollHeight - slide.clientHeight);
-          combo.style.transform = 'translateY(' + (-d) + 'px)';
-        }
-      }, 4400));
-      // 3) переход к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 7800));
+        slide.classList.add('__invite');
+        if (combo && inviteStage) combo.style.transform = 'translateY(' + (-inviteStage.offsetTop) + 'px)';
+      }, 8400));
+      // кнопка «Перейти к марафону» — через 300мс после подзаголовка приглашайте
+      timers.push(setTimeout(function () { setFooter('invite'); }, 9300));
     }
 
     function goTo(i) {
       i = Math.max(0, Math.min(last, i));
       clearTimers();
       index = i;
-      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — лента уходит вверх
+      track.style.transform = 'translateY(' + (-i * 100) + '%)';   // смах вниз — страница уходит вверх
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
-      nextWrap.style.display = (i === 0) ? 'block' : 'none';   // «Далее» только на первом
-      // на последнем слайде «Перейти к фотомарафону» становится основной (оранжевой)
-      ctaBtn.className = 'button-container ' + (i === last ? '__style-primary' : '__style-secondary');
+      if (i === 0) setFooter('hero');
       if (i === COMBO_INDEX) startCombo();
     }
 

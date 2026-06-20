@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>Лента (light) — прототип</title>
+<!-- При первом заходе в приложение показываем шторку «Добавить друзей»
+     (add-friends-sheet.html, её крестик возвращает сюда). Гейт по sessionStorage,
+     чтобы не зацикливаться и показывать один раз за сессию. Синхронно в head —
+     до отрисовки ленты. -->
+<script>
+  (function () {
+    try {
+      if (!sessionStorage.getItem('afs-seen')) {
+        sessionStorage.setItem('afs-seen', '1');
+        location.replace('add-friends-sheet.html');
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -129,16 +143,8 @@
     gap: var(--space-1);
   }
 
-  /* Градиентная кнопка «Создать ИИ подарок» — повторяет --style-secondary
-     по высоте/радиусу/паддингам, но фон — диагональный неон-градиент. */
-  .ll-ai-gift-btn .button-container {
-    background: linear-gradient(
-      to right,
-      rgba(0, 183, 255, 0.24) 0%,
-      rgba(255, 0, 221, 0.24) 60%,
-      rgba(5, 0, 153, 0.24) 100%
-    );
-  }
+  /* Кнопка «Создать ИИ подарок» — стиль .button-container.__style-ai-gift
+     (components/button.css), заливка из ИИ-подарков NV-ленты. */
 
   /* В тёмных пилюлях __style-on-image иконки должны быть белыми.
      В DS это решается через .icon.__src + currentColor (mask), но в
@@ -899,7 +905,7 @@
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-36">
+            <div class="button-wrapper __size-36undefined">
               <button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">Отправить подарок</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
@@ -1444,6 +1450,63 @@
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
             <div class="fc-input__field">
               <input class="fc-input__text" placeholder="Написать ответ…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Галина Гаджикулиева</div>
+              <div class="ds-caption-s text-feed__time">8:42</div>
+            </div>
+          </div></div></div>
+
+          <div class="text-feed__reshare-card __ai-gift">
+            <div class="ll-gift-from">
+              <div class="ds-body-m">Получила подарок от</div>
+              <div class="text-feed__reshare-card-author">
+                <div class="avatar __size-24 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&amp;dpr=2" alt=""></div>
+                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">Сергей Чернышов</b></div>
+              </div>
+            </div>
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
+              <img style="width:100%; height:100%; object-fit:cover; display:block" src="https://www.justmedia.ru/upload/analitika/68/94/689445adbfbf2888931166_1400_1200.png" alt="">
+            </div>
+          </div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36">
+              <button class="button-container __style-ai-gift"><span class="button-content"><span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkes_filled_24.svg')"></span>Создать подарок из фото</span></button>
+            </div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+                  <div class="fc-list">
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Александр Попов</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">вауууу</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
               <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>
@@ -2264,7 +2327,7 @@
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-36">
+            <div class="button-wrapper __size-36undefined">
               <button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">Отправить подарок</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
@@ -2519,6 +2582,18 @@
                 var p = P(id) || {};
                 return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
               });
+              // Общие друзья у первых трёх карточек (2 / 4 / 3), аватарки —
+              // реальные фото людей из листа «Люди» (people.json).
+              var pool = (window.DS_PEOPLE_DATA || [])
+                .filter(function (pp) { return pp && pp.photo; })
+                .map(function (pp) { return pp.photo; });
+              [2, 4, 3].forEach(function (n, i) {
+                if (!people[i] || !pool.length) return;
+                var k = Math.min(n, 3);
+                people[i].mutuals = n;
+                people[i].m = [];
+                for (var j = 0; j < k; j++) people[i].m.push(pool[(i * 3 + j) % pool.length]);
+              });
               return [MomentViewer.vvzSlide({
                 title:  'Возможно, вы знакомы',
                 people: people,
@@ -2529,8 +2604,10 @@
               var p = P(st.author) || {};
               var slide = MomentViewer.bdaySlide({
                 photo:          st.image || p.photo || '',
-                name:           p.name || '',
-                headerTitle:    'День рождения ' + firstName(p),
+                // ФИ в род. падеже: большим текстом — полностью, в шапке —
+                // только имя (склонение по эвристике MomentViewer.genitive).
+                name:           MomentViewer.genitive(p.name, p.gender),
+                headerTitle:    'День рождения ' + MomentViewer.genitiveFirst(p.name, p.gender),
                 headerSubtitle: '3 часа назад',
                 cta:            'Поздравить'
               });

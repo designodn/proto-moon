@@ -725,22 +725,25 @@ ${actionsBar(likes, comments, reshares)}
     }
 
     /* ── Подарок/открытка — получил … от … ── */
-    case 'gift-received': {
-      const caption = title || 'Получил подарок от';
+    /* gift-received — обычный подарок/открытка; ai-gift-received — ИИ-подарок
+       (кнопка __style-ai-gift + тёплая подложка #FFEFE5 бордерного блока).
+       Разметка общая, отличается кнопкой/иконкой/подложкой. */
+    case 'gift-received': case 'ai-gift-received': {
+      const isAi = type === 'ai-gift-received';
+      const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
-      // CTA по содержимому подписи: подарок / ИИ / открытка (по умолчанию).
-      let cta, btnWrap, icon;
-      if (/ии|нейро/i.test(caption)) {
-        cta = 'Создать ИИ подарок';
-        btnWrap = ' __full-width ll-ai-gift-btn';
-        icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>`;
+      let cta, btnWrap, icon, btnStyle = '__style-secondary', cardMod = '';
+      if (isAi) {
+        cta = 'Создать подарок из фото';
+        btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
+        btnStyle = '__style-ai-gift';
+        cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
+        icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkes_filled_24.svg')"></span>`;
       } else if (/подар/i.test(caption)) {
         cta = 'Отправить подарок';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       } else {
         cta = 'Отправить открытку';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
@@ -750,7 +753,7 @@ ${actionsBar(likes, comments, reshares)}
       return `        <article class="text-feed island">
 ${authorHeader(aid, time)}
 
-          <div class="text-feed__reshare-card">
+          <div class="text-feed__reshare-card${cardMod}">
             <div class="ll-gift-from">
               <div class="ds-body-m">${esc(caption)}</div>
               <div class="text-feed__reshare-card-author">
@@ -762,7 +765,7 @@ ${authorHeader(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36${btnWrap}">
-              <button class="button-container __style-secondary"><span class="button-content">${icon}${cta}</span></button>
+              <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
           </div>
