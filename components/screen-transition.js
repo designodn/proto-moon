@@ -268,7 +268,24 @@
     e.preventDefault();
     try { sessionStorage.setItem(BACK_KEY, '1'); } catch (_) {}
     var href = back.getAttribute('data-href');
-    if (href) location.href = href;
-    else history.back();
+    // Если пришли с той же страницы, на которую указывает data-href — это ВОЗВРАТ:
+    // делаем history.back() (а не location.href), иначе создаётся новая запись в
+    // истории и «назад» на той странице улетит обратно сюда → петля
+    // (уведомления ↔ шторка подарков). location.href оставляем как фолбэк для
+    // прямого захода (referrer пустой/другой).
+    if (href) {
+      var sameAsReferrer = false;
+      try {
+        if (document.referrer) {
+          var ref = new URL(document.referrer);
+          var dst = new URL(href, location.href);
+          sameAsReferrer = (ref.origin === dst.origin && ref.pathname === dst.pathname);
+        }
+      } catch (_) {}
+      if (sameAsReferrer && history.length > 1) history.back();
+      else location.href = href;
+    } else {
+      history.back();
+    }
   });
 })();
