@@ -176,10 +176,11 @@
         if (!bdayHost) {
           bdayHost = document.createElement('div');
           bdayHost.className = 'moment__bday';
-          // Кладём перед .moment__cta, чтобы CTA остался поверх.
-          var cta = this.root.querySelector('.moment__cta');
-          if (cta) {
-            cta.parentNode.insertBefore(bdayHost, cta);
+          // Кладём ВНУТРЬ .moment__card, чтобы блюр+текст обрезались её
+          // скруглениями (overflow:hidden), как и фото. Кнопка — снаружи карты.
+          var card = this.root.querySelector('.moment__card');
+          if (card) {
+            card.appendChild(bdayHost);
           } else {
             this.root.appendChild(bdayHost);
           }
@@ -631,8 +632,13 @@
     el.hidden = true;
     el.style.cssText = '--moment-duration: ' + duration + '; z-index: 1000;';
     el.innerHTML = [
-      '<img class="moment__media" alt="" style="display:none;">',
-      '<div class="moment__scrim"></div>',
+      // Карточка-контейнер: фото + скрим (+ блюр/текст ДР добавляются сюда же).
+      // В ДР она получает скругления + overflow:hidden и отделяется от кнопки
+      // (кнопка лежит ниже на чёрном фоне). В остальных сториз — на весь экран.
+      '<div class="moment__card">',
+        '<img class="moment__media" alt="" style="display:none;">',
+        '<div class="moment__scrim"></div>',
+      '</div>',
       '<div class="moment__statusbar">',
         '<span class="moment__statusbar-time">9:41</span>',
       '</div>',
