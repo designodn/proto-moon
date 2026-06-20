@@ -96,7 +96,7 @@
     display: inline-flex;
     align-items: center;
     padding: var(--space-2) var(--space-3);
-    border-radius: 12px;
+    border-radius: 999px;
     background: var(--dynamic-surface-base-secondary);
     color: var(--dynamic-text-and-icons-status-accent);
     white-space: nowrap;
@@ -162,7 +162,7 @@
         <label class="ll-fp-drop" id="fpDrop" aria-label="Загрузить фото">
           <input type="file" id="fpFile" accept="image/*" hidden>
           <div class="ll-fp-drop__empty">
-            <div class="avatar __size-56 __type-icon ll-fp-drop__upload"><span class="icon __size-24 __src ll-fp-drop__upload-icon" style="--icon-src:url('assets/icons/photo_add_24.svg')"></span></div>
+            <div class="avatar __size-56 __type-icon ll-fp-drop__upload"><img class="ll-fp-drop__upload-icon" src="assets/icons/photo_add_24.svg" width="24" height="24" alt=""></div>
             <div class="ll-fp-drop__hint ds-title-m">Загрузите хотя бы одно фото для участия</div>
           </div>
           <div class="ll-fp-drop__photo">
@@ -205,11 +205,7 @@
         if (d && d.meta && d.meta.hashtag) { HASHTAG = d.meta.hashtag; chip.textContent = HASHTAG; }
       }).catch(function () {});
 
-      // Подпись сохраняется в кеше (sessionStorage) — переживает переходы до обновления.
-      try { var c = sessionStorage.getItem('mp_caption'); if (c) caption.value = c; } catch (e) {}
-      caption.addEventListener('input', function () {
-        try { sessionStorage.setItem('mp_caption', caption.value); } catch (e) {}
-      });
+      // Каждая публикация — с чистой подписью (не подтягиваем предыдущую).
 
       // Выбор реального фото → уменьшаем (canvas) и показываем в зоне.
       fileInput.addEventListener('change', function () {
@@ -239,7 +235,12 @@
       publish.addEventListener('click', function () {
         if (publish.disabled) return;
         try {
-          sessionStorage.setItem('mp_published', JSON.stringify({ photo: photoData, caption: caption.value || '', hashtag: HASHTAG }));
+          // Добавляем пост в список опубликованных (прежние не затираем).
+          var arr = [];
+          try { arr = JSON.parse(sessionStorage.getItem('mp_published') || '[]'); } catch (e) { arr = []; }
+          if (!Array.isArray(arr)) arr = arr ? [arr] : [];
+          arr.push({ photo: photoData, caption: caption.value || '', hashtag: HASHTAG });
+          sessionStorage.setItem('mp_published', JSON.stringify(arr));
           sessionStorage.setItem('mp_show_sheet', '1');
         } catch (e) {}
         location.href = 'lenta-q3.html?published=1';

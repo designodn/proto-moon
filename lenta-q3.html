@@ -2814,55 +2814,57 @@
       </div>
     </div>
   </div>
-  <div class="mp-toast" id="mpToast" role="status" aria-live="polite"><span class="mp-toast__icon icon __size-24 __src" style="--icon-src:url('assets/icons/check_circle_on_filled_24.svg')"></span><span class="mp-toast__text">Заметка опубликована</span></div>
+  <div class="mp-toast" id="mpToast" role="status" aria-live="polite"><img class="mp-toast__icon" src="assets/icons/check_circle_on_filled_24.svg" width="24" height="24" alt=""><span class="mp-toast__text">Заметка опубликована</span></div>
 
   <script>
   // ── Фотомарафон: пост пользователя первым в ленте + шторка приглашений ──
   (function () {
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function getPublished() {
-      try { return JSON.parse(sessionStorage.getItem('mp_published') || 'null'); } catch (e) { return null; }
+      try { var v = JSON.parse(sessionStorage.getItem('mp_published') || 'null'); if (!v) return []; return Array.isArray(v) ? v : [v]; } catch (e) { return []; }
     }
-    var pub = getPublished();
-    var myPost = null;   // ссылка на вставленный пост пользователя (для скролла к нему)
+    var pubs = getPublished();
+    var pub = pubs.length ? pubs[pubs.length - 1] : null;   // последний пост — для шторки/шеринга
+    var myPost = null;   // ссылка на самый свежий пост (для скролла к нему)
 
-    // 1) Пост пользователя с участием в марафоне — первым в ленте (после баннера).
-    if (pub) {
+    // 1) Посты пользователя с участием в марафоне — сверху ленты. Накапливаются:
+    //    каждая публикация добавляет новый пост, прежние не затираются.
+    (function () {
+      if (!pubs.length) return;
       var ALLp = window.DS_PEOPLE_DATA || [];
       var me = ALLp.filter(function (p) { return p.id === 'my_profile'; })[0] || { name: 'Вы', photo: '' };
-      var hashtag = pub.hashtag || '#РадостьДетства';
-      // В конце текста поста через пробел — хэштег марафона (оранжевым).
-      var tagSpan = '<span class="marathon-promo__tag">' + esc(hashtag) + '</span>';
-      var bodyInner = pub.caption ? (esc(pub.caption) + ' ' + tagSpan) : tagSpan;
-      var captionHTML = '<p class="ds-body-m text-feed__body">' + bodyInner + '</p>';
-      var art = document.createElement('article');
-      art.className = 'text-feed island';
-      art.innerHTML =
-        '<div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">'
-        + '<div class="avatar __size-44 __type-image"><img src="' + esc(me.photo) + '" alt=""></div>'
-        + '<div class="uni-cell-additional-content"><div class="ds-title-s">' + esc(me.name) + '</div><div class="ds-caption-s text-feed__time">Только что</div></div>'
-        + '</div></div></div>'
-        + captionHTML
-        + '<div class="text-feed__media __single"><img style="width:100%;height:100%;object-fit:cover;display:block" src="' + esc(pub.photo) + '" alt=""></div>'
-        + '<div class="actions-bar">'
-        +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
-        +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
-        +   '<label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
-        +   '<div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>'
-        + '</div>'
-        + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
-        +   '<div class="button-wrapper __size-44 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
       var feed = document.querySelector('.ll-feed');
-      // Пост пользователя — после ВВЗ-портлета (иначе после баннера / в начало).
-      var anchor = feed && (feed.querySelector('.vvz-portlet') || feed.querySelector('.ll-banner'));
-      if (feed) {
+      if (!feed) return;
+      var anchor = feed.querySelector('.vvz-portlet') || feed.querySelector('.ll-banner');
+      pubs.forEach(function (p) {
+        var hashtag = p.hashtag || '#РадостьДетства';
+        var tagSpan = '<span class="marathon-promo__tag">' + esc(hashtag) + '</span>';
+        var bodyInner = p.caption ? (esc(p.caption) + ' ' + tagSpan) : tagSpan;
+        var captionHTML = '<p class="ds-body-m text-feed__body">' + bodyInner + '</p>';
+        var art = document.createElement('article');
+        art.className = 'text-feed island';
+        art.innerHTML =
+          '<div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">'
+          + '<div class="avatar __size-44 __type-image"><img src="' + esc(me.photo) + '" alt=""></div>'
+          + '<div class="uni-cell-additional-content"><div class="ds-title-s">' + esc(me.name) + '</div><div class="ds-caption-s text-feed__time">Только что</div></div>'
+          + '</div></div></div>'
+          + captionHTML
+          + '<div class="text-feed__media __single"><img style="width:100%;height:100%;object-fit:cover;display:block" src="' + esc(p.photo) + '" alt=""></div>'
+          + '<div class="actions-bar">'
+          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
+          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
+          +   '<label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
+          +   '<div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>'
+          + '</div>'
+          + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
+          +   '<div class="button-wrapper __size-44 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
+        // каждый новый пост — сразу после якоря, поэтому самый свежий оказывается сверху
         if (anchor && anchor.nextSibling) feed.insertBefore(art, anchor.nextSibling);
         else feed.insertBefore(art, feed.firstChild);
-        // отступ под sticky-навбар, чтобы при скролле пост не уезжал под шапку
         art.style.scrollMarginTop = '72px';
         myPost = art;
-      }
-    }
+      });
+    })();
 
     // Подвести пост пользователя во вьюпорт (он вставлен в самый верх ленты и
     // частично прячется под sticky-навбаром — после закрытия шторки показываем его).
@@ -2875,7 +2877,7 @@
     var list = document.getElementById('mpList');
     var toastEl = document.getElementById('mpToast');
     function openSheet() { sheet.classList.add('__open'); sheet.setAttribute('aria-hidden', 'false'); setTimeout(playConfetti, 300); }
-    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); revealMyPost(); }
+    function closeSheet() { sheet.classList.remove('__open'); sheet.setAttribute('aria-hidden', 'true'); revealMyPost(); showToast('Заметка опубликована'); }
 
     // Конфетти-лотти поверх панели шторки (lottie-web грузим лениво из CDN).
     var confettiHost = document.getElementById('mpConfetti');
@@ -2961,10 +2963,10 @@
 
     document.addEventListener('click', function (e) { if (e.target.closest('[data-sheet-close]')) closeSheet(); });
 
-    // 3) Автопоказ шторки сразу после публикации (один раз) + тост «Заметка опубликована».
+    // 3) Автопоказ шторки сразу после публикации (один раз).
+    //    Тост «Заметка опубликована» — при закрытии шторки (одновременно со скроллом к посту).
     if (sessionStorage.getItem('mp_show_sheet')) {
       sessionStorage.removeItem('mp_show_sheet');
-      showToast('Заметка опубликована');
       setTimeout(openSheet, 350);
     }
   })();
