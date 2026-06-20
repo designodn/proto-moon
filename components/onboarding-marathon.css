@@ -34,7 +34,7 @@
   flex: 1 1 auto;
   position: relative;
   overflow: hidden;
-  touch-action: pan-y;
+  touch-action: none;          /* свайп ловим в JS (нативно скроллить нечего) */
 }
 .omar__track {
   display: flex;
