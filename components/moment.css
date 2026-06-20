@@ -112,6 +112,12 @@
    STATUS BAR — белый, поверх скрима, 52h
    (свой, а не из meshok-up: там фон --dynamic-surface-base-secondary !important)
    ============================================================ */
+/* Статус-бар (фейковые 9:41) и home-индикатор скрыты во всех сториз —
+   на реальном устройстве их рисует система. */
+.moment__statusbar,
+.moment__handle {
+  display: none;
+}
 .moment__statusbar {
   position: absolute;
   top: 0;
@@ -246,9 +252,17 @@
   display: flex;
   flex-direction: column;
   justify-content: safe center;
-  gap: var(--space-4);
 }
 .moment__body::-webkit-scrollbar { display: none; }
+
+/* Внутренний блок ВВЗ-body (заголовок + сетка карточек). Его viewer
+   масштабирует через zoom, если он не влезает по высоте (см. _fitBody). */
+.moment__body-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
 
 /* Типографика — DS-класс .ds-title-xl, навешивается в moment.js рядом
    с .moment__body-title. Здесь только специфика: цвет, выравнивание,
@@ -459,7 +473,10 @@
    экрана. Применяется только к именинному шаблону.
    ============================================================ */
 .moment.__view-bday {
-  --bday-strip: 100px;
+  /* Полоса под карточку = 16 (низ) + 44 (кнопка) + 16 (зазор от карточки) = 76.
+     Статус-бар/handle в сториз скрыты, поэтому кнопка прижата к самому низу
+     (16), а не висит в воздухе. */
+  --bday-strip: 76px;
 }
 /* Фото не доходит до низа — оставляет полосу под кнопку, нижние углы скруглены. */
 .moment.__view-bday.__fullscreen .moment__media {
@@ -484,10 +501,10 @@
   padding-bottom: var(--space-5);
 }
 /* Кнопка «Поздравить» в полосе под карточкой: внешние паддинги 16 уже на
-   .moment__cta (padding: 0 16). bottom = strip(100) − 16(зазор от карточки)
-   − 44(высота кнопки) = 40. */
+   .moment__cta (padding: 0 16), прижата к низу (bottom 16). Карточка
+   заканчивается ровно над ней (зазор 16) — кнопка не «витает». */
 .moment.__view-bday .moment__cta {
-  bottom: 40px;
+  bottom: 16px;
 }
 /* Progressive blur 0 → 80px — стек из 6 слоёв backdrop-filter с
    возрастающими радиусами. У каждого слоя маска `linear-gradient(

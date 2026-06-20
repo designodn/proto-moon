@@ -2581,9 +2581,10 @@
                 return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
               });
               // Общие друзья у первых трёх карточек (2 / 4 / 3), аватарки —
-              // реальные фото людей из листа «Люди» (people.json).
+              // реальные фото РЕАЛЬНЫХ людей (числовые id с фото) из листа
+              // «Люди», без vvz-заглушек/групп/рекламы.
               var pool = (window.DS_PEOPLE_DATA || [])
-                .filter(function (pp) { return pp && pp.photo; })
+                .filter(function (pp) { return pp && typeof pp.id === 'number' && pp.photo; })
                 .map(function (pp) { return pp.photo; });
               [2, 4, 3].forEach(function (n, i) {
                 if (!people[i] || !pool.length) return;
