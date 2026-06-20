@@ -23,6 +23,11 @@
      (шапка/контент прижаты к краям карточки). */
   .ll-post-feed .text-feed.island { padding-top: 0; padding-bottom: 0; }
 
+  /* Инпут коммента прижат к низу экрана даже при коротком контенте: область
+     поста растягивается (flex:1), толкая sticky-инпут вниз. */
+  .phone-frame__feed { display: flex; flex-direction: column; }
+  .ll-post-feed { flex: 1 0 auto; }
+
   /* Контент-стопка: пост-остров + блок комментов; нижний паддинг под
      прибитый инпут (его высота ~64px + safe-area). */
   .ll-post-feed {
@@ -118,6 +123,20 @@
   <script src="data/people.js"></script>
   <script src="components/user-data.js"></script>
   <script src="components/actions-bar.js"></script>
+
+  <!-- Навигация по кнопкам/ссылкам с data-href (напр. «Перейти к фотомарафону»
+       в инжектированном посте). screen-transition.js в обычном post.html не
+       активен (без ?nv=1), поэтому свой делегатор. -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest('[data-href]');
+      if (!el) return;
+      var href = el.getAttribute('data-href');
+      if (!href || href === '#') return;
+      e.preventDefault();
+      location.href = href;
+    });
+  </script>
 
   <!-- Контент поста приходит из ленты: тап по .text-feed кладёт его
        innerHTML в sessionStorage('openPost'), здесь подставляем в #ll-post.
