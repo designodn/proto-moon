@@ -872,6 +872,25 @@
       var GUTTER = 5;
       var snapped = 0;
       var downAcceptAll = false;  // тап начат на карточке «принять всех»?
+      var acceptAllI = IDX[IDX.length - 1];  // data-i карточки «принять всех» (8)
+      var finishing = false;      // идёт авто-финиш (приняли всё по одной)
+
+      // Авто-финиш: приняли все карточки по одной → карточка «принять всех» сама
+      // улетает вниз, затем конфетти + финальный заголовок.
+      function autoFinish() {
+        if (finishing) return;
+        finishing = true;
+        var el = els[acceptAllI], cs = rowState[acceptAllI];
+        el.style.transition = '';            // снять остаточный transition сдвига
+        el.classList.add('__flying-down');
+        var tx = (cs.cx - 330) + panOffset;
+        var ty = (cs.cy - 230) + 900;
+        var sc = cs.s || 1;
+        requestAnimationFrame(function () {
+          el.style.transform = 'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) scale(' + sc + ') rotate(-10deg)';
+        });
+        setTimeout(showAllAccepted, 450);
+      }
 
       function symmetricRound(x) {
         return x < 0 ? -Math.round(-x) : Math.round(x);
@@ -1031,8 +1050,10 @@
               els[j].style.transition = '';
             });
           }, SHIFT_DUR + 30);
-          if (liveCards.length === 0) {
-            setTimeout(showAllAccepted, SHIFT_DUR);
+          // Приняли все по одной — осталась только карточка «принять всех»:
+          // она сама улетает вниз + конфетти + финал.
+          if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
+            setTimeout(autoFinish, SHIFT_DUR);
           }
         }
 
@@ -1061,7 +1082,7 @@
       // схлопываются в комок (state 6). Шаг 3: комок падает вниз, тая
       // (state 5). Карточка «принять всех» (8) гаснет на шаге 1 (o:0 в state 2).
       function runAcceptAll() {
-          if (animating) return;
+          if (animating || finishing) return;
           if (!liveCards.length) return;
           if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
           if (panOffset !== 0) {
