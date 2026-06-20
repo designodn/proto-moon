@@ -184,17 +184,18 @@
             this.root.appendChild(bdayHost);
           }
         }
+        var bphoto = s.src || '';
         bdayHost.innerHTML =
-          // Progressive blur 0 → 80 px: стек из 6 слоёв с возрастающими
-          // backdrop-filter и масками-полосками. Верх слота — почти резко,
-          // низ — сильно размыто. Поверх лёгкий dark-tint для контраста.
+          // Прогрессивный блюр: стек из размытых КОПИЙ фото (filter: blur с
+          // возрастающим радиусом) + градиентные маски «снизу-сильнее».
+          // filter+mask надёжно композитятся в гадиент (в отличие от
+          // backdrop-filter, который в части браузеров давал жёсткий шов).
+          // Верх — резкое фото (media под слоями), низ — плавно размыто.
           '<div class="moment__bday-blur">' +
-            '<div class="moment__bday-blur-step __b-1"></div>' +
-            '<div class="moment__bday-blur-step __b-2"></div>' +
-            '<div class="moment__bday-blur-step __b-3"></div>' +
-            '<div class="moment__bday-blur-step __b-4"></div>' +
-            '<div class="moment__bday-blur-step __b-5"></div>' +
-            '<div class="moment__bday-blur-step __b-6"></div>' +
+            '<img class="moment__bday-blur-img __b-1" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-2" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-3" src="' + bphoto + '" alt="" aria-hidden="true">' +
+            '<img class="moment__bday-blur-img __b-4" src="' + bphoto + '" alt="" aria-hidden="true">' +
             '<div class="moment__bday-blur-tint"></div>' +
           '</div>' +
           '<div class="moment__bday-content">' +
@@ -705,7 +706,9 @@
       // вниз, assets/vvz-story-back.png). Путь относительный — резолвится от
       // URL страницы; вложенные страницы могут переопределить через
       // opts.background. Снизу #000 на случай экранов выше картинки.
-      background: opts.background || 'center top / cover no-repeat url("assets/vvz-story-back.png") #000'
+      background: opts.background || 'center top / cover no-repeat url("assets/vvz-story-back.png") #000',
+      // На ВВЗ-сториз держимся дольше (6с) — успеть рассмотреть карточки.
+      duration: opts.duration || '6s'
     };
     if (opts.cta) slide.cta = opts.cta;
     return slide;
