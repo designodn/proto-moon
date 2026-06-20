@@ -392,12 +392,13 @@
 
     <!-- ===== TABBAR ===== -->
     <div class="ll-tabbar">
-      <div class="tabbar __platform-ios">
+      <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
           <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
           <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
           <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
         </div>
         <div class="tabbar__handle"></div>
@@ -470,5 +471,6 @@
       if (origin) back.setAttribute('data-href', origin);
     })();
   </script>
+  <script src="components/tabbar-autohide.js"></script>
 </body>
 </html>

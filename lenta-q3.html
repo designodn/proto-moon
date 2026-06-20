@@ -611,6 +611,7 @@
         </article>
 
         <article class="text-feed island">
+          <div class="text-feed__activity ds-caption-m"><b>Сергей</b> поставил класс</div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -939,6 +940,7 @@
         </article>
 
         <article class="text-feed island">
+          <div class="text-feed__activity ds-caption-m"><b>Зинаида</b> поставил класс</div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -2646,16 +2648,16 @@
        ФИО и аватар прокидываем в profile.html через ?name=&avatar=. -->
   <script>
     (function () {
-      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s')
+      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s, .uni-cell .uni-cell-additional-content .feed-header__name')
         .forEach(function (el) { el.style.cursor = 'pointer'; });
 
       document.addEventListener('click', function (e) {
         var t = e.target;
         var cell = t.closest && t.closest('.uni-cell');
         if (!cell || !cell.querySelector('.avatar.__size-44')) return;
-        if (!t.closest('.avatar') && !t.closest('.ds-title-s')) return;
+        if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
         e.preventDefault();
-        var nameEl = cell.querySelector('.ds-title-s');
+        var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
         var img    = cell.querySelector('.avatar img');
         var name = nameEl ? nameEl.textContent.trim() : '';
         var ava  = img ? (img.getAttribute('src') || '') : '';
@@ -2786,6 +2788,7 @@
     })();
   </script>
   <script src="components/smart-crop.js" defer></script>
+  <script src="components/tabbar-autohide.js"></script>
 
   <!-- ШТОРКА «Вы участвуете в фотомарафоне!» — показывается над лентой после публикации -->
   <div class="mp-sheet" id="mpSheet" aria-hidden="true">
