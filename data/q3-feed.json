@@ -572,7 +572,7 @@
     },
     {
       "id": "row-22",
-      "type": "gift-received",
+      "type": "ai-gift-received",
       "author": "7, 2",
       "tema": "",
       "rubrika": "",
@@ -715,13 +715,10 @@
       "title": "Шринкфляция отобрала у россиян сосиску",
       "text": "В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.",
       "photos": [
-        "https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&quality=96&crop=0"
+        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
       ],
       "photosRaw": [
-        "https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&quality=96&crop=0",
-        "0",
-        "1000",
-        "750&sign=027fb7227c85e54af66ea92f149652cb&type=news_post_photo"
+        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
       ],
       "likes": "213",
       "comments": "35",

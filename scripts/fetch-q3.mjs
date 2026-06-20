@@ -223,6 +223,19 @@ function breadcrumbs(tema, rubrika) {
             </nav>`;
 }
 
+/** Строка-активность над автором («почему пост в ленте»), слот text-feed__activity.
+ *  Колонка «шапка». Токен id_<id> → имя человека из people.json (жирным):
+ *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
+function activityLine(header) {
+  if (!header) return '';
+  const parts = String(header).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
+  let html = '';
+  for (let i = 0; i < parts.length; i++) {
+    html += (i % 2 === 0) ? esc(parts[i]) : `<b>${esc(firstName(parts[i]) || parts[i])}</b>`;
+  }
+  return `          <div class="text-feed__activity ds-caption-m">${html}</div>\n`;
+}
+
 /** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
  *  простой <p>. bodyClass — класс параграфа (text-feed__body по умолчанию). */
 const CLAMP = 160;
@@ -458,7 +471,7 @@ ${feedText(text)}
           </div>`
         : feedText(text);
       return `        <article class="text-feed island">
-${header}
+${activityLine(p.header)}${header}
 
 ${body}
 ${media(photos)}
