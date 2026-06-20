@@ -297,6 +297,7 @@
             body.appendChild(s.body);
           }
           this.root.classList.add('__view-body');
+          this._fitBody();
         } else {
           body.style.display = 'none';
           body.innerHTML = '';
@@ -334,6 +335,32 @@
 
     if (typeof this.options.onChange === 'function') {
       this.options.onChange(index);
+    }
+  };
+
+  // Если контент ВВЗ-body не влезает по высоте (маленький экран) — масштабируем
+  // его (zoom), чтобы карточки уменьшились и поместились без скролла. zoom
+  // меняет и layout, поэтому блок честно вписывается в доступную высоту.
+  MomentViewer.prototype._fitBody = function () {
+    var root = this.root;
+    var run = function () {
+      var body = root.querySelector('.moment__body');
+      var inner = body && body.querySelector('.moment__body-inner');
+      if (!inner) return;
+      inner.style.zoom = '';
+      var cs = getComputedStyle(body);
+      var avail = body.clientHeight
+        - parseFloat(cs.paddingTop || 0)
+        - parseFloat(cs.paddingBottom || 0);
+      var natural = inner.offsetHeight;
+      if (avail > 0 && natural > avail) {
+        inner.style.zoom = (avail / natural).toFixed(4);
+      }
+    };
+    requestAnimationFrame(run);
+    if (!this._onResize) {
+      this._onResize = run;
+      window.addEventListener('resize', this._onResize);
     }
   };
 
@@ -422,6 +449,7 @@
     this.root.removeEventListener('pointercancel', this._onPressEnd);
     this.root.removeEventListener('pointerleave', this._onPressEnd);
     clearTimeout(this._holdTimer);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
     if (this._prev) this._prev.removeEventListener('click', this._onPrev);
     if (this._next) this._next.removeEventListener('click', this._onNext);
   };
@@ -662,9 +690,14 @@
     var people = opts.people || [];
     var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
     var cards = people.map(renderCard).join('');
+    // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
+    // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
+    // экране (см. _fitBody в moment.js).
     var body = [
-      '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
-      '<div class="moment__body-grid">' + cards + '</div>'
+      '<div class="moment__body-inner">',
+        '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
+        '<div class="moment__body-grid">' + cards + '</div>',
+      '</div>'
     ].join('');
     var slide = {
       body: body,
