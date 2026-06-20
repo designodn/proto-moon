@@ -530,27 +530,27 @@
 }
 .moment__bday-blur-step.__b-1 {
   --bday-blur-p: 0%;
-  -webkit-backdrop-filter: blur(2px);  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(1px);  backdrop-filter: blur(1px);
 }
 .moment__bday-blur-step.__b-2 {
-  --bday-blur-p: 16%;
-  -webkit-backdrop-filter: blur(5px);  backdrop-filter: blur(5px);
+  --bday-blur-p: 14%;
+  -webkit-backdrop-filter: blur(3px);  backdrop-filter: blur(3px);
 }
 .moment__bday-blur-step.__b-3 {
-  --bday-blur-p: 33%;
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  --bday-blur-p: 30%;
+  -webkit-backdrop-filter: blur(6px);  backdrop-filter: blur(6px);
 }
 .moment__bday-blur-step.__b-4 {
-  --bday-blur-p: 50%;
-  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+  --bday-blur-p: 48%;
+  -webkit-backdrop-filter: blur(11px); backdrop-filter: blur(11px);
 }
 .moment__bday-blur-step.__b-5 {
   --bday-blur-p: 66%;
-  -webkit-backdrop-filter: blur(44px); backdrop-filter: blur(44px);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
 }
 .moment__bday-blur-step.__b-6 {
   --bday-blur-p: 83%;
-  -webkit-backdrop-filter: blur(80px); backdrop-filter: blur(80px);
+  -webkit-backdrop-filter: blur(28px); backdrop-filter: blur(28px);
 }
 /* Лёгкое затемнение поверх блюра — добавляет контраст белому тексту,
    повторяет фигму (bg-black/20 на блюр-слое). */
