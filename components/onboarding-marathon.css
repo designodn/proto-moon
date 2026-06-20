@@ -227,21 +227,33 @@
 .omar-chip--cooking { background: #E5BA37; transform: rotate(7.83deg); width: 100%; }
 .omar-chip--garden  { background: #8AA920; transform: rotate(-9.65deg); margin-bottom: -32px; }
 
-.omar-chip__icon { object-fit: contain; pointer-events: none; flex: none; }
+.omar-chip__icon { object-fit: contain; pointer-events: none; flex: none; animation: omar-float 3.3s ease-in-out infinite; }
 .omar-chip__icon--sport   { width: 74px; height: 74px; transform: rotate(4.65deg); }
-.omar-chip__icon--cooking { width: 61px; height: 54px; margin-right: 8px; margin-bottom: -30px; z-index: 2; }
-.omar-chip__icon--garden  { width: 77px; height: 77px; margin-left: 18px; }
+.omar-chip__icon--cooking { width: 61px; height: 54px; margin-right: 8px; margin-bottom: -30px; z-index: 2; animation-duration: 3.7s; animation-delay: .4s; }
+.omar-chip__icon--garden  { width: 77px; height: 77px; margin-left: 18px; animation-duration: 3s; animation-delay: .8s; }
+
+/* лёгкий витающий эффект для картинок страницы (через translate — не мешает rotate/scale) */
+@keyframes omar-float {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -8px; }
+}
 
 /* ============================================================
    2+3. ОБЪЕДИНЁННЫЙ БЛОК «Тематика + Голосование» — один прокручиваемый блок
    ============================================================ */
-/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, combo мотается вниз */
-.omar-slide--combo { overflow: hidden; padding-left: 0; padding-right: 0; }
+/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, нативный скролл
+   (можно отмотать назад и дочитать; контент не обрезается overflow:hidden) */
+.omar-slide--combo {
+  overflow: hidden;                 /* во время анимации скролл заблокирован */
+  scroll-behavior: smooth;
+  padding-left: 0;
+  padding-right: 0;
+}
+.omar-slide--combo.__scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }  /* после анимации можно мотать назад */
+.omar-slide--combo::-webkit-scrollbar { display: none; }
 .omar-combo {
   display: flex;
   flex-direction: column;
-  transition: transform .6s cubic-bezier(.4, 0, .2, 1);   /* мотаем страницу вниз */
-  will-change: transform;
 }
 .omar-stage {
   display: flex;
@@ -259,6 +271,7 @@
   height: 160px;
   margin-top: var(--space-4);
   object-fit: contain;
+  animation: omar-float 3.5s ease-in-out infinite;
 }
 /* блок «Голосуйте» скрыт, пока не наступила фаза голосования (все переходы 200мс) */
 .omar-vote { opacity: 0; transition: opacity .2s ease; }
@@ -304,7 +317,7 @@
   object-fit: contain;
   opacity: 0;
 }
-.omar-slide--combo.__invite .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both; }
+.omar-slide--combo.__invite .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both, omar-float 3.6s ease-in-out 1s infinite; }
 
 /* ============================================================
    Нижняя панель: кнопки

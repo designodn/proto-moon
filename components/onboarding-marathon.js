@@ -182,24 +182,24 @@
     // 3с на чтение) → мотаем вниз к «Приглашайте» (кнопка через 300мс после подписи).
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      var combo = slide.querySelector('.omar-combo');
       var inviteStage = slide.querySelector('.omar-stage--invite');
-      slide.classList.remove('__vote', '__vote-settle', '__invite');
+      slide.classList.remove('__vote', '__vote-settle', '__invite', '__scrollable');
       var stages = slide.querySelectorAll('.omar-stage');
       for (var k = 0; k < stages.length; k++) stages[k].style.minHeight = slide.clientHeight + 'px';
-      if (combo) { combo.style.transition = 'none'; combo.style.transform = 'translateY(0)'; void combo.offsetWidth; combo.style.transition = ''; }
+      slide.scrollTop = 0;
       setFooter('hidden');
 
       // голосование — через 1.5с после подписи тематики (подпись ~3.0с)
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
       timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
-      // приглашайте — 3с на чтение голосования, затем мотаем страницу вниз
+      // приглашайте — 3с на чтение голосования, затем мотаем страницу вниз (нативный скролл)
       timers.push(setTimeout(function () {
         slide.classList.add('__invite');
-        if (combo && inviteStage) combo.style.transform = 'translateY(' + (-inviteStage.offsetTop) + 'px)';
+        if (inviteStage) slide.scrollTo({ top: inviteStage.offsetTop, behavior: 'smooth' });
       }, 8400));
-      // кнопка «Перейти к марафону» — через 300мс после подзаголовка приглашайте
-      timers.push(setTimeout(function () { setFooter('invite'); }, 9300));
+      // кнопка «Перейти к марафону» — через 300мс после подзаголовка приглашайте;
+      // после финала разблокируем прокрутку — можно отмотать назад и дочитать
+      timers.push(setTimeout(function () { setFooter('invite'); slide.classList.add('__scrollable'); }, 9300));
     }
 
     function goTo(i) {
@@ -215,20 +215,6 @@
     el.querySelector('.omar__close').addEventListener('click', close);
     ctaBtn.addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
-
-    // Свайп вверх/вниз (отменяет автосценарий).
-    var sy = null, sdy = 0;
-    slidesEl.addEventListener('pointerdown', function (e) { sy = e.clientY; sdy = 0; clearTimers(); });
-    slidesEl.addEventListener('pointermove', function (e) { if (sy != null) sdy = e.clientY - sy; });
-    function endSwipe() {
-      if (sy == null) return;
-      var d = sdy; sy = null;
-      if (d < -40) goTo(index + 1);             // смах вверх → следующий блок снизу
-      else if (d > 40) goTo(index - 1);         // смах вниз → предыдущий
-      else if (index === COMBO_INDEX) startCombo();   // не свайп — перезапускаем сценарий блока
-    }
-    slidesEl.addEventListener('pointerup', endSwipe);
-    slidesEl.addEventListener('pointercancel', function () { sy = null; });
 
     // Масштаб блока фото на 1-м слайде: занимает весь остаток над текстом.
     function fitFan() {
