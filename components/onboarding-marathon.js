@@ -99,7 +99,7 @@
               '</div>' +
               '<div class="omar-vote">' +
                 '<h2 class="omar-slide__title">Голосуйте за фото</h2>' +
-                '<p class="omar-slide__text">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
+                '<p class="omar-slide__text omar-vote__sub">Поддержите фото друга классом - так у него будет больше шанса выиграть в фотомарафоне или пригласите голосовать за вас</p>' +
                 img('smile.png', 'omar-stickers') +
               '</div>' +
             '</div>' +
@@ -109,7 +109,7 @@
           '<section class="omar-slide omar-slide--invite">' +
             '<div class="omar-invite__text">' +
               '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-              '<p class="omar-slide__text">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
+              '<p class="omar-slide__text omar-invite__sub">Зовите друзей, делитесь своими достижениями, ведь вместе всегда интереснее</p>' +
             '</div>' +
             '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
           '</section>' +
@@ -161,11 +161,13 @@
     // прокрутка вниз к «Голосуйте» (подпись тематики ещё видна) → переход дальше.
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      slide.classList.remove('__vote');
-      // «Голосуйте» проявляется на своём месте после тегов+подписи (всё на одном экране)
-      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3000));
-      // переход к «Приглашайте»
-      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 6200));
+      slide.classList.remove('__vote', '__vote-settle');
+      // 1) заголовок «Голосуйте» + увеличенный стикер (подзаголовок скрыт)
+      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 3800));
+      // 2) стикер уменьшается, появляется подзаголовок (всё по 200мс)
+      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 4600));
+      // 3) переход к «Приглашайте»
+      timers.push(setTimeout(function () { goTo(COMBO_INDEX + 1); }, 7400));
     }
 
     function goTo(i) {
