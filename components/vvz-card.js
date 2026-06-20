@@ -115,6 +115,9 @@
   //               отмены, сториз ставятся на паузу.
   // ============================================================
   function enterRequested(card) {
+    // Фиксируем высоту до изменений, чтобы карточка не «скакала» при скрытии
+    // общих друзей / переносе текста «Заявка отправлена».
+    card.style.minHeight = card.offsetHeight + 'px';
     var sub = card.querySelector('.vvz-card__subtitle');
     var btnWrap = card.querySelector('.vvz-card__btn');
     if (sub) {
@@ -144,6 +147,7 @@
       delete btnWrap.dataset.originalHtml;
     }
     card.classList.remove('__state-requested');
+    card.style.minHeight = '';
   }
 
   // Пауза/возобновление сториз, в которых лежит карточка (через .__state-paused
