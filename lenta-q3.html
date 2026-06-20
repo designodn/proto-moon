@@ -2566,6 +2566,18 @@
                 var p = P(id) || {};
                 return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
               });
+              // Общие друзья у первых трёх карточек (2 / 4 / 3), аватарки —
+              // реальные фото людей из листа «Люди» (people.json).
+              var pool = (window.DS_PEOPLE_DATA || [])
+                .filter(function (pp) { return pp && pp.photo; })
+                .map(function (pp) { return pp.photo; });
+              [2, 4, 3].forEach(function (n, i) {
+                if (!people[i] || !pool.length) return;
+                var k = Math.min(n, 3);
+                people[i].mutuals = n;
+                people[i].m = [];
+                for (var j = 0; j < k; j++) people[i].m.push(pool[(i * 3 + j) % pool.length]);
+              });
               return [MomentViewer.vvzSlide({
                 title:  'Возможно, вы знакомы',
                 people: people,
