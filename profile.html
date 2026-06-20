@@ -678,5 +678,35 @@
     }
   })();
   </script>
+
+  <!-- Опубликованные посты фотомарафона (mp_published) — дублируем в личный профиль. -->
+  <script>
+  (function () {
+    var box = document.querySelector('.ll-pr-posts[data-self-posts]');
+    if (!box) return;
+    var pubs;
+    try { pubs = JSON.parse(sessionStorage.getItem('mp_published') || 'null'); } catch (e) { pubs = null; }
+    if (!pubs) return;
+    pubs = Array.isArray(pubs) ? pubs : [pubs];
+    if (!pubs.length) return;
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    var me = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0] || { name: 'Вы', photo: '' };
+    pubs.forEach(function (p) {
+      var hashtag = p.hashtag || '#РадостьДетства';
+      var tag = '<span class="marathon-promo__tag">' + esc(hashtag) + '</span>';
+      var body = p.caption ? (esc(p.caption) + ' ' + tag) : tag;
+      var art = document.createElement('article');
+      art.className = 'text-feed island';
+      art.innerHTML =
+        '<div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">'
+        + '<div class="avatar __size-44 __type-image"><img src="' + esc(me.photo) + '" alt=""></div>'
+        + '<div class="uni-cell-additional-content"><div class="ds-title-s">' + esc(me.name) + '</div><div class="ds-caption-s text-feed__time">Только что</div></div>'
+        + '</div></div></div>'
+        + '<p class="ds-body-m text-feed__body">' + body + '</p>'
+        + '<div class="text-feed__media __single"><img style="width:100%;height:100%;object-fit:cover;display:block" src="' + esc(p.photo) + '" alt=""></div>';
+      box.insertBefore(art, box.firstChild);   // самые свежие — сверху
+    });
+  })();
+  </script>
 </body>
 </html>
