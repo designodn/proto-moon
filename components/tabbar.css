@@ -79,22 +79,5 @@
 .tabbar-icon.__slot-clip       { --tabbar-icon-src: url('../assets/icons/clips_24.svg'); }
 .tabbar-icon.__slot-menu       { --tabbar-icon-src: url('../assets/icons/menu_24.svg'); }
 
-.tabbar__handle {
-  position: relative;
-  width: 100%;
-  height: 24px;
-  touch-action: none;
-  cursor: grab;
-}
-
-/* Home-indicator отдан реальной ОС устройства: визуальную «пилюлю» не рисуем
-   на уровне компонента (ни на iOS, ни на Android), чтобы скрылось сразу во всех
-   экранах-детях — как и фейковый статус-бар в meshok-up. .tabbar__handle при этом
-   остаётся: свайп-вверх (свайп-зона) продолжает ловиться. */
-.tabbar .tabbar__handle::after {
-  display: none;
-}
-
-.tabbar__handle:active {
-  cursor: grabbing;
-}
+/* .tabbar__handle (home-indicator свайп-зона) удалён из компонента —
+   home-indicator отдан реальной ОС устройства. */

@@ -54,7 +54,6 @@
       '<div class="' + variant.wrapper + '">' +
         '<div class="tabbar __platform-' + variant.platform + '">' +
           '<div class="tabbar__row">' + btns + '</div>' +
-          '<div class="tabbar__handle"></div>' +
         '</div>' +
       '</div>';
 
