@@ -205,7 +205,7 @@
              (s === active ? ' __state-on' : '') + '" aria-label="' + LABEL[s] + '"></button></div>';
     }).join('');
     bar.className = 'tabbar __platform-android';
-    bar.innerHTML = '<div class="tabbar__row">' + row + '</div><div class="tabbar__handle"></div>';
+    bar.innerHTML = '<div class="tabbar__row">' + row + '</div>';
   }
 
   // Дописать ?nv=1 к локальной .html-ссылке (для не-JS переходов и как страховка).
