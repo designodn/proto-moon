@@ -695,17 +695,15 @@
   function vvzSlide(opts) {
     opts = opts || {};
     var people = opts.people || [];
-    var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
-    var cards = people.map(renderCard).join('');
+    // Заголовок + сетку карточек собирает единый компонент VvzCard.section
+    // (он же — в ВВЗ-слайде клипов, см. components/clip-vvz.js).
+    var section = (window.VvzCard && window.VvzCard.section)
+      ? window.VvzCard.section({ title: opts.title, people: people })
+      : '';
     // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
     // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
     // экране (см. _fitBody в moment.js).
-    var body = [
-      '<div class="moment__body-inner">',
-        '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
-        '<div class="moment__body-grid">' + cards + '</div>',
-      '</div>'
-    ].join('');
+    var body = '<div class="moment__body-inner">' + section + '</div>';
     var slide = {
       body: body,
       // Фон ВВЗ-сториз — картинка-подложка (оранжево-чёрный градиент сверху-

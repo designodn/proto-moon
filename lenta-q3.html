@@ -71,13 +71,18 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    /* боковых паддингов нет (острова в края), но нижний клиренс под
-       прибитый таббар нужен, иначе последняя карточка уезжает под него */
-    padding-bottom: calc(72px + var(--space-6));
+    /* острова в края; нижний воздух перед таб-баром (таб-бар теперь sticky
+       внутри скролла, отдельный клиренс под fixed не нужен) */
+    padding-bottom: var(--space-8);
   }
 
-  /* .ll-tabbar (fixed к низу) → components/app-shell.css.
-     .ll-feed держит нижний паддинг под высоту таббара. */
+  /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), а в конце
+     доскролла встаёт в поток. Перебиваем fixed из app-shell.css. */
+  .ll-tabbar {
+    position: sticky;
+    bottom: 0;
+    margin-top: var(--space-2);
+  }
 
   /* button-klass + <img>-иконки: my .ll-icon ставит display:inline-block,
      поэтому скрывать filled/outline через .button-klass__icon-X (тоже один
@@ -2406,7 +2411,6 @@
         <!-- FEED:END -->
 
       </div>
-    </div>
 
     <!-- Полноэкранный просмотрщик сториз — лежит поверх всей phone-frame
          и поднимается по тапу на аватарку сториз. Сам контент (аватар, имя,
@@ -2429,6 +2433,7 @@
         </div>
         <div class="tabbar__handle"></div>
       </div>
+    </div>
     </div>
 
   </div>
