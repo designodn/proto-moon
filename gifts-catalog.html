@@ -55,6 +55,18 @@
     padding: var(--space-4) var(--space-4) var(--space-3);
   }
 
+  /* Получатель (приход с годовщины: ?to=<id>): аватар + ФИ + разделитель снизу.
+     Показывается через .__on (JS), стоит первым в острове над заголовком. */
+  .ll-gc-recipient {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--dynamic-stroke-contrast-low);
+  }
+  .ll-gc-recipient.__on { display: flex; }
+  .ll-gc-recipient__name { color: var(--dynamic-text-and-icons-base-primary); }
+
   /* Сетка подарков — 2×N, gap 12, бока 16, низ 36, верх 12 (под хедером уже
      есть его собственный padding-bottom, поэтому верх грида = 0; общий
      верхний отступ контента в карточке = 12 хедера + 12 от карточки). */
@@ -152,8 +164,13 @@
         </div>
       </div>
 
-      <!-- ИСЛАНД: хедер «День рождения!» + сетка подарков -->
+      <!-- ИСЛАНД: (опц.) получатель с годовщины + хедер + сетка подарков -->
       <section class="ll-gc-island">
+        <!-- Получатель (аватар + ФИ + разделитель). Заполняется из ?to=<id>. -->
+        <div class="ll-gc-recipient" id="gcRecipient">
+          <div class="avatar __size-36 __type-image"><img id="gcRecipientAva" src="" alt=""></div>
+          <span class="ds-body-l ll-gc-recipient__name" id="gcRecipientName"></span>
+        </div>
         <header class="header __size-l ll-gc-section-head">
           <div class="header__title ds-title-l">День рождения!</div>
         </header>
@@ -212,5 +229,44 @@
   <script src="components/back-button.js"></script>
   <script src="components/tab.js"></script>
   <script src="components/tab-bar.js"></script>
+
+  <!-- Реальные люди (для получателя с годовщины) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
+  <script>
+    // Приход с годовщины дружбы: ?to=<id людей>&anniv=<лет>. Показываем ряд
+    // «аватар + ФИ + разделитель» и меняем заголовок раздела на «N года дружбы».
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var to = params.get('to');
+      if (!to) return;
+      var anniv = params.get('anniv');
+      function plural(n, forms) {
+        n = Math.abs(n) % 100;
+        var n1 = n % 10;
+        if (n > 10 && n < 20) return forms[2];
+        if (n1 > 1 && n1 < 5) return forms[1];
+        if (n1 === 1) return forms[0];
+        return forms[2];
+      }
+      function apply() {
+        var p = (window.DS_PEOPLE && window.DS_PEOPLE.get(to)) || null;
+        var row = document.getElementById('gcRecipient');
+        if (p && row) {
+          var ava = document.getElementById('gcRecipientAva');
+          var name = document.getElementById('gcRecipientName');
+          if (ava) { ava.src = p.photo || ''; ava.alt = p.name || ''; }
+          if (name) name.textContent = p.name || '';
+          row.classList.add('__on');
+        }
+        if (anniv) {
+          var head = document.querySelector('.ll-gc-section-head .header__title');
+          if (head) head.textContent = anniv + ' ' + plural(+anniv, ['год', 'года', 'лет']) + ' дружбы';
+        }
+      }
+      if (window.DS_PEOPLE) apply();
+      else document.addEventListener('DOMContentLoaded', apply);
+    })();
+  </script>
 </body>
 </html>

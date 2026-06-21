@@ -34,7 +34,7 @@
   flex: 1 1 auto;
   position: relative;
   overflow: hidden;
-  touch-action: pan-y;
+  touch-action: none;          /* свайп ловим в JS (нативно скроллить нечего) */
 }
 .omar__track {
   display: flex;
@@ -233,38 +233,21 @@
 .omar-chip__icon--garden  { width: 77px; height: 77px; margin-left: 18px; }
 
 /* ============================================================
-   2+3. ОБЪЕДИНЁННЫЙ БЛОК «Тематика + Голосование» — один прокручиваемый блок
+   2. Тематика + Голосование — один экран, делят 50/50
    ============================================================ */
-/* Длинная страница: «экраны» (.omar-stage) сложены в столбик, нативный скролл
-   (можно отмотать назад и дочитать; контент не обрезается overflow:hidden) */
 .omar-slide--combo {
-  position: relative;
-  overflow: hidden;                 /* во время анимации скролл заблокирован */
-  scroll-behavior: smooth;
-  padding: 0;
-}
-.omar-slide--combo.__scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }  /* после анимации можно мотать назад */
-.omar-slide--combo::-webkit-scrollbar { display: none; }
-.omar-combo {
-  display: flex;
-  flex-direction: column;
-}
-.omar-stage {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   padding: calc(env(safe-area-inset-top, 0px) + 64px) var(--space-4) 0;   /* верх 64 */
 }
-/* тематика и голосование делят экран по 50% (тематика выше) */
-.omar-stage .omar-topics,
-.omar-stage .omar-vote {
+/* тематика и голосование честно делят экран по 50% (прямые сиблинги) */
+.omar-slide--combo > .omar-topics,
+.omar-slide--combo > .omar-vote {
   flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-.omar-stage--invite { justify-content: center; padding-top: 0; }
 
 /* Голосование — стикер (одна картинка ~160px, наклон −15° из Figma) */
 .omar-stickers {
@@ -286,24 +269,25 @@
 .omar-slide--combo.__vote-settle .omar-vote .omar-stickers { transform: rotate(-15deg) scale(1); }
 
 /* ============================================================
-   4. ПРИГЛАШАЙТЕ — лейаут из автолейаута фрейма 01
-   контент по центру по вертикали; gap 33 текст↔картинка; gap 6 заголовок↔подпись;
-   картинка во всю ширину (262/146); кнопка «Перейти к марафону»
+   3. ПРИГЛАШАЙТЕ — отдельный слайд (контент по центру, картинка во всю ширину)
    ============================================================ */
-.omar-stage--invite {
+.omar-slide--invite {
   align-items: center;
   text-align: center;
+  justify-content: center;          /* по центру по вертикали */
   gap: 33px;                        /* Figma: текст ↔ картинка */
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) 0 0;
 }
 .omar-invite__text {
   display: flex;
   flex-direction: column;
   gap: 6px;                         /* Figma: заголовок ↔ подпись */
+  padding: 0 var(--space-4);
 }
 .omar-invite__text .omar-slide__text { margin: 0; }
 /* заголовок виден сразу; подзаголовок появляется после «бампа» картинки */
 .omar-invite__sub { opacity: 0; transition: opacity .2s ease; }
-.omar-slide--combo.__invite .omar-invite__sub { opacity: 1; transition-delay: .6s; }
+.omar-slide--invite.is-active .omar-invite__sub { opacity: 1; transition-delay: .6s; }
 /* картинка: «бампает» в центр до ×1.2, затем встаёт на место */
 @keyframes omar-bump {
   0%   { opacity: 0; transform: scale(.8); }
@@ -312,13 +296,12 @@
 }
 .omar-invite {
   display: block;
-  width: calc(100% + 2 * var(--space-4));   /* во всю ширину (выходим из паддинга стейджа) */
-  margin-left: calc(-1 * var(--space-4));
+  width: 100%;                      /* во всю ширину (у слайда нет боковых паддингов) */
   aspect-ratio: 262 / 146;          /* Figma */
   object-fit: contain;
   opacity: 0;
 }
-.omar-slide--combo.__invite .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both; }
+.omar-slide--invite.is-active .omar-invite { animation: omar-bump .5s cubic-bezier(.2,.7,.3,1) .15s both; }
 
 /* ============================================================
    Нижняя панель: кнопки

@@ -176,10 +176,11 @@
         if (!bdayHost) {
           bdayHost = document.createElement('div');
           bdayHost.className = 'moment__bday';
-          // Кладём перед .moment__cta, чтобы CTA остался поверх.
-          var cta = this.root.querySelector('.moment__cta');
-          if (cta) {
-            cta.parentNode.insertBefore(bdayHost, cta);
+          // Кладём ВНУТРЬ .moment__card, чтобы блюр+текст обрезались её
+          // скруглениями (overflow:hidden), как и фото. Кнопка — снаружи карты.
+          var card = this.root.querySelector('.moment__card');
+          if (card) {
+            card.appendChild(bdayHost);
           } else {
             this.root.appendChild(bdayHost);
           }
@@ -631,8 +632,13 @@
     el.hidden = true;
     el.style.cssText = '--moment-duration: ' + duration + '; z-index: 1000;';
     el.innerHTML = [
-      '<img class="moment__media" alt="" style="display:none;">',
-      '<div class="moment__scrim"></div>',
+      // Карточка-контейнер: фото + скрим (+ блюр/текст ДР добавляются сюда же).
+      // В ДР она получает скругления + overflow:hidden и отделяется от кнопки
+      // (кнопка лежит ниже на чёрном фоне). В остальных сториз — на весь экран.
+      '<div class="moment__card">',
+        '<img class="moment__media" alt="" style="display:none;">',
+        '<div class="moment__scrim"></div>',
+      '</div>',
       '<div class="moment__statusbar">',
         '<span class="moment__statusbar-time">9:41</span>',
       '</div>',
@@ -689,17 +695,15 @@
   function vvzSlide(opts) {
     opts = opts || {};
     var people = opts.people || [];
-    var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
-    var cards = people.map(renderCard).join('');
+    // Заголовок + сетку карточек собирает единый компонент VvzCard.section
+    // (он же — в ВВЗ-слайде клипов, см. components/clip-vvz.js).
+    var section = (window.VvzCard && window.VvzCard.section)
+      ? window.VvzCard.section({ title: opts.title, people: people })
+      : '';
     // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
     // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
     // экране (см. _fitBody в moment.js).
-    var body = [
-      '<div class="moment__body-inner">',
-        '<h2 class="moment__body-title ds-title-xl">' + (opts.title || '') + '</h2>',
-        '<div class="moment__body-grid">' + cards + '</div>',
-      '</div>'
-    ].join('');
+    var body = '<div class="moment__body-inner">' + section + '</div>';
     var slide = {
       body: body,
       // Фон ВВЗ-сториз — картинка-подложка (оранжево-чёрный градиент сверху-

@@ -19,14 +19,16 @@
     var title = opts.title || 'Возможно, вы знакомы';
     var people = opts.people || [];
     var cta = opts.cta || 'Показать всех';
-    var renderCard = (window.VvzCard && window.VvzCard.render) || function () { return ''; };
-    var cards = people.map(renderCard).join('');
+    // Заголовок + сетку карточек собирает единый компонент VvzCard.section
+    // (он же — в сториз-ВВЗ, см. moment.js vvzSlide).
+    var section = (window.VvzCard && window.VvzCard.section)
+      ? window.VvzCard.section({ title: title, people: people })
+      : '';
 
     return '' +
       '<section class="klip __vvz" data-klip data-vvz>' +
         '<div class="klip__vvz-inner">' +
-          '<h2 class="klip__vvz-title ds-title-xl">' + title + '</h2>' +
-          '<div class="klip__vvz-grid" data-vvz-grid>' + cards + '</div>' +
+          section +
           '<div class="klip__vvz-cta">' +
             '<div class="button-wrapper __size-44 __style-secondary-on-color">' +
               '<button class="button-container __style-secondary-on-color" type="button">' +

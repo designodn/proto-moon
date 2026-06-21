@@ -505,7 +505,7 @@ ${marathonPromo(hashtag, isJoined(p.marathonJoined))}
     /* ── реклама (feed-ad — как в NV, но в Q3-разметке text-feed) ── */
     case 'ad': {
       const subtitle = PEOPLE[String(aid)]?.subtitle || 'Реклама 0+';
-      return `        <article class="text-feed island">
+      return `        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
             <div class="uni-cell-additional-content">
@@ -732,7 +732,7 @@ ${actionsBar(likes, comments, reshares)}
       const isAi = type === 'ai-gift-received';
       const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
-      let cta, btnWrap, icon, btnStyle = '__style-secondary', cardMod = '';
+      let cta, btnWrap = '', icon, btnStyle = '__style-secondary', cardMod = '';
       if (isAi) {
         cta = 'Создать подарок из фото';
         btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
@@ -776,6 +776,14 @@ ${authorHeader(aid, time)}
     case 'friendversary': {
       const a1 = personPhoto(ids[0]) || 'https://i.pravatar.cc/288?img=49';
       const a2 = personPhoto(ids[1]) || 'https://i.pravatar.cc/288?img=23';
+      // Получатель подарка — друг (id, отличный от my_profile). Кол-во лет —
+      // первое число из текста («Ровно 3 года назад…»). Прокидываем на
+      // страницу подарков: ?to=<id>&anniv=<лет> → там показывается ряд
+      // «аватар + ФИ + разделитель» и заголовок «N года дружбы».
+      const giftTo = ids.find(id => id && id !== 'my_profile') || ids[1] || ids[0] || '';
+      const giftYears = (String(text).match(/(\d+)/) || [])[1] || '';
+      const giftHref = 'gifts-catalog.html?to=' + encodeURIComponent(giftTo) +
+        (giftYears ? '&anniv=' + giftYears : '');
       return `        <article class="feed-birthday island">
           <div class="feed-birthday__deco"></div>
 
@@ -789,7 +797,7 @@ ${authorHeader(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary" data-href="gifts-catalog.html"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>

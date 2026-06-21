@@ -10,6 +10,7 @@
     feed: 'lenta-q3.html',
     book: 'tribune.html',
     message: 'messages.html',
+    clip: 'klipy.html',
     menu: 'menu.html'
   };
 

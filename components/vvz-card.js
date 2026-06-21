@@ -115,6 +115,9 @@
   //               отмены, сториз ставятся на паузу.
   // ============================================================
   function enterRequested(card) {
+    // Фиксируем высоту до изменений, чтобы карточка не «скакала» при скрытии
+    // общих друзей / переносе текста «Заявка отправлена».
+    card.style.minHeight = card.offsetHeight + 'px';
     var sub = card.querySelector('.vvz-card__subtitle');
     var btnWrap = card.querySelector('.vvz-card__btn');
     if (sub) {
@@ -123,9 +126,11 @@
     }
     if (btnWrap) {
       if (btnWrap.dataset.originalHtml == null) btnWrap.dataset.originalHtml = btnWrap.innerHTML;
-      // Кнопка становится secondary-on-color «Отменить» (на тёмном фоне сториз).
+      // Кнопка становится secondary «Отменить». Именно secondary (не on-color):
+      // карточка сохраняет светлый фон, поэтому on-color (белый текст) был бы
+      // не виден. secondary = тёмный текст на светлой подложке.
       btnWrap.innerHTML =
-        '<button class="button-container __style-secondary-on-color" type="button">' +
+        '<button class="button-container __style-secondary" type="button">' +
           '<span class="button-content">Отменить</span>' +
         '</button>';
     }
@@ -144,6 +149,7 @@
       delete btnWrap.dataset.originalHtml;
     }
     card.classList.remove('__state-requested');
+    card.style.minHeight = '';
   }
 
   // Пауза/возобновление сториз, в которых лежит карточка (через .__state-paused
@@ -246,5 +252,17 @@
     }
   });
 
-  window.VvzCard = { render: render };
+  // Единый блок «заголовок + сетка карточек» для ВВЗ-слайдов (клипы и сториз
+  //   переиспользуют один компонент). Карточки — через render() выше.
+  //   VvzCard.section({ title?, people: [{name,img,sub?,mutuals?,m?}, …] })
+  // Возвращает <h2 …>+<div сетка>; обёртку/CTA/фон даёт вызывающий контекст.
+  function section(opts) {
+    opts = opts || {};
+    var title = opts.title || 'Возможно, вы знакомы';
+    var cards = (opts.people || []).map(render).join('');
+    return '<h2 class="vvz-section__title ds-title-xl">' + title + '</h2>' +
+           '<div class="vvz-section__grid" data-vvz-grid>' + cards + '</div>';
+  }
+
+  window.VvzCard = { render: render, section: section };
 })();
