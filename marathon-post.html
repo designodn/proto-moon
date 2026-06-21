@@ -67,10 +67,8 @@
     padding: var(--space-4) var(--space-4) 72px;
     text-align: center;
   }
-  /* Аватар-иконка загрузки (DS avatar __type-icon), иконка внутри оранжевая. */
-  /* DS-аватар __type-icon: свой фон + оранжевая иконка (через --avatar-color) */
-  .ll-fp-drop__upload { background: var(--dynamic-surface-base-secondary); --avatar-color: var(--dynamic-text-and-icons-status-accent); }
-  .ll-fp-drop__upload img { width: 20px; height: 20px; object-fit: contain; }   /* иконка 20×20, не растягивать */
+  /* Иконка загрузки — оранжевая, 24×24, без круга/обводки (просто img). */
+  .ll-fp-drop__upload-icon { width: 24px; height: 24px; object-fit: contain; }
   .ll-fp-drop__hint {
     max-width: 240px;
     color: var(--dynamic-text-and-icons-base-primary);
@@ -163,7 +161,7 @@
         <label class="ll-fp-drop" id="fpDrop" aria-label="Загрузить фото">
           <input type="file" id="fpFile" accept="image/*" hidden>
           <div class="ll-fp-drop__empty">
-            <div class="avatar __size-56 __type-icon ll-fp-drop__upload"><img class="ll-fp-drop__upload-icon" src="assets/icons/photo_add_24_orange.svg" width="20" height="20" alt=""></div>
+            <img class="ll-fp-drop__upload-icon" src="assets/icons/photo_add_24_orange.svg" width="24" height="24" alt="">
             <div class="ll-fp-drop__hint ds-title-m">Загрузите хотя бы одно фото для участия</div>
           </div>
           <div class="ll-fp-drop__photo">

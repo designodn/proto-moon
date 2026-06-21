@@ -249,12 +249,13 @@
   justify-content: center;
 }
 
-/* Голосование — стикер (одна картинка ~160px, наклон −15° из Figma) */
+/* Голосование — стикер (наклон −15° из Figma). База уменьшена, чтобы пик
+   бампа ×2 целиком помещался в нижнюю половину и не обрезался слайдом. */
 .omar-stickers {
   align-self: center;
-  width: 160px;
-  height: 160px;
-  margin-top: var(--space-4);
+  width: 120px;
+  height: 120px;
+  margin-top: var(--space-3);
   object-fit: contain;
 }
 /* блок «Голосуйте» скрыт, пока не наступила фаза голосования (все переходы 200мс) */

@@ -164,16 +164,21 @@
     //   combo  — только «Далее» (появляется после подписи «Голосуйте»)
     //   invite — только «Перейти к марафону» (primary)
     //   hidden — спрятан
+    // Высота футера ВСЕГДА = две кнопки: лишнюю прячем через visibility (место
+    // сохраняется), а не display:none. Иначе при появлении «Далее» футер меняет
+    // высоту → слайды пересчитываются → контент скачет.
     function setFooter(mode) {
       footer.classList.toggle('__hidden', mode === 'hidden');
+      if (mode === 'hidden') return;                 // видимость кнопок не трогаем — высота стабильна
+      ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
       if (mode === 'hero') {
-        ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
+        ctaWrap.style.visibility = 'visible'; nextWrap.style.visibility = 'visible';
         ctaBtn.className = 'button-container __style-secondary';
         ctaLabel.textContent = 'Перейти к фотомарафону';
       } else if (mode === 'combo') {
-        ctaWrap.style.display = 'none'; nextWrap.style.display = 'block';
+        ctaWrap.style.visibility = 'hidden'; nextWrap.style.visibility = 'visible';
       } else if (mode === 'invite') {
-        ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
+        ctaWrap.style.visibility = 'visible'; nextWrap.style.visibility = 'hidden';
         ctaBtn.className = 'button-container __style-primary';
         ctaLabel.textContent = 'Перейти к марафону';
       }
@@ -276,6 +281,9 @@
     if (!e.target.closest) return;
     var el = e.target.closest('a[href], [data-href]');
     if (!el) return;
+    // Кнопка из своего опубликованного поста (пришли после загрузки фото) —
+    // онбординг уже неактуален, уходим в марафон напрямую.
+    if (el.closest('[data-self-post]')) return;
     var raw = el.getAttribute('href') || el.getAttribute('data-href');
     if (!isMarathonHref(raw)) return;
 
