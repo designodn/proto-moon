@@ -173,7 +173,9 @@
   .rl-bottom {
     position: relative; z-index: 18;
     padding: 12px 16px;
-    background: linear-gradient(180deg, rgba(229,99,0,0) 0%, #e56300 38%);
+    /* основной цвет = оранжевый фон страницы (#e12300), чтобы плашка
+       сливалась с фоном под колесом без шва */
+    background: linear-gradient(180deg, rgba(225,35,0,0) 0%, #e12300 38%);
   }
   /* CTA — каноничная DS-кнопка __size-56 __style-primary-on-color (белый фон) */
   .rl-cta .button-content { gap: 8px; }

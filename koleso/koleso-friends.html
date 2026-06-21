@@ -71,6 +71,8 @@
   .rf-sheet__title { text-align: center; margin: 16px 0 16px; color: var(--dynamic-text-and-icons-base-primary); }
   .rf-sheet__list { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
   .rf-sheet__item { display: flex; gap: var(--space-3); align-items: flex-start; text-align: left; color: var(--dynamic-text-and-icons-base-secondary); }
+  /* в шторке «Как получить билет?» (i) — текст по центру относительно цифры */
+  #howto-sheet .rf-sheet__item { align-items: center; }
   .rf-sheet__num {
     flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
     background: var(--dynamic-surface-base-primary);
@@ -143,7 +145,7 @@
       <!-- КОНТЕНТ -->
       <div class="rf">
         <button class="rf-banner ds-body-m" id="banner" type="button">
-          <span class="rf-banner__text">Отправим вашему другу приглашение в чат, можно отправить не больше 10 приглашений в день</span>
+          <span class="rf-banner__text">Отправим вашему другу приглашение в&nbsp;чат, можно отправить не больше 10 приглашений в&nbsp;день</span>
         </button>
 
         <div class="rf-list" id="list">
