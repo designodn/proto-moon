@@ -64,17 +64,13 @@
   .ch-revive__row { display:flex; gap: var(--space-2); overflow-x:auto;
                     padding-right: var(--space-4); -webkit-overflow-scrolling:touch; }
   .ch-revive__row::-webkit-scrollbar { display:none; }
-  /* подарок-заглушка 120×80 */
+  /* подарок-открытка 120×80 (картинка, заполняет плитку) */
   .ch-gift { flex:0 0 auto; width:120px; height:80px; border-radius: 12px; cursor:pointer;
-             display:flex; align-items:center; justify-content:center;
-             font-size: 34px; color:#fff;
+             overflow:hidden;
              box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
              transition: transform 240ms cubic-bezier(0, -0.3, 0.5, 1.3); }
   .ch-gift:active { transform: scale(0.95); }
-  .ch-gift.__g1 { background: radial-gradient(120% 90% at 50% 30%, #ffd36b, #ff8224); }
-  .ch-gift.__g2 { background: radial-gradient(120% 90% at 50% 30%, #ff9aa8, #ff4d6d); }
-  .ch-gift.__g3 { background: radial-gradient(120% 90% at 50% 30%, #a0c4ff, #5b8def); }
-  .ch-gift.__g4 { background: radial-gradient(120% 90% at 50% 30%, #b8f1c0, #34c759); }
+  .ch-gift img { width:100%; height:100%; object-fit:cover; display:block; }
 
   /* ── Поле ввода ───────────────────────────────────────────────── */
   .ch-input { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
@@ -143,10 +139,10 @@
     <div class="ch-revive">
       <div class="ds-title-s ch-revive__title">Возобновите общение с подарка</div>
       <div class="ch-revive__row">
-        <div class="ch-gift __g1" role="button" aria-label="Подарок">🎁</div>
-        <div class="ch-gift __g2" role="button" aria-label="Подарок">💐</div>
-        <div class="ch-gift __g3" role="button" aria-label="Подарок">🧸</div>
-        <div class="ch-gift __g4" role="button" aria-label="Подарок">☕</div>
+        <div class="ch-gift" role="button" aria-label="Подарок"><img src="https://otkritkiok.ru/posts/big/milyi-privetik-ot-menya-24437.gif" alt="Подарок"></div>
+        <div class="ch-gift" role="button" aria-label="Подарок"><img src="https://cdn.fkimages.ru/posts/big/milyy-privet-posylayu-tebe-299.jpg" alt="Подарок"></div>
+        <div class="ch-gift" role="button" aria-label="Подарок"><img src="https://cdn.oonimages.ru/posts/big/gipnoticeskaya-gif-otkrytka-privetik-kak-tvoi-deliski-26024.gif" alt="Подарок"></div>
+        <div class="ch-gift" role="button" aria-label="Подарок"><img src="https://3d-galleru.ru/cards/15/10/om9uji51xf0uu4g/teplyj-privet-ot-menya.gif" alt="Подарок"></div>
       </div>
     </div>
 
