@@ -153,6 +153,15 @@ const resolveNames = str => {
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/* Текст карточки-годовщины (заголовок/подзаголовок): экранируем, перевод
+ * строки из ячейки (Alt/Option+Enter в Google-таблице) → <br>, и приклеиваем
+ * «висячие» предлоги/союзы к следующему слову неразрывным пробелом. */
+const HANG_WORDS = ['а','в','и','к','о','с','у','я','во','до','за','из','ко','на','не','об','от','по','со','то'];
+const HANG_RE = new RegExp('(^|[\\s>(«"])(' + HANG_WORDS.join('|') + ')\\s+', 'gi');
+const annivProse = s => esc(String(s ?? ''))
+  .replace(/\r\n?|\n/g, '<br>')
+  .replace(HANG_RE, (_, pre, w) => pre + w + ' ');
+
 const img = (url, attr = '') => `<img ${attr}src="${esc(url)}" alt="">`;
 
 /* ── ФОТОМАРАФОН ──────────────────────────────────────────────────────────────
@@ -792,8 +801,8 @@ ${authorHeader(aid, time)}
             <div class="avatar __size-120 __type-image __border">${img(a2)}</div>
           </div>
 
-          <div class="ds-title-l feed-birthday__title">${esc(title)}</div>
-          <div class="ds-body-m feed-birthday__text">${esc(text)}</div>
+          <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
+          <div class="ds-body-m feed-birthday__text">${annivProse(text)}</div>
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
