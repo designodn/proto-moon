@@ -223,6 +223,19 @@ function breadcrumbs(tema, rubrika) {
             </nav>`;
 }
 
+/** Строка-активность над автором («почему пост в ленте»), слот text-feed__activity.
+ *  Колонка «шапка». Токен id_<id> → имя человека из people.json (жирным):
+ *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
+function activityLine(header) {
+  if (!header) return '';
+  const parts = String(header).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
+  let html = '';
+  for (let i = 0; i < parts.length; i++) {
+    html += (i % 2 === 0) ? esc(parts[i]) : `<b>${esc(firstName(parts[i]) || parts[i])}</b>`;
+  }
+  return `          <div class="text-feed__activity ds-caption-m">${html}</div>\n`;
+}
+
 /** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
  *  простой <p>. bodyClass — класс параграфа (text-feed__body по умолчанию). */
 const CLAMP = 160;
@@ -458,7 +471,7 @@ ${feedText(text)}
           </div>`
         : feedText(text);
       return `        <article class="text-feed island">
-${header}
+${activityLine(p.header)}${header}
 
 ${body}
 ${media(photos)}
@@ -492,7 +505,7 @@ ${marathonPromo(hashtag, isJoined(p.marathonJoined))}
     /* ── реклама (feed-ad — как в NV, но в Q3-разметке text-feed) ── */
     case 'ad': {
       const subtitle = PEOPLE[String(aid)]?.subtitle || 'Реклама 0+';
-      return `        <article class="text-feed island">
+      return `        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
             <div class="uni-cell-additional-content">
@@ -712,22 +725,25 @@ ${actionsBar(likes, comments, reshares)}
     }
 
     /* ── Подарок/открытка — получил … от … ── */
-    case 'gift-received': {
-      const caption = title || 'Получил подарок от';
+    /* gift-received — обычный подарок/открытка; ai-gift-received — ИИ-подарок
+       (кнопка __style-ai-gift + тёплая подложка #FFEFE5 бордерного блока).
+       Разметка общая, отличается кнопкой/иконкой/подложкой. */
+    case 'gift-received': case 'ai-gift-received': {
+      const isAi = type === 'ai-gift-received';
+      const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
-      // CTA по содержимому подписи: подарок / ИИ / открытка (по умолчанию).
-      let cta, btnWrap, icon;
-      if (/ии|нейро/i.test(caption)) {
-        cta = 'Создать ИИ подарок';
-        btnWrap = ' __full-width ll-ai-gift-btn';
-        icon = `<span class="icon __size-20 __src" style="--icon-src:url('assets/icons/sparkles_24.svg')"></span>`;
+      let cta, btnWrap = '', icon, btnStyle = '__style-secondary', cardMod = '';
+      if (isAi) {
+        cta = 'Создать подарок из фото';
+        btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
+        btnStyle = '__style-ai-gift';
+        cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
+        icon = `<img class="ll-icon" src="assets/icons/sparkes_filled_24.svg" width="20" height="20" alt="">`;
       } else if (/подар/i.test(caption)) {
         cta = 'Отправить подарок';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       } else {
         cta = 'Отправить открытку';
-        btnWrap = '';
         icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
@@ -737,7 +753,7 @@ ${actionsBar(likes, comments, reshares)}
       return `        <article class="text-feed island">
 ${authorHeader(aid, time)}
 
-          <div class="text-feed__reshare-card">
+          <div class="text-feed__reshare-card${cardMod}">
             <div class="ll-gift-from">
               <div class="ds-body-m">${esc(caption)}</div>
               <div class="text-feed__reshare-card-author">
@@ -749,7 +765,7 @@ ${authorHeader(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36${btnWrap}">
-              <button class="button-container __style-secondary"><span class="button-content">${icon}${cta}</span></button>
+              <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
           </div>
@@ -793,7 +809,7 @@ ${authorHeader(aid, time)}
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+            <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
                  style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>

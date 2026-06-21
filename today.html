@@ -392,12 +392,13 @@
 
     <!-- ===== TABBAR ===== -->
     <div class="ll-tabbar">
-      <div class="tabbar __platform-ios">
+      <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
           <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
           <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
           <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
         </div>
         <div class="tabbar__handle"></div>
@@ -455,20 +456,27 @@
     (function () {
       var back = document.querySelector('.nav-bar__back');
       if (!back) return;
+      // Не возвращаемся на сам «Сегодня» и на экраны рулетки (koleso) — иначе
+      // цикл: today → koleso → (назад) today → (назад) koleso … Исходный origin
+      // (лента) ПЕРСИСТИМ в sessionStorage, чтобы возврат из koleso его не сбивал.
+      var EXCLUDE = /(^|\/)today\.html$|\/koleso\//;
       var origin = null;
       try { origin = sessionStorage.getItem('todayOrigin'); } catch (_) {}
-      if (!origin && document.referrer) {
+      if (document.referrer) {
         try {
           var ref = new URL(document.referrer);
           if (ref.origin === location.origin && /\.html$/.test(ref.pathname) &&
-              !/(^|\/)today\.html$/.test(ref.pathname))
+              !EXCLUDE.test(ref.pathname)) {
             // АБСОЛЮТНЫЙ путь (с ведущим «/»): на subpath-деплое (/proto-moon/…)
             // относительный путь задвоил бы префикс → /proto-moon/proto-moon/… (404).
             origin = ref.pathname + ref.search;
+            try { sessionStorage.setItem('todayOrigin', origin); } catch (_) {}
+          }
         } catch (e) {}
       }
       if (origin) back.setAttribute('data-href', origin);
     })();
   </script>
+  <script src="components/tabbar-autohide.js"></script>
 </body>
 </html>

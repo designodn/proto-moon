@@ -653,6 +653,25 @@
       var GUTTER = 5;
       var snapped = 0;                // последняя зафиксированная позиция
       var downAcceptAll = false;      // тап начат на карточке «принять все»?
+      var acceptAllI = IDX[IDX.length - 1];  // data-i карточки «принять все» (4)
+      var finishing = false;          // идёт авто-финиш (приняли всё по одной)
+
+      // Авто-финиш: приняли все подарки по одному → карточка «принять все» сама
+      // улетает вниз, затем конфетти + финальный заголовок.
+      function autoFinish() {
+        if (finishing) return;
+        finishing = true;
+        var el = els[acceptAllI], cs = rowState[acceptAllI];
+        el.style.transition = '';            // снять остаточный transition сдвига
+        el.classList.add('__flying-down');
+        var tx = (cs.cx - 330) + panOffset;
+        var ty = (cs.cy - 175) + 900;
+        var sc = cs.s || 1;
+        requestAnimationFrame(function () {
+          el.style.transform = 'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) scale(' + sc + ') rotate(-10deg)';
+        });
+        setTimeout(showAllAccepted, 450);
+      }
       // Кнопки «Принять» показываем СРАЗУ в ряду (без свайпа).
       var activated = true;
 
@@ -863,9 +882,10 @@
               els[j].style.transition = '';
             });
           }, SHIFT_DUR + 30);
-          // Все карточки приняты по одной — финальный экран.
-          if (liveCards.length === 0) {
-            setTimeout(showAllAccepted, SHIFT_DUR);
+          // Приняли все по одному — осталась только карточка «принять все»:
+          // она сама улетает вниз + конфетти + финал.
+          if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
+            setTimeout(autoFinish, SHIFT_DUR);
           }
         }
 
@@ -892,7 +912,7 @@
       // и уводим вниз за viewport с opacity 0 (STATES[4] / __state-5).
       // Карточка «принять все» (4) гаснет на шаге 1 (o:0 в веере).
       function runAcceptAll() {
-          if (animating) return;
+          if (animating || finishing) return;
           if (!liveCards.length) return;
           // Останавливаем активный снап + бэйкаем текущий panOffset в
           // STATES[3].cards.cx, чтобы from-снапшот transitionTo был

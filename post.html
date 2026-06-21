@@ -19,27 +19,32 @@
   }
   .phone-frame { background: var(--dynamic-surface-base-secondary); }
 
+  /* Пост-остров в детальной странице — без вертикальных паддингов острова
+     (шапка/контент прижаты к краям карточки). */
+  .ll-post-feed .text-feed.island { padding-top: 0; padding-bottom: 0; }
+
+  /* Инпут коммента прижат к низу экрана даже при коротком контенте: область
+     поста растягивается (flex:1), толкая sticky-инпут вниз. */
+  .phone-frame__feed { display: flex; flex-direction: column; }
+  .ll-post-feed { flex: 1 0 auto; }
+
   /* Контент-стопка: пост-остров + блок комментов; нижний паддинг под
      прибитый инпут (его высота ~64px + safe-area). */
   .ll-post-feed {
     display: flex;
     flex-direction: column;
-    padding-bottom: 88px;
+    padding-bottom: var(--space-8);
   }
 
-  /* Блок комментов под постом: серый фон страницы просвечивает сверху 8px */
-  .ll-comments {
-    background: var(--dynamic-surface-base-primary);
-    padding-top: var(--space-4);
-  }
-  .ll-comments .ds-divider { margin: 0 0 var(--space-4); }
-
-  /* Прибитый снизу инпут ответа */
+  /* Прибитый снизу инпут ответа (новый fc-input) */
   .ll-answer {
     position: sticky;
     bottom: 0;
     z-index: 40;
     border-top: 1px solid var(--dynamic-stroke-contrast-low);
+    background: var(--dynamic-surface-base-secondary);
+    padding-top: var(--space-2-5);
+    padding-bottom: max(var(--space-2-5), env(safe-area-inset-bottom));
   }
 </style>
 </head>
@@ -99,105 +104,39 @@
           </div>
         </article>
 
-        <!-- КОММЕНТЫ -->
-        <div class="ll-comments">
-          <hr class="ds-divider">
-
-          <div class="ct-list">
-
-            <!-- Ветка: верхний коммент + 3 ответа -->
-            <div class="ct-thread">
-
-              <article class="ct-item __has-line">
-                <div class="ct-item__aside">
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
-                </div>
-                <div class="ct-item__body">
-                  <div class="ct-item__head">
-                    <span class="ct-item__author ds-title-s">Татьяна ВолотькО</span>
-                    <span class="ct-item__meta">· 27 апреля</span>
-                  </div>
-                  <p class="ct-item__text">Моя профессия-монтажница радиоэлектронной аппаратуры и приборов. 4 разряд был, паяльник маленький, как продолжение руки. Очень любила свою работу.</p>
-                  <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>8</span></button></span>
-                  </div>
-                </div>
-              </article>
-
-              <article class="ct-item __reply">
-                <div class="ct-item__aside">
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=31" alt=""></div>
-                </div>
-                <div class="ct-item__body">
-                  <div class="ct-item__head">
-                    <span class="ct-item__author ds-title-s">Галина Карташова (Заборина)</span>
-                  </div>
-                  <p class="ct-item__text">Татьяна, ты молодец! Я бы ничего не смогла бы в радиоэлектроннике сделать. Только навредить! Ну я — гуманитарий!</p>
-                  <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span>
-                  </div>
-                </div>
-              </article>
-
-              <article class="ct-item __reply">
-                <div class="ct-item__aside">
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
-                </div>
-                <div class="ct-item__body">
-                  <div class="ct-item__head">
-                    <span class="ct-item__author ds-title-s">Марина Митина-Сырейщикова</span>
-                  </div>
-                  <p class="ct-item__text">Доброй наступающей ночки, Танюша! Я присоединяюсь к Галине и восхищаюсь твоими способностями!</p>
-                  <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>3</span></button></span>
-                  </div>
-                </div>
-              </article>
-
-              <article class="ct-item __reply">
-                <div class="ct-item__aside">
-                  <div class="avatar __size-24 __type-image"><img src="https://i.pravatar.cc/96?img=45" alt=""></div>
-                </div>
-                <div class="ct-item__body">
-                  <div class="ct-item__head">
-                    <span class="ct-item__author ds-title-s">Татьяна ВолотькО</span>
-                  </div>
-                  <p class="ct-item__text">Так и я гуманитарий, но работе это никак не мешало.</p>
-                  <div class="ct-item__actions">
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reply"></span>Ответить</span></button></span>
-                    <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>3</span></button></span>
-                  </div>
-                </div>
-              </article>
-
-            </div>
-
-            <div class="ct-more">
-              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть 6 ответов</span></button></span>
-            </div>
-
-          </div>
-        </div>
 
       </div>
 
-      <!-- ПРИБИТЫЙ ИНПУТ ОТВЕТА -->
-      <div class="comment-input ll-answer">
-        <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/96?img=15" alt=""></div>
-        <div class="comment-input__field">
-          <input class="text-input __size-36" placeholder="Написать ответ…">
-          <div class="comment-input__actions">
-            <span class="comment-input__action icon __size-24 __slot-attach"></span>
-            <span class="comment-input__action icon __size-24 __slot-smile"></span>
-          </div>
+      <!-- ПРИБИТЫЙ ИНПУТ КОММЕНТА (новый fc-input: ава 44 + send) -->
+      <div class="fc-input ll-answer">
+        <div class="avatar __size-44 __type-image"><img data-user-avatar src="https://i.pravatar.cc/96?img=15" alt=""></div>
+        <div class="fc-input__field">
+          <input class="fc-input__text" placeholder="Написать комментарий…">
+          <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
         </div>
       </div>
 
     </div>
   </div>
+
+  <!-- Моя ава (data-user-avatar) в инпуте коммента + лотти «Класс!» на лайк. -->
+  <script src="data/people.js"></script>
+  <script src="components/user-data.js"></script>
+  <script src="components/actions-bar.js"></script>
+
+  <!-- Навигация по кнопкам/ссылкам с data-href (напр. «Перейти к фотомарафону»
+       в инжектированном посте). screen-transition.js в обычном post.html не
+       активен (без ?nv=1), поэтому свой делегатор. -->
+  <script>
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest('[data-href]');
+      if (!el) return;
+      var href = el.getAttribute('data-href');
+      if (!href || href === '#') return;
+      e.preventDefault();
+      location.href = href;
+    });
+  </script>
 
   <!-- Контент поста приходит из ленты: тап по .text-feed кладёт его
        innerHTML в sessionStorage('openPost'), здесь подставляем в #ll-post.
@@ -208,8 +147,14 @@
         var html = sessionStorage.getItem('openPost');
         if (!html) return;
         var el = document.getElementById('ll-post');
-        if (el) el.innerHTML = html;
-        sessionStorage.removeItem('openPost');
+        if (el) {
+          el.innerHTML = html;
+          // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
+          // прибитый (ll-answer). Убираем дубль.
+          el.querySelectorAll('.fc-input').forEach(function (n) { n.remove(); });
+        }
+        // openPost НЕ удаляем: при обновлении страницы пост должен остаться тем же
+        // (иначе показывался бы дефолтный «Народный труд»).
       } catch (_) {}
     })();
   </script>

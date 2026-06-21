@@ -108,6 +108,7 @@
   gap: var(--space-1);
 }
 .text-feed__title {
+  margin: 0;
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
@@ -122,6 +123,15 @@
 .text-feed .uni-cell {
   align-items: center;
   gap: var(--space-3);
+}
+
+/* Имя автора/канала в шапке поста — всегда одна строка с эллипсисом.
+   У обычной шапки (uni-cell, без класса feed-header__name) своего nowrap не
+   было, поэтому длинные имена групп переносились. Контейнер уже min-width:0. */
+.text-feed .uni-cell-additional-content > .ds-title-s {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Время в шапке — secondary text (ds-caption-s даёт только размер) */
@@ -175,6 +185,11 @@
   border: 2px solid var(--dynamic-stroke-contrast-low);
   border-radius: 20px;
   overflow: hidden;
+}
+
+/* ИИ-подарок — тёплая подложка бордерного блока (в тон ИИ-заливке кнопки). */
+.text-feed__reshare-card.__ai-gift {
+  background: #FFEFE5;
 }
 
 .text-feed__reshare-card-author {

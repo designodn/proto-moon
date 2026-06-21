@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>Лента (light) — прототип</title>
+<!-- При первом заходе в приложение показываем шторку «Добавить друзей»
+     (add-friends-sheet.html, её крестик возвращает сюда). Гейт по sessionStorage,
+     чтобы не зацикливаться и показывать один раз за сессию. Синхронно в head —
+     до отрисовки ленты. -->
+<script>
+  (function () {
+    try {
+      if (!sessionStorage.getItem('afs-seen')) {
+        sessionStorage.setItem('afs-seen', '1');
+        location.replace('add-friends-sheet.html');
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -129,16 +143,8 @@
     gap: var(--space-1);
   }
 
-  /* Градиентная кнопка «Создать ИИ подарок» — повторяет --style-secondary
-     по высоте/радиусу/паддингам, но фон — диагональный неон-градиент. */
-  .ll-ai-gift-btn .button-container {
-    background: linear-gradient(
-      to right,
-      rgba(0, 183, 255, 0.24) 0%,
-      rgba(255, 0, 221, 0.24) 60%,
-      rgba(5, 0, 153, 0.24) 100%
-    );
-  }
+  /* Кнопка «Создать ИИ подарок» — стиль .button-container.__style-ai-gift
+     (components/button.css), заливка из ИИ-подарков NV-ленты. */
 
   /* В тёмных пилюлях __style-on-image иконки должны быть белыми.
      В DS это решается через .icon.__src + currentColor (mask), но в
@@ -253,8 +259,8 @@
   }
   /* Остриё CSS-треугольника и плоский край пилюли дают 0.5px анти-алиас-шов —
      на глаз читается как отрыв хвоста. Перекрываем на 1px, чтобы стык был
-     бесшовным (хвост у нас __side-bottom: остриё снизу примыкает к пилюле). */
-  .ll-tagged__media .tooltip-wrapper.__side-bottom > .tooltip-tail {
+     бесшовным (хвост у нас __side-top: остриё сверху примыкает к пилюле). */
+  .ll-tagged__media .tooltip-wrapper.__side-top > .tooltip-tail {
     margin-bottom: -1px;
   }
 
@@ -503,7 +509,7 @@
           </div>
         </section>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -606,6 +612,7 @@
         </article>
 
         <article class="text-feed island">
+          <div class="text-feed__activity ds-caption-m"><b>Сергей</b> поставил класс</div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -707,7 +714,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -934,6 +941,7 @@
         </article>
 
         <article class="text-feed island">
+          <div class="text-feed__activity ds-caption-m"><b>Зинаида</b> поставил класс</div>
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1083,7 +1091,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1271,7 +1279,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KxbwaUoEwUu_eB1gSo7_F0w9HjGCF-RsElme3I_obZKlDNPdU9C0AnKj5IjaBsZ61q1dJaO0yCmUDRiwETqXt5BOvnk82vmHrc_32BCo4AAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1457,7 +1465,7 @@
             </div>
           </div></div></div>
 
-          <div class="text-feed__reshare-card">
+          <div class="text-feed__reshare-card __ai-gift">
             <div class="ll-gift-from">
               <div class="ds-body-m">Получила подарок от</div>
               <div class="text-feed__reshare-card-author">
@@ -1472,7 +1480,7 @@
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36">
-              <button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/gift_16_20.svg" width="20" height="20" alt="">Отправить подарок</span></button>
+              <button class="button-container __style-ai-gift"><span class="button-content"><img class="ll-icon" src="assets/icons/sparkes_filled_24.svg" width="20" height="20" alt="">Создать подарок из фото</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
@@ -1597,7 +1605,7 @@
 
           <div class="text-feed__media ll-tagged__media">
             <img src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&amp;dpr=2" alt="">
-            <div class="tooltip-wrapper __view-primary __side-bottom __alignment-center __placement-bottom-center"
+            <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
                  style="top: 143px; left: 187.5px; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">Анфиса Тимирбаева(Абдуллина)</div>
               <div class="tooltip-tail"></div>
@@ -1697,7 +1705,7 @@
           </div>
         </article>
 
-        <article class="text-feed island">
+        <article class="text-feed island ll-ad">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://avatars.mds.yandex.net/get-altay/910613/2a00000160da5a5d8010b004bcd9a09d2f99/L_height" alt=""></div>
             <div class="uni-cell-additional-content">
@@ -1739,7 +1747,7 @@
             <h2 class="text-feed__title ds-title-xl">Шринкфляция отобрала у россиян сосиску</h2>
           <p class="ds-body-m text-feed__body">В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.</p>
           </div>
-          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://sun9-88.userapi.com/impg/s4G15-UqxkalgYF3kSrV0azOcbp4jtDWSaY-oA/JpUypeLJJZ0.jpg?size=800x600&amp;quality=96&amp;crop=0" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200" alt=""></div>
           <div class="actions-bar">
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">35</span></button></div>
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">4</span></button></div>
@@ -2575,6 +2583,19 @@
                 var p = P(id) || {};
                 return { name: p.name || '', sub: ageCity(p), img: p.photo || '' };
               });
+              // Общие друзья у первых трёх карточек (2 / 4 / 3), аватарки —
+              // реальные фото РЕАЛЬНЫХ людей (числовые id с фото) из листа
+              // «Люди», без vvz-заглушек/групп/рекламы.
+              var pool = (window.DS_PEOPLE_DATA || [])
+                .filter(function (pp) { return pp && typeof pp.id === 'number' && pp.photo; })
+                .map(function (pp) { return pp.photo; });
+              [2, 4, 3].forEach(function (n, i) {
+                if (!people[i] || !pool.length) return;
+                var k = Math.min(n, 3);
+                people[i].mutuals = n;
+                people[i].m = [];
+                for (var j = 0; j < k; j++) people[i].m.push(pool[(i * 3 + j) % pool.length]);
+              });
               return [MomentViewer.vvzSlide({
                 title:  'Возможно, вы знакомы',
                 people: people,
@@ -2585,8 +2606,10 @@
               var p = P(st.author) || {};
               var slide = MomentViewer.bdaySlide({
                 photo:          st.image || p.photo || '',
-                name:           p.name || '',
-                headerTitle:    'День рождения ' + firstName(p),
+                // ФИ в род. падеже: большим текстом — полностью, в шапке —
+                // только имя (склонение по эвристике MomentViewer.genitive).
+                name:           MomentViewer.genitive(p.name, p.gender),
+                headerTitle:    'День рождения ' + MomentViewer.genitiveFirst(p.name, p.gender),
                 headerSubtitle: '3 часа назад',
                 cta:            'Поздравить'
               });
@@ -2627,20 +2650,24 @@
        ФИО и аватар прокидываем в profile.html через ?name=&avatar=. -->
   <script>
     (function () {
-      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s')
+      document.querySelectorAll('.uni-cell .avatar.__size-44, .uni-cell .uni-cell-additional-content .ds-title-s, .uni-cell .uni-cell-additional-content .feed-header__name')
         .forEach(function (el) { el.style.cursor = 'pointer'; });
 
       document.addEventListener('click', function (e) {
         var t = e.target;
         var cell = t.closest && t.closest('.uni-cell');
         if (!cell || !cell.querySelector('.avatar.__size-44')) return;
-        if (!t.closest('.avatar') && !t.closest('.ds-title-s')) return;
-        e.preventDefault();
+        if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
+        // Реклама (ad-N) — не пользователь, профиль не открываем.
+        if (cell.closest('.ll-ad')) return;
         // Мой пост (фотомарафон) → личный профиль (без ?name).
-        if (cell.closest('[data-self-post]')) { location.href = 'profile.html'; return; }
-        var nameEl = cell.querySelector('.ds-title-s');
-        var img    = cell.querySelector('.avatar img');
+        if (cell.closest('[data-self-post]')) { e.preventDefault(); location.href = 'profile.html'; return; }
+        var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
         var name = nameEl ? nameEl.textContent.trim() : '';
+        // Своё / без имени — в профиль не уводим (напр. «Вы» в карточке-комменте).
+        if (!name || name === 'Вы') return;
+        e.preventDefault();
+        var img  = cell.querySelector('.avatar img');
         var ava  = img ? (img.getAttribute('src') || '') : '';
         location.href = 'profile.html?name=' + encodeURIComponent(name) +
                         '&avatar=' + encodeURIComponent(ava);
@@ -2769,6 +2796,7 @@
     })();
   </script>
   <script src="components/smart-crop.js" defer></script>
+  <script src="components/tabbar-autohide.js"></script>
 
   <!-- ШТОРКА «Вы участвуете в фотомарафоне!» — показывается над лентой после публикации -->
   <div class="mp-sheet" id="mpSheet" aria-hidden="true">
