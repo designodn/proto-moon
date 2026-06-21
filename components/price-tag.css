@@ -64,13 +64,26 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  /* Сдвигаем «уголок» на 1px вправо — он налезает на тело ценника, без шва. */
-  right: calc(100% - 1px);
+  right: 100%;
   width: var(--price-tag-tip-width);
   background-color: var(--price-tag-bg);
   clip-path: path(evenodd,
     'M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z \
      M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z');
+}
+
+/* Шов между «уголком» и телом — тонкая сплошная перемычка цвета тега ровно
+   на стыке (по 1px в каждую сторону). Уголок остаётся на месте (right:100%),
+   а микро-пустота на границе закрывается. */
+.price-tag::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(100% - 1px);
+  width: 2px;
+  background-color: var(--price-tag-bg);
+  pointer-events: none;
 }
 
 /* ============================================================
