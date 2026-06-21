@@ -164,25 +164,27 @@
     //   combo  — только «Далее» (появляется после подписи «Голосуйте»)
     //   invite — только «Перейти к марафону» (primary)
     //   hidden — спрятан
-    // Высота футера ВСЕГДА = две кнопки: лишнюю прячем через visibility (место
-    // сохраняется), а не display:none. Иначе при появлении «Далее» футер меняет
-    // высоту → слайды пересчитываются → контент скачет.
-    function setFooter(mode) {
-      footer.classList.toggle('__hidden', mode === 'hidden');
-      if (mode === 'hidden') return;                 // видимость кнопок не трогаем — высота стабильна
-      ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
+    // Раскладку футера (сколько кнопок) задаём СРАЗУ при входе на слайд, даже
+    // если он ещё скрыт (hidden=true → только opacity 0). Кнопку потом проявляем
+    // снятием __hidden — высота футера не меняется, контент не скачет.
+    //   hero   — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
+    //   combo  — только «Далее»
+    //   invite — только «Перейти к марафону» (primary)
+    function setFooter(mode, hidden) {
       if (mode === 'hero') {
-        ctaWrap.style.visibility = 'visible'; nextWrap.style.visibility = 'visible';
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
         ctaBtn.className = 'button-container __style-secondary';
         ctaLabel.textContent = 'Перейти к фотомарафону';
       } else if (mode === 'combo') {
-        ctaWrap.style.visibility = 'hidden'; nextWrap.style.visibility = 'visible';
+        ctaWrap.style.display = 'none'; nextWrap.style.display = 'block';
       } else if (mode === 'invite') {
-        ctaWrap.style.visibility = 'visible'; nextWrap.style.visibility = 'hidden';
+        ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
         ctaBtn.className = 'button-container __style-primary';
         ctaLabel.textContent = 'Перейти к марафону';
       }
+      footer.classList.toggle('__hidden', !!hidden);
     }
+    function showFooter() { footer.classList.remove('__hidden'); }
 
     // Combo: чипсы → подпись тематики (1.5с) → голосование (бамп-стикер) →
     // подпись голосования → показываем «Далее». Без авто-перехода: читать можно сколько угодно.
@@ -190,7 +192,7 @@
       var slide = slides[COMBO_INDEX];
       timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
       timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
-      timers.push(setTimeout(function () { setFooter('combo'); }, 5600));   // «Далее» после второй подписи
+      timers.push(setTimeout(showFooter, 5600));   // «Далее» проявляем opacity (раскладка уже задана)
     }
 
     function goTo(i) {
@@ -201,13 +203,14 @@
       slides[i].classList.add('is-active');   // не снимаем у предыдущих — анимации не перезапускаются
 
       if (i === 0) {
-        setFooter('hero');
+        setFooter('hero', false);
       } else if (i === COMBO_INDEX) {
-        if (!played[i]) { played[i] = true; setFooter('hidden'); startCombo(); }
-        else { slides[i].classList.add('__vote', '__vote-settle'); setFooter('combo'); }   // уже видели — финал + «Далее»
+        // раскладку combo (1 кнопка) ставим сразу, скрытой; «Далее» проявит showFooter()
+        if (!played[i]) { played[i] = true; setFooter('combo', true); startCombo(); }
+        else { slides[i].classList.add('__vote', '__vote-settle'); setFooter('combo', false); }   // уже видели — сразу с «Далее»
       } else if (i === last) {
-        if (!played[i]) { played[i] = true; setFooter('hidden'); timers.push(setTimeout(function () { setFooter('invite'); }, 900)); }
-        else { setFooter('invite'); }
+        if (!played[i]) { played[i] = true; setFooter('invite', true); timers.push(setTimeout(showFooter, 900)); }
+        else { setFooter('invite', false); }
       }
     }
 
