@@ -2660,6 +2660,8 @@
         if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
         // Реклама (ad-N) — не пользователь, профиль не открываем.
         if (cell.closest('.ll-ad')) return;
+        // Мой пост (фотомарафон) → личный профиль (без ?name).
+        if (cell.closest('[data-self-post]')) { e.preventDefault(); location.href = 'profile.html'; return; }
         var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
         var name = nameEl ? nameEl.textContent.trim() : '';
         // Своё / без имени — в профиль не уводим (напр. «Вы» в карточке-комменте).
@@ -2848,6 +2850,7 @@
         var captionHTML = '<p class="ds-body-m text-feed__body">' + bodyInner + '</p>';
         var art = document.createElement('article');
         art.className = 'text-feed island';
+        art.setAttribute('data-self-post', '1');   // мой пост → тап по аве ведёт в личный профиль
         art.innerHTML =
           '<div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">'
           + '<div class="avatar __size-44 __type-image"><img src="' + esc(me.photo) + '" alt=""></div>'
