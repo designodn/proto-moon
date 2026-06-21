@@ -250,5 +250,17 @@
     }
   });
 
-  window.VvzCard = { render: render };
+  // Единый блок «заголовок + сетка карточек» для ВВЗ-слайдов (клипы и сториз
+  //   переиспользуют один компонент). Карточки — через render() выше.
+  //   VvzCard.section({ title?, people: [{name,img,sub?,mutuals?,m?}, …] })
+  // Возвращает <h2 …>+<div сетка>; обёртку/CTA/фон даёт вызывающий контекст.
+  function section(opts) {
+    opts = opts || {};
+    var title = opts.title || 'Возможно, вы знакомы';
+    var cards = (opts.people || []).map(render).join('');
+    return '<h2 class="vvz-section__title ds-title-xl">' + title + '</h2>' +
+           '<div class="vvz-section__grid" data-vvz-grid>' + cards + '</div>';
+  }
+
+  window.VvzCard = { render: render, section: section };
 })();

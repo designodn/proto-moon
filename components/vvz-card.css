@@ -441,3 +441,24 @@
   border-radius: 12px;
   background: var(--dynamic-surface-base-inverse-primary, #1a1a1c);
 }
+
+/* ============================================================
+   VVZ-SECTION — единый блок «заголовок + сетка карточек».
+   Переиспользуется ВВЗ-слайдами клипов (.klip__vvz-inner) и сториз
+   (.moment__body) — собирается через VvzCard.section(). Контекст даёт
+   обёртку/фон/CTA, здесь — общий заголовок и 2×2 сетка карточек.
+   ============================================================ */
+.vvz-section__title {
+  margin: 0;
+  text-align: center;
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+.vvz-section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: min-content;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+}
+.vvz-section__grid > .vvz-card { min-width: 0; }
