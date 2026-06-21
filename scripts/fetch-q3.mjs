@@ -776,6 +776,14 @@ ${authorHeader(aid, time)}
     case 'friendversary': {
       const a1 = personPhoto(ids[0]) || 'https://i.pravatar.cc/288?img=49';
       const a2 = personPhoto(ids[1]) || 'https://i.pravatar.cc/288?img=23';
+      // Получатель подарка — друг (id, отличный от my_profile). Кол-во лет —
+      // первое число из текста («Ровно 3 года назад…»). Прокидываем на
+      // страницу подарков: ?to=<id>&anniv=<лет> → там показывается ряд
+      // «аватар + ФИ + разделитель» и заголовок «N года дружбы».
+      const giftTo = ids.find(id => id && id !== 'my_profile') || ids[1] || ids[0] || '';
+      const giftYears = (String(text).match(/(\d+)/) || [])[1] || '';
+      const giftHref = 'gifts-catalog.html?to=' + encodeURIComponent(giftTo) +
+        (giftYears ? '&anniv=' + giftYears : '');
       return `        <article class="feed-birthday island">
           <div class="feed-birthday__deco"></div>
 
@@ -789,7 +797,7 @@ ${authorHeader(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary" data-href="gifts-catalog.html"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
