@@ -64,7 +64,8 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 100%;
+  /* Сдвигаем «уголок» на 1px вправо — он налезает на тело ценника, без шва. */
+  right: calc(100% - 1px);
   width: var(--price-tag-tip-width);
   background-color: var(--price-tag-bg);
   clip-path: path(evenodd,
