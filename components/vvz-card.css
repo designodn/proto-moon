@@ -401,22 +401,14 @@
   border-radius: 999px;
   background: var(--static-surface-base-inverse-quaternary, rgba(0, 0, 0, 0.12));
 }
+/* Навбар шторки — DS nav-bar (крестик справа). Выносим за горизонтальные
+   паддинги панели (margin -16), чтобы крестик встал по краю навбара. */
 .vvz-sheet__navbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  min-height: 40px;
-}
-.vvz-sheet__close {
-  display: inline-flex;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  color: var(--dynamic-text-and-icons-base-primary);
+  margin: 0 calc(-1 * var(--space-4));
 }
 .vvz-sheet__title {
-  margin: 4px 0 16px;
+  /* Отступ от текста до кнопок — 32. */
+  margin: 0 0 var(--space-8);
   color: var(--dynamic-text-and-icons-base-primary);
 }
 .vvz-sheet__buttons {
