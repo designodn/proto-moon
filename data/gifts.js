@@ -1,14 +1,73 @@
 /**
- * Каталог подарков (картинки/цены) — зеркало data/gifts.json для браузера
- * (window.DS_GIFTS_DATA), чтобы не зависеть от fetch локального json.
- * Поля: id (для send-gift.html?gift=ID), image (URL постера), price ("N ОК").
- * Сюда заменяем картинки на свои — сетка подарков соберётся автоматически.
+ * Каталог подарков — зеркало data/gifts.json для браузера
+ * (window.DS_GIFTS_DATA). Собрано scripts/fetch-gifts.mjs из листа «Подарки».
+ * Структура: { [тип]: [{ id, image, price }] }. Типы: basic (базовая
+ * страница), friendversary (приход с годовщины). Не редактировать вручную —
+ * правь таблицу и перегоняй скриптом.
  */
-window.DS_GIFTS_DATA = [
-  { id: 'cake',    image: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg', price: '0 ОК' },
-  { id: 'bouquet', image: 'https://cool.klev.club/uploads/posts/2025-05/2630/na_den_rozhdeniya_odnoklassniku_15_9e514099.jpg',          price: '0 ОК' },
-  { id: 'classic', image: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassnik-1841.jpg',                   price: '0 ОК' },
-  { id: 'heart',   image: 'https://play-lh.googleusercontent.com/DIUjj_0djlD0xfteoleEnmD6CkmpIqMoHMwuH3AvhL85duDITmjEr9w_ib_VAC3ejQc=w240-h480-rw', price: '0 ОК' },
-  { id: 'social',  image: 'https://123ot.ru/img/00003/skachaty-besplatno-whatsapp-odnoklassniki-instagram-774945.jpg',            price: '2 ОК' },
-  { id: 'flowers', image: 'https://kartinki-life.ru/articles/2020/02/07/kartinki-i-otkrytki-s-dnjom-rozhdeniya-22-7.jpg',          price: '5 ОК' }
-];
+window.DS_GIFTS_DATA = {
+  "friendversary": [
+    {
+      "id": "friendversary-1",
+      "image": "https://3d-galleru.ru/cards/14/46/oq62oouyy5mbd6o/otkrytka.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "friendversary-2",
+      "image": "https://cvam.ru/wp-content/uploads/2023/12/otkrytki-pro-druzhbu-16.webp",
+      "price": "0 ОК"
+    },
+    {
+      "id": "friendversary-3",
+      "image": "https://3d-galleru.ru/cards/8/0/1cggyulwmg6cmsxl/eto-tebe-didzhej-tiesto-klubnaya-zhizn.jpg?z=162",
+      "price": "0 ОК"
+    },
+    {
+      "id": "friendversary-4",
+      "image": "https://3d-galleru.ru/cards/8/36/17y9ka91y2wgip72/za-druzhbu-v-seti.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "friendversary-5",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpRSlVhxhYsTFXnOZp02NputrxmzcQtJWPS-ooua9I2JEzMtzwb3Nh79Q&s=10",
+      "price": "0 ОК"
+    },
+    {
+      "id": "friendversary-6",
+      "image": "https://i.pinimg.com/736x/bb/94/b4/bb94b49442ec6a5da81d1797c6149b4d.jpg",
+      "price": "0 ОК"
+    }
+  ],
+  "basic": [
+    {
+      "id": "basic-1",
+      "image": "https://i.pinimg.com/originals/ca/c1/c1/cac1c1dcca51a7d2b9640ca157c29cfe.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "basic-2",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJzKzTUcnfglPK9J4krIzM1pJL0cpq6XRUHWWcH-c_kA&s=10",
+      "price": "0 ОК"
+    },
+    {
+      "id": "basic-3",
+      "image": "https://pozd.org/wp-content/uploads/2534235123.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "basic-4",
+      "image": "https://mir-animashki.com/_ph/17/473273500.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "basic-5",
+      "image": "https://img1.picmix.com/output/pic/normal/4/8/5/2/8252584_dfd61.gif",
+      "price": "0 ОК"
+    },
+    {
+      "id": "basic-6",
+      "image": "https://img1.picmix.com/output/pic/normal/5/5/1/2/7292155_51b4c.gif",
+      "price": "0 ОК"
+    }
+  ]
+};
