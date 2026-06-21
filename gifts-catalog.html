@@ -44,39 +44,50 @@
   .ll-gc-island {
     flex-shrink: 0;
     margin: var(--space-2) 0 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    /* Все элементы острова (получатель / заголовок / сетка) с гэпом 12. */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3) 0 36px;
     background-color: var(--dynamic-surface-base-secondary);
     overflow: visible;
   }
 
-  /* Хедер «День рождения!» — DS header __size-l, внутри острова, 16/12/16/0 */
+  /* Хедер «День рождения!» — DS header __size-l. Вертикальные отступы задаёт
+     gap острова, поэтому здесь только горизонтальные 16. */
   .ll-gc-section-head {
-    padding: var(--space-4) var(--space-4) var(--space-3);
+    padding: 0 var(--space-4);
   }
 
-  /* Получатель (приход с годовщины: ?to=<id>): аватар + ФИ + разделитель снизу.
-     Показывается через .__on (JS), стоит первым в острове над заголовком. */
+  /* Получатель (приход с годовщины: ?to=<id>): аватар + ФИ + разделитель снизу
+     (с гор. паддингами 16, через ::after). Показывается через .__on (JS). */
   .ll-gc-recipient {
     display: none;
+    position: relative;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--dynamic-stroke-contrast-low);
+    padding: 0 var(--space-4) var(--space-3);
   }
   .ll-gc-recipient.__on { display: flex; }
+  .ll-gc-recipient::after {
+    content: '';
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: 0;
+    height: 1px;
+    background: var(--dynamic-stroke-contrast-low);
+  }
   .ll-gc-recipient__name { color: var(--dynamic-text-and-icons-base-primary); }
 
-  /* Сетка подарков — 2×N, gap 12, бока 16, низ 36, верх 12 (под хедером уже
-     есть его собственный padding-bottom, поэтому верх грида = 0; общий
-     верхний отступ контента в карточке = 12 хедера + 12 от карточки). */
+  /* Сетка подарков — 2×N, gap 12, бока 16 (низ острова даёт padding-bottom). */
   .ll-gc-grid {
     display: grid;
     /* 2×N — две колонки. minmax(0,1fr) гасит min-content-расширение от
        крупного font-size в постере. */
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-3);                          /* 12px */
-    padding: 0 var(--space-4) 36px;
+    padding: 0 var(--space-4);
   }
 
   /* Сама карточка — вертикальный стек: image squircle + price-tag под ним.
@@ -169,45 +180,14 @@
         <!-- Получатель (аватар + ФИ + разделитель). Заполняется из ?to=<id>. -->
         <div class="ll-gc-recipient" id="gcRecipient">
           <div class="avatar __size-36 __type-image"><img id="gcRecipientAva" src="" alt=""></div>
-          <span class="ds-body-l ll-gc-recipient__name" id="gcRecipientName"></span>
+          <span class="ds-title-s ll-gc-recipient__name" id="gcRecipientName"></span>
         </div>
         <header class="header __size-l ll-gc-section-head">
           <div class="header__title ds-title-l">День рождения!</div>
         </header>
 
-        <div class="ll-gc-grid">
-
-          <a class="ll-gift" href="send-gift.html?gift=cake">
-            <span class="ll-gift__poster"><img src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg" alt="" loading="lazy"></span>
-            <span class="price-tag">0 ОК</span>
-          </a>
-
-          <a class="ll-gift" href="send-gift.html?gift=bouquet">
-            <span class="ll-gift__poster"><img src="https://cool.klev.club/uploads/posts/2025-05/2630/na_den_rozhdeniya_odnoklassniku_15_9e514099.jpg" alt="" loading="lazy"></span>
-            <span class="price-tag">0 ОК</span>
-          </a>
-
-          <a class="ll-gift" href="send-gift.html?gift=classic">
-            <span class="ll-gift__poster"><img src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassnik-1841.jpg" alt="" loading="lazy"></span>
-            <span class="price-tag">0 ОК</span>
-          </a>
-
-          <a class="ll-gift" href="send-gift.html?gift=heart">
-            <span class="ll-gift__poster"><img src="https://play-lh.googleusercontent.com/DIUjj_0djlD0xfteoleEnmD6CkmpIqMoHMwuH3AvhL85duDITmjEr9w_ib_VAC3ejQc=w240-h480-rw" alt="" loading="lazy"></span>
-            <span class="price-tag">0 ОК</span>
-          </a>
-
-          <a class="ll-gift" href="send-gift.html?gift=social">
-            <span class="ll-gift__poster"><img src="https://123ot.ru/img/00003/skachaty-besplatno-whatsapp-odnoklassniki-instagram-774945.jpg" alt="" loading="lazy"></span>
-            <span class="price-tag">2 ОК</span>
-          </a>
-
-          <a class="ll-gift" href="send-gift.html?gift=flowers">
-            <span class="ll-gift__poster"><img src="https://kartinki-life.ru/articles/2020/02/07/kartinki-i-otkrytki-s-dnjom-rozhdeniya-22-7.jpg" alt="" loading="lazy"></span>
-            <span class="price-tag">5 ОК</span>
-          </a>
-
-        </div>
+        <!-- Сетка подарков собирается из data/gifts.js (window.DS_GIFTS_DATA). -->
+        <div class="ll-gc-grid" id="gcGrid"></div>
       </section>
 
     </div>
@@ -230,6 +210,24 @@
   <script src="components/back-button.js"></script>
   <script src="components/tab.js"></script>
   <script src="components/tab-bar.js"></script>
+
+  <!-- Каталог подарков (картинки/цены) -->
+  <script src="data/gifts.js"></script>
+  <script>
+    // Сетка подарков из data/gifts.js. Заменишь картинки в gifts.js — сетка
+    // пересоберётся сама. Каждый подарок ведёт на send-gift.html?gift=<id>.
+    (function () {
+      var grid = document.getElementById('gcGrid');
+      var list = window.DS_GIFTS_DATA;
+      if (!grid || !list || !list.length) return;
+      grid.innerHTML = list.map(function (g) {
+        return '<a class="ll-gift" href="send-gift.html?gift=' + encodeURIComponent(g.id) + '">' +
+          '<span class="ll-gift__poster"><img src="' + (g.image || '') + '" alt="" loading="lazy"></span>' +
+          '<span class="price-tag">' + (g.price || '0 ОК') + '</span>' +
+        '</a>';
+      }).join('');
+    })();
+  </script>
 
   <!-- Реальные люди (для получателя с годовщины) -->
   <script src="data/people.js"></script>
