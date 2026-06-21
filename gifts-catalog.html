@@ -214,12 +214,15 @@
   <!-- Каталог подарков (картинки/цены) -->
   <script src="data/gifts.js"></script>
   <script>
-    // Сетка подарков из data/gifts.js. Заменишь картинки в gifts.js — сетка
-    // пересоберётся сама. Каждый подарок ведёт на send-gift.html?gift=<id>.
+    // Сетка подарков из data/gifts.js (наборы по типу из листа «Подарки»):
+    //   ?to=<id>  → набор friendversary (приход с годовщины);
+    //   иначе     → набор basic (базовая страница).
     (function () {
       var grid = document.getElementById('gcGrid');
-      var list = window.DS_GIFTS_DATA;
-      if (!grid || !list || !list.length) return;
+      var data = window.DS_GIFTS_DATA || {};
+      var set = new URLSearchParams(location.search).get('to') ? 'friendversary' : 'basic';
+      var list = data[set] || data.basic || [];
+      if (!grid || !list.length) return;
       grid.innerHTML = list.map(function (g) {
         return '<a class="ll-gift" href="send-gift.html?gift=' + encodeURIComponent(g.id) + '">' +
           '<span class="ll-gift__poster"><img src="' + (g.image || '') + '" alt="" loading="lazy"></span>' +
