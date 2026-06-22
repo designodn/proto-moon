@@ -1001,6 +1001,9 @@
 
       // Remember we're "in the app" so Back returns to the menu
       try { sessionStorage.setItem(HOME_KEY, '1'); } catch (e) {}
+      // Каждый запуск OK-прилы заново показывает шторку «Новые друзья»:
+      // сбрасываем гейт afs-seen (его читает lenta-q3.html при заходе).
+      try { if (/lenta-q3\.html/.test(href)) sessionStorage.removeItem('afs-seen'); } catch (e) {}
 
       // Reflow → запускаем переходы
       void launch.offsetWidth;
