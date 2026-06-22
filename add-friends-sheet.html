@@ -205,6 +205,18 @@
   <button class="fp__close nav-bar__back" data-href="lenta-q3.html" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
   </button>
+  <!-- Возврат крестика — на страницу, которая открыла шторку (?back). По
+       умолчанию lenta-q3.html (исторический поток), для открытия из lenta.html
+       приходит ?back=lenta.html. -->
+  <script>
+    (function () {
+      try {
+        var back = new URLSearchParams(location.search).get('back');
+        var close = document.querySelector('.fp__close');
+        if (back && close) close.setAttribute('data-href', back);
+      } catch (e) {}
+    })();
+  </script>
 
   <main class="fp __state-1" id="fp">
     <h1 class="fp__title">У вас<br>7 новых друзей</h1>
