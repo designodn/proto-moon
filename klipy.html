@@ -200,16 +200,8 @@
      форсированно тёмный (видео всегда тёмное) — переопределяем
      токены поверхности/иконок на dark-значения.
      ============================================================ */
+  /* Тёмную тему таб-бара задаёт модификатор .tabbar.__theme-dark (tabbar.css). */
   .klipy-tabbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 25; }
-  .klipy-tabbar .tabbar {
-    --dynamic-surface-base-secondary: #1A1A1C;
-    --dynamic-stroke-contrast-low: rgba(255, 255, 255, 0.10);
-    /* невыбранный таб = base-primary (см. tabbar.css) — в тёмной шапке клипа
-       красим в белый; tertiary оставлен для совместимости. */
-    --dynamic-text-and-icons-base-primary: #FFFFFF;
-    --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
-    --dynamic-text-and-icons-status-accent: #FF9558;
-  }
   /* Home-indicator (handle) в плеере не показываем вовсе — ни «пилюли», ни
      цветной подложки (свайп-зона не нужна, навигация — по таб-иконкам). */
 
@@ -307,7 +299,7 @@
 
     <!-- TABBAR (клипы активны, тёмная тема) -------------------------- -->
     <div class="klipy-tabbar">
-      <div class="tabbar __platform-android">
+      <div class="tabbar __platform-android __theme-dark">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed" aria-label="Лента" data-href="lenta-q3.html"></button>
           <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
