@@ -46,6 +46,9 @@
   .ch-msg { align-self:flex-end; max-width: 76%;
             background: var(--dynamic-surface-base-secondary);
             border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
+  /* входящее — прижато влево, другой фон */
+  .ch-msg.__in { align-self:flex-start;
+                 background: var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
   .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
   .ch-msg__time { position:absolute; right:8px; bottom:4px;
                   font-size:11px; line-height:14px;
@@ -96,9 +99,26 @@
 
     <!-- ЛЕНТА -->
     <div class="ch-feed">
+      <div class="ds-caption-m ch-day">вчера</div>
+
+      <div class="ch-msg __in">
+        <div class="ds-body-l ch-msg__text">Привет! Как ты? Сто лет не общались 🙂</div>
+        <span class="ch-msg__time">19:02</span>
+      </div>
+
+      <div class="ch-msg">
+        <div class="ds-body-l ch-msg__text">Привет! Всё хорошо, рада тебя слышать</div>
+        <span class="ch-msg__time">19:05</span>
+      </div>
+
+      <div class="ch-msg __in">
+        <div class="ds-body-l ch-msg__text">Видела, Колесо призов сейчас у всех в ленте — прикольная штука</div>
+        <span class="ch-msg__time">19:06</span>
+      </div>
+
       <div class="ch-msg">
         <div class="ds-body-l ch-msg__text">Да, я тоже так думаю</div>
-        <span class="ch-msg__time">10:10</span>
+        <span class="ch-msg__time">19:08</span>
       </div>
 
       <div class="ds-caption-m ch-day">сегодня</div>
