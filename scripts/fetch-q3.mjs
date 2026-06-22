@@ -548,11 +548,11 @@ ${crumbs}
 ${authorHeaderFn(aid, time, { subscribe })}
           </header>`
           : authorHeaderFn(aid, time, { subscribe });
-      // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
+      // Заголовок из колонки «заголовок» (если задан) — ds-title-l,
       // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
       const body = title
         ? `          <div class="text-feed__titled">
-            <h2 class="text-feed__title ds-title-xl">${esc(title)}</h2>
+            <h2 class="text-feed__title ds-title-l">${esc(title)}</h2>
 ${feedText(text)}
           </div>`
         : feedText(text);

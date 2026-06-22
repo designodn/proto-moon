@@ -89,7 +89,7 @@
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: url('assets/start/wallpaper.jpg') center / cover no-repeat;
+    background: url('assets/start/q3-wallpaper.jpg') center / cover no-repeat;
   }
   .wallpaper::before {
     content: none;
@@ -145,8 +145,10 @@
   .splash.is-loaded .splash__logo { opacity: 1; filter: blur(0); }
   .splash__logo svg,
   .splash__logo img { display: block; width: 100%; height: 100%; }
-  /* оранжевый логотип → белый для контраста на оранжевом фоне */
-  .splash__logo-img { filter: brightness(0) invert(1); }
+  /* splashLogo.png — оранжевая squircle-плитка с белыми буквами «ОК».
+     На оранжевом фоне плитка визуально сливается с градиентом, остаются
+     только белые буквы. Без CSS-фильтра — иначе и плитка, и буквы стали
+     бы одним белым квадратом. */
 
   /* Подпись «народная соцсеть» — 50px от низа (параметры из Figma) */
   .splash__subtitle {
@@ -406,27 +408,9 @@
   .icon-messages { background: linear-gradient(180deg, #2aa7ff 0%, #1b72e8 100%); }
   .icon-camera   { background: linear-gradient(180deg, #4a4a4f 0%, #202024 100%); }
 
-  /* Chrome — multi-colour ring + white centre + blue dot */
-  .icon-chrome {
-    background: conic-gradient(from 90deg,
-      #34a853 0deg 120deg,
-      #fbbc05 120deg 240deg,
-      #ea4335 240deg 360deg);
-  }
-  .icon-chrome::before {
-    content: "";
-    position: absolute;
-    width: 60%; height: 60%;
-    border-radius: 50%;
-    background: #fff;
-  }
-  .icon-chrome::after {
-    content: "";
-    position: absolute;
-    width: 36%; height: 36%;
-    border-radius: 50%;
-    background: #4285f4;
-  }
+  /* Chrome — реальный логотип (PNG, свой круг с прозрачным фоном) */
+  .icon-chrome { background: none; }
+  .icon-chrome img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
   /* Google search bar (Pixel signature) */
   .search-bar {
@@ -444,57 +428,6 @@
   .search-bar__g { width: 22px; height: 22px; }
   .search-bar__spacer { flex: 1; }
   .search-bar__icon { width: 22px; height: 22px; }
-
-  /* ============================================================
-     System notifications — Android heads-up cards from our app.
-     One at a time: each new push replaces the previous one, and a
-     card can be flicked up to dismiss it.
-     ============================================================ */
-  .notifs {
-    position: absolute;
-    top: 36px; left: 8px; right: 8px;
-    z-index: 65;
-    pointer-events: none;   /* empty area passes taps to the launcher */
-  }
-  /* Карточки накладываются друг на друга (стопка-дека): новая приходит
-     поверх, предыдущие чуть уезжают вглубь и выглядывают снизу. */
-  .notif {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    background: rgba(241, 243, 247, 0.97);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px;
-    padding: 11px 15px 13px;
-    color: #1c1c1e;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.28);
-    pointer-events: auto;   /* the card itself catches the swipe */
-    touch-action: none;     /* vertical drag stays ours */
-    transform-origin: center top;
-    will-change: transform, opacity;
-    cursor: grab;
-    transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
-  }
-  .notif:active { cursor: grabbing; }
-  .notif__head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #5f6368;
-    font-weight: 500;
-  }
-  .notif__appicon {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: radial-gradient(120% 120% at 30% 25%, #ffb347 0%, #ff7a00 100%);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .notif__app { font-weight: 600; color: #3c4043; }
-  .notif__sep { opacity: 0.6; }
-  .notif__title { font-size: 14px; font-weight: 600; margin-top: 5px; }
-  .notif__body  { font-size: 13px; color: #3c4043; margin-top: 1px; line-height: 1.3; }
 
   /* ============================================================
      App-launch animation — tapped icon flies to splash logo position
@@ -548,8 +481,8 @@
   <!-- ============== SPLASH приложения ОК (показывается при открытии) ============== -->
   <div class="splash" id="splash" style="display:none">
     <div class="splash__logo" id="splashLogo">
-      <!-- Официальный логотип ОК (78×78). На оранжевом сплеше делаем белым
-           CSS-фильтром для контраста. -->
+      <!-- Официальный логотип ОК: оранжевая плитка сливается с фоном,
+           видны только белые буквы (без CSS-фильтра, см. .splash__logo выше). -->
       <img src="assets/icons/splashLogo.png" alt="ОК" class="splash__logo-img">
     </div>
     <div class="splash__subtitle">народная соцсеть</div>
@@ -617,7 +550,7 @@
         <span class="ls-push__app"><img src="assets/icons/appLogoDefault.png" alt="ОК"></span>
         <div class="ls-push__content">
           <div class="ls-push__head">
-            <span class="ls-push__title">Алёна, у вас новые гости</span>
+            <span class="ls-push__title"><span data-ls-myname>Анфиса</span>, у вас новые гости</span>
             <span class="ls-push__time">2 ч назад</span>
           </div>
           <div class="ls-push__body">Давайте проверим, кто это</div>
@@ -674,7 +607,7 @@
         <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 20 17H8l-4.2 3.4A.6.6 0 0 1 2.8 20V5.5A1.5 1.5 0 0 1 4.3 4Z"/><g fill="#1b72e8"><circle cx="8" cy="10.5" r="1.2"/><circle cx="12" cy="10.5" r="1.2"/><circle cx="16" cy="10.5" r="1.2"/></g></svg>
       </span>
       <!-- Chrome -->
-      <span class="app__icon icon-chrome"></span>
+      <span class="app__icon icon-chrome"><img src="assets/icons/chrome.png" alt="Chrome"></span>
       <!-- Камера -->
       <span class="app__icon icon-camera">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M9 4.5 8 6.2H5A2.2 2.2 0 0 0 2.8 8.4v8.4A2.2 2.2 0 0 0 5 19h14a2.2 2.2 0 0 0 2.2-2.2V8.4A2.2 2.2 0 0 0 19 6.2h-3l-1-1.7H9Z" fill="#fff" fill-opacity="0.95"/><circle cx="12" cy="12.4" r="3.6" fill="#202024"/><circle cx="12" cy="12.4" r="2.4" fill="#fff" fill-opacity="0.85"/></svg>
@@ -687,13 +620,9 @@
       <span class="search-bar__spacer"></span>
       <!-- mic -->
       <svg class="search-bar__icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path fill="#34A853" d="M18 12a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.9V22h2v-2.1A8 8 0 0 0 20 12h-2Z"/></svg>
-      <!-- lens -->
-      <svg class="search-bar__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4" fill="#4285F4"/><path fill="#EA4335" d="M12 2a10 10 0 0 0-3 .5l1.3 4A6 6 0 0 1 12 6V2Z"/><path fill="#FBBC05" d="M3.2 7.5A10 10 0 0 0 2 12h4a6 6 0 0 1 .7-2.8L3.2 7.5Z"/><path fill="#34A853" d="M6 16.5 3 19a10 10 0 0 0 9 3v-4a6 6 0 0 1-6-1.5Z"/></svg>
     </div>
   </div>
 
-  <!-- System notifications stack (filled from JS while on the menu) -->
-  <div class="notifs" id="notifs"></div>
 
   <!-- Gesture navigation pill (always on top) -->
   <div class="nav-pill"></div>
@@ -722,6 +651,19 @@
     var person = firstWithPhoto(pair[1]);
     if (el && person) { el.src = person.photo; el.alt = person.name || ''; }
   });
+
+  // Обращение в пуше — имя из профиля пользователя (id "my_profile" в people.js).
+  // Берём только первое слово (имя), т.к. в name хранится полное ФИО.
+  var me = null;
+  for (var j = 0; j < people.length; j++) {
+    if (people[j] && people[j].id === 'my_profile') { me = people[j]; break; }
+  }
+  if (me && me.name) {
+    var firstName = me.name.trim().split(/\s+/)[0];
+    document.querySelectorAll('[data-ls-myname]').forEach(function (el) {
+      el.textContent = firstName;
+    });
+  }
 })();
 </script>
 <script>
@@ -730,7 +672,6 @@
   var lock     = document.getElementById('lockscreen');
   var launch   = document.getElementById('launch');
   var glyph    = document.getElementById('launchGlyph');
-  var notifBox = document.getElementById('notifs');
   var splash   = document.getElementById('splash');
 
   /* ---- App-open splash: показывается ПОСЛЕ тапа по иконке ОК (пока
@@ -760,7 +701,6 @@
     device.classList.add('unlocked');
     try { sessionStorage.setItem(HOME_KEY, '1'); } catch (e) {}
     history.pushState({ scr: 'menu' }, '');
-    startNotifications();
   }
 
   // Slide back down to the lock screen (Back pressed from the menu).
@@ -777,8 +717,6 @@
     device.classList.add('unlocked');
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
-    stopNotifications(false);         // cancel any stale timer, keep delivered
-    startNotifications();             // resume any remaining notifications
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
@@ -793,142 +731,6 @@
     launch.removeAttribute('style');
     glyph.innerHTML = '';
     hideSplash();
-  }
-
-  /* ============================================================
-     System notifications from «ОК» — arrive on the menu
-     one after another, 6 seconds apart, while it stays unlocked.
-     ============================================================ */
-  var NOTIFS = [
-    { title: 'Тамара Белова опубликовала фото', body: 'Поставьте «Класс!» одними из первых' },
-    { title: '3 новых уведомления',             body: 'Алёна Курская и ещё двое отметили вас' },
-    { title: 'Миша Колесников ответил вам',      body: '«Спасибо за совет по кофеварке!»' },
-    { title: 'Прямой эфир скоро начнётся',       body: 'Концерт «Летняя сцена» — через 5 минут' },
-    { title: 'Сегодня день рождения у Ирины 🎂', body: 'Не забудьте поздравить' }
-  ];
-  var NOTIF_GAP = 6000;   // 6s between notifications
-  var NOTIF_FIRST = 2000; // first one shortly after entering the menu
-
-  var NOTIF_LIFETIME = 10000;  // каждое уведомление само скрывается через 10s
-
-  var notifTimer = null, notifIndex = 0, notifsRunning = false;
-
-  // Animate a card up and out, then drop it from the DOM.
-  function dismissNotif(el) {
-    if (!el || el.__leaving) return;
-    el.__leaving = true;
-    if (el.__hideTimer) { clearTimeout(el.__hideTimer); el.__hideTimer = null; }
-    el.style.transition = 'transform 0.28s ease, opacity 0.28s ease';
-    el.style.transform = 'translateY(-150%)';
-    el.style.opacity = '0';
-    var done = function () { if (el.parentNode) el.parentNode.removeChild(el); restack(); };
-    el.addEventListener('transitionend', done, { once: true });
-    setTimeout(done, 360);   // fallback if transitionend is missed
-  }
-
-  // Раскладываем стопку: новейшая карточка спереди (depth 0), предыдущие
-  // уезжают вглубь (смещение вниз + уменьшение), выглядывая снизу.
-  var MAX_STACK = 3;
-  function restack() {
-    var kids = notifBox.children, visible = [];
-    for (var i = 0; i < kids.length; i++) {
-      if (!kids[i].__leaving) visible.push(kids[i]);
-    }
-    var n = visible.length;
-    for (var j = 0; j < n; j++) {
-      var el = visible[j];
-      var depth = n - 1 - j;                 // 0 = новейшая (спереди)
-      if (depth >= MAX_STACK) { dismissNotif(el); continue; }
-      el.style.transition = 'transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease';
-      el.style.zIndex = String(100 - depth);
-      el.style.opacity = depth === 0 ? '1' : (depth === 1 ? '0.92' : '0.8');
-      el.style.transform = 'translateY(' + (depth * 10) + 'px) scale(' + (1 - depth * 0.05) + ')';
-    }
-  }
-
-  // Flick-up to dismiss: the card follows the finger, releases past a
-  // small threshold to fly off, otherwise springs back.
-  function attachSwipe(el) {
-    var sy = 0, dy = 0, dragging = false;
-    el.addEventListener('pointerdown', function (e) {
-      if (el.__leaving) return;
-      dragging = true; sy = e.clientY; dy = 0;
-      el.style.transition = 'none';
-      try { el.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-    el.addEventListener('pointermove', function (e) {
-      if (!dragging) return;
-      dy = Math.min(0, e.clientY - sy);              // upward only
-      el.style.transform = 'translateY(' + dy + 'px)';
-      el.style.opacity = String(Math.max(0, 1 + dy / 120));
-    });
-    function end() {
-      if (!dragging) return;
-      dragging = false;
-      if (dy < -34) {                                // flicked far enough → close
-        dismissNotif(el);
-      } else {                                       // snap back into the stack
-        restack();
-      }
-    }
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-  }
-
-  function addNotif(data) {
-    var el = document.createElement('div');
-    el.className = 'notif';
-    el.innerHTML =
-      '<div class="notif__head">' +
-        '<span class="notif__appicon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none">' +
-          '<circle cx="50" cy="34" r="13" fill="#fff"/>' +
-          '<path d="M38 44 L50 64 L38 84" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<path d="M62 44 L50 64 L62 84" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '</svg></span>' +
-        '<span class="notif__app">ОК</span>' +
-        '<span class="notif__sep">·</span><span>сейчас</span>' +
-      '</div>' +
-      '<div class="notif__title"></div>' +
-      '<div class="notif__body"></div>';
-    el.querySelector('.notif__title').textContent = data.title;
-    el.querySelector('.notif__body').textContent = data.body;
-    notifBox.appendChild(el);            // новейшая — последняя в DOM = спереди
-    attachSwipe(el);
-    // Стартовое состояние: над стопкой и прозрачная — затем «приходит» поверх,
-    // а предыдущие карточки уезжают вглубь.
-    el.style.transition = 'none';
-    el.style.transform = 'translateY(-46px) scale(1)';
-    el.style.opacity = '0';
-    void el.offsetWidth;                 // фиксируем старт перед анимацией
-    restack();
-    el.__hideTimer = setTimeout(function () { dismissNotif(el); }, NOTIF_LIFETIME);
-  }
-
-  function scheduleNext() {
-    if (notifIndex >= NOTIFS.length) { notifsRunning = false; return; }
-    var delay = notifIndex === 0 ? NOTIF_FIRST : NOTIF_GAP;
-    notifTimer = setTimeout(function () {
-      addNotif(NOTIFS[notifIndex]);
-      notifIndex++;
-      scheduleNext();
-    }, delay);
-  }
-
-  function startNotifications() {
-    // Приходящие системные пуши на меню отключены (по запросу) — heads-up
-    // карточки больше не «прилетают» во время взаимодействия.
-    return;
-  }
-
-  function stopNotifications(clear) {
-    notifsRunning = false;
-    if (notifTimer) { clearTimeout(notifTimer); notifTimer = null; }
-    if (clear) {
-      Array.prototype.forEach.call(notifBox.children, function (el) {
-        if (el.__hideTimer) clearTimeout(el.__hideTimer);
-      });
-      notifBox.innerHTML = ''; notifIndex = 0;
-    }
   }
 
   /* ---- Lock screen: interactive swipe-up (follows the finger), release past
