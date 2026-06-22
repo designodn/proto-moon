@@ -521,21 +521,17 @@ ${actionsBar(likes, comments, reshares)}${marathonBlock(p.marathon, isJoined(p.m
         </article>`.replace(/\n\n+/g, '\n\n');
     }
 
-    /* ── Фотомарафон: веер фото + промо. Два варианта по автору:
-       • группа/приложение (group-*) или пусто → «от приложения»: заголовок,
-         без шапки автора (большая титульная карточка);
-       • человек (8, my_profile, …) → «марафон от человека»: сверху шапка
-         автора (аватар + имя + время), как у обычного поста. ── */
+    /* ── Фотомарафон «от приложения» — отдельный фид: заголовок + веер фото + промо.
+       Пост от ЧЕЛОВЕКА с фото делается типом `photo`: колонка «марафон» добавит
+       к нему промо-блок (текст + кол-во участников + кнопка) через marathonBlock. ── */
     case 'marathon': {
       const hashtag = marathonHashtag(p.marathon);
       const rot = ['-12.42deg', '-4.17deg', '6.62deg'];
       const tiles = photos.slice(0, 3).map((u, i) =>
         `            <div class="marathon__tile" style="--marathon-tile-rotate:${rot[i] || '0deg'}">${img(u)}</div>`).join('\n');
-      const fromPerson = aid && !isGroupId(aid);
-      const personHdr = fromPerson ? `${authorHeaderFn(aid, time)}\n\n` : '';
-      const titleEl = title ? `          <p class="ds-title-l marathon__title">${esc(title)}</p>\n` : '';
       return `        <article class="marathon island">
-${personHdr}${titleEl}          <div class="marathon__gallery">
+          <p class="ds-title-l marathon__title">${esc(title)}</p>
+          <div class="marathon__gallery">
 ${tiles}
           </div>
           <div class="marathon__special">
