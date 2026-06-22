@@ -16,24 +16,27 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
 
 // Порядок важен: people → ленты/контент → подарки → доразметка vvz.
+// Шаг — это [скрипт, ...аргументы]; первый элемент задаёт лейбл в логах.
 const STEPS = [
-  'fetch-people.mjs',    // лист «Люди» → data/people.*
-  'fetch-feed.mjs',      // лист «Посты» (New Vision) → new-vision/lenta.html
-  'fetch-q3.mjs',        // лист «Q3-посты» → lenta-q3.html
-  'fetch-clips.mjs',     // лист «Клипы» → data/clips.*
-  'fetch-activity.mjs',  // лист «Активности» (Вокруг вас)
-  'fetch-stories.mjs',   // лист «Сториз» (Моменты) → data/stories.*
-  'fetch-marathon.mjs',  // лист «Марафон» → marathon.html
-  'fetch-gifts.mjs',     // лист «Подарки» → data/gifts.*
-  'wire-vvz.mjs',        // доразметка data-person на ВВЗ-карточках страниц
+  ['fetch-people.mjs'],              // лист «Люди» → data/people.*
+  ['fetch-feed.mjs'],                // лист «Посты» (New Vision) → new-vision/lenta.html
+  ['fetch-q3.mjs'],                  // лист «Q3-посты» → lenta-q3.html
+  ['fetch-q3.mjs', '--tribune'],     // лист «Трибуна» (gid 803749593) → tribune.html
+  ['fetch-clips.mjs'],               // лист «Клипы» → data/clips.*
+  ['fetch-activity.mjs'],            // лист «Активности» (Вокруг вас)
+  ['fetch-stories.mjs'],             // лист «Сториз» (Моменты) → data/stories.*
+  ['fetch-marathon.mjs'],            // лист «Марафон» → marathon.html
+  ['fetch-gifts.mjs'],               // лист «Подарки» → data/gifts.*
+  ['wire-vvz.mjs'],                  // доразметка data-person на ВВЗ-карточках страниц
 ];
 
 const results = [];
-for (const step of STEPS) {
-  console.log(`\n════════ ${step} ════════`);
-  const r = spawnSync(process.execPath, [resolve(HERE, step)], { stdio: 'inherit', cwd: ROOT });
-  results.push({ step, ok: r.status === 0 });
-  if (r.status !== 0) console.error(`⚠ ${step}: ошибка (код ${r.status ?? '—'}) — продолжаю дальше`);
+for (const [script, ...args] of STEPS) {
+  const label = [script, ...args].join(' ');
+  console.log(`\n════════ ${label} ════════`);
+  const r = spawnSync(process.execPath, [resolve(HERE, script), ...args], { stdio: 'inherit', cwd: ROOT });
+  results.push({ step: label, ok: r.status === 0 });
+  if (r.status !== 0) console.error(`⚠ ${label}: ошибка (код ${r.status ?? '—'}) — продолжаю дальше`);
 }
 
 console.log('\n════════ СВОДКА ════════');
