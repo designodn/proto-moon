@@ -904,9 +904,9 @@
   }
 
   function startNotifications() {
-    if (notifsRunning || notifIndex >= NOTIFS.length) return;
-    notifsRunning = true;
-    scheduleNext();
+    // Приходящие системные пуши на меню отключены (по запросу) — heads-up
+    // карточки больше не «прилетают» во время взаимодействия.
+    return;
   }
 
   function stopNotifications(clear) {
