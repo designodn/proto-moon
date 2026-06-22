@@ -175,7 +175,8 @@
 
           <label class="caf-text-wrap">
             <input type="checkbox" hidden>
-            <p class="caf-text">Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш<span class="caf-text__full"> отправля...ещё</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
+            <p class="caf-text">Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправля...ещё</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
           </label>
           <div class="text-feed__reshare-card caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -411,7 +412,8 @@
 
           <label class="caf-text-wrap">
             <input type="checkbox" hidden>
-            <p class="caf-text">Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите<span class="caf-text__full"> у настоящего белоруса</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
+            <p class="caf-text">Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
           </label>
           <div class="text-feed__reshare-card caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -512,6 +514,25 @@
         if (/\/lenta-q3\.html$/.test(new URL(document.referrer).pathname))
           back.setAttribute('data-href', 'lenta-q3.html');
       } catch (e) {}
+    })();
+  </script>
+  <script>
+    // Комменты/caf: «ещё/скрыть» показываем только если текст реально переполняет
+    // line-clamp. Тап по обёртке-лейблу разворачивает (скрытый чекбокс).
+    (function () {
+      function refresh() {
+        document.querySelectorAll('.fc-comment__text-wrap, .caf-text-wrap').forEach(function (w) {
+          var input = w.querySelector('input');
+          if (input && input.checked) return;            // развёрнут — оставляем как есть
+          var text = w.querySelector('.fc-comment__text, .caf-text');
+          if (!text) return;
+          var over = text.scrollHeight > text.clientHeight + 1;
+          w.classList.toggle('is-clampable', over);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', refresh);
+      window.addEventListener('load', refresh);
+      window.addEventListener('resize', refresh);
     })();
   </script>
 </body>
