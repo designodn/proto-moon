@@ -1083,7 +1083,7 @@ ${mediaInner}
             </div>
           </div>`;
       return `        <article class="text-feed island">
-${authorHeader(commenter, time, { subscribe: true })}
+${IS_TRIBUNE ? authorHeaderTribune(commenter) : authorHeader(commenter, time, { subscribe: true })}
 
 ${cafText(title)}
 ${preview}
