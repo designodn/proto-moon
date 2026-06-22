@@ -187,6 +187,9 @@ const HANG_RE = new RegExp('(^|[\\s>(«"])(' + HANG_WORDS.join('|') + ')\\s+', '
 // пробелом. Применяется ко всей прозе карточек (заголовок/текст/описание/комменты)
 // ДО esc() —   экранирование не трогает, так что переживает шаблоны.
 const nbsp = s => String(s ?? '').replace(HANG_RE, (_, pre, w) => pre + w + ' ');
+// noWidow — приклеивает ПОСЛЕДНЕЕ слово к предыдущему неразрывным пробелом
+// (U+00A0), чтобы одно слово не «улетало» одиночкой на новую строку.
+const noWidow = s => String(s ?? '').replace(/\s+(\S+)\s*$/, ' $1');
 const annivProse = s => esc(String(s ?? ''))
   .replace(/\r\n?|\n/g, '<br>')
   .replace(HANG_RE, (_, pre, w) => pre + w + ' ');
@@ -236,23 +239,6 @@ const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
 function authorHeader(id, time, { subscribe = false } = {}) {
-  const subBtn = `
-              <label class="button-wrapper __size-28 button-subscribe">
-                <input type="checkbox" hidden>
-                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-              </label>`;
-  // Трибуна — компактная шапка feed-header.__tribune: ава 20, имя title-s,
-  // кнопка «Подписаться» 28, без времени и крошек (см. components/feed-header.css).
-  if (IS_TRIBUNE) {
-    return `          <header class="feed-header __tribune">
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-20 __type-image">${img(personPhoto(id))}</div>
-              <div class="contents-view-container uni-cell-additional-content">
-                <div class="ds-title-s feed-header__name">${esc(personName(id))}</div>
-              </div>${subBtn}
-            </div></div></div>
-          </header>`;
-  }
   const sub = subscribe ? `
             <label class="button-wrapper __size-28 button-subscribe">
               <input type="checkbox" hidden>
@@ -265,6 +251,24 @@ function authorHeader(id, time, { subscribe = false } = {}) {
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
             </div>${sub}
           </div></div></div>`;
+}
+
+/** Компактная шапка постов Трибуны: иконка 20 + имя (ds-title-s) + «Подписаться»
+ *  (button __size-28) справа. Без времени и крошек. Стили/центрирование/высота
+ *  (= аватарка) — модификатор .feed-header.__tribune (components/feed-header.css). */
+function authorHeaderTribune(id) {
+  return `          <header class="feed-header __tribune __no-breadcrumbs">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image">${img(personPhoto(id))}</div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">${esc(personName(id))}</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>`;
 }
 
 /** Хлебные крошки из колонок «тема»/«рубрика» (последняя — активная). Если обе
@@ -283,12 +287,14 @@ function breadcrumbs(tema, rubrika) {
  *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
 function activityLine(header) {
   if (!header) return '';
-  const parts = String(header).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
+  // noWidow — чтобы последнее слово шапки не «улетало» одиночкой на новую строку.
+  const parts = String(noWidow(header)).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
   let html = '';
   for (let i = 0; i < parts.length; i++) {
-    html += (i % 2 === 0) ? esc(parts[i]) : `<b>${esc(firstName(parts[i]) || parts[i])}</b>`;
+    html += (i % 2 === 0) ? esc(parts[i]) : `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
   }
-  return `          <div class="text-feed__activity ds-caption-m">${html}</div>\n`;
+  // ds-body-m — как текст обычного поста в ленте, рядом с которым стоит шапка.
+  return `          <div class="text-feed__activity ds-body-m">${html}</div>\n`;
 }
 
 /** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
@@ -309,6 +315,26 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
             <p class="${bodyClass}">
               ${esc(head)}<span class="text-feed__body-full">${esc(tail)}</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
+          </label>`;
+}
+
+/** caf-text (comment-as-feed): крупный текст коммента. Длинный (> CAF_CLAMP) →
+ *  режем по слову, хвост прячем, «ещё» — ИНЛАЙН в конце видимого текста и
+ *  приклеено неразрывным (U+00A0) к последнему слову, чтобы не висело одно.
+ *  Короткий → простой <p> с no-widow на последнем слове. */
+const CAF_CLAMP = 120;
+function cafText(title) {
+  const t = String(title ?? '');
+  if (t.length <= CAF_CLAMP) {
+    return `          <p class="caf-text">${esc(noWidow(t))}</p>`;
+  }
+  let cut = t.lastIndexOf(' ', CAF_CLAMP);
+  if (cut < CAF_CLAMP * 0.5) cut = CAF_CLAMP;
+  const head = t.slice(0, cut);
+  const tail = t.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  return `          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">${esc(head)}<span class="caf-text__full">${esc(tail)}</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
           </label>`;
 }
 
@@ -515,15 +541,16 @@ function renderPost(p, idx, opts = {}) {
       // Крошки «тема / рубрика» (если заданы в листе) — над шапкой автора,
       // как в NV-ленте. Шапку заворачиваем в feed-header (тот же паттерн, что
       // в комментах-как-фид), иначе оставляем uni-cell как есть.
-      // В Трибуне authorHeader сам возвращает <header class="feed-header __tribune">
-      // (компактная шапка без времени/крошек) — повторно не оборачиваем.
+      // В Трибуне — компактная шапка: иконка 20 + имя + «Подписаться» 28.
       const crumbs = breadcrumbs(p.tema, p.rubrika);
-      const header = (!IS_TRIBUNE && crumbs)
-        ? `          <header class="feed-header">
+      const header = IS_TRIBUNE
+        ? authorHeaderTribune(aid)
+        : crumbs
+          ? `          <header class="feed-header">
 ${crumbs}
 ${authorHeaderFn(aid, time, { subscribe })}
           </header>`
-        : authorHeaderFn(aid, time, { subscribe });
+          : authorHeaderFn(aid, time, { subscribe });
       // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
       // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
       const body = title
@@ -1056,13 +1083,9 @@ ${mediaInner}
             </div>
           </div>`;
       return `        <article class="text-feed island">
-${authorHeader(commenter, time, { subscribe: true })}
+${IS_TRIBUNE ? authorHeaderTribune(commenter) : authorHeader(commenter, time, { subscribe: true })}
 
-          <label class="caf-text-wrap">
-            <input type="checkbox" hidden>
-            <p class="caf-text">${esc(title)}</p>
-            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
-          </label>
+${cafText(title)}
 ${preview}
 ${actionsBar(likes, comments, reshares)}
         </article>`;

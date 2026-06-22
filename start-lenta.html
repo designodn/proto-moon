@@ -99,6 +99,10 @@
     position: absolute; inset: 0;
     background: radial-gradient(130% 120% at 50% 36%, transparent 54%, rgba(0,0,0,0.5) 100%);
   }
+  /* Отдельные обои для локскрина (хоумскрин оставляем на wallpaper.jpg). */
+  .lockscreen .wallpaper {
+    background-image: url('assets/start/lockscreen.jpg');
+  }
 
   /* ============================================================
      SCREEN 0 — Splash (boot) — фирменный оранжевый градиент ОК
@@ -643,8 +647,8 @@
 
     <!-- App grid -->
     <div class="home-grid">
-      <!-- ОК → lenta.html -->
-      <button class="app" data-href="lenta.html">
+      <!-- ОК → lenta-q3.html (Q3-лента — основная точка входа в прилу) -->
+      <button class="app" data-href="lenta-q3.html">
         <span class="app__icon icon-ok">
           <img src="assets/icons/appLogoDefault.png" alt="ОК" width="58" height="58">
         </span>
@@ -997,6 +1001,9 @@
 
       // Remember we're "in the app" so Back returns to the menu
       try { sessionStorage.setItem(HOME_KEY, '1'); } catch (e) {}
+      // Каждый запуск OK-прилы заново показывает шторку «Новые друзья»:
+      // сбрасываем гейт afs-seen (его читает lenta-q3.html при заходе).
+      try { if (/lenta-q3\.html/.test(href)) sessionStorage.removeItem('afs-seen'); } catch (e) {}
 
       // Reflow → запускаем переходы
       void launch.offsetWidth;
