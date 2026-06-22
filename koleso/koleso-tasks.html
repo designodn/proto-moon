@@ -22,26 +22,29 @@
   /* ── Контент ───────────────────────────────────────────────────── */
   .rt {
     display: flex; flex-direction: column; gap: var(--space-4);
-    padding: var(--space-2) var(--space-4) 32px;
+    padding: 0 var(--space-4) 32px;
   }
-  .rt__subtitle { color: var(--dynamic-text-and-icons-base-secondary); margin: 0 0 4px; }
+  .rt__subtitle { color: var(--dynamic-text-and-icons-base-secondary); margin: 0; }
 
   /* Карточка-задание */
   .rt-task {
-    background: var(--dynamic-surface-base-primary);
+    background: var(--dynamic-surface-contrast-low);
     border-radius: 16px;
     padding: var(--space-4);
     display: flex; flex-direction: column; gap: var(--space-4);
   }
   .rt-task.__done { background: var(--static-surface-status-contrast-positive); }
-  .rt-task__top { display: flex; align-items: center; gap: var(--space-3); }
+  .rt-task__top { display: flex; align-items: flex-start; gap: var(--space-3); }
   .rt-task__text { flex: 1 1 0; min-width: 0; }
   .rt-task__title { color: var(--dynamic-text-and-icons-base-primary); }
   .rt-task__reward { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 2px; }
   .rt-task__icon {
     width: 56px; height: 56px; flex-shrink: 0;
     border-radius: 14px;
-    background: var(--dynamic-surface-contrast-low);
+    background: var(--dynamic-surface-base-tertiary);
+    /* обводка поверх картинки (offset -1 → внутрь, на самой картинке) */
+    outline: 1px solid var(--dynamic-stroke-contrast-low);
+    outline-offset: -1px;
     display: flex; align-items: center; justify-content: center;
     font-size: 34px; line-height: 1;
   }
@@ -107,14 +110,14 @@
 
       <!-- КОНТЕНТ -->
       <div class="rt">
-        <p class="ds-body-m rt__subtitle">Выполняйте задания и получайте билетики</p>
+        <p class="ds-body-l rt__subtitle">Выполняйте задания и получайте билетики</p>
 
         <!-- Пригласи друга -->
         <div class="rt-task">
           <div class="rt-task__top">
             <div class="rt-task__text">
-              <div class="ds-title-s rt-task__title">Пригласите друзей в Колесо призов</div>
-              <div class="ds-caption-m rt-task__reward">+1 билетик</div>
+              <div class="ds-title-m rt-task__title">Пригласите друзей в Колесо призов</div>
+              <div class="ds-body-m rt-task__reward">+1 билетик</div>
             </div>
             <div class="rt-task__icon"><img src="../assets/koleso/ruletka-lyudi.png" alt=""></div>
           </div>
@@ -127,8 +130,8 @@
         <div class="rt-task">
           <div class="rt-task__top">
             <div class="rt-task__text">
-              <div class="ds-title-s rt-task__title">Подарите подарок</div>
-              <div class="ds-caption-m rt-task__reward">+1 билетик</div>
+              <div class="ds-title-m rt-task__title">Подарите подарок</div>
+              <div class="ds-body-m rt-task__reward">+1 билетик</div>
             </div>
             <div class="rt-task__icon"><img src="../assets/koleso/new/card-gift.png" alt=""></div>
           </div>
@@ -141,8 +144,8 @@
         <div class="rt-task">
           <div class="rt-task__top">
             <div class="rt-task__text">
-              <div class="ds-title-s rt-task__title">Установите фото профиля</div>
-              <div class="ds-caption-m rt-task__reward">+1 билетик</div>
+              <div class="ds-title-m rt-task__title">Установите фото профиля</div>
+              <div class="ds-body-m rt-task__reward">+1 билетик</div>
             </div>
             <div class="rt-task__icon"><img src="../assets/koleso/new/card-person.png" alt=""></div>
           </div>
@@ -155,8 +158,8 @@
         <div class="rt-task">
           <div class="rt-task__top">
             <div class="rt-task__text">
-              <div class="ds-title-s rt-task__title">Пополнение счета в ОК</div>
-              <div class="ds-caption-m rt-task__reward">+1 билетик</div>
+              <div class="ds-title-m rt-task__title">Пополнение счета в ОК</div>
+              <div class="ds-body-m rt-task__reward">+1 билетик</div>
             </div>
             <div class="rt-task__icon"><img src="../assets/koleso/new/card-ok.png" alt=""></div>
           </div>
@@ -169,8 +172,8 @@
         <div class="rt-task __done">
           <div class="rt-task__top">
             <div class="rt-task__text">
-              <div class="ds-title-s rt-task__title">Посмотреть короткий ролик</div>
-              <div class="ds-caption-m rt-task__reward">+1 билетик</div>
+              <div class="ds-title-m rt-task__title">Посмотреть короткий ролик</div>
+              <div class="ds-body-m rt-task__reward">+1 билетик</div>
             </div>
             <div class="rt-task__icon"><img src="../assets/koleso/ruletka-kino.png" alt=""></div>
           </div>
