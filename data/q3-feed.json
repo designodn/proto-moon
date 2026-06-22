@@ -395,35 +395,6 @@
     },
     {
       "id": "row-16",
-      "type": "marathon",
-      "author": "8",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Ох помню разбили окно соседке тете Люде, столько люлей отхватили ))) хорошее раньше было детство.",
-      "photos": [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
-      ],
-      "photosRaw": [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "РадостьДетства",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "5",
-          "text": "прямо дос лез прошибло!!))"
-        }
-      ]
-    },
-    {
-      "id": "row-17",
       "type": "photo",
       "author": "8",
       "tema": "",
@@ -437,8 +408,8 @@
       "photosRaw": [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
       ],
-      "likes": "",
-      "comments": "",
+      "likes": "4",
+      "comments": "2",
       "reshares": "",
       "link": "",
       "marathon": "РадостьДетства",
