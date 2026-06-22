@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лента — OK</title>
 <!-- При первом заходе в приложение (открытие прилы) показываем шторку
-     «Новые друзья» (add-friends-sheet.html, её крестик возвращает сюда через
-     ?back). Гейт по sessionStorage('afs-seen') — один раз за сессию, общий с
-     lenta-q3. Синхронно в head — до отрисовки ленты. -->
+     «Новые друзья» (add-friends-sheet.html). Её крестик ведёт в ленту Q3
+     (lenta-q3.html) — дефолтный возврат шторки, поэтому ?back не передаём.
+     Гейт по sessionStorage('afs-seen') — один раз за сессию, общий с lenta-q3.
+     Синхронно в head — до отрисовки ленты. -->
 <script>
   (function () {
     try {
       if (!sessionStorage.getItem('afs-seen')) {
         sessionStorage.setItem('afs-seen', '1');
-        location.replace('add-friends-sheet.html?back=lenta.html');
+        location.replace('add-friends-sheet.html');
       }
     } catch (e) {}
   })();
