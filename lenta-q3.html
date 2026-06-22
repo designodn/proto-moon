@@ -269,6 +269,29 @@
     margin-bottom: -1px;
   }
 
+  /* Реклама (ll-ad): строка под заголовком — пилюля на contrast-low.
+     Гор. паддинг 6 / верт. 2, иконка «ещё» (DS more) справа с зазором 4,
+     заголовок ↔ тег = 2. Текст приходит из таблицы — руками не трогаем. */
+  .ll-ad .uni-cell-additional-content { gap: 2px; }
+  .ll-ad .text-feed__time {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);                 /* иконка ↔ текст = 4 */
+    padding: 2px 6px;                    /* верт 2 / гор 6 */
+    border-radius: 8px;
+    background: var(--dynamic-surface-contrast-low);
+  }
+  .ll-ad .text-feed__time::after {
+    content: "";
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background-color: currentColor;
+    -webkit-mask: url('assets/icons/more_16_20.svg') center / contain no-repeat;
+            mask: url('assets/icons/more_16_20.svg') center / contain no-repeat;
+  }
+
   /* «Ваш клип из воспоминаний» — карточка-воспоминание с видео-клипом.
      Над full-bleed медиа — caption «Видите только вы» + ds-title-xl (как в
      on-this-day). Внутри медиа: подпись-период слева сверху (белая, с тенью)
