@@ -260,14 +260,33 @@
   // Единый блок «заголовок + сетка карточек» для ВВЗ-слайдов (клипы и сториз
   //   переиспользуют один компонент). Карточки — через render() выше.
   //   VvzCard.section({ title?, people: [{name,img,sub?,mutuals?,m?}, …] })
-  // Возвращает <h2 …>+<div сетка>; обёртку/CTA/фон даёт вызывающий контекст.
+  // Возвращает .vvz-section (flex-колонка «заголовок + сетка»), которая сама
+  //   центрируется по вертикали и скроллится в своём контейнере (см.
+  //   vvz-card.css). Контекст даёт только высоту, CTA и фон.
   function section(opts) {
     opts = opts || {};
     var title = opts.title || 'Возможно, вы знакомы';
     var cards = (opts.people || []).map(render).join('');
-    return '<h2 class="vvz-section__title ds-title-xl">' + title + '</h2>' +
-           '<div class="vvz-section__grid" data-vvz-grid>' + cards + '</div>';
+    return '<div class="vvz-section">' +
+             '<h2 class="vvz-section__title ds-title-xl">' + title + '</h2>' +
+             '<div class="vvz-section__grid" data-vvz-grid>' + cards + '</div>' +
+           '</div>';
   }
 
-  window.VvzCard = { render: render, section: section };
+  // Единая CTA-кнопка ВВЗ-слайдов «во всю ширину» (клипы и сториз рисуют её
+  //   одинаково). По умолчанию стеклянный стиль secondary-on-color (как во
+  //   ВВЗ); style можно переопределить (напр. 'primary' для именинной сториз).
+  //   VvzCard.cta({ label?: 'Показать всех', style?: 'secondary-on-color' })
+  function cta(opts) {
+    opts = opts || {};
+    var label = opts.label || 'Показать всех';
+    var style = opts.style || 'secondary-on-color';
+    return '<div class="button-wrapper __size-44 __style-' + style + '">' +
+             '<button class="button-container __style-' + style + '" type="button">' +
+               '<span class="button-content">' + label + '</span>' +
+             '</button>' +
+           '</div>';
+  }
+
+  window.VvzCard = { render: render, section: section, cta: cta };
 })();
