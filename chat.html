@@ -46,14 +46,12 @@
             background: var(--dynamic-surface-base-secondary);
             border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
   .ch-msg.__in { align-self:flex-start;
-                 background: var(--static-surface-status-accent, #ff8224);
-                 color:#fff; }
+                 background: var(--static-surface-tint-chikunya); }
   .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
-  .ch-msg.__in .ch-msg__text { color:#fff; }
+  .ch-msg.__in .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
   .ch-msg__time { position:absolute; right:8px; bottom:4px;
                   font-size:11px; line-height:14px;
                   color: var(--dynamic-text-and-icons-base-tertiary, rgba(46,47,51,0.48)); }
-  .ch-msg.__in .ch-msg__time { color: rgba(255,255,255,0.72); }
 
   /* ── «Возобновите общение с подарка» — над инпутом ───────────────── */
   .ch-revive { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
@@ -152,7 +150,7 @@
       <span class="ds-body-l ch-input__ph">Текст сообщения</span>
       <span class="ch-input__icons">
         <img src="assets/icons/attach_24.svg" alt="">
-        <img src="assets/icons/microphone_filled_24.svg" alt="Записать аудио">
+        <img src="assets/icons/microphone_24.svg" alt="Записать аудио">
       </span>
     </div>
   </div>
