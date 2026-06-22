@@ -1,9 +1,9 @@
 /**
  * OK Design System (proto) — CalendarDate
  *
- * Иконка-календарь с текущим числом месяца на «листе» + зелёный
- * индикатор-точка (события сегодня). Кладётся в button-inline навбара
- * ленты как первая иконка. Число проставляет components/calendar-date.js
+ * Иконка-календарь (Figma «calendar 2d») с текущим числом месяца на тёплом
+ * «листе» + зелёный индикатор-точка (события сегодня). Кладётся в button-inline
+ * навбара ленты как первая иконка. Число проставляет components/calendar-date.js
  * (= new Date().getDate()).
  *
  *   <span class="calendar-date" aria-hidden="true">
@@ -13,8 +13,9 @@
  *     <span class="calendar-date__dot"></span>
  *   </span>
  *
- * Цвет контура/числа = currentColor (наследуется от button-inline → тема).
- * Оранжевая «шапка» календаря и зелёная точка — статичные акцентные токены.
+ * Цвета сняты с макета: тёплый градиент листа (#fff→#f7f4f2→#ecd8cb) с контуром
+ * #e3d0c3, оранжевая «шапочка» #e56b00, тёмное число #38393e по центру под ней,
+ * металлические клипсы спирали (#575960→#2e2f33). Точка — статичный токен.
  */
 
 .calendar-date {
@@ -26,65 +27,76 @@
   vertical-align: middle;
 }
 
-/* Кольца-штырьки сверху (крепление календаря) */
+/* Металлическая «клипса» спирали сверху (одна, слева) — тёмный градиент (Figma).
+   Выступает на 2px над листом (верх листа top:3px). z-index:4 — выше точки. */
 .calendar-date__tab {
   position: absolute;
-  top: 0;
+  top: 1px;
+  left: 6px;
   width: 2.5px;
-  height: 6px;
-  border-radius: 2px;
-  background: currentColor;
-  z-index: 2;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #575960 0%, #2e2f33 100%);
+  z-index: 4;
 }
-.calendar-date__tab:nth-of-type(1) { left: 7px; }
-.calendar-date__tab:nth-of-type(2) { right: 7px; }
 
-/* Тело календаря — белый лист с контуром */
+/* Тело календаря — тёплый светлый градиент с тёплым контуром (Figma calendar 2d).
+   Оранжевая «шапочка» — отдельный слой .calendar-date::after (см. ниже). */
 .calendar-date__body {
   position: absolute;
   left: 1px;
   right: 1px;
   bottom: 0;
   top: 3px;
-  border: 2px solid currentColor;
+  border: 1.5px solid #e3d0c3;
   border-radius: 6px;
-  background: var(--dynamic-surface-base-secondary);
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  background: linear-gradient(180deg, #ffffff 59%, #f7f4f2 71%, #ecd8cb 111%);
 }
 
-/* Оранжевая «шапка» */
-.calendar-date__body::before {
+/* Оранжевая «шапочка» — отдельный слой РОВНО по ширине листа (= ширина
+   квадратика), лежит ПОВЕРХ верхней обводки. Координаты совпадают с
+   border-box листа (left/right 1px, top 3px, радиус верхних углов 6px),
+   поэтому не выезжает за границы. z-index:2 — выше тела (под точкой/клипсами). */
+.calendar-date::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 7px;
-  background: var(--static-surface-status-accent);
+  left: 1px;
+  right: 1px;
+  top: 3px;
+  height: 6px;
+  background: #e56b00;
+  border-radius: 6px 6px 0 0;
+  z-index: 2;
 }
 
-/* Число месяца */
+/* Число месяца — абсолютный слой (как в макете), отцентрован по всему листу.
+   Выступает на 2px влево/вправо за контент-бокс (не считая бордера), приподнят. */
 .calendar-date__num {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 4px;
+  bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
   font-family: var(--font-family);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
-  padding-bottom: 2px;
-  color: currentColor;
+  letter-spacing: -0.5px;
+  color: #38393e;
 }
 
-/* Зелёный индикатор «есть события сегодня» */
+/* Зелёный индикатор «есть события сегодня» — 12px. Сдвинут на 2px вниз и
+   влево относительно угла (top/right −1px вместо −3px). */
 .calendar-date__dot {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 10px;
-  height: 10px;
+  top: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--static-surface-status-positive, #4bb34b);
   border: 2px solid var(--dynamic-surface-base-secondary);

@@ -199,15 +199,15 @@
 .omar-chipgrp--cooking { left: 118px; top: 0;    width: 157px; flex-direction: column; align-items: flex-end; isolation: isolate; }
 .omar-chipgrp--garden  { left: 278px; top: 23px; width: 88px;  flex-direction: column; align-items: flex-start; }
 
-/* появление каждой группы с шагом 800 мс, с бампом */
-.omar-slide.is-active .omar-chipgrp { animation: omar-pop .5s cubic-bezier(.2,.7,.3,1) both; }
-.omar-slide.is-active .omar-chipgrp--sport   { animation-delay: .6s; }
-.omar-slide.is-active .omar-chipgrp--cooking { animation-delay: 1.4s; }
-.omar-slide.is-active .omar-chipgrp--garden  { animation-delay: 2.2s; }
+/* появление каждой группы с шагом ~450 мс, с бампом (ускорено) */
+.omar-slide.is-active .omar-chipgrp { animation: omar-pop .45s cubic-bezier(.2,.7,.3,1) both; }
+.omar-slide.is-active .omar-chipgrp--sport   { animation-delay: .25s; }
+.omar-slide.is-active .omar-chipgrp--cooking { animation-delay: .7s; }
+.omar-slide.is-active .omar-chipgrp--garden  { animation-delay: 1.15s; }
 
 /* подзаголовок тематики проявляется уже после всех тегов */
-.omar-topics__sub { opacity: 0; transition: opacity .45s ease; }
-.omar-slide--combo.is-active .omar-topics__sub { opacity: 1; transition-delay: 3s; }
+.omar-topics__sub { opacity: 0; transition: opacity .4s ease; }
+.omar-slide--combo.is-active .omar-topics__sub { opacity: 1; transition-delay: 1.4s; }
 
 .omar-chip {
   display: inline-flex;

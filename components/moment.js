@@ -49,6 +49,19 @@
     return lottieLoading;
   }
 
+  // Базовый префикс путей к иконкам. createViewer() кладёт пути document-
+  // relative ('assets/icons/…'); страницы во вложенных каталогах (например
+  // new-vision/) переписывают src уже отрендеренных иконок на '../assets/…'.
+  // Динамически собираемым иконкам (панель быстрых действий) тот разовый
+  // префикс не достаётся, поэтому выводим его из уже исправленной иконки в
+  // шапке вьюера — так путь совпадёт с базой конкретной страницы.
+  function iconBase(root) {
+    var ref = root.querySelector('img[src*="assets/icons/"]');
+    var src = ref ? (ref.getAttribute('src') || '') : '';
+    var idx = src.indexOf('assets/icons/');
+    return idx > 0 ? src.slice(0, idx) : '';
+  }
+
   function MomentViewer(root, options) {
     this.root = root;
     this.options = options || {};
@@ -139,19 +152,27 @@
           media.style.display = 'none';
         }
       }
+      // «Обычный» момент — слайд без именинного (bday) и без произвольного
+      // контента (body: ВВЗ / годовщина). По макету такие моменты получают
+      // скруглённую карту (как ДР) + нижнюю панель быстрых действий.
+      var isRegular = !s.bday && !s.body;
+
+      // Фон слайда. У обычного (скруглённого) момента красим КАРТУ — под ней
+      // остаётся чёрный зазор .moment (как у ДР); у остальных слайдов фон на
+      // всём .moment. Сбрасываем оба слоя, чтобы фон не «протекал» с прошлого.
+      var bgCard = this.root.querySelector('.moment__card');
+      this.root.style.background = '';
+      this.root.style.backgroundColor = '';
+      if (bgCard) { bgCard.style.background = ''; bgCard.style.backgroundColor = ''; }
+      var bgEl = (isRegular && bgCard) ? bgCard : this.root;
       if (s.background) {
         // Произвольный CSS-background (например картинка ВВЗ или градиент).
-        this.root.style.background = s.background;
+        bgEl.style.background = s.background;
       } else if (s.color) {
-        this.root.style.background = '';
-        this.root.style.backgroundColor = s.color;
-      } else {
-        // Ни фона, ни цвета (например именинный слайд с фото) — сбрасываем
-        // инлайновый фон к дефолту .moment (#000 static), чтобы не «протекал»
-        // фон-картинка от предыдущего ВВЗ-слайда.
-        this.root.style.background = '';
-        this.root.style.backgroundColor = '';
+        bgEl.style.backgroundColor = s.color;
       }
+      // Ни фона, ни цвета (например именинное/обычное фото) — оставляем
+      // сброшенным к дефолту .moment (#000 static).
       // s.duration — опциональный override длительности сегмента (CSS-переменная
       // --moment-duration). Используется, например, в bdaySlide, чтобы после
       // улёта шариков (~5.7s) оставалось ещё 2s «передышки» на тап «Поздравить».
@@ -307,12 +328,62 @@
         }
       }
 
-      // CTA — кнопка снизу. Если slide.cta = {label, onClick} — рендерим,
-      // иначе скрываем слот. Кликовый обработчик навешиваем напрямую
-      // (один раз на сегмент).
+      // ROUNDED — обычный момент: скруглённая карта + панель быстрых действий.
+      // Если CTA для слайда не задан — подставляем дефолтную панель «Написать»
+      // + эмодзи (один раз, чтобы не пересоздавать массив при каждом показе).
+      if (isRegular) {
+        this.root.classList.add('__view-rounded');
+        if (!s.cta) {
+          s.cta = { label: 'Написать', emojis: DEFAULT_QUICK_EMOJIS.slice() };
+        }
+      } else {
+        this.root.classList.remove('__view-rounded');
+      }
+
+      // CTA — панель снизу. Варианты:
+      //   • slide.cta.emojis — панель быстрых действий: «Написать» + эмодзи
+      //     (обычный момент). Колбэки: cta.onWrite(), cta.onEmoji(emoji).
+      //   • slide.cta.label  — одиночная кнопка (ДР «Поздравить», ВВЗ и т.п.).
+      // Кликовые обработчики навешиваем напрямую (один раз на сегмент).
       var cta = this.root.querySelector('.moment__cta');
       if (cta) {
-        if (s.cta && s.cta.label) {
+        cta.classList.remove('__quick');
+        if (s.cta && s.cta.emojis) {
+          cta.style.display = '';
+          cta.classList.add('__quick');
+          var emojis = s.cta.emojis;
+          var quickHtml =
+            '<div class="moment__quick">' +
+              '<div class="button-wrapper __size-44 __style-primary moment__quick-write">' +
+                '<button class="button-container __style-primary" type="button">' +
+                  '<span class="button-content">' +
+                    '<img src="' + iconBase(this.root) + 'assets/icons/send_filled_24.svg" alt="" width="20" height="20">' +
+                    '<span class="moment__quick-label"></span>' +
+                  '</span>' +
+                '</button>' +
+              '</div>';
+          for (var qi = 0; qi < emojis.length; qi++) {
+            quickHtml += '<button class="moment__quick-emoji" type="button"></button>';
+          }
+          quickHtml += '</div>';
+          cta.innerHTML = quickHtml;
+          // Текст и эмодзи через textContent — без html-инъекции.
+          cta.querySelector('.moment__quick-label').textContent = s.cta.label || 'Написать';
+          var emojiBtns = cta.querySelectorAll('.moment__quick-emoji');
+          for (var qj = 0; qj < emojiBtns.length; qj++) {
+            emojiBtns[qj].textContent = emojis[qj];
+          }
+          if (typeof s.cta.onWrite === 'function') {
+            cta.querySelector('.moment__quick-write button').addEventListener('click', s.cta.onWrite);
+          }
+          if (typeof s.cta.onEmoji === 'function') {
+            for (var qk = 0; qk < emojiBtns.length; qk++) {
+              (function (btn, emo, handler) {
+                btn.addEventListener('click', function () { handler(emo); });
+              })(emojiBtns[qk], emojis[qk], s.cta.onEmoji);
+            }
+          }
+        } else if (s.cta && s.cta.label) {
           cta.style.display = '';
           // По умолчанию CTA-кнопка во ВВЗ-стиле «secondary-on-color»
           // (стеклянная). Для именинной сториз и любых других кейсов можно
@@ -684,6 +755,9 @@
   // bindRow, если slides()-колбэк не передан или вернул null.
   var DEFAULT_PALETTE = ['#FF7700', '#5856D6', '#34C759', '#FF3B30', '#007AFF', '#AF52DE'];
 
+  // Эмодзи быстрых реакций в панели обычного момента (см. квик-CTA в go()).
+  var DEFAULT_QUICK_EMOJIS = ['😍', '🔥', '👏', '😂'];
+
   // ============================================================
   // VVZ-SLIDE — фабрика slide-объекта для viewer'а с ВВЗ-контентом.
   //   MomentViewer.vvzSlide({
@@ -900,6 +974,7 @@
     friendshipSlide: friendshipSlide,
     genitive:        genitive,
     genitiveFirst:   genitiveFirst,
-    palette:         DEFAULT_PALETTE
+    palette:         DEFAULT_PALETTE,
+    quickEmojis:     DEFAULT_QUICK_EMOJIS
   };
 })();
