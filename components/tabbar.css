@@ -46,7 +46,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
+  /* Высота строки = высота таб-бара − 1px верхний бордер (.tabbar).
+     --tabbar-height задаётся в index.css :root (фолбэк 49px). */
+  height: calc(var(--tabbar-height, 49px) - 1px);
   background: none;
   border: 0;
   padding: 0;
