@@ -40,7 +40,8 @@
   .ll-pr-menu {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: var(--space-2);
-    padding: 0 var(--space-4) var(--space-4);
+    /* Низ 12 (space-3) — отступ от счётчиков до разделителя по макету. */
+    padding: 0 var(--space-4) var(--space-3);
   }
   .ll-pr-menu__item {
     appearance: none; background: transparent; border: 0; padding: var(--space-2) 0;
@@ -137,6 +138,17 @@
   [data-friend-request] { transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease; }
   [data-friend-request] .button-content { transition: opacity 250ms ease; }
   [data-friend-request].__fr-fading .button-content { opacity: 0; }
+
+  /* ВВЗ-портлет появляется с мягкой анимацией (fade + лёгкий подъём снизу),
+     когда отправлена заявка в друзья. Класс __vvz-enter — стартовое
+     состояние (прозрачно + сдвиг вниз), снимается на следующий кадр. */
+  #vvzPortlet {
+    transition: opacity 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #vvzPortlet.__vvz-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 
   /* «Общие друзья» — стек аватарок + текст, под CTA */
   .ll-pr-mutuals { padding: 0 var(--space-4) var(--space-4); }
@@ -335,13 +347,15 @@
             <span class="ll-pr-menu__label ds-caption-m">Друзья</span>
             <span class="ll-pr-menu__count ds-caption-m">5</span>
           </button>
-          <button class="ll-pr-menu__item" aria-label="Заметки">
+          <button class="ll-pr-menu__item" aria-label="Заметки: 1">
             <img class="ll-icon" src="assets/icons/edit_24.svg" width="24" height="24" alt="">
             <span class="ll-pr-menu__label ds-caption-m">Заметки</span>
+            <span class="ll-pr-menu__count ds-caption-m">1</span>
           </button>
-          <button class="ll-pr-menu__item" aria-label="Фото">
+          <button class="ll-pr-menu__item" aria-label="Фото: 56">
             <img class="ll-icon" src="assets/icons/photo_24.svg" width="24" height="24" alt="">
             <span class="ll-pr-menu__label ds-caption-m">Фото</span>
+            <span class="ll-pr-menu__count ds-caption-m">56</span>
           </button>
           <button class="ll-pr-menu__item" aria-label="Ещё">
             <img class="ll-icon" src="assets/icons/menu_24.svg" width="24" height="24" alt="">
@@ -678,8 +692,9 @@
     if (selfPosts)     selfPosts.hidden = true;
     if (strangerPosts) strangerPosts.hidden = false;
 
-    // ── Поток «Добавить в друзья»: add → (≈500мс) Заявка отправлена → (3с) У вас в друзьях.
-    //    ВВЗ показывается при отправке и НЕ убирается до перезахода на страницу. ──
+    // ── Поток «Добавить в друзья»: add → (≈500мс) Заявка отправлена.
+    //    Дальше состояние НЕ меняется (раньше через 3с переходило в «У вас в
+    //    друзьях» — убрали). ВВЗ показывается при отправке и не убирается. ──
     var btn = document.querySelector('[data-friend-request]');
     if (btn) {
       var icon  = btn.querySelector('[data-fr-icon]');
@@ -687,8 +702,7 @@
       var FADE  = 250; // пол-кроссфейда контента; фон тянется 500мс параллельно
 
       var STATES = {
-        sent:    { icon: 'user_request_16_20', text: 'Заявка отправлена' },
-        friends: { icon: 'user_added_16_20',   text: 'У вас в друзьях' }
+        sent:    { icon: 'user_request_16_20', text: 'Заявка отправлена' }
       };
 
       // Плавный переход в состояние: гасим контент, на стыке меняем текст/иконку/фон, проявляем.
@@ -704,14 +718,26 @@
         }, FADE);
       }
 
+      // Показать ВВЗ-портлет с мягкой анимацией: ставим стартовое состояние
+      // (__vvz-enter — прозрачно + сдвиг вниз), снимаем hidden, затем на
+      // следующий кадр убираем класс — срабатывает transition.
+      function showPortlet() {
+        if (!portlet) return;
+        portlet.classList.add('__vvz-enter');
+        portlet.hidden = false;
+        void portlet.offsetWidth;            // форсим reflow перед анимацией
+        requestAnimationFrame(function () {
+          portlet.classList.remove('__vvz-enter');
+        });
+      }
+
       var inFlow = false;
       btn.addEventListener('click', function () {
         if (inFlow) return;                 // флоу одноразовый (сброс — перезаходом на страницу)
         inFlow = true;
-        morph('sent');                      // → «Заявка отправлена»
+        morph('sent');                      // → «Заявка отправлена» (финальное состояние)
         if (mutuals) mutuals.hidden = true; // прячем общих друзей
-        if (portlet) portlet.hidden = false; // показываем ВВЗ (и не убираем)
-        setTimeout(function () { morph('friends'); }, 3000); // через 3с → «У вас в друзьях»
+        showPortlet();                      // показываем ВВЗ с мягкой анимацией (и не убираем)
       });
     }
   })();
