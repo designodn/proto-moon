@@ -488,7 +488,13 @@
           '<div class="tg-friend__ava"><div class="avatar __size-56 __type-image"><img alt=""></div></div>' +
           '<div class="tg-friend__name ds-title-m"></div>';
         item.querySelector('img').src = p.photo;
-        item.querySelector('.tg-friend__name').textContent = p.name;
+        // Имя — на первой строке, фамилия принудительно на следующей (<br>).
+        var nameEl = item.querySelector('.tg-friend__name');
+        var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+        var parts = String(p.name || '').trim().split(/\s+/);
+        nameEl.innerHTML = parts.length > 1
+          ? esc(parts[0]) + '<br>' + esc(parts.slice(1).join(' '))
+          : esc(p.name);
         row.appendChild(item);
       });
     })();
