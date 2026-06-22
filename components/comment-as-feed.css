@@ -23,8 +23,10 @@
 .caf-text {
   margin: 0;
   font-family: var(--font-family);
-  font-size: 22px;
-  line-height: 26px;
+  /* Типографика как у текста обычного поста в ленте (ds-body-m, 15/20) —
+     карточка-коммент стоит среди постов и читается так же. */
+  font-size: 15px;
+  line-height: 20px;
   font-weight: 400;
   color: var(--dynamic-text-and-icons-base-primary);
   display: -webkit-box;
