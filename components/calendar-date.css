@@ -28,7 +28,8 @@
 }
 
 /* Металлические «клипсы» спирали сверху — только тёмный градиент (Figma).
-   Выступают на 2px над листом (верх листа top:3px). */
+   Выступают на 2px над листом (верх листа top:3px). z-index:4 — выше зелёной
+   точки (z:3), чтобы правая палочка не пряталась под индикатором. */
 .calendar-date__tab {
   position: absolute;
   top: 1px;
@@ -36,13 +37,13 @@
   height: 5px;
   border-radius: 999px;
   background: linear-gradient(180deg, #575960 0%, #2e2f33 100%);
-  z-index: 3;
+  z-index: 4;
 }
 .calendar-date__tab:nth-of-type(1) { left: 6px; }
 .calendar-date__tab:nth-of-type(2) { right: 6px; }
 
-/* Тело календаря — тёплый светлый градиент с тёплым контуром (Figma calendar 2d)
-   + оранжевая «шапочка» сверху (см. ::before ниже). */
+/* Тело календаря — тёплый светлый градиент с тёплым контуром (Figma calendar 2d).
+   Оранжевая «шапочка» — отдельный слой .calendar-date::after (см. ниже). */
 .calendar-date__body {
   position: absolute;
   left: 1px;
@@ -59,18 +60,20 @@
   padding-top: 5px;
 }
 
-/* Оранжевая «шапочка» календаря (Figma 8658-109726). Лежит ПОВЕРХ обводки —
-   уходит на 1.5px за край листа (перекрывает верхний контур #e3d0c3),
-   верхние углы скруглены под лист. */
-.calendar-date__body::before {
+/* Оранжевая «шапочка» — отдельный слой РОВНО по ширине листа (= ширина
+   квадратика), лежит ПОВЕРХ верхней обводки. Координаты совпадают с
+   border-box листа (left/right 1px, top 3px, радиус верхних углов 6px),
+   поэтому не выезжает за границы. z-index:2 — выше тела (под точкой/клипсами). */
+.calendar-date::after {
   content: '';
   position: absolute;
-  top: -1.5px;
-  left: -1.5px;
-  right: -1.5px;
-  height: 6.5px;
+  left: 1px;
+  right: 1px;
+  top: 3px;
+  height: 6px;
   background: #e56b00;
   border-radius: 6px 6px 0 0;
+  z-index: 2;
 }
 
 /* Число месяца — по центру, тёмное (в макете Rounded Mplus Bold → системный bold) */
