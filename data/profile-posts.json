@@ -1,0 +1,103 @@
+{
+  "_readme": {
+    "источник": "Google-таблица, лист «профиль» (gid 877262163)",
+    "как_обновить": "node scripts/fetch-profile.mjs  (офлайн-реген: node scripts/fetch-profile.mjs --offline)"
+  },
+  "posts": [
+    {
+      "id": "profile-1",
+      "type": "photo",
+      "author": "",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "Из истории моего родного Уварова",
+      "text": "УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.",
+      "desc": "",
+      "photos": [
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
+      ],
+      "photosRaw": [
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
+      ],
+      "likes": "25",
+      "comments": "1",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "threadComments": []
+    },
+    {
+      "id": "profile-2",
+      "type": "photo",
+      "author": "",
+      "tema": "Сделай сам",
+      "rubrika": "Цветы и сад",
+      "header": "",
+      "title": "Соседи не верили, что лук можно выращивать без перекопки",
+      "text": "Когда я впервые посадила лук без перекопки, была уверена, что осенью он обязательно взойдет, лето должно быть сухое",
+      "desc": "",
+      "photos": [
+        "https://upload.wikimedia.org/wikipedia/commons/0/0e/Allium_sativum_001.JPG"
+      ],
+      "photosRaw": [
+        "https://upload.wikimedia.org/wikipedia/commons/0/0e/Allium_sativum_001.JPG"
+      ],
+      "likes": "45",
+      "comments": "12",
+      "reshares": "2",
+      "link": "",
+      "marathon": "",
+      "threadComments": [
+        {
+          "authorId": "5",
+          "text": "Мы перестали копать и пахать огород сразу как дом купили.весной мотоблоком рыхлим неглубоко.копаем пока под морковь,грядки тоже делаем"
+        },
+        {
+          "authorId": "6",
+          "text": "Ой, какая красота с мотоблоком, а не подскажите какой у вас, тоже хочу, выбираем не можем выбрать, может фото есть агрегата спасибо"
+        }
+      ]
+    },
+    {
+      "id": "profile-3",
+      "type": "reshare-post",
+      "author": "",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!",
+      "desc": "",
+      "photos": [
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1dXYFWACup8JRxzeCQOqt-LiOzIaU2mB4w49pHZEl-KYse8Nc12mfrKTKkuJ417XAI-EAUsMXxyni-Ff8_P9yzTR8mQ1-JA3B_A9TCqMAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9eEuh5Y2raEgDlsJx8Cl6m6EI3JgnPzdVSLdjcmQak7aSFf2N1VJz-eaEZPJPEQxH4n2whTxP_ry6b0HvmfetBFCgfjfihZcNDYnj0EMAAAAp&dpr=2"
+      ],
+      "photosRaw": [
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1dXYFWACup8JRxzeCQOqt-LiOzIaU2mB4w49pHZEl-KYse8Nc12mfrKTKkuJ417XAI-EAUsMXxyni-Ff8_P9yzTR8mQ1-JA3B_A9TCqMAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&dpr=2",
+        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9eEuh5Y2raEgDlsJx8Cl6m6EI3JgnPzdVSLdjcmQak7aSFf2N1VJz-eaEZPJPEQxH4n2whTxP_ry6b0HvmfetBFCgfjfihZcNDYnj0EMAAAAp&dpr=2"
+      ],
+      "likes": "5",
+      "comments": "12",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "threadComments": [
+        {
+          "authorId": "2",
+          "text": "а потом они их съели"
+        },
+        {
+          "authorId": "10",
+          "text": "На платной и дурак впоймает"
+        }
+      ]
+    }
+  ]
+}

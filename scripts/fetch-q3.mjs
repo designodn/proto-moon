@@ -23,7 +23,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
@@ -447,9 +447,14 @@ function attachComments(card, p) {
   return `${card.slice(0, i)}${block}\n        ${card.slice(i)}`;
 }
 
-/* ── рендер одного поста ────────────────────────────────────────────────────── */
-function renderPost(p, idx) {
+/* ── рендер одного поста ──────────────────────────────────────────────────────
+ * opts.authorHeader — необязательная замена authorHeader(id, time, {subscribe}).
+ *   Нужна профильному пайплайну (scripts/fetch-profile.mjs): автор поста = хозяин
+ *   профиля (data-pr-* / data-pr-subject-*), а НЕ человек из people.json. Если
+ *   не передана — используется обычная запекаемая шапка из people.json. */
+function renderPost(p, idx, opts = {}) {
   const { id, type, author, photos, likes, comments, reshares, link } = p;
+  const authorHeaderFn = opts.authorHeader || authorHeader;
   const title = resolveNames(p.title);   // «<id>_name» → имя из people.json
   const text = resolveNames(p.text);
   const ids = splitIds(author);
@@ -468,9 +473,9 @@ function renderPost(p, idx) {
       const header = crumbs
         ? `          <header class="feed-header">
 ${crumbs}
-${authorHeader(aid, time, { subscribe })}
+${authorHeaderFn(aid, time, { subscribe })}
           </header>`
-        : authorHeader(aid, time, { subscribe });
+        : authorHeaderFn(aid, time, { subscribe });
       // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
       // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
       const body = title
@@ -637,7 +642,7 @@ ${likesBlock}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -661,7 +666,7 @@ ${actionsBar(likes, comments, reshares)}
 ${avatarsStack(f.mutuals, 'll-friend-row__mutuals')}
                 </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <p class="ds-body-m text-feed__body">Добавил в друзья</p>
 
@@ -717,7 +722,7 @@ ${authorHeader(aid, time)}
         ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
 ${feedText(text)}
 
@@ -760,7 +765,7 @@ ${actionsBar(likes, comments, reshares)}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card${cardMod}">
             <div class="ll-gift-from">
@@ -885,7 +890,7 @@ ${authorHeader(aid, time)}
           ? `
               <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
                 <input type="checkbox" hidden>
-                <span class="button-container __style-on-image"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
               </label>`
           : '';
         const hint = p.header
@@ -1179,4 +1184,18 @@ async function main() {
   posts.forEach(p => console.log(`  • ${p.id.padEnd(8)} ${p.type}`));
 }
 
-main().catch(err => { console.error('✗', err.message); process.exit(1); });
+/* ── exports для переиспользования (scripts/fetch-profile.mjs) ────────────────
+ * Импорт этого модуля НЕ должен ничего запускать — main() стартует только при
+ * прямом запуске файла (см. guard ниже). Профильный пайплайн переиспользует
+ * рендереры/хелперы и подменяет шапку автора через renderPost(p, i, {authorHeader}). */
+export {
+  renderPost, attachComments, renderCommentThread, commentItem,
+  authorHeader, breadcrumbs, activityLine, feedText, media, actionsBar,
+  esc, img, personName, personPhoto, resolveNames, splitIds, isGroupId,
+  parseCsv, PEOPLE, TIMES, COMPANION, EXTRAS, SPREADSHEET_ID,
+};
+
+// Авто-запуск только при прямом вызове (node scripts/fetch-q3.mjs), не при import.
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  main().catch(err => { console.error('✗', err.message); process.exit(1); });
+}
