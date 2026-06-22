@@ -619,6 +619,7 @@
 }
 .moment__bday-name {
   margin: 0;
+  width: 100%;
   font-family: var(--font-family);
   font-size: 22px;
   line-height: 28px;
