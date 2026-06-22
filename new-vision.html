@@ -487,19 +487,24 @@
         nb.style.transition = 'none';
         nb.style.transform = '';
         nb.style.opacity   = '';
+        device.classList.add('headsup-notifs');   // → notifs.top: 36px
+        if (window.OkNotifs) window.OkNotifs.setMode('heads-up');
       }, 520);
     }
-    // Пуши показываем ТОЛЬКО на локскрине — в меню стрим ставим на паузу.
-    stopNotifications();
+    startNotifications();
   }
 
   // Slide back down to the lock screen (Back pressed from the menu).
   function lockDevice() {
     device.classList.remove('unlocked');
     device.classList.remove('headsup-notifs');
-    if (window.OkNotifs) window.OkNotifs.clearShown();
-    // Вернулись на локскрин → возобновляем стрим пушей (в меню он на паузе).
-    startNotifications();
+    if (window.OkNotifs) {
+      window.OkNotifs.setMode('lock');
+      // Только убираем видимые карточки (они принадлежали heads-up слою) —
+      // сам стрим продолжаем. Пуши приходят независимо от UI: новый пуш
+      // прилетит на свежий локскрин в lock-mode.
+      window.OkNotifs.clearShown();
+    }
     resetLaunch();
     try { sessionStorage.removeItem(HOME_KEY); } catch (e) {}
   }
@@ -508,9 +513,11 @@
   function showHomeInstant() {
     device.classList.add('no-anim');
     device.classList.add('unlocked');
+    device.classList.add('headsup-notifs');   // сразу heads-up, без анимации
+    if (window.OkNotifs) window.OkNotifs.setMode('heads-up');
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
-    stopNotifications();              // в меню пуши не показываем (только локскрин)
+    startNotifications();             // resume any remaining notifications (idempotent)
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
