@@ -569,6 +569,23 @@
       function entryHTML(c) {
         return c.type === 'vvz-clip' ? vvzHTML() : clipHTML(c);
       }
+
+      // ВВЗ-слайд: если «заголовок + сетка карточек» не влезает по высоте
+      // (маленький экран) — масштабируем .vvz-section через zoom, чтобы карточки
+      // уменьшились и поместились без скролла. Тот же приём, что в сториз
+      // (см. MomentViewer._fitBody в components/moment.js). Едина для всех ВВЗ.
+      function fitVvz(section) {
+        section.style.zoom = '';
+        var avail = section.clientHeight;     // доступная высота (растянута flex:1)
+        var natural = section.scrollHeight;   // натуральная высота контента
+        if (avail > 0 && natural > avail) {
+          section.style.zoom = (avail / natural).toFixed(4);
+        }
+      }
+      function fitAllVvz() {
+        var sections = reel.querySelectorAll('.klip.__vvz .vvz-section');
+        for (var i = 0; i < sections.length; i++) fitVvz(sections[i]);
+      }
       // Ростер из листа в исходном порядке (одна «итерация» очереди).
       var rosterHTML = roster.map(entryHTML).join('');
 
@@ -580,10 +597,16 @@
         (lead ? entryHTML(lead) : '') +
         rosterHTML;
 
+      // Масштабируем ВВЗ-слайды после первичного рендера и на ресайз.
+      requestAnimationFrame(fitAllVvz);
+      window.addEventListener('resize', fitAllVvz);
+
       if (rosterHTML) {
         reel.addEventListener('scroll', function () {
           if (reel.scrollTop + reel.clientHeight * 2 >= reel.scrollHeight) {
             reel.insertAdjacentHTML('beforeend', rosterHTML);
+            // Допечатанные ВВЗ-слайды тоже масштабируем под высоту экрана.
+            requestAnimationFrame(fitAllVvz);
           }
         }, { passive: true });
       }
