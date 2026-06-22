@@ -6,141 +6,142 @@
   "posts": [
     {
       "id": "row-1",
-      "type": "comment-as-feed",
-      "author": "4, 9",
-      "tema": "Еда",
-      "rubrika": "Выпечка",
+      "type": "photo",
+      "author": "2",
+      "tema": "",
+      "rubrika": "",
       "header": "",
-      "title": "Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправля...ещё",
-      "text": "Домашние беляши с мясом. Всегда готовлю сразу двойную порцию",
+      "title": "",
+      "text": "Природное любопытство сделало меня журналистом. Благодаря этому самому любопытству я много знаю про свой день рождения. Родился 22 мая 1968 года в 9:25 утра, в деревянной казарме на станции Архара. Казарму тогда на полном серьезе именовали роддомом. Веса во мне было - 3 кг 550 грамм, роста - 57 сантиметров. Роды принимала акушерка с редким именем Изольда, которая фронтовой медсестрой дошла до Берлина.",
       "photos": [],
       "photosRaw": [],
-      "likes": "12",
-      "comments": "6",
-      "reshares": "1",
-      "link": "",
+      "likes": "104",
+      "comments": "89",
+      "reshares": "2",
+      "link": "https://ic.pics.livejournal.com/egor_23/73280836/1566227/1566227_1000.jpg",
       "marathon": "",
       "marathonJoined": "",
-      "desc": "Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовала, домашние всё равно нравятся больше.",
+      "desc": "",
       "threadComments": [
         {
-          "authorId": "9",
-          "text": "И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой"
+          "authorId": "7",
+          "text": "Какие удивительные лица,простые,но по-особенному красивые,душой подсвеченные"
         },
         {
-          "authorId": "11",
-          "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
+          "authorId": "4",
+          "text": "Как проникновенно Вы излагаете. До самого сердца и души. И , почти всегда, до слез . Спасибо Вам, за то что Вы есть. С Вашим Днем! Всех благ!"
         }
       ]
     },
     {
       "id": "row-2",
       "type": "photo",
-      "author": "8",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "Из истории моего родного Уварова",
-      "text": "УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.",
-      "photos": [
-        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
-      ],
-      "photosRaw": [
-        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
-      ],
-      "likes": "25",
-      "comments": "1",
-      "reshares": "1",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
-      "id": "row-3",
-      "type": "text",
-      "author": "1",
+      "author": "9",
       "tema": "",
       "rubrika": "",
       "header": "",
       "title": "",
-      "text": "Поставили новый счётчик, а расход стал больше обычного.",
+      "text": "Праздничный бишбармак, по казахски бесбармак. Астраханский вариант с картошкой.",
       "photos": [],
       "photosRaw": [],
-      "likes": "5",
-      "comments": "20",
-      "reshares": "",
-      "link": "",
+      "likes": "56",
+      "comments": "34",
+      "reshares": "23",
+      "link": "https://multivarka-receptik.ru/wp-content/uploads/2022/10/beshbarmak-reczept-klassicheskij.jpg",
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
       "threadComments": [
         {
-          "authorId": "3",
-          "text": "Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!"
+          "authorId": "10",
+          "text": "какое мясо посоветуете?"
         },
         {
-          "authorId": "6",
-          "text": "руки потому что не из тго места"
+          "authorId": "4",
+          "text": "Мне очень нравится башбармак с картошкой. Я его часто готовлю. Подробнее: https://povar.ru/recipes/beshbarmak_s_kartoshkoi-17518.html"
         }
       ]
     },
     {
-      "id": "row-4",
+      "id": "row-3",
       "type": "photo",
       "author": "8",
       "tema": "",
       "rubrika": "",
       "header": "",
       "title": "",
-      "text": "Мои любимые и родные!!!!Обожаю вас",
-      "photos": [
-        "https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg"
-      ],
-      "photosRaw": [
-        "https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
+      "text": "СЕГОДНЯ – ДЕНЬ СЕМЬИ 15 мая отмечается Международный день семьи. Наш Кувандыкский округ славится множеством прекрасных семей – настоящих оплотов любви, взаимопонимания и поддержки, на которых держится общество.",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "34",
+      "comments": "12",
+      "reshares": "1",
+      "link": "https://735606.selcdn.ru/thumbnails/photos/2017/08/22/luolwakvoabhbmni_1024.jpg",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "4",
+          "text": "лапочки!!!"
+        },
+        {
+          "authorId": "1",
+          "text": "и вас с праздником, родные!!!"
+        }
+      ]
+    },
+    {
+      "id": "row-4",
+      "type": "photo",
+      "author": "7",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Тайны старого Уральска: За что автора знаменитого \"Соловья\" сослали в наш город? Александр Алябьев пробыл в Уральской ссылке совсем недолго — с 1833 по 1834 год, но этот период оставил глубокий след в истории нашего города. Это была судьба человека огромного таланта и трагических обстоятельств. Громкое имя в старом городе",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "78",
+      "comments": "34",
+      "reshares": "2",
+      "link": "https://www.belcanto.ru/media/images/uploaded/alyabiev2025.jpg",
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
       "threadComments": [
         {
           "authorId": "5",
-          "text": "ну красавицы!!!!!"
+          "text": "ну и ну"
+        },
+        {
+          "authorId": "9",
+          "text": "вот же жили раньше (( жалко парня, видно по лицу, что хороший"
         }
       ]
     },
     {
       "id": "row-5",
-      "type": "comment-as-feed",
-      "author": "8, group-4",
-      "tema": "Еда",
-      "rubrika": "Закуски",
+      "type": "photo",
+      "author": "3",
+      "tema": "",
+      "rubrika": "",
       "header": "",
-      "title": "Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса",
-      "text": "",
+      "title": "",
+      "text": "Мы будем жить и процветать! Над клумбой бабочки порхают, И небо льётся синевой. В тени песочницы играют",
       "photos": [],
       "photosRaw": [],
-      "likes": "4",
-      "comments": "18",
-      "reshares": "",
-      "link": "",
+      "likes": "2",
+      "comments": "3",
+      "reshares": "14",
+      "link": "https://static.insales-cdn.com/images/products/1/2305/406702337/output_f8c718ca5be6115746c28b8a10569e94_scale.jpg",
       "marathon": "",
       "marathonJoined": "",
-      "desc": "Хрустящая золотистая корочка снаружи, нежная картофельная серединка внутри — кажется, устоять просто невозможно 😍",
+      "desc": "",
       "threadComments": [
         {
-          "authorId": "4",
-          "text": "... 😄мы сими с усами."
-        },
-        {
-          "authorId": "9",
-          "text": "Настоящие, по- белорусски!"
+          "authorId": "vvz-3",
+          "text": "красиво сказано"
         }
       ]
     }
