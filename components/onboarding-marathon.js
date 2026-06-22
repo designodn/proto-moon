@@ -4,11 +4,11 @@
    Перехват клика идёт на window в фазе capture — то есть РАНЬШЕ
    глобального обработчика навигации в screen-transition.js (он на document).
 
-   4 слайда: Участвуйте → Тематика → Голосуйте → Приглашайте.
+   2 слайда: Участвуйте → Тематика+Голосование.
    • «Далее» — только на 1-м слайде (ручной переход).
-   • 2-й и 3-й слайды перелистываются сами (автопереход).
-   • На последнем слайде «Далее» нет — только «Перейти к фотомарафону».
-   Свайп влево/вправо листает вручную (отменяет автопереход).
+   • Кнопка «Перейти к фотомарафону» видна на обоих слайдах.
+   • На 2-м (последнем) слайде анимация чипов/голосования играет сама.
+   Свайп вверх/вниз листает вручную.
 
    Подключение:
      <link rel="stylesheet" href="components/onboarding-marathon.css">
@@ -103,15 +103,6 @@
             '</div>' +
           '</section>' +
 
-          /* 3 — Приглашайте всех (отдельный слайд) */
-          '<section class="omar-slide omar-slide--invite">' +
-            '<div class="omar-invite__text">' +
-              '<h2 class="omar-slide__title">Приглашайте всех</h2>' +
-              '<p class="omar-slide__text omar-invite__sub">Зовите друзей — вместе интереснее</p>' +
-            '</div>' +
-            '<img class="omar-invite" src="assets/icons/Resourses.png" alt="" loading="lazy">' +   // вайб Трибуны
-          '</section>' +
-
         '</div>' +
       '</div>' +
 
@@ -160,9 +151,9 @@
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
     // Футер по фазам:
-    //   hero   — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
-    //   combo  — только «Далее» (появляется после подписи «Голосуйте»)
-    //   invite — только «Перейти к марафону» (primary)
+    //   hero  — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
+    //   combo — «Перейти к фотомарафону» (primary, последний слайд). Кнопка
+    //           остаётся видна на этом шаге, а не прячется на время анимации.
     //   hidden — спрятан
     function setFooter(mode) {
       footer.classList.toggle('__hidden', mode === 'hidden');
@@ -171,21 +162,19 @@
         ctaBtn.className = 'button-container __style-secondary';
         ctaLabel.textContent = 'Перейти к фотомарафону';
       } else if (mode === 'combo') {
-        ctaWrap.style.display = 'none'; nextWrap.style.display = 'block';
-      } else if (mode === 'invite') {
         ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
         ctaBtn.className = 'button-container __style-primary';
-        ctaLabel.textContent = 'Перейти к марафону';
+        ctaLabel.textContent = 'Перейти к фотомарафону';
       }
     }
 
-    // Combo: чипсы → подпись тематики (1.5с) → голосование (бамп-стикер) →
-    // подпись голосования → показываем «Далее». Без авто-перехода: читать можно сколько угодно.
+    // Combo: чипсы → подпись тематики → голосование (бамп-стикер) → подпись
+    // голосования. Кнопка «Перейти к фотомарафону» видна сразу (setFooter
+    // вызывается в goTo), поэтому здесь только тайминги анимации — ускорены.
     function startCombo() {
       var slide = slides[COMBO_INDEX];
-      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 4500));
-      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 5200));
-      timers.push(setTimeout(function () { setFooter('combo'); }, 5600));   // «Далее» после второй подписи
+      timers.push(setTimeout(function () { slide.classList.add('__vote'); }, 1700));
+      timers.push(setTimeout(function () { slide.classList.add('__vote-settle'); }, 2300));
     }
 
     function goTo(i) {
@@ -198,11 +187,11 @@
       if (i === 0) {
         setFooter('hero');
       } else if (i === COMBO_INDEX) {
-        if (!played[i]) { played[i] = true; setFooter('hidden'); startCombo(); }
-        else { slides[i].classList.add('__vote', '__vote-settle'); setFooter('combo'); }   // уже видели — финал + «Далее»
-      } else if (i === last) {
-        if (!played[i]) { played[i] = true; setFooter('hidden'); timers.push(setTimeout(function () { setFooter('invite'); }, 900)); }
-        else { setFooter('invite'); }
+        // combo — последний слайд. Кнопка «Перейти к фотомарафону» видна сразу;
+        // анимация чипов/голосования играет параллельно.
+        setFooter('combo');
+        if (!played[i]) { played[i] = true; startCombo(); }
+        else { slides[i].classList.add('__vote', '__vote-settle'); }
       }
     }
 
