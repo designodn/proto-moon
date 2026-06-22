@@ -848,19 +848,18 @@ ${authorHeaderFn(aid, time)}
 
     /* ── Вас отметили на фото — full-bleed media + tooltip ── */
     case 'tagged-photo': {
-      // Аватарка сверху — автор поста (id из people.json), иначе companion-дефолт.
-      const hero = (aid && personPhoto(aid)) || x.heroAvatar || 'https://i.pravatar.cc/192?img=49';
-      const tag = x.tag || { name: 'Анастасия Кащеева', top: 143, left: 187.5 };
+      const tag = x.tag || { name: 'Анастасия Кащеева' };
       return `        <article class="text-feed island">
-          <div class="ll-tagged__head">
-            <div class="avatar __size-72 __type-image">${img(hero)}</div>
-            <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ll-otd__caption ds-body-m">
+            ${EYE_SVG}
+            <span>Видите только вы</span>
           </div>
+          <div class="ds-title-xl">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
             <div class="tooltip-wrapper __view-primary __side-top __alignment-center __placement-top-center"
-                 style="top: ${esc(tag.top)}px; left: ${esc(tag.left)}px; transform: translateX(-50%)">
+                 style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%)">
               <div class="tooltip ds-title-m">${esc(personName(aid) || tag.name)}</div>
               <div class="tooltip-tail"></div>
             </div>
