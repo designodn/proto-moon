@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лента — OK</title>
+<!-- При первом заходе в приложение (открытие прилы) показываем шторку
+     «Новые друзья» (add-friends-sheet.html, её крестик возвращает сюда через
+     ?back). Гейт по sessionStorage('afs-seen') — один раз за сессию, общий с
+     lenta-q3. Синхронно в head — до отрисовки ленты. -->
+<script>
+  (function () {
+    try {
+      if (!sessionStorage.getItem('afs-seen')) {
+        sessionStorage.setItem('afs-seen', '1');
+        location.replace('add-friends-sheet.html?back=lenta.html');
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">

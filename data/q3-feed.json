@@ -25,30 +25,6 @@
       "threadComments": []
     },
     {
-      "id": "post-4",
-      "type": "ad",
-      "author": "ad-1",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до центра города",
-      "photos": [
-        "https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg"
-      ],
-      "photosRaw": [
-        "https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
       "id": "post-7",
       "type": "comment-as-feed",
       "author": "4, 9",
@@ -76,6 +52,30 @@
           "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
         }
       ]
+    },
+    {
+      "id": "post-4",
+      "type": "ad",
+      "author": "ad-1",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "От 7,6 млн ₽! 15 минут до исторического центра города! 2 варианта отделки. 20 минут до центра города",
+      "photos": [
+        "https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg"
+      ],
+      "photosRaw": [
+        "https://s0.rbk.ru/v6_top_pics/media/img/8/67/756191073937678.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": []
     },
     {
       "id": "row-4",
@@ -283,7 +283,7 @@
       "threadComments": [
         {
           "authorId": "11",
-          "text": "Я тоже такие делала, очень здорово придумано"
+          "text": "клас"
         }
       ]
     },
@@ -332,7 +332,7 @@
       "threadComments": [
         {
           "authorId": "4",
-          "text": "соболезную"
+          "text": "я люблю груши"
         }
       ]
     },
@@ -415,12 +415,7 @@
       "marathon": "РадостьДетства",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [
-        {
-          "authorId": "5",
-          "text": "прямо дос лез прошибло!!))"
-        }
-      ]
+      "threadComments": []
     },
     {
       "id": "row-17",
@@ -960,26 +955,6 @@
           "text": "Сторонников натурального земледелия уже нет.. проще же купить химикаты, о чём и пишут в каждой статье блогеры ежедневно по несколько раз.."
         }
       ]
-    },
-    {
-      "id": "post-15",
-      "type": "added-friend",
-      "author": "2, 6",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
     },
     {
       "id": "post-16",
