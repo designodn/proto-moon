@@ -67,6 +67,21 @@
   border: 0;
 }
 
+/* Скрим под шапкой клипа — линейный градиент 100→0 сверху вниз (высота 80),
+   чтобы белый текст шапки читался поверх любого кадра. Лежит между видео
+   (z0) и шапкой (z2). */
+.clip-feed::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  z-index: 1;
+  background: linear-gradient(to bottom, var(--static-surface-special-layer-tertiary), transparent);
+  pointer-events: none;
+}
+
 /* Шапка автора — общий feed-header поверх видео (белый __on-media). */
 .clip-feed > .feed-header {
   position: absolute;

@@ -81,16 +81,16 @@
 
 /* ============================================================
    ACTIVITY — опциональная плашка «X поставил класс» / «X переслал»
-   Маленькая строка caption-m, имя medium-weight. Размещается
-   первым ребёнком text-feed (над основной шапкой).
+   Строка body-m, имя — title-s (bold 700). Размещается
+   первым ребёнком text-feed (над основной шапкой). Текст из JSON.
    ============================================================
-   <div class="text-feed__activity ds-caption-m"><b>Борис Фрол</b> поставил класс</div>
+   <div class="text-feed__activity ds-body-m"><b>Борис Фрол</b> поставил класс</div>
 */
 .text-feed__activity {
   color: var(--dynamic-text-and-icons-base-primary);
 }
 .text-feed__activity b {
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* Горизонтальный паддинг — всем секциям, кроме медиа (full-bleed). */
