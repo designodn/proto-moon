@@ -3,14 +3,45 @@
     "источник": "Google-таблица, лист «Клипы» (gid 1801786104)",
     "как_обновить": "node scripts/fetch-clips.mjs (или скилл fetch-clips)",
     "колонки": "id · тип · автор · заголовок · текст · лайки · комменты · репосты",
-    "видео": "файл assets/clips/<id>.mp4 (или поле video с прямой ссылкой)",
+    "видео": "файл assets/clips/<id>.mp4 (или столбец «видео» с прямой ссылкой)",
     "автор": "id человека из листа «Люди» — имя/аватар резолвятся через DS_PEOPLE"
   },
   "clips": [
-    { "id": "clip-1", "type": "clip", "author": "1", "likes": "2", "comments": "12", "reshares": "34" },
-    { "id": "clip-2", "type": "clip", "author": "2", "likes": "2", "comments": "23", "reshares": "3" },
-    { "id": "vvz-clip", "type": "vvz-clip" },
-    { "id": "clip-3", "type": "clip", "author": "7", "likes": "51", "comments": "17", "reshares": "5" },
-    { "id": "clip-4", "type": "clip", "author": "group-3", "likes": "124", "comments": "34", "reshares": "24" }
+    {
+      "id": "clip-1",
+      "type": "clip",
+      "author": "1",
+      "likes": "2",
+      "comments": "12",
+      "reshares": "34"
+    },
+    {
+      "id": "clip-2",
+      "type": "clip",
+      "author": "2",
+      "likes": "2",
+      "comments": "23",
+      "reshares": "3"
+    },
+    {
+      "id": "clip-2",
+      "type": "vvz-clip"
+    },
+    {
+      "id": "clip-3",
+      "type": "clip",
+      "author": "7",
+      "likes": "51",
+      "comments": "17",
+      "reshares": "5"
+    },
+    {
+      "id": "clip-4",
+      "type": "clip",
+      "author": "group-3",
+      "likes": "124",
+      "comments": "34",
+      "reshares": "24"
+    }
   ]
 }

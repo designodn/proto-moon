@@ -322,25 +322,27 @@
 }
 
 /* ============================================================
-   АДАПТИВ: устройство шире 420 — крупнее аватар, ФИО и крестик
-   (только во ВВЗ-сториз, .moment__body).
+   АДАПТИВ: устройство шире 420 — крупнее аватар, ФИО и крестик.
+   Цепляемся за общий .vvz-section (vvz-card.css), поэтому работает в обоих
+   контекстах ВВЗ-слайда — и в сториз (.moment__body), и в клипах
+   (.klip__vvz-inner).
    ============================================================ */
 @media (min-width: 421px) {
   /* Аватар 96 → 120 */
-  .moment__body .vvz-card__media {
+  .vvz-section .vvz-card__media {
     width: 120px;
     height: 120px;
   }
   /* ФИО Title S → Title M (17/24) */
-  .moment__body .vvz-card__title {
+  .vvz-section .vvz-card__title {
     font-size: 17px;
     line-height: 24px;
   }
   /* Крест скрытия buttonInline 16 → 20 */
-  .moment__body .vvz-card__close.button-inline-wrapper {
+  .vvz-section .vvz-card__close.button-inline-wrapper {
     height: 20px;
   }
-  .moment__body .vvz-card__close .button-inline__icon {
+  .vvz-section .vvz-card__close .button-inline__icon {
     width: 20px;
     height: 20px;
   }
