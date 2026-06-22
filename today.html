@@ -31,8 +31,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding-top: var(--space-2);
-    padding-bottom: calc(72px + var(--space-6));
+    padding-top: 0;                       /* без отступа под аппбаром до блока новостей */
+    padding-bottom: var(--space-8);       /* 32 */
   }
   /* Острова контента — поля по 8px (как во всех discovery-фреймах Figma) */
   .tg-island { padding: 0 var(--space-2); }
@@ -390,7 +390,7 @@
             <div class="tg-news__title ds-title-xl">Сейчас в СМИ</div>
             <div class="tg-news__tabs">
               <button type="button" class="tg-news__tab __active">Главное</button>
-              <button type="button" class="tg-news__tab">Москва</button>
+              <button type="button" class="tg-news__tab">Санкт-Петербург</button>
               <button type="button" class="tg-news__tab">Происшествия</button>
             </div>
             <div class="tg-news__list">
@@ -440,9 +440,9 @@
           </article>
         </section>
 
-        <!-- Заголовок «Какой сегодня день» (padding-bottom 0 → до баннера ровно
+        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до баннера ровно
              12px через gap .tg-feed) -->
-        <div class="tg-sec-head" style="padding: var(--space-2) var(--space-4) 0;">
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
           <header class="header"><div class="header__title ds-title-xl">Какой сегодня день</div></header>
         </div>
 
@@ -452,11 +452,13 @@
         </div>
 
         <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) — под картинкой дня -->
-        <div class="tg-sec-head" style="padding: 0 var(--space-4) var(--space-3);">
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
           <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
-        <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4);"></div>
+        <!-- padding-left = 16 (как у заголовка) минус инсет аватара в ячейке
+             ((90-56)/2 = 17), чтобы ПЕРВАЯ голова встала вровень с текстом «Друзья на сайте». -->
+        <div class="tg-carousel" id="friendsRow" style="padding-left: calc(var(--space-4) - 17px);"></div>
       </div>
     </div>
 
