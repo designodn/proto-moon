@@ -2956,7 +2956,13 @@
       return out;
     }
     document.querySelectorAll('.feed-birthday__title, .feed-birthday__text').forEach(function (el) {
-      el.textContent = glue(el.textContent);
+      // Обрабатываем только текстовые узлы — принудительный <br> сохраняем
+      // (иначе textContent стирал перенос и склеивал «добавили» + имя).
+      el.childNodes.forEach(function (node) {
+        if (node.nodeType === 3) {
+          node.textContent = glue(node.textContent);
+        }
+      });
     });
   })();
   </script>
