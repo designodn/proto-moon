@@ -27,20 +27,18 @@
   vertical-align: middle;
 }
 
-/* Металлические «клипсы» спирали сверху — только тёмный градиент (Figma).
-   Выступают на 2px над листом (верх листа top:3px). z-index:4 — выше зелёной
-   точки (z:3), чтобы правая палочка не пряталась под индикатором. */
+/* Металлическая «клипса» спирали сверху (одна, слева) — тёмный градиент (Figma).
+   Выступает на 2px над листом (верх листа top:3px). z-index:4 — выше точки. */
 .calendar-date__tab {
   position: absolute;
   top: 1px;
+  left: 6px;
   width: 2.5px;
   height: 5px;
   border-radius: 999px;
   background: linear-gradient(180deg, #575960 0%, #2e2f33 100%);
   z-index: 4;
 }
-.calendar-date__tab:nth-of-type(1) { left: 6px; }
-.calendar-date__tab:nth-of-type(2) { right: 6px; }
 
 /* Тело календаря — тёплый светлый градиент с тёплым контуром (Figma calendar 2d).
    Оранжевая «шапочка» — отдельный слой .calendar-date::after (см. ниже). */
@@ -89,6 +87,8 @@
   line-height: 1;
   letter-spacing: -0.5px;
   color: #38393e;
+  /* сдвиг числа вниз на 2px и влево на 2px */
+  transform: translate(-2px, 2px);
 }
 
 /* Зелёный индикатор «есть события сегодня» — 12px, выступает на 3px за угол листа */
