@@ -18,7 +18,9 @@
   .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .phone-frame__feed::-webkit-scrollbar { display: none; }
   .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
-  .ll-tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; }
+  /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), встаёт в
+     поток в конце доскролла. Перебиваем fixed из app-shell.css. */
+  .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
 
   /* Оранжевая локация справа в навбаре */
   .tg-location { color: var(--static-surface-status-accent); }
@@ -460,18 +462,18 @@
              ((90-56)/2 = 17), чтобы ПЕРВАЯ голова встала вровень с текстом «Друзья на сайте». -->
         <div class="tg-carousel" id="friendsRow" style="padding-left: calc(var(--space-4) - 17px);"></div>
       </div>
-    </div>
 
-    <!-- ===== TABBAR ===== -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- ===== TABBAR — внутри скролла, sticky снизу ===== -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
     </div>
