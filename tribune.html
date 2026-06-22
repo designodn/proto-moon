@@ -150,19 +150,24 @@
       </section>
 
       <!-- Лента постов — каждый пост = отдельный остров. Реальные люди (data/people.js).
-           Шапка: authorHeader (ава 44 / имя ds-title-s / время / кнопка «Подписаться» 28).
+           Шапка: feed-header.__tribune (ава 20 / имя ds-title-s / кнопка «Подписаться» 28 / без времени и крошек).
            Контроллы — Q3 (comment / reshare / klass / more). -->
       <div class="feed-container">
 
         <!-- FEED:START (генерится scripts/fetch-q3.mjs --tribune — не редактировать вручную) -->
         <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&amp;dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Сергей Чернышов</div>
-              <div class="ds-caption-s text-feed__time">9:12</div>
-            </div>
-          </div></div></div>
+          <header class="feed-header __tribune">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&amp;dpr=2" alt=""></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">Сергей Чернышов</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>
 
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
@@ -228,13 +233,18 @@
         </article>
 
         <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Екатерина )))))</div>
-              <div class="ds-caption-s text-feed__time">12:48</div>
-            </div>
-          </div></div></div>
+          <header class="feed-header __tribune">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">Екатерина )))))</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>
 
           <p class="ds-body-m text-feed__body">Праздничный бишбармак, по казахски бесбармак. Астраханский вариант с картошкой.</p>
 
@@ -295,13 +305,18 @@
         </article>
 
         <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Александр Мещеряков</div>
-              <div class="ds-caption-s text-feed__time">вчера, 18:02</div>
-            </div>
-          </div></div></div>
+          <header class="feed-header __tribune">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">Александр Мещеряков</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>
 
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
@@ -367,13 +382,18 @@
         </article>
 
         <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&amp;dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Галина Гаджикулиева</div>
-              <div class="ds-caption-s text-feed__time">пн, 12:03</div>
-            </div>
-          </div></div></div>
+          <header class="feed-header __tribune">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&amp;dpr=2" alt=""></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">Галина Гаджикулиева</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>
 
           <label class="text-feed__body-toggle">
             <input type="checkbox" hidden>
@@ -439,13 +459,18 @@
         </article>
 
         <article class="text-feed island">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&amp;dpr=2" alt=""></div>
-            <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Зинаида Халина(Стребкова)</div>
-              <div class="ds-caption-s text-feed__time">10:05</div>
-            </div>
-          </div></div></div>
+          <header class="feed-header __tribune">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&amp;dpr=2" alt=""></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">Зинаида Халина(Стребкова)</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>
 
           <p class="ds-body-m text-feed__body">Мы будем жить и процветать! Над клумбой бабочки порхают, И небо льётся синевой. В тени песочницы играют</p>
 
