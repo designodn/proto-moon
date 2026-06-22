@@ -133,6 +133,13 @@
   .fp.__state-3 .friend-big-card,
   .fp.__state-4 .friend-big-card { height: auto; min-height: var(--fp-row-card-h, 0px); }
 
+  /* Тех. класс для предварительного замера высоты карточки в ряду (на старте,
+     пока карточки невидимы): ряд-лейаут — фото без верхнего отступа, кнопка
+     «Дружить» развёрнута. JS снимает offsetHeight и фиксирует --fp-row-card-h
+     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах. */
+  .fp.__measuring .friend-big-card { height: auto; min-height: 0; }
+  .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; }
+
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
      кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
      При раскрытии карточка подрастает вниз, фото остаётся на месте. */
@@ -660,6 +667,24 @@
         c.s = b.s * s;
       });
     }
+    // Заранее (пока карточки невидимы, opacity:0) меряем высоту карточки в
+    // ряд-лейауте и фиксируем --fp-row-card-h / ROW_CARD_H — чтобы при входе в
+    // ряд карточки сразу были равной высоты и не «растягивались» на глазах.
+    function measureRowCardH() {
+      root.classList.remove('__state-1');     // снять кружковый лейаут (margin-top фото)
+      root.classList.add('__measuring');
+      var maxH = 0;
+      IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
+      root.classList.remove('__measuring');
+      root.classList.add('__state-1');
+      if (maxH) {
+        root.style.setProperty('--fp-row-card-h', maxH + 'px');
+        ROW_CARD_H = maxH;
+        if (els[8]) els[8].style.height = maxH + 'px';
+      }
+    }
+    measureRowCardH();
+
     recenterRow();
 
     applyState(0);
@@ -855,9 +880,11 @@
       [1, 2, 3, 4, 5].forEach(function (i) {
         if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
       });
-      if (maxH) {
+      // Высота уже зафиксирована на старте (measureRowCardH). Пересчитываем только
+      // если фактическая заметно разошлась (напр. перенос строки после загрузки) —
+      // иначе лишний applyState дал бы микро-сдвиг ряда.
+      if (maxH && Math.abs(maxH - ROW_CARD_H) > 1) {
         if (els[8]) els[8].style.height = maxH + 'px';
-        // Равная высота всех карточек в ряду (имя+город сверху, авы прибиты к низу).
         root.style.setProperty('--fp-row-card-h', maxH + 'px');
         ROW_CARD_H = maxH;
         recenterRow();
