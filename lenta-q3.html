@@ -241,18 +241,10 @@
   .ll-otd__likes-text { color: var(--dynamic-text-and-icons-base-secondary); }
 
   /* «Вас отметили на фото N лет назад» — карточка-воспоминание.
-     Шапка ll-tagged__head: аватар 72 (компонент) над ds-title-xl (колонка).
-     Паддинг text-feed получает сама шапка (а не голый аватар — иначе
-     .text-feed > :not(media) сплющивал бы круг в овал). Ниже full-bleed
-     фото с tooltip-овером, который указывает на отмеченного. Внизу — primary
-     «Поделиться» на всю ширину (через .button-wrapper.__full-width).
+     Сверху капшн «Видите только вы» (.ll-otd__caption) + ds-title-xl, ниже
+     full-bleed фото с tooltip-овером (имя отмеченного, у низа-центра). Внизу —
+     primary «Поделиться» на всю ширину (.button-wrapper.__full-width).
      Media получает .text-feed__media — чтобы выйти из паддинга text-feed. */
-  .ll-tagged__head {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-3);
-  }
   .ll-tagged__media {
     position: relative;
     width: 100%;
