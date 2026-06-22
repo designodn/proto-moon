@@ -174,7 +174,6 @@
     text-align: center;
     color: var(--dynamic-text-and-icons-base-primary);
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   /* ============================================================
@@ -431,6 +430,12 @@
             </div>
           </article>
         </section>
+
+        <!-- Заголовок «Какой сегодня день» (padding-bottom 0 → до баннера ровно
+             12px через gap .tg-feed) -->
+        <div class="tg-sec-head" style="padding: var(--space-2) var(--space-4) 0;">
+          <header class="header"><div class="header__title ds-title-xl">Какой сегодня день</div></header>
+        </div>
 
         <!-- Картинка дня -->
         <div class="tg-island">
