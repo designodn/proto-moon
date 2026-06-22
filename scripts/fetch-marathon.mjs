@@ -98,10 +98,16 @@ function renderEntries(entries) {
   const hero = card({ ...first, ratio: first.ratio || '16:9' }, 1, true);
   // Раскладываем работы по двум колонкам ПОСТРОЧНО (через одну), чтобы порядок
   // мест шёл слева-направо сверху-вниз: верхний ряд — места 2 и 3, ниже 4 и 5 и т.д.
+  // Поле «col» в записи жёстко прибивает работу к колонке: left/a/1 → левая,
+  // right/b/2 → правая (иначе — авточередование).
   const colA = [], colB = [];
   rest.forEach((e, i) => {
     const withRatio = { ...e, ratio: e.ratio || RATIO_CYCLE[i % RATIO_CYCLE.length] };
-    (i % 2 === 0 ? colA : colB).push(card(withRatio, i + 2, false));
+    const html = card(withRatio, i + 2, false);
+    const forced = String(e.col || '').trim().toLowerCase();
+    if (forced === 'left' || forced === 'a' || forced === '1') colA.push(html);
+    else if (forced === 'right' || forced === 'b' || forced === '2') colB.push(html);
+    else (i % 2 === 0 ? colA : colB).push(html);
   });
   return `${hero}
           <div class="ll-mar-masonry">
