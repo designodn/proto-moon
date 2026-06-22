@@ -11,6 +11,11 @@
 <script>
   (function () {
     try {
+      // Обновление страницы (reload) сбрасывает гейт — шторка показывается снова.
+      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]);
+      var isReload = nav ? nav.type === 'reload'
+                         : (performance.navigation && performance.navigation.type === 1);
+      if (isReload) sessionStorage.removeItem('afs-seen');
       if (!sessionStorage.getItem('afs-seen')) {
         sessionStorage.setItem('afs-seen', '1');
         location.replace('add-friends-sheet.html');
