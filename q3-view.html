@@ -332,6 +332,18 @@
 
 <div class="device" id="device">
 
+  <!-- До первой отрисовки: если телефон уже «дома» (вернулись из ленты по
+       back-trap → okstart_at_home=1), сразу раскрываем меню. Иначе при полной
+       перезагрузке q3-view (location.replace) успевает мелькнуть локскрин со
+       своим фоном — .unlocked раньше ставился только в pageshow (после загрузки). -->
+  <script>
+    try {
+      if (sessionStorage.getItem('okstart_at_home') === '1') {
+        document.getElementById('device').classList.add('unlocked', 'no-anim');
+      }
+    } catch (e) {}
+  </script>
+
   <!-- ============== SPLASH приложения ОК (показывается при открытии) ============== -->
   <div class="splash" id="splash" style="display:none">
     <div class="splash__logo" id="splashLogo">
