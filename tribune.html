@@ -555,5 +555,24 @@
       } catch (e) {}
     })();
   </script>
+  <script>
+    // Комменты/caf: «ещё/скрыть» показываем только если текст реально переполняет
+    // line-clamp. Тап по обёртке-лейблу разворачивает (скрытый чекбокс).
+    (function () {
+      function refresh() {
+        document.querySelectorAll('.fc-comment__text-wrap, .caf-text-wrap').forEach(function (w) {
+          var input = w.querySelector('input');
+          if (input && input.checked) return;            // развёрнут — оставляем как есть
+          var text = w.querySelector('.fc-comment__text, .caf-text');
+          if (!text) return;
+          var over = text.scrollHeight > text.clientHeight + 1;
+          w.classList.toggle('is-clampable', over);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', refresh);
+      window.addEventListener('load', refresh);
+      window.addEventListener('resize', refresh);
+    })();
+  </script>
 </body>
 </html>

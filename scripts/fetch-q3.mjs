@@ -324,17 +324,14 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
  *  Короткий → простой <p> с no-widow на последнем слове. */
 const CAF_CLAMP = 120;
 function cafText(title) {
-  const t = String(title ?? '');
-  if (t.length <= CAF_CLAMP) {
-    return `          <p class="caf-text">${esc(noWidow(t))}</p>`;
-  }
-  let cut = t.lastIndexOf(' ', CAF_CLAMP);
-  if (cut < CAF_CLAMP * 0.5) cut = CAF_CLAMP;
-  const head = t.slice(0, cut);
-  const tail = t.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  // Текст коммента целиком в <p>, обрезку делает CSS (line-clamp:4). «ещё/скрыть» —
+  // отдельный сосед, показывается только при переполнении (is-clampable из JS).
+  // Тот же механизм, что у обычных комментариев (fc-comment).
+  const t = esc(String(title ?? ''));
   return `          <label class="caf-text-wrap">
             <input type="checkbox" hidden>
-            <p class="caf-text">${esc(head)}<span class="caf-text__full">${esc(tail)}</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
+            <p class="caf-text">${t}</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
           </label>`;
 }
 
