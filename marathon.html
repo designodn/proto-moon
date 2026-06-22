@@ -86,10 +86,11 @@
     box-shadow: inset 0 0 0 1px var(--dynamic-stroke-contrast-low);
   }
   .ll-mar-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  /* три поддерживаемые пропорции фото */
-  .ll-mar-card__media.__ar-16-9 { aspect-ratio: 16 / 9; }
-  .ll-mar-card__media.__ar-1-1  { aspect-ratio: 1 / 1; }
-  .ll-mar-card__media.__ar-9-16 { aspect-ratio: 9 / 16; }
+  /* все фото в карточках квадратные 1:1 (классы пропорций оставлены для совместимости) */
+  .ll-mar-card__media,
+  .ll-mar-card__media.__ar-16-9,
+  .ll-mar-card__media.__ar-1-1,
+  .ll-mar-card__media.__ar-9-16 { aspect-ratio: 1 / 1; }
 
   /* Бейдж-ранг: оранжевая «закладка» с уголком снизу, в правом верхнем углу. */
   .ll-mar-card__rank {

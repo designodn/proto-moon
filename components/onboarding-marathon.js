@@ -154,7 +154,7 @@
     //   hero  — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
     //   combo — те же две кнопки, что и на hero (последний слайд): secondary
     //           «Перейти к фотомарафону» + primary «Далее» (на последнем шаге
-    //           «Далее» закрывает онбординг, см. обработчик nextWrap).
+    //           «Далее» ведёт внутрь фотомарафона, см. обработчик nextWrap).
     //   hidden — спрятан
     function setFooter(mode) {
       footer.classList.toggle('__hidden', mode === 'hidden');
@@ -195,8 +195,8 @@
     el.querySelector('.omar__close').addEventListener('click', close);
     ctaBtn.addEventListener('click', go);
     nextWrap.querySelector('button').addEventListener('click', function () {
-      // «Далее»: на последнем слайде закрывает онбординг, иначе — следующий слайд.
-      if (index >= last) close();
+      // «Далее»: на последнем слайде ведёт внутрь фотомарафона, иначе — следующий слайд.
+      if (index >= last) go();
       else goTo(index + 1);
     });
 
