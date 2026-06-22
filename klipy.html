@@ -152,7 +152,8 @@
   .klip__bottom {
     position: absolute; left: var(--space-4); z-index: 20;
     right: 76px; /* не залезать под right-rail */
-    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    /* таб-бар 49px (48 иконки + 1 бордер) + 12 до блока со звуком */
+    bottom: calc(61px + env(safe-area-inset-bottom, 0px));
     display: flex; flex-direction: column; gap: var(--space-3);
     color: var(--static-text-and-icons-base-inverse-primary);
   }
