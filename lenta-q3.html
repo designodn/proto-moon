@@ -2616,24 +2616,6 @@
     })();
   </script>
 
-  <!-- Тап по текстовому посту → открыть запись (post.html). Клики по
-       контролам поста (actions-bar, кнопки/ссылки/инпуты, toggle «ещё»)
-       не перехватываем. -->
-  <style>.text-feed { cursor: pointer; }</style>
-  <script>
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest) return;
-      var post = e.target.closest('.text-feed');
-      if (!post) return;
-      // Клип из воспоминаний — свой обработчик (открывает редактор), не post.html.
-      if (post.classList.contains('ll-memclip')) return;
-      if (e.target.closest('.actions-bar, button, a, input, label, .text-feed__body-toggle, .text-feed__more, .avatar, .ds-title-s')) return;
-      e.preventDefault();
-      try { sessionStorage.setItem('openPost', post.innerHTML); } catch (_) {}
-      location.href = 'post.html';
-    });
-  </script>
-
   <!-- Тап по автору поста (аватар/имя в шапке) → профиль человека.
        ФИО и аватар прокидываем в profile.html через ?name=&avatar=. -->
   <script>
