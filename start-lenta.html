@@ -594,7 +594,7 @@
         <span class="ls-push__app"><img src="assets/icons/appLogoDefault.png" alt="ОК"></span>
         <div class="ls-push__content">
           <div class="ls-push__head">
-            <span class="ls-push__title">Алёна, у вас новые гости</span>
+            <span class="ls-push__title"><span data-ls-myname>Анфиса</span>, у вас новые гости</span>
             <span class="ls-push__time">2 ч назад</span>
           </div>
           <div class="ls-push__body">Давайте проверим, кто это</div>
@@ -697,6 +697,19 @@
     var person = firstWithPhoto(pair[1]);
     if (el && person) { el.src = person.photo; el.alt = person.name || ''; }
   });
+
+  // Обращение в пуше — имя из профиля пользователя (id "my_profile" в people.js).
+  // Берём только первое слово (имя), т.к. в name хранится полное ФИО.
+  var me = null;
+  for (var j = 0; j < people.length; j++) {
+    if (people[j] && people[j].id === 'my_profile') { me = people[j]; break; }
+  }
+  if (me && me.name) {
+    var firstName = me.name.trim().split(/\s+/)[0];
+    document.querySelectorAll('[data-ls-myname]').forEach(function (el) {
+      el.textContent = firstName;
+    });
+  }
 })();
 </script>
 <script>
