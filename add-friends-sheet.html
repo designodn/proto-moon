@@ -595,7 +595,20 @@
     ];
     // Порядок слева-направо в ряду = 1..7 (card1 — первая видимая, крупный кружок),
     // 8 — карточка «принять всех» в самом конце ряда.
-    var IDX = [1, 2, 3, 4, 5, 6, 7, 8];
+    // ── Флаг карточки «Принять всех» ─────────────────────────────────────
+    // Массовое принятие по тапу + финальный «комок» (autoFinish). Выключена по
+    // просьбе: финиш теперь по последней обычной карточке. КОД СОХРАНЁН —
+    // ACCEPT_ALL=true возвращает прежнее поведение (карточку, bulk-accept, финал).
+    var ACCEPT_ALL = false;
+    var ACCEPT_ALL_I = 8;
+    var IDX = ACCEPT_ALL ? [1, 2, 3, 4, 5, 6, 7, 8] : [1, 2, 3, 4, 5, 6, 7];
+    // Выключено → убираем accept-all из стейтов (чтобы не лезла в раскладку) и
+    // прячем её элемент. Сам HTML/JS остаётся для повторного включения.
+    if (!ACCEPT_ALL) {
+      STATES.forEach(function (s) { delete s.cards[ACCEPT_ALL_I]; });
+      var _aaEl = root.querySelector('.friend-big-card.__accept-all');
+      if (_aaEl) _aaEl.style.display = 'none';
+    }
     var SUCCESS_TOP = 396;  // «Вы подружились со всеми» — между навбаром и кнопкой
 
     var els = {};
@@ -884,7 +897,7 @@
       var GUTTER = 5;
       var snapped = 0;
       var downAcceptAll = false;  // тап начат на карточке «принять всех»?
-      var acceptAllI = IDX[IDX.length - 1];  // data-i карточки «принять всех» (8)
+      var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять всех» (8)
       var finishing = false;      // идёт авто-финиш (приняли всё по одной)
 
       // Авто-финиш: приняли все карточки по одной → карточка «принять всех» сама
@@ -912,7 +925,7 @@
       // когда карточек > 1) — особый: последняя карточка («принять всех») прижата
       // правым краем к 12px от края экрана (как крестик), а не в общей колонке.
       function panForSnap(target) {
-        if (target !== minSnap || liveCards.length <= 1) return target * STEP;
+        if (!ACCEPT_ALL || target !== minSnap || liveCards.length <= 1) return target * STEP;
         var vpW = scene.clientWidth || window.innerWidth;
         var lastI = liveCards[liveCards.length - 1];
         var cxLast = rowState[lastI].cx;
@@ -1062,10 +1075,15 @@
               els[j].style.transition = '';
             });
           }, SHIFT_DUR + 30);
-          // Приняли все по одной — осталась только карточка «принять всех»:
-          // она сама улетает вниз + конфетти + финал.
-          if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
-            setTimeout(autoFinish, SHIFT_DUR);
+          // Приняли все по одной → финал (конфетти + «Вы подружились со всеми»).
+          // С accept-all: остаётся её карточка, она сама улетает вниз (autoFinish).
+          // Без accept-all: ряд опустел на последней карточке → финал сразу.
+          if (ACCEPT_ALL) {
+            if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
+              setTimeout(autoFinish, SHIFT_DUR);
+            }
+          } else if (liveCards.length === 0) {
+            setTimeout(showAllAccepted, SHIFT_DUR);
           }
         }
 
