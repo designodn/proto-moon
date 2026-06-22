@@ -87,15 +87,14 @@
   line-height: 1;
   letter-spacing: -0.5px;
   color: #38393e;
-  /* сдвиг числа вниз на 2px и влево на 2px */
-  transform: translate(-2px, 2px);
 }
 
-/* Зелёный индикатор «есть события сегодня» — 12px, выступает на 3px за угол листа */
+/* Зелёный индикатор «есть события сегодня» — 12px. Сдвинут на 2px вниз и
+   влево относительно угла (top/right −1px вместо −3px). */
 .calendar-date__dot {
   position: absolute;
-  top: -3px;
-  right: -3px;
+  top: -1px;
+  right: -1px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
