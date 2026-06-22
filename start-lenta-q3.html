@@ -448,57 +448,6 @@
   .search-bar__icon { width: 22px; height: 22px; }
 
   /* ============================================================
-     System notifications — Android heads-up cards from our app.
-     One at a time: each new push replaces the previous one, and a
-     card can be flicked up to dismiss it.
-     ============================================================ */
-  .notifs {
-    position: absolute;
-    top: 36px; left: 8px; right: 8px;
-    z-index: 65;
-    pointer-events: none;   /* empty area passes taps to the launcher */
-  }
-  /* Карточки накладываются друг на друга (стопка-дека): новая приходит
-     поверх, предыдущие чуть уезжают вглубь и выглядывают снизу. */
-  .notif {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    background: rgba(241, 243, 247, 0.97);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px;
-    padding: 11px 15px 13px;
-    color: #1c1c1e;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.28);
-    pointer-events: auto;   /* the card itself catches the swipe */
-    touch-action: none;     /* vertical drag stays ours */
-    transform-origin: center top;
-    will-change: transform, opacity;
-    cursor: grab;
-    transition: transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
-  }
-  .notif:active { cursor: grabbing; }
-  .notif__head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #5f6368;
-    font-weight: 500;
-  }
-  .notif__appicon {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: radial-gradient(120% 120% at 30% 25%, #ffb347 0%, #ff7a00 100%);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .notif__app { font-weight: 600; color: #3c4043; }
-  .notif__sep { opacity: 0.6; }
-  .notif__title { font-size: 14px; font-weight: 600; margin-top: 5px; }
-  .notif__body  { font-size: 13px; color: #3c4043; margin-top: 1px; line-height: 1.3; }
-
-  /* ============================================================
      App-launch animation — tapped icon flies to splash logo position
      while the orange splash background reveals as a growing circle
      ============================================================ */
@@ -694,8 +643,6 @@
     </div>
   </div>
 
-  <!-- System notifications stack (filled from JS while on the menu) -->
-  <div class="notifs" id="notifs"></div>
 
   <!-- Gesture navigation pill (always on top) -->
   <div class="nav-pill"></div>
@@ -745,7 +692,6 @@
   var lock     = document.getElementById('lockscreen');
   var launch   = document.getElementById('launch');
   var glyph    = document.getElementById('launchGlyph');
-  var notifBox = document.getElementById('notifs');
   var splash   = document.getElementById('splash');
 
   /* ---- App-open splash: показывается ПОСЛЕ тапа по иконке ОК (пока
@@ -775,7 +721,6 @@
     device.classList.add('unlocked');
     try { sessionStorage.setItem(HOME_KEY, '1'); } catch (e) {}
     history.pushState({ scr: 'menu' }, '');
-    startNotifications();
   }
 
   // Slide back down to the lock screen (Back pressed from the menu).
@@ -792,8 +737,6 @@
     device.classList.add('unlocked');
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
-    stopNotifications(false);         // cancel any stale timer, keep delivered
-    startNotifications();             // resume any remaining notifications
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
@@ -808,142 +751,6 @@
     launch.removeAttribute('style');
     glyph.innerHTML = '';
     hideSplash();
-  }
-
-  /* ============================================================
-     System notifications from «ОК» — arrive on the menu
-     one after another, 6 seconds apart, while it stays unlocked.
-     ============================================================ */
-  var NOTIFS = [
-    { title: 'Тамара Белова опубликовала фото', body: 'Поставьте «Класс!» одними из первых' },
-    { title: '3 новых уведомления',             body: 'Алёна Курская и ещё двое отметили вас' },
-    { title: 'Миша Колесников ответил вам',      body: '«Спасибо за совет по кофеварке!»' },
-    { title: 'Прямой эфир скоро начнётся',       body: 'Концерт «Летняя сцена» — через 5 минут' },
-    { title: 'Сегодня день рождения у Ирины 🎂', body: 'Не забудьте поздравить' }
-  ];
-  var NOTIF_GAP = 6000;   // 6s between notifications
-  var NOTIF_FIRST = 2000; // first one shortly after entering the menu
-
-  var NOTIF_LIFETIME = 10000;  // каждое уведомление само скрывается через 10s
-
-  var notifTimer = null, notifIndex = 0, notifsRunning = false;
-
-  // Animate a card up and out, then drop it from the DOM.
-  function dismissNotif(el) {
-    if (!el || el.__leaving) return;
-    el.__leaving = true;
-    if (el.__hideTimer) { clearTimeout(el.__hideTimer); el.__hideTimer = null; }
-    el.style.transition = 'transform 0.28s ease, opacity 0.28s ease';
-    el.style.transform = 'translateY(-150%)';
-    el.style.opacity = '0';
-    var done = function () { if (el.parentNode) el.parentNode.removeChild(el); restack(); };
-    el.addEventListener('transitionend', done, { once: true });
-    setTimeout(done, 360);   // fallback if transitionend is missed
-  }
-
-  // Раскладываем стопку: новейшая карточка спереди (depth 0), предыдущие
-  // уезжают вглубь (смещение вниз + уменьшение), выглядывая снизу.
-  var MAX_STACK = 3;
-  function restack() {
-    var kids = notifBox.children, visible = [];
-    for (var i = 0; i < kids.length; i++) {
-      if (!kids[i].__leaving) visible.push(kids[i]);
-    }
-    var n = visible.length;
-    for (var j = 0; j < n; j++) {
-      var el = visible[j];
-      var depth = n - 1 - j;                 // 0 = новейшая (спереди)
-      if (depth >= MAX_STACK) { dismissNotif(el); continue; }
-      el.style.transition = 'transform 0.38s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease';
-      el.style.zIndex = String(100 - depth);
-      el.style.opacity = depth === 0 ? '1' : (depth === 1 ? '0.92' : '0.8');
-      el.style.transform = 'translateY(' + (depth * 10) + 'px) scale(' + (1 - depth * 0.05) + ')';
-    }
-  }
-
-  // Flick-up to dismiss: the card follows the finger, releases past a
-  // small threshold to fly off, otherwise springs back.
-  function attachSwipe(el) {
-    var sy = 0, dy = 0, dragging = false;
-    el.addEventListener('pointerdown', function (e) {
-      if (el.__leaving) return;
-      dragging = true; sy = e.clientY; dy = 0;
-      el.style.transition = 'none';
-      try { el.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-    el.addEventListener('pointermove', function (e) {
-      if (!dragging) return;
-      dy = Math.min(0, e.clientY - sy);              // upward only
-      el.style.transform = 'translateY(' + dy + 'px)';
-      el.style.opacity = String(Math.max(0, 1 + dy / 120));
-    });
-    function end() {
-      if (!dragging) return;
-      dragging = false;
-      if (dy < -34) {                                // flicked far enough → close
-        dismissNotif(el);
-      } else {                                       // snap back into the stack
-        restack();
-      }
-    }
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-  }
-
-  function addNotif(data) {
-    var el = document.createElement('div');
-    el.className = 'notif';
-    el.innerHTML =
-      '<div class="notif__head">' +
-        '<span class="notif__appicon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none">' +
-          '<circle cx="50" cy="34" r="13" fill="#fff"/>' +
-          '<path d="M38 44 L50 64 L38 84" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<path d="M62 44 L50 64 L62 84" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '</svg></span>' +
-        '<span class="notif__app">ОК</span>' +
-        '<span class="notif__sep">·</span><span>сейчас</span>' +
-      '</div>' +
-      '<div class="notif__title"></div>' +
-      '<div class="notif__body"></div>';
-    el.querySelector('.notif__title').textContent = data.title;
-    el.querySelector('.notif__body').textContent = data.body;
-    notifBox.appendChild(el);            // новейшая — последняя в DOM = спереди
-    attachSwipe(el);
-    // Стартовое состояние: над стопкой и прозрачная — затем «приходит» поверх,
-    // а предыдущие карточки уезжают вглубь.
-    el.style.transition = 'none';
-    el.style.transform = 'translateY(-46px) scale(1)';
-    el.style.opacity = '0';
-    void el.offsetWidth;                 // фиксируем старт перед анимацией
-    restack();
-    el.__hideTimer = setTimeout(function () { dismissNotif(el); }, NOTIF_LIFETIME);
-  }
-
-  function scheduleNext() {
-    if (notifIndex >= NOTIFS.length) { notifsRunning = false; return; }
-    var delay = notifIndex === 0 ? NOTIF_FIRST : NOTIF_GAP;
-    notifTimer = setTimeout(function () {
-      addNotif(NOTIFS[notifIndex]);
-      notifIndex++;
-      scheduleNext();
-    }, delay);
-  }
-
-  function startNotifications() {
-    // Приходящие системные пуши на меню отключены (по запросу) — heads-up
-    // карточки больше не «прилетают» во время взаимодействия.
-    return;
-  }
-
-  function stopNotifications(clear) {
-    notifsRunning = false;
-    if (notifTimer) { clearTimeout(notifTimer); notifTimer = null; }
-    if (clear) {
-      Array.prototype.forEach.call(notifBox.children, function (el) {
-        if (el.__hideTimer) clearTimeout(el.__hideTimer);
-      });
-      notifBox.innerHTML = ''; notifIndex = 0;
-    }
   }
 
   /* ---- Lock screen: interactive swipe-up (follows the finger), release past
