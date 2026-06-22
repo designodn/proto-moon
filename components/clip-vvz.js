@@ -37,11 +37,6 @@
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="klip__rail">' +
-          '<button class="klip__rail-btn" aria-label="Ещё">' +
-            '<span class="klip__rail-ico" style="--ico:url(\'assets/icons/more_24.svg\')"></span>' +
-          '</button>' +
-        '</div>' +
       '</section>';
   }
 

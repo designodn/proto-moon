@@ -3,25 +3,26 @@
  *
  * Полноэкранный слайд «Возможно, вы знакомы» внутри ленты клипов (klipy).
  * Вставляется между клипами как отдельный full-screen «клип» (.klip.__vvz):
- * мягкий оранжево-чёрный градиент + заголовок + сетка карточек VvzCard + CTA.
- * Композиция повторяет MomentViewer.vvzSlide, но живёт в вертикальном reel.
+ * фон-подложка как в ВВЗ-сториз (canonical) + общий блок «заголовок + сетка
+ * карточек» (VvzCard.section) + CTA. Композиция и фон совпадают с
+ * MomentViewer.vvzSlide — отличается только тем, что живёт в вертикальном reel.
  *
  * Разметку собирает window.ClipVvz.render() (см. components/clip-vvz.js),
- * карточки — через window.VvzCard.render. Подключается на странице плеера.
+ * заголовок+карточки — через window.VvzCard.section. Подключается на плеере.
  *
  * Структура:
  *   <section class="klip __vvz">
  *     <div class="klip__vvz-inner">
- *       <h2 class="klip__vvz-title ds-title-xl">Возможно, вы знакомы</h2>
- *       <div class="klip__vvz-grid"> …VvzCard… </div>
+ *       <h2 class="vvz-section__title ds-title-xl">Возможно, вы знакомы</h2>
+ *       <div class="vvz-section__grid"> …VvzCard… </div>
  *       <div class="klip__vvz-cta"> …button… </div>
  *     </div>
- *     <div class="klip__rail"> … </div>
  *   </section>
  */
 
 .klip.__vvz {
-  background: radial-gradient(120% 80% at 50% 0%, #4c2400 0%, #1a0a02 55%, #000 100%);
+  /* Фон-подложка — та же, что в ВВЗ-сториз (canonical), а не свой градиент. */
+  background: center top / cover no-repeat url('../assets/vvz-story-back.png') #000;
 }
 .klip__vvz-inner {
   position: absolute;
