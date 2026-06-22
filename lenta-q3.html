@@ -71,9 +71,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    /* острова в края; нижний воздух перед таб-баром (таб-бар теперь sticky
-       внутри скролла, отдельный клиренс под fixed не нужен) */
-    padding-bottom: var(--space-8);
+    /* нижний воздух перед таб-баром задаётся margin-top у .ll-tabbar (12) */
+    padding-bottom: 0;
   }
 
   /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), а в конце
@@ -81,7 +80,7 @@
   .ll-tabbar {
     position: sticky;
     bottom: 0;
-    margin-top: var(--space-2);
+    margin-top: var(--space-3);
   }
 
   /* button-klass + <img>-иконки: my .ll-icon ставит display:inline-block,
