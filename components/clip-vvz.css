@@ -31,8 +31,10 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   row-gap: var(--space-4);
+  /* Низ: CTA «Показать всех» прижат на 12px над таб-баром.
+     Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
   padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
-           calc(108px + env(safe-area-inset-bottom, 0px));
+           calc(49px + 12px);
 }
 /* Заголовок и сетка — общий компонент .vvz-section (vvz-card.css).
    Здесь только специфика клипа: сетка скроллится внутри средней строки
