@@ -115,6 +115,13 @@ function initialsOf(name) {
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/* nbsp() — приклеивает «висячие» предлоги/союзы (1–2 буквы) к следующему слову
+ * неразрывным пробелом, чтобы они не отрывались в конце строки. Применяется к
+ * прозе карточек (заголовок/текст) ДО esc() — экранирование nbsp не трогает. */
+const HANG_WORDS = ['а','в','и','к','о','с','у','я','во','до','за','из','ко','на','не','об','от','по','со','то'];
+const HANG_RE = new RegExp('(^|[\\s>(«"])(' + HANG_WORDS.join('|') + ')\\s+', 'gi');
+const nbsp = s => String(s ?? '').replace(HANG_RE, (_, pre, w) => pre + w + ' ');
+
 const SECONDARY = 'color: var(--dynamic-text-and-icons-base-secondary);';
 
 function subscribeBtn() {
@@ -269,7 +276,10 @@ ${stack}${more}
 
 /* ── рендер одного поста ────────────────────────────────────────────────────── */
 function renderPost(p, idx) {
-  const { id, type, author, title, text, photos, likes, comments, reshares, tema, rubrika } = p;
+  const { id, type, author, photos, likes, comments, reshares, tema, rubrika } = p;
+  // Заголовок/текст — с неразрывными пробелами (висячие предлоги, см. nbsp()).
+  const title = nbsp(p.title);
+  const text = nbsp(p.text);
   const grp = isGroupId(author);
   const time = TIMES[idx % TIMES.length];
   const x = EXTRAS[id] || {};

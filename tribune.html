@@ -154,258 +154,314 @@
            Контроллы — Q3 (comment / reshare / klass / more). -->
       <div class="feed-container">
 
-        <!-- Стих — feed-text с .poem (Roboto 24/28, clamp 4) -->
-        <article class="feed-base island">
-          <header class="feed-header __tribune">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="1" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="1"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">3 ч</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
+        <!-- FEED:START (генерится scripts/fetch-q3.mjs --tribune — не редактировать вручную) -->
+        <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Еда</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Выпечка</span>
+            </nav>
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-44 __type-image __has-addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""><div class="avatar __size-20 __type-image caf-ava__addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-m feed-header__name">Виктор Бондарев</div>
+                <div class="ds-caption-m caf-header__sub">Комментарий к <span class="caf-header__to">Екатерина )))))</span></div>
+              </div>
+            </div></div></div>
           </header>
 
-          <div class="feed-text">
-            <p class="feed-text__body poem">
-              Опять у солнца выходной…<br>
-              А может просто отсыпной?<br>
-              Устало солнце нам светить<br>
-              Пора такое прекратить…
-            </p>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">11</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 8;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- Текстовый пост (бывш. «news») — обычный feed-text (ds-body-m, не крупный) -->
-        <article class="feed-base island">
-          <header class="feed-header __tribune">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="2" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="2"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">5 ч</div>
+          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправля...ещё</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
+          </label>
+          <div class="text-feed__reshare-card caf-preview">
+            <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
+            <div class="text-feed__link caf-preview__body">
+              <div class="ds-title-s">Домашние беляши с мясом. Всегда готовлю сразу двойную порцию</div>
+              <p class="ds-body-m caf-preview__snippet">Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовала, домашние всё равно нравятся больше.</p>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
-          </header>
-
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">Сейчас новый вирус снова закроет нас по домам, потребление нефтепродуктов снизится, и цены на них упадут. Очень удобно.</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
           </div>
-
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">1</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 22;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- VIDEO (post-1) — Игорь Черняков, Еда › Рецепты -->
-        <article class="feed-base island" data-entity="group">
-          <header class="feed-header __tribune">
-          <nav class="breadcrumbs">
-            <span class="breadcrumbs__item">Еда</span>
-            <span class="breadcrumbs__separator" aria-hidden="true"></span>
-            <span class="breadcrumbs__item __state-on">Рецепты</span>
-          </nav>
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-5" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="group-5"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">08:15</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
-          </header>
-
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">Шашлык как в детстве Это вкуснее, чем  я ожидал!</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-          </div>
-
-          <div class="media __aspect-4-3 __type-video"><img src="https://avatars.dzeninfra.ru/get-zen_doc/1901671/pub_5e7d003d16fa5012842479e5_5e820a69d4abfe57572f6291/scale_1200" alt="">
-            <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
-            <span class="media__time">0:45</span>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">48</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">15</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 312;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- PHOTO (post-4) — Екатерина -->
-        <article class="feed-base island">
-          <header class="feed-header __tribune">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="9" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="9"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">12:48</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
-          </header>
-
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-          </div>
-
-          <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">20</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">6</span></button></div>
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
             <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 12;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
+                  <div class="fc-list">
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Екатерина )))))</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Ольга Стрельникова</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">Когда переворачиваешь га другую сторону надо накрыть крышкой</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать ответ…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
         </article>
 
-        <!-- TEXT (post-20) — Галина Гаджикулиева, Санкт-Петербург › Рядом живут -->
-        <article class="feed-base island">
-          <header class="feed-header __tribune">
-          <nav class="breadcrumbs">
-            <span class="breadcrumbs__item">Санкт-Петербург</span>
-            <span class="breadcrumbs__separator" aria-hidden="true"></span>
-            <span class="breadcrumbs__item __state-on">Рядом живут</span>
-          </nav>
+        <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="7" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="7"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">вчера</div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александр Мещеряков</div>
+              <div class="ds-caption-s text-feed__time">12:48</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
           </div></div></div>
-          </header>
 
-          <div class="feed-text" style="--feed-text-clamp: 3;">
-            <p class="feed-text__body ds-body-m">Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
+          <div class="text-feed__titled">
+            <h2 class="text-feed__title ds-title-xl">Из истории моего родного Уварова</h2>
+          <label class="text-feed__body-toggle">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body">
+              УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины,<span class="text-feed__body-full"> на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
+            </p>
+          </label>
           </div>
-
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg" alt=""></div>
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">5</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">1</span></button></div>
             <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 2;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 25;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
         </article>
 
-        <!-- PHOTO (post-22) — Наталья Атаманюк | Рецепты, Еда › Рекомендации групп -->
-        <article class="feed-base island" data-entity="group">
-          <header class="feed-header __tribune">
-          <nav class="breadcrumbs">
-            <span class="breadcrumbs__item">Еда</span>
-            <span class="breadcrumbs__separator" aria-hidden="true"></span>
-            <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
-          </nav>
+        <article class="text-feed island">
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-1" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="group-1"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">вчера, 18:02</div>
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IPNeAmefnQ_q_fBnSP6L7gURvfVXT0zpZCXFkKdi9qlbJOESgFVCi1uWLafZHwvhP8rmqH6tzXG92KALACQQfDhoXLvV7CBLfXqOZtGEQAAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александра Бачурина (Душка)</div>
+              <div class="ds-caption-s text-feed__time">вчера, 18:02</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
           </div></div></div>
-          </header>
 
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">Забирайте идею подачи блинов. А если нужно еще и не наесть бочков, то готовьте по моему рецепту</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-          </div>
-
-          <div class="media __aspect-4-3"><img src="https://avatars.dzeninfra.ru/get-zen_doc/8220767/pub_63e9ec741b468f22ef1e7232_63ee070c3398503757765481/scale_1200" alt=""></div>
+          <p class="ds-body-m text-feed__body">Поставили новый счётчик, а расход стал больше обычного.</p>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">97</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">10</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 56;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- VIDEO (post-7) — Рыбалка и Охота, Рыбалка › Рекомендации групп -->
-        <article class="feed-base island" data-entity="group">
-          <header class="feed-header __tribune">
-          <nav class="breadcrumbs">
-            <span class="breadcrumbs__item">Рыбалка</span>
-            <span class="breadcrumbs__separator" aria-hidden="true"></span>
-            <span class="breadcrumbs__item __state-on">Рекомендации групп</span>
-          </nav>
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="group-3" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="group-3"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">2 дн</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
-          </header>
-
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">Как привлечь удачу на рыбалке</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-          </div>
-
-          <div class="media __aspect-4-3 __type-video"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItQ78d_1sAmaVQ2TFGIpufPBJ7hIuvpy4kLXgxgzhO-O35B_tiCJp926IqupEmU9Du4E2K5esrB2eYxH7rP_Fw_xuPACL7b7uCiuVT1U4AAAAp&amp;dpr=2" alt="">
-            <div class="media__play button-circle-wrapper __size-56"><button class="button-circle" aria-label="Play"><span class="icon __slot-play"></span></button></div>
-            <span class="media__time">1:12</span>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">180</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">10</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 35;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
-          </div>
-        </article>
-
-        <!-- GALLERY (post-14) — Александр Попов -->
-        <article class="feed-base island">
-          <header class="feed-header __tribune">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-20 __type-image"><img data-person-avatar="10" alt=""></div>
-            <div class="contents-view-container uni-cell-additional-content">
-              <div class="ds-title-s feed-header__name" data-person-name="10"></div>
-              <div class="ds-caption-m" style="color: var(--dynamic-text-and-icons-base-secondary);">3 дн</div>
-            </div>
-            <label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>
-          </div></div></div>
-          </header>
-
-          <div class="feed-text">
-            <p class="feed-text__body ds-body-m">6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!</p>
-            <label class="feed-text__expand button-inline-wrapper __size-20 __view-primary"><input type="checkbox" hidden><span class="button-inline __size-20"><span class="button-inline__content"><span class="feed-text__label-collapsed">Раскрыть текст</span><span class="feed-text__label-expanded">Свернуть</span></span></span></label>
-          </div>
-
-          <div class="media __type-gallery">
-            <div class="media__cell"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&amp;dpr=2" alt=""></div>
-            <div class="media__cell"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&amp;dpr=2" alt=""></div>
-            <div class="media__cell"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1dXYFWACup8JRxzeCQOqt-LiOzIaU2mB4w49pHZEl-KYse8Nc12mfrKTKkuJ417XAI-EAUsMXxyni-Ff8_P9yzTR8mQ1-JA3B_A9TCqMAAAAp&amp;dpr=2" alt=""></div>
-            <div class="media__cell __more" data-more="2"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KKi1SDCWV9W3KezY11eBZRZtMytTE9RtR3YQhs-lzrKie2yoaKXedKGDzEIpxv23sdH43yYj871Td6onSRTBg2zaxYrvE7MbbYX-trI-wAAAAp&amp;dpr=2" alt=""></div>
-          </div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">12</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">1</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">20</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
             <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 5;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
           </div>
+                  <div class="fc-list">
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Зинаида Халина(Стребкова)</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Александр Кириевич</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">руки потому что не из тго места</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
         </article>
+
+        <article class="text-feed island">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александр Мещеряков</div>
+              <div class="ds-caption-s text-feed__time">пн, 12:03</div>
+            </div>
+          </div></div></div>
+
+          <p class="ds-body-m text-feed__body">Мои любимые и родные!!!!Обожаю вас</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg" alt=""></div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+                  <div class="fc-list">
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Антонида Чекалова (Гахова)</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">ну красавицы!!!!!</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="text-feed island">
+          <header class="feed-header">
+            <nav class="breadcrumbs">
+              <a class="breadcrumbs__item" href="#">Еда</a>
+              <span class="breadcrumbs__separator" aria-hidden="true"></span>
+              <span class="breadcrumbs__item __state-on">Закуски</span>
+            </nav>
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-44 __type-image __has-addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""><div class="avatar __size-20 __type-image caf-ava__addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div></div>
+              <div class="contents-view-container uni-cell-additional-content">
+                <div class="ds-title-m feed-header__name">Александр Мещеряков</div>
+                <div class="ds-caption-m caf-header__sub">Комментарий к <span class="caf-header__to">Идеи для сада и огорода своими руками с фото</span></div>
+              </div>
+            </div></div></div>
+          </header>
+
+          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса</p>
+            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
+          </label>
+          <div class="text-feed__reshare-card caf-preview">
+            <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
+            <div class="text-feed__link caf-preview__body">
+              <p class="ds-body-m caf-preview__snippet">Хрустящая золотистая корочка снаружи, нежная картофельная серединка внутри — кажется, устоять просто невозможно 😍</p>
+            </div>
+          </div>
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">18</span></button></div>
+            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>
+            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 4;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/icons/klass_filled_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          </div>
+                  <div class="fc-list">
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Виктор Бондарев</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">... 😄мы сими с усами.</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment">
+              <div class="fc-comment__aside">
+                <span class="fc-comment__handle" aria-hidden="true"></span>
+                <div class="avatar __size-20 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__author ds-title-s">Екатерина )))))</div>
+                <label class="fc-comment__text-wrap">
+                  <input type="checkbox" hidden>
+                  <p class="fc-comment__text ds-body-m">Настоящие, по- белорусски!</p>
+                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
+                </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать ответ…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
+        </article>
+        <!-- FEED:END -->
 
         <div style="height: 96px"></div>
       </div>
