@@ -76,7 +76,7 @@ function arClass(r) {
 function card(e, rank, hero) {
   const cls = hero ? 'll-mar-card __hero' : 'll-mar-card';
   // Ранг-ярлык показываем только у призовых мест (1–3).
-  const rankBadge = rank <= 3 ? `\n              <span class="ll-mar-card__rank">${esc(rank)}</span>` : '';
+  const rankBadge = rank <= 3 ? `\n              <span class="ll-mar-card__rank __rank-${esc(rank)}">${esc(rank)}</span>` : '';
   return `          <a class="${cls}" href="#">
             <span class="ll-mar-card__media ${arClass(e.ratio)}">
               <img src="${esc(e.photo)}" alt="" loading="lazy">${rankBadge}
