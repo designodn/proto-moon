@@ -152,8 +152,10 @@
   .klip__bottom {
     position: absolute; left: var(--space-4); z-index: 20;
     right: 76px; /* не залезать под right-rail */
-    /* таб-бар 49px (48 иконки + 1 бордер) + 12 до блока со звуком */
-    bottom: calc(61px + env(safe-area-inset-bottom, 0px));
+    /* таб-бар 49px (48 иконки + 1 бордер) + 12 до блока со звуком.
+       Без env(safe-area): таб-бар тоже не резервирует safe-area, иначе зазор
+       раздувался бы на величину инсета. */
+    bottom: 61px;
     display: flex; flex-direction: column; gap: var(--space-3);
     color: var(--static-text-and-icons-base-inverse-primary);
   }
@@ -202,6 +204,9 @@
   .klipy-tabbar .tabbar {
     --dynamic-surface-base-secondary: #1A1A1C;
     --dynamic-stroke-contrast-low: rgba(255, 255, 255, 0.10);
+    /* невыбранный таб = base-primary (см. tabbar.css) — в тёмной шапке клипа
+       красим в белый; tertiary оставлен для совместимости. */
+    --dynamic-text-and-icons-base-primary: #FFFFFF;
     --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
     --dynamic-text-and-icons-status-accent: #FF9558;
   }

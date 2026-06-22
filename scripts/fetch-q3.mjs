@@ -881,7 +881,7 @@ ${authorHeaderFn(aid, time)}
           ? `
               <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
                 <input type="checkbox" hidden>
-                <span class="button-container __style-on-image"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
               </label>`
           : '';
         const hint = p.header
