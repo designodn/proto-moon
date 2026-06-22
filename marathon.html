@@ -25,7 +25,9 @@
   /* Заголовок-хэштег в навбаре по центру страницы. */
   .ll-mar-nav { position: relative; }
   .ll-mar-nav__title {
-    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    /* Прижат к низу навбара: счётчик «11K участников» идёт сразу под навбаром
+       (margin:0), поэтому bottom:4px даёт 4px между хэштегом и счётчиком. */
+    position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
     color: var(--dynamic-text-and-icons-base-primary); pointer-events: none;
   }
 

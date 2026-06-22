@@ -847,6 +847,21 @@
     var avaEls  = document.querySelectorAll('[data-pr-subject-avatar]');
     var firstEls = document.querySelectorAll('[data-pr-subject-first]');
 
+    // Родительный падеж русского имени (для «События кого?»). Покрывает частые
+    // окончания; несклоняемые (на о/е/у/ы/э/ю/и) оставляем как есть.
+    function toGenitive(n) {
+      if (!n) return n;
+      var low = n.toLowerCase();
+      if (/[ьй]$/.test(low)) return n.slice(0, -1) + 'я';          // Эмиль→Эмиля, Николай→Николая
+      if (/я$/.test(low))     return n.slice(0, -1) + 'и';          // Илья→Ильи, Аня→Ани
+      if (/а$/.test(low)) {                                         // Анфиса→Анфисы, Ольга→Ольги
+        var p = low.slice(-2, -1);
+        return n.slice(0, -1) + ('кгхжшщч'.indexOf(p) >= 0 ? 'и' : 'ы');
+      }
+      if (/[бвгдзклмнпрстфхцчшщ]$/.test(low)) return n + 'а';       // Иван→Ивана, Олег→Олега
+      return n;
+    }
+
     function setSubject(name, avatar) {
       if (name) nameEls.forEach(function (el) { el.textContent = name; });
       if (avatar) avaEls.forEach(function (el) { el.src = avatar; el.alt = name || ''; });
@@ -858,7 +873,12 @@
       setSubject(me.name, me.avatarSrc);
       var selfName = me.name || (nameEls[0] && nameEls[0].textContent) || '';
       var selfFirst = selfName.trim().split(/\s+/)[0];
-      if (selfFirst) firstEls.forEach(function (el) { el.textContent = selfFirst; });
+      // Таб «События <имя>» и подсказка — родительный падеж («События кого?»),
+      // поэтому склоняем имя: Анфиса→Анфисы, Эмиль→Эмиля, Илья→Ильи и т.п.
+      if (selfFirst) {
+        var gen = toGenitive(selfFirst);
+        firstEls.forEach(function (el) { el.textContent = gen; });
+      }
 
       // Инфо-строки из строки my_profile реестра (город/возраст/род)
       var meRow = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0] || {};

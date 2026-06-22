@@ -828,6 +828,12 @@ ${authorHeaderFn(aid, time)}
       const giftYears = (String(text).match(/(\d+)/) || [])[1] || '';
       const giftHref = 'gifts-catalog.html?to=' + encodeURIComponent(giftTo) +
         (giftYears ? '&anniv=' + giftYears : '');
+      // Подзаголовок: «Ровно N <год/года/лет> назад вы добавили\n<Имя друга> в
+      // друзья OK». Число и грамматику единицы берём из текста листа (там уже
+      // «3 года»), имя друга — из автора, принудительный перенос перед именем.
+      const annivUnit = (String(text).match(/\d+\s+(год[а-яё]*|лет)/i) || [])[1] || 'года';
+      const annivName = firstName(giftTo) || 'друга';
+      const annivText = `Ровно ${giftYears || '3'} ${annivUnit} назад вы добавили\n${annivName} в друзья OK`;
       return `        <article class="feed-birthday island">
           <div class="feed-birthday__deco"></div>
 
@@ -837,7 +843,7 @@ ${authorHeaderFn(aid, time)}
           </div>
 
           <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
-          <div class="ds-body-m feed-birthday__text">${annivProse(text)}</div>
+          <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
