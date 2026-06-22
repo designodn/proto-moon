@@ -350,14 +350,13 @@
     var root = this.root;
     var run = function () {
       var body = root.querySelector('.moment__body');
-      var inner = body && body.querySelector('.moment__body-inner');
+      var inner = body && body.querySelector('.vvz-section');
       if (!inner) return;
       inner.style.zoom = '';
-      var cs = getComputedStyle(body);
-      var avail = body.clientHeight
-        - parseFloat(cs.paddingTop || 0)
-        - parseFloat(cs.paddingBottom || 0);
-      var natural = inner.offsetHeight;
+      // .vvz-section растянута на всю высоту body (flex:1), поэтому доступная
+      // высота — её clientHeight, а натуральная высота контента — scrollHeight.
+      var avail = inner.clientHeight;
+      var natural = inner.scrollHeight;
       if (avail > 0 && natural > avail) {
         inner.style.zoom = (avail / natural).toFixed(4);
       }
@@ -703,10 +702,10 @@
     var section = (window.VvzCard && window.VvzCard.section)
       ? window.VvzCard.section({ title: opts.title, people: people })
       : '';
-    // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
-    // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
-    // экране (см. _fitBody в moment.js).
-    var body = '<div class="moment__body-inner">' + section + '</div>';
+    // section — это .vvz-section (заголовок + сетка): сам центрируется и
+    // скроллится в .moment__body; viewer масштабирует его (zoom), если он не
+    // влезает по высоте на маленьком экране (см. _fitBody в moment.js).
+    var body = section;
     var slide = {
       body: body,
       // Фон ВВЗ-сториз — картинка-подложка (оранжево-чёрный градиент сверху-

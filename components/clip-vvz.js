@@ -31,9 +31,9 @@
     return '' +
       '<section class="klip __vvz" data-klip data-vvz>' +
         '<div class="klip__vvz-inner">' +
-          // .klip__vvz-body центрирует пару «заголовок + сетка» по вертикали
-          // (как .moment__body в сториз), CTA прижата снизу.
-          '<div class="klip__vvz-body">' + section + '</div>' +
+          // section — это .vvz-section: сама центрирует «заголовок + сетку»
+          // по вертикали и скроллится (как в сториз). CTA прижата снизу.
+          section +
           '<div class="klip__vvz-cta">' + ctaHtml + '</div>' +
         '</div>' +
       '</section>';
