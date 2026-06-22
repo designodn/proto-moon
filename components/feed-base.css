@@ -110,6 +110,14 @@
 .button-subscribe { cursor: pointer; }
 .button-subscribe__label-subscribed { display: none; }
 
+/* В обычной шапке поста кнопка «Подписаться» прижата к верхнему краю строки
+   автора (ава 44 + 2 строки), а не центрируется по ней. У Трибуны
+   .uni-cell-wrapper лежит внутри .feed-header.__tribune (не прямой ребёнок
+   .text-feed) — её этот селектор не задевает. */
+.text-feed > .uni-cell-wrapper .button-subscribe {
+  align-self: flex-start;
+}
+
 .button-subscribe:has(> input:checked) .button-subscribe__label-default { display: none; }
 .button-subscribe:has(> input:checked) .button-subscribe__label-subscribed { display: inline; }
 

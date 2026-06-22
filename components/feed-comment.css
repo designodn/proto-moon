@@ -63,7 +63,7 @@
   width: 2px;
   top: 12px;
   bottom: -12px;
-  background: #E4DED9;
+  background: #F0EDEB;
 }
 /* Первый коммент: его локоть на (padding 4 − 4) = 0, оттуда трунк идёт вниз. */
 .fc-comment:first-child::before {
@@ -84,14 +84,14 @@
   gap: var(--space-2);              /* 8 между локтем и авой */
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет #E4DED9 (сплошной, 100%). */
+   12px. Цвет #F0EDEB (сплошной, 100%). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: -4px;                 /* низ локтя (загиб) попадает на центр авы 20px */
-  border-left: 2px solid #E4DED9;
-  border-bottom: 2px solid #E4DED9;
+  border-left: 2px solid #F0EDEB;
+  border-bottom: 2px solid #F0EDEB;
   border-bottom-left-radius: 8px;
 }
 

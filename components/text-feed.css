@@ -320,7 +320,7 @@
 .text-feed__body-toggle:has(> input:checked) .text-feed__body-full { display: inline; }
 
 .text-feed__more {
-  color: var(--dynamic-text-and-icons-status-accent);
+  color: var(--dynamic-text-and-icons-base-secondary);
   text-decoration: none;
 }
 
