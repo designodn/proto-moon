@@ -150,26 +150,23 @@
       </section>
 
       <!-- Лента постов — каждый пост = отдельный остров. Реальные люди (data/people.js).
-           Шапка: feed-header.__tribune (ава 20 / title-s / кнопка 28 / без времени и крошек).
+           Шапка: authorHeader (ава 44 / имя ds-title-s / время / кнопка «Подписаться» 28).
            Контроллы — Q3 (comment / reshare / klass / more). -->
       <div class="feed-container">
 
         <!-- FEED:START (генерится scripts/fetch-q3.mjs --tribune — не редактировать вручную) -->
         <article class="text-feed island">
-          <header class="feed-header">
-            <nav class="breadcrumbs">
-              <a class="breadcrumbs__item" href="#">Еда</a>
-              <span class="breadcrumbs__separator" aria-hidden="true"></span>
-              <span class="breadcrumbs__item __state-on">Выпечка</span>
-            </nav>
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-44 __type-image __has-addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""><div class="avatar __size-20 __type-image caf-ava__addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div></div>
-              <div class="contents-view-container uni-cell-additional-content">
-                <div class="ds-title-m feed-header__name">Виктор Бондарев</div>
-                <div class="ds-caption-m caf-header__sub">Комментарий к <span class="caf-header__to">Екатерина )))))</span></div>
-              </div>
-            </div></div></div>
-          </header>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Виктор Бондарев</div>
+              <div class="ds-caption-s text-feed__time">9:12</div>
+            </div>
+            <label class="button-wrapper __size-28 button-subscribe">
+              <input type="checkbox" hidden>
+              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+            </label>
+          </div></div></div>
 
           <label class="caf-text-wrap">
             <input type="checkbox" hidden>
@@ -380,20 +377,17 @@
         </article>
 
         <article class="text-feed island">
-          <header class="feed-header">
-            <nav class="breadcrumbs">
-              <a class="breadcrumbs__item" href="#">Еда</a>
-              <span class="breadcrumbs__separator" aria-hidden="true"></span>
-              <span class="breadcrumbs__item __state-on">Закуски</span>
-            </nav>
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-44 __type-image __has-addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""><div class="avatar __size-20 __type-image caf-ava__addon"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LnEGgW2A033-9JEivEi6R6JLrHPPPa1WtpnUQlrXvG2c-MVEpo7hNTmtHfgb5frej-ZYSDPkOndaRY1P8C5eHPvWVqGKCGZfB3YCfw9LYAAAAp&amp;dpr=2" alt=""></div></div>
-              <div class="contents-view-container uni-cell-additional-content">
-                <div class="ds-title-m feed-header__name">Александр Мещеряков</div>
-                <div class="ds-caption-m caf-header__sub">Комментарий к <span class="caf-header__to">Идеи для сада и огорода своими руками с фото</span></div>
-              </div>
-            </div></div></div>
-          </header>
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JdD0Rzu2vA4-BylDQbj9Ufs3G2EV0EbvBXd80QICIQ3c4qVMMSFbx63fVFQIe3nCLyOpOOJA2DGTKhltQP3pcqcq79uM7O5bW7avFU-X0AAAAp&amp;dpr=2" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Александр Мещеряков</div>
+              <div class="ds-caption-s text-feed__time">10:05</div>
+            </div>
+            <label class="button-wrapper __size-28 button-subscribe">
+              <input type="checkbox" hidden>
+              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+            </label>
+          </div></div></div>
 
           <label class="caf-text-wrap">
             <input type="checkbox" hidden>
