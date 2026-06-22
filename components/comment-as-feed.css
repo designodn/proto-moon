@@ -23,27 +23,25 @@
 .caf-text {
   margin: 0;
   font-family: var(--font-family);
-  /* Как крупный текст поста в ленте (.text-feed__body.__news/__poem, 24/28) —
-     comment-as-feed это крупная карточка-коммент, стоит в один размер с ними. */
+  /* Как крупный текст поста в ленте (.text-feed__body.__news/__poem, 24/28). */
   font-size: 24px;
   line-height: 28px;
   font-weight: 400;
   color: var(--dynamic-text-and-icons-base-primary);
-  /* Обрезка ровно как у комментариев (fc-comment): line-clamp до 4 строк,
-     «ещё» — отдельной строкой снизу, по чекбоксу разворачиваем. */
+  /* Обрезка как у комментариев (fc-comment): line-clamp до 4 строк, «ещё» —
+     отдельной строкой снизу, по чекбоксу разворачиваем. */
   overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
   overflow: hidden;
 }
-/* Развёрнутый — снимаем кламп. */
 .caf-text-wrap > input:checked ~ .caf-text {
   -webkit-line-clamp: unset;
   overflow: visible;
 }
-/* «ещё/скрыть» — отдельный сосед текста (не внутри клампа), показываем ТОЛЬКО
-   когда текст реально переполнен (класс is-clampable вешает JS по overflow). */
+/* «ещё/скрыть» — отдельный сосед текста, показываем только при переполнении
+   (is-clampable вешает JS по overflow). */
 .caf-text__more {
   display: none;
   margin-top: var(--space-1);
@@ -54,7 +52,6 @@
 .caf-text__more-hide { display: none; }
 .caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-show { display: none; }
 .caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-hide { display: inline; }
-
 
 /* Подзаголовок шапки «Комментарий к <автор оригинала>» — строго в одну строку
    (ellipsis), как и имя выше (.feed-header__name). Имя оригинала чуть акцентнее. */

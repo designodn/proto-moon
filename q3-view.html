@@ -92,26 +92,10 @@
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background:
-      radial-gradient(70% 55% at 80% 6%,  rgba(0, 170, 200, 0.75) 0%, transparent 60%),
-      radial-gradient(70% 55% at 16% 18%, rgba(66, 133, 244, 0.65) 0%, transparent 58%),
-      radial-gradient(85% 60% at 86% 94%, rgba(52, 168, 83, 0.55) 0%, transparent 60%),
-      radial-gradient(80% 60% at 8% 96%,  rgba(20, 130, 160, 0.55) 0%, transparent 60%),
-      radial-gradient(60% 45% at 50% 55%, rgba(26, 90, 130, 0.55) 0%, transparent 70%),
-      linear-gradient(160deg, #0a141b 0%, #0e1a26 45%, #06090f 100%);
+    background: url('assets/start/wallpaper.jpg') center / cover no-repeat;
   }
   .wallpaper::before {
-    content: "";
-    position: absolute;
-    inset: -20%;
-    background: conic-gradient(from 200deg at 55% 42%,
-      transparent 0deg,
-      rgba(255,255,255,0.08) 40deg,
-      transparent 120deg,
-      rgba(120,200,255,0.14) 210deg,
-      transparent 300deg);
-    filter: blur(44px);
-    opacity: 0.8;
+    content: none;
   }
   .wallpaper::after {
     content: "";
@@ -332,6 +316,18 @@
 
 <div class="device" id="device">
 
+  <!-- До первой отрисовки: если телефон уже «дома» (вернулись из ленты по
+       back-trap → okstart_at_home=1), сразу раскрываем меню. Иначе при полной
+       перезагрузке q3-view (location.replace) успевает мелькнуть локскрин со
+       своим фоном — .unlocked раньше ставился только в pageshow (после загрузки). -->
+  <script>
+    try {
+      if (sessionStorage.getItem('okstart_at_home') === '1') {
+        document.getElementById('device').classList.add('unlocked', 'no-anim');
+      }
+    } catch (e) {}
+  </script>
+
   <!-- ============== SPLASH приложения ОК (показывается при открытии) ============== -->
   <div class="splash" id="splash" style="display:none">
     <div class="splash__logo" id="splashLogo">
@@ -511,6 +507,7 @@
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
     stopNotifications();              // в меню пуши не показываем (только локскрин)
+    if (window.OkNotifs) window.OkNotifs.clearShown();  // снять залипшие с локскрина
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
