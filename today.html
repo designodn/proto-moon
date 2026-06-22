@@ -94,6 +94,62 @@
   .tg-feature__actions { display: flex; gap: var(--space-2); }
 
   /* ============================================================
+     «Сейчас в СМИ» — Дзен-портлет новостей: заголовок + табы +
+     список «источник · заголовок» + кнопка «Посмотреть ещё».
+     Подложка contrast-low, скругление 20.
+     ============================================================ */
+  .tg-news {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: 20px;
+    background: var(--dynamic-surface-contrast-low);
+    overflow: hidden;
+  }
+  .tg-news__title { color: var(--dynamic-text-and-icons-base-primary); }
+  .tg-news__tabs { display: flex; gap: 6px; }
+  .tg-news__tab {
+    flex-shrink: 0;
+    border: 0;
+    cursor: pointer;
+    padding: var(--space-2) var(--space-3);
+    border-radius: 12px;
+    background: var(--dynamic-surface-contrast-low);
+    color: var(--dynamic-text-and-icons-base-primary);
+    font-family: var(--font-family);
+    font-size: 15px;
+    line-height: 20px;
+  }
+  .tg-news__tab.__active {
+    background: var(--dynamic-surface-base-inverse-primary);
+    color: var(--dynamic-text-and-icons-base-inverse-primary);
+  }
+  /* Видео-фон карточки рулетки (PNG в background-image карточки — постер-фолбэк). */
+  .tg-roulette__video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .tg-news__list { display: flex; flex-direction: column; gap: var(--space-4); }
+  .tg-news__item { display: flex; align-items: center; gap: var(--space-3); }
+  .tg-news__icon { width: 24px; height: 24px; flex-shrink: 0; display: block; border-radius: 50%; }
+  .tg-news__text {
+    flex: 1 1 0;
+    min-width: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============================================================
      «Друзья на сайте» — аватар + имя + online-точка.
      ============================================================ */
   .tg-friend {
@@ -323,38 +379,40 @@
       <!-- ===== КОНТЕНТ ===== -->
       <div class="tg-feed">
 
-        <!-- 1. Напоминание о событии (закрываемое) -->
-        <section class="tg-island" data-dismiss-row>
-          <article class="tg-feature" data-dismiss-target style="background: var(--dynamic-surface-tint-indigo);">
-            <div class="tg-feature__title ds-title-s">Вы сегодня записаны на мероприятие «Скандинавская ходьба»</div>
-            <div class="tg-feature__actions" style="width: 100%;">
-              <span class="button-wrapper __size-36 __style-primary __full-width" style="flex: 1 1 0;">
-                <button class="button-container __style-primary"><span class="button-content">Подробнее</span></button>
-              </span>
-              <span class="button-wrapper __size-36 __style-secondary __full-width" style="flex: 1 1 0;">
-                <button class="button-container __style-secondary" data-dismiss="row"><span class="button-content">Скрыть</span></button>
-              </span>
-            </div>
-          </article>
-        </section>
-
-        <!-- 2. День рождения друга -->
+        <!-- 1. Сейчас в СМИ — Дзен-портлет новостей -->
         <section class="tg-island">
-          <article class="cover-card __size-164 __fill"
-                   style="background-image: url('assets/today/dr-segodnya-fon.png'); color: var(--base-black-100);">
-            <div class="cover-card__body">
-              <div class="cover-card__top">
-                <div class="cover-card__title ds-title-m" style="max-width: 220px;">День Рождения у Виктора Бондарева</div>
+          <article class="tg-news">
+            <div class="tg-news__title ds-title-xl">Сейчас в СМИ</div>
+            <div class="tg-news__tabs">
+              <button type="button" class="tg-news__tab __active">Главное</button>
+              <button type="button" class="tg-news__tab">Москва</button>
+              <button type="button" class="tg-news__tab">Происшествия</button>
+            </div>
+            <div class="tg-news__list">
+              <div class="tg-news__item">
+                <img class="tg-news__icon" src="assets/today/src-lenta.svg" alt="">
+                <div class="tg-news__text ds-body-l">ЦИК: выборы депутатов Госдумы пройдут с 18 по 20 сентября</div>
               </div>
-              <div class="cover-card__bottom" style="align-items: flex-start;">
-                <span class="button-wrapper __size-36 __style-primary">
-                  <button class="button-container __style-primary"><span class="button-content">Поздравить</span></button>
-                </span>
+              <div class="tg-news__item">
+                <img class="tg-news__icon" src="assets/today/src-rt.svg" alt="">
+                <div class="tg-news__text ds-body-l">Летчик-космонавт и депутат ГД Александр Самокутяев умер в возрасте 56 лет</div>
+              </div>
+              <div class="tg-news__item">
+                <img class="tg-news__icon" src="assets/today/src-re.svg" alt="">
+                <div class="tg-news__text ds-body-l">Слово «преддверие» вызвало самые большие проблемы на ЕГЭ по русскому языку</div>
+              </div>
+              <div class="tg-news__item">
+                <img class="tg-news__icon" src="assets/today/src-lenta.svg" alt="">
+                <div class="tg-news__text ds-body-l">«Единая Россия» предложила заменить предупреждениями штрафы за мелкие нарушения</div>
+              </div>
+              <div class="tg-news__item">
+                <img class="tg-news__icon" src="assets/today/src-rt.svg" alt="">
+                <div class="tg-news__text ds-body-l">Трамп назвал условие возвращения санкций против российской нефти</div>
               </div>
             </div>
-            <div class="cover-card__badge __pos-tr" style="top: 16px; right: 16px;">
-              <div class="avatar __size-72 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&dpr=2" alt=""></div>
-            </div>
+            <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
+              <button class="button-container __style-primary-on-color"><span class="button-content">Посмотреть ещё</span></button>
+            </span>
           </article>
         </section>
 
@@ -363,6 +421,7 @@
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
                    style="background-image: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
+            <video class="tg-roulette__video" src="assets/today/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-xl">Колесо призов</div>
@@ -376,17 +435,17 @@
           </article>
         </section>
 
-        <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) -->
+        <!-- Картинка дня -->
+        <div class="tg-island">
+          <img src="assets/today/segodnya-day.png" alt="" style="width: 100%; display: block; border-radius: 16px;">
+        </div>
+
+        <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) — под картинкой дня -->
         <div class="tg-sec-head" style="padding: var(--space-3) var(--space-4);">
           <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
         <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4);"></div>
-
-        <!-- Картинка дня -->
-        <div class="tg-island">
-          <img src="assets/today/segodnya-day.png" alt="" style="width: 100%; display: block; border-radius: 16px;">
-        </div>
       </div>
     </div>
 

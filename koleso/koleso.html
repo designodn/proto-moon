@@ -270,10 +270,10 @@
     var loop = PRIZES.length * (220 + 8);
     reel.style.setProperty('--rl-loop', '-' + loop + 'px');
 
-    // ── Состояние билетов (?tickets=0 → реферальный режим) ────────
-    var params = new URLSearchParams(location.search);
-    var tickets = parseInt(params.get('tickets'), 10);
-    if (isNaN(tickets)) tickets = 1;
+    // ── Состояние билетов ─────────────────────────────────────────
+    // Всегда показываем состояние «нет билета» (реферальный режим):
+    // вариант «есть билет» убран.
+    var tickets = 0;
 
     var coin = document.getElementById('coin-count');
     var ctaText = document.getElementById('cta-text');
@@ -294,7 +294,7 @@
 
     cta.addEventListener('click', function () {
       if (cta.dataset.mode === 'invite') {
-        location.href = 'koleso-tasks.html';
+        location.href = 'koleso-friends.html' + location.search;
         return;
       }
       // защита от повторного тапа во время прокрута
