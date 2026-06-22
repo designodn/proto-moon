@@ -53,11 +53,6 @@
   border: 1.5px solid #e3d0c3;
   border-radius: 6px;
   background: linear-gradient(180deg, #ffffff 59%, #f7f4f2 71%, #ecd8cb 111%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* запас под оранжевую «шапочку» — число центрируется ниже неё */
-  padding-top: 5px;
 }
 
 /* Оранжевая «шапочка» — отдельный слой РОВНО по ширине листа (= ширина
@@ -76,10 +71,18 @@
   z-index: 2;
 }
 
-/* Число месяца — по центру, тёмное (в макете Rounded Mplus Bold → системный bold) */
+/* Число месяца — абсолютный слой (как в макете), отцентрован по всему листу.
+   Выступает на 2px влево/вправо за контент-бокс (не считая бордера), приподнят. */
 .calendar-date__num {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: 4px;
+  bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
   font-family: var(--font-family);
   font-weight: 700;
   font-size: 12px;
