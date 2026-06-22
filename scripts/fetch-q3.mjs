@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 /**
- * fetch-q3.mjs — собирает Q3-ленту (lenta-q3.html) из листа «Q3-посты» Google-таблицы.
+ * fetch-q3.mjs — собирает ленты из Google-таблицы по ОБЩЕЙ Q3-схеме листа.
  *
- *   node scripts/fetch-q3.mjs            — тянет лист и перегенерит ленту
- *   node scripts/fetch-q3.mjs --offline  — реген из data/q3-feed.json (без сети)
+ *   node scripts/fetch-q3.mjs                      — Q3-лента → lenta-q3.html
+ *   node scripts/fetch-q3.mjs --offline            — реген Q3 из data/q3-feed.json (без сети)
+ *   node scripts/fetch-q3.mjs --tribune            — лента Трибуны → tribune.html
+ *   node scripts/fetch-q3.mjs --tribune --offline  — реген Трибуны из data/tribune-feed.json
+ *
+ * Лист трибуны имеет ту же схему/типы, что Q3-посты, поэтому рендер общий —
+ * меняется только источник (gid), json-выгрузка и целевой html (см. FEEDS ниже).
  *
  * Что делает (полный аналог scripts/fetch-feed.mjs):
  *   1. тянет лист «Q3-посты» (gviz CSV) → массив постов;
@@ -23,17 +28,36 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
-const SHEET_NAME = 'Q3-посты';            // человекочитаемое имя листа (для логов)
-const SHEET_GID = '1662648328';           // стабильный gid листа Q3-постов
+
+// Один скрипт обслуживает две ленты с ОДИНАКОВОЙ схемой/типами листа:
+//   • Q3-лента      — node scripts/fetch-q3.mjs            → lenta-q3.html
+//   • Трибуна       — node scripts/fetch-q3.mjs --tribune  → tribune.html
+// Меняется только лист-источник (gid), json-выгрузка и целевой html. Рендер
+// карточек (text-feed / caf-* / fc-комменты) общий — типы листов совпадают.
+const FEEDS = {
+  q3: {
+    name: 'Q3-посты',  gid: '1662648328',     // стабильный gid листа Q3-постов
+    json: 'data/q3-feed.json', html: 'lenta-q3.html',
+    cmd: 'scripts/fetch-q3.mjs',              // подпись в маркере FEED:START
+  },
+  tribune: {
+    name: 'Трибуна',   gid: '803749593',      // лист трибуны (та же схема, что Q3)
+    json: 'data/tribune-feed.json', html: 'tribune.html',
+    cmd: 'scripts/fetch-q3.mjs --tribune',
+  },
+};
+const FEED = FEEDS[process.argv.includes('--tribune') ? 'tribune' : 'q3'];
+const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
+const SHEET_GID = FEED.gid;                   // стабильный gid листа
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
-// Тянем по gid, а НЕ по имени листа: имя («Q3-посты») переименовали в таблице,
+// Тянем по gid, а НЕ по имени листа: имя листа могут переименовать в таблице,
 // и gviz при ненайденном имени молча отдаёт первый лист («Люди») — из-за чего
 // раньше лента собиралась из чужой схемы и обнулялась. gid переживает переименования.
 //
@@ -152,6 +176,19 @@ const resolveNames = str => {
 /* ── helpers разметки ───────────────────────────────────────────────────────── */
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* Текст карточки-годовщины (заголовок/подзаголовок): экранируем, перевод
+ * строки из ячейки (Alt/Option+Enter в Google-таблице) → <br>, и приклеиваем
+ * «висячие» предлоги/союзы к следующему слову неразрывным пробелом. */
+const HANG_WORDS = ['а','в','и','к','о','с','у','я','во','до','за','из','ко','на','не','об','от','по','со','то'];
+const HANG_RE = new RegExp('(^|[\\s>(«"])(' + HANG_WORDS.join('|') + ')\\s+', 'gi');
+// nbsp() — приклеивает «висячие» предлоги/союзы к следующему слову неразрывным
+// пробелом. Применяется ко всей прозе карточек (заголовок/текст/описание/комменты)
+// ДО esc() —   экранирование не трогает, так что переживает шаблоны.
+const nbsp = s => String(s ?? '').replace(HANG_RE, (_, pre, w) => pre + w + ' ');
+const annivProse = s => esc(String(s ?? ''))
+  .replace(/\r\n?|\n/g, '<br>')
+  .replace(HANG_RE, (_, pre, w) => pre + w + ' ');
 
 const img = (url, attr = '') => `<img ${attr}src="${esc(url)}" alt="">`;
 
@@ -387,7 +424,7 @@ function commentItem(authorId, text) {
                 <div class="fc-comment__author ds-title-s">${esc(personName(authorId))}</div>
                 <label class="fc-comment__text-wrap">
                   <input type="checkbox" hidden>
-                  <p class="fc-comment__text ds-body-m">${esc(resolveNames(text))}</p>
+                  <p class="fc-comment__text ds-body-m">${esc(nbsp(resolveNames(text)))}</p>
                   <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
                 </label>
                 <div class="fc-comment__actions">
@@ -438,11 +475,16 @@ function attachComments(card, p) {
   return `${card.slice(0, i)}${block}\n        ${card.slice(i)}`;
 }
 
-/* ── рендер одного поста ────────────────────────────────────────────────────── */
-function renderPost(p, idx) {
+/* ── рендер одного поста ──────────────────────────────────────────────────────
+ * opts.authorHeader — необязательная замена authorHeader(id, time, {subscribe}).
+ *   Нужна профильному пайплайну (scripts/fetch-profile.mjs): автор поста = хозяин
+ *   профиля (data-pr-* / data-pr-subject-*), а НЕ человек из people.json. Если
+ *   не передана — используется обычная запекаемая шапка из people.json. */
+function renderPost(p, idx, opts = {}) {
   const { id, type, author, photos, likes, comments, reshares, link } = p;
-  const title = resolveNames(p.title);   // «<id>_name» → имя из people.json
-  const text = resolveNames(p.text);
+  const authorHeaderFn = opts.authorHeader || authorHeader;
+  const title = nbsp(resolveNames(p.title));   // «<id>_name» → имя; +неразрывные пробелы
+  const text = nbsp(resolveNames(p.text));
   const ids = splitIds(author);
   const aid = ids[0];
   const time = TIMES[idx % TIMES.length];
@@ -459,9 +501,9 @@ function renderPost(p, idx) {
       const header = crumbs
         ? `          <header class="feed-header">
 ${crumbs}
-${authorHeader(aid, time, { subscribe })}
+${authorHeaderFn(aid, time, { subscribe })}
           </header>`
-        : authorHeader(aid, time, { subscribe });
+        : authorHeaderFn(aid, time, { subscribe });
       // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
       // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
       const body = title
@@ -628,7 +670,7 @@ ${likesBlock}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -652,7 +694,7 @@ ${actionsBar(likes, comments, reshares)}
 ${avatarsStack(f.mutuals, 'll-friend-row__mutuals')}
                 </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <p class="ds-body-m text-feed__body">Добавил в друзья</p>
 
@@ -708,7 +750,7 @@ ${authorHeader(aid, time)}
         ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
 ${feedText(text)}
 
@@ -751,7 +793,7 @@ ${actionsBar(likes, comments, reshares)}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeader(aid, time)}
+${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card${cardMod}">
             <div class="ll-gift-from">
@@ -792,8 +834,8 @@ ${authorHeader(aid, time)}
             <div class="avatar __size-120 __type-image __border">${img(a2)}</div>
           </div>
 
-          <div class="ds-title-l feed-birthday__title">${esc(title)}</div>
-          <div class="ds-body-m feed-birthday__text">${esc(text)}</div>
+          <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
+          <div class="ds-body-m feed-birthday__text">${annivProse(text)}</div>
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
@@ -876,7 +918,7 @@ ${authorHeader(aid, time)}
           ? `
               <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
                 <input type="checkbox" hidden>
-                <span class="button-container __style-on-image"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
               </label>`
           : '';
         const hint = p.header
@@ -995,7 +1037,7 @@ ${mediaInner}
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
               <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
-              <p class="ds-body-m caf-preview__snippet">${esc(resolveNames(p.desc))}</p>` : ''}
+              <p class="ds-body-m caf-preview__snippet">${esc(nbsp(resolveNames(p.desc)))}</p>` : ''}
             </div>
           </div>`;
       return `        <article class="text-feed island">
@@ -1029,9 +1071,9 @@ ${actionsBar(likes, comments, reshares)}
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function splice(cardsHtml) {
-  const file = resolve(ROOT, 'lenta-q3.html');
+  const file = resolve(ROOT, FEED.html);
   let html = readFileSync(file, 'utf8');
-  const START = '<!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->';
+  const START = `<!-- FEED:START (генерится ${FEED.cmd} — не редактировать вручную) -->`;
   const END = '<!-- FEED:END -->';
   const block = `${START}\n${cardsHtml}\n        ${END}`;
 
@@ -1043,7 +1085,7 @@ function splice(cardsHtml) {
     const startIdx = html.indexOf('        <!-- 1. Короткий текст');
     const closeIdx = html.indexOf('\n      </div>\n    </div>');
     if (startIdx === -1 || closeIdx === -1)
-      throw new Error('Не нашёл границы legacy-карточек в lenta-q3.html');
+      throw new Error(`Не нашёл маркеры FEED:START/END и границы legacy-карточек в ${FEED.html}`);
     html = html.slice(0, startIdx) + block + '\n\n' + html.slice(closeIdx + 1);
   }
   writeFileSync(file, html);
@@ -1056,8 +1098,8 @@ async function main() {
   let posts;
 
   if (offline) {
-    console.log('→ Офлайн-реген из data/q3-feed.json (таблицу не тяну)…');
-    posts = JSON.parse(readFileSync(resolve(ROOT, 'data/q3-feed.json'), 'utf8')).posts || [];
+    console.log(`→ Офлайн-реген из ${FEED.json} (таблицу не тяну)…`);
+    posts = JSON.parse(readFileSync(resolve(ROOT, FEED.json), 'utf8')).posts || [];
   } else {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
@@ -1094,7 +1136,7 @@ async function main() {
     // деплой-реген не обнулил живой фид.
     if (I.type < 0 || I.author < 0) {
       throw new Error(
-        `лист по gid=${SHEET_GID} не похож на Q3-посты (нет колонок «тип»/«автор»): ` +
+        `лист по gid=${SHEET_GID} не похож на «${SHEET_NAME}» (нет колонок «тип»/«автор»): ` +
         `${head.join(' | ')}. Лента НЕ перегенерирована — проверь доступ/лист в таблице.`);
     }
 
@@ -1149,8 +1191,8 @@ async function main() {
       }
     }
 
-    writeFileSync(resolve(ROOT, 'data/q3-feed.json'),
-      JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}» (gid 1662648328)`, 'как_обновить': 'node scripts/fetch-q3.mjs  (офлайн-реген: node scripts/fetch-q3.mjs --offline)' }, posts }, null, 2) + '\n');
+    writeFileSync(resolve(ROOT, FEED.json),
+      JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}» (gid ${SHEET_GID})`, 'как_обновить': `node ${FEED.cmd}  (офлайн-реген: node ${FEED.cmd} --offline)` }, posts }, null, 2) + '\n');
   }
 
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
@@ -1166,8 +1208,22 @@ async function main() {
   const cards = rendered.join('\n\n');
   splice(cards);
 
-  console.log(`✓ ${posts.length} постов → data/q3-feed.json + вставлено в lenta-q3.html`);
+  console.log(`✓ ${posts.length} постов → ${FEED.json} + вставлено в ${FEED.html}`);
   posts.forEach(p => console.log(`  • ${p.id.padEnd(8)} ${p.type}`));
 }
 
-main().catch(err => { console.error('✗', err.message); process.exit(1); });
+/* ── exports для переиспользования (scripts/fetch-profile.mjs) ────────────────
+ * Импорт этого модуля НЕ должен ничего запускать — main() стартует только при
+ * прямом запуске файла (см. guard ниже). Профильный пайплайн переиспользует
+ * рендереры/хелперы и подменяет шапку автора через renderPost(p, i, {authorHeader}). */
+export {
+  renderPost, attachComments, renderCommentThread, commentItem,
+  authorHeader, breadcrumbs, activityLine, feedText, media, actionsBar,
+  esc, img, personName, personPhoto, resolveNames, splitIds, isGroupId,
+  parseCsv, PEOPLE, TIMES, COMPANION, EXTRAS, SPREADSHEET_ID,
+};
+
+// Авто-запуск только при прямом вызове (node scripts/fetch-q3.mjs), не при import.
+if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
+  main().catch(err => { console.error('✗', err.message); process.exit(1); });
+}

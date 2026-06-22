@@ -1,0 +1,148 @@
+{
+  "_readme": {
+    "источник": "Google-таблица, лист «Трибуна» (gid 803749593)",
+    "как_обновить": "node scripts/fetch-q3.mjs --tribune  (офлайн-реген: node scripts/fetch-q3.mjs --tribune --offline)"
+  },
+  "posts": [
+    {
+      "id": "row-1",
+      "type": "comment-as-feed",
+      "author": "4, 9",
+      "tema": "Еда",
+      "rubrika": "Выпечка",
+      "header": "",
+      "title": "Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправля...ещё",
+      "text": "Домашние беляши с мясом. Всегда готовлю сразу двойную порцию",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "12",
+      "comments": "6",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовала, домашние всё равно нравятся больше.",
+      "threadComments": [
+        {
+          "authorId": "9",
+          "text": "И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой"
+        },
+        {
+          "authorId": "11",
+          "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
+        }
+      ]
+    },
+    {
+      "id": "row-2",
+      "type": "photo",
+      "author": "8",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "Из истории моего родного Уварова",
+      "text": "УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.",
+      "photos": [
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
+      ],
+      "photosRaw": [
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
+      ],
+      "likes": "25",
+      "comments": "1",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": []
+    },
+    {
+      "id": "row-3",
+      "type": "text",
+      "author": "1",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Поставили новый счётчик, а расход стал больше обычного.",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "5",
+      "comments": "20",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "3",
+          "text": "Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!"
+        },
+        {
+          "authorId": "6",
+          "text": "руки потому что не из тго места"
+        }
+      ]
+    },
+    {
+      "id": "row-4",
+      "type": "photo",
+      "author": "8",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Мои любимые и родные!!!!Обожаю вас",
+      "photos": [
+        "https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg"
+      ],
+      "photosRaw": [
+        "https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "5",
+          "text": "ну красавицы!!!!!"
+        }
+      ]
+    },
+    {
+      "id": "row-5",
+      "type": "comment-as-feed",
+      "author": "8, group-4",
+      "tema": "Еда",
+      "rubrika": "Закуски",
+      "header": "",
+      "title": "Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса",
+      "text": "",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "4",
+      "comments": "18",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Хрустящая золотистая корочка снаружи, нежная картофельная серединка внутри — кажется, устоять просто невозможно 😍",
+      "threadComments": [
+        {
+          "authorId": "4",
+          "text": "... 😄мы сими с усами."
+        },
+        {
+          "authorId": "9",
+          "text": "Настоящие, по- белорусски!"
+        }
+      ]
+    }
+  ]
+}

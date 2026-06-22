@@ -23,6 +23,18 @@
   border-top: 1px solid var(--dynamic-stroke-contrast-low);
 }
 
+/* Тёмная вариация — таб-бар поверх тёмного медиа (например full-bleed клип),
+   когда сама страница в светлой теме. Форсим dark-значения токенов прямо в
+   компоненте: невыбранный таб (base-primary) — белый, активный — акцент,
+   подложка/разделитель — тёмные. */
+.tabbar.__theme-dark {
+  --dynamic-surface-base-secondary: #1A1A1C;
+  --dynamic-stroke-contrast-low: rgba(255, 255, 255, 0.10);
+  --dynamic-text-and-icons-base-primary: #FFFFFF;
+  --dynamic-text-and-icons-base-tertiary: rgba(255, 255, 255, 0.64);
+  --dynamic-text-and-icons-status-accent: #FF9558;
+}
+
 .tabbar__row {
   display: flex;
   align-items: stretch;
@@ -38,7 +50,7 @@
   background: none;
   border: 0;
   padding: 0;
-  color: var(--dynamic-text-and-icons-base-tertiary);
+  color: var(--dynamic-text-and-icons-base-primary);
   cursor: pointer;
   transition: color var(--ds-animation-duration) var(--ds-animation-easing),
               var(--ds-transition-transform);

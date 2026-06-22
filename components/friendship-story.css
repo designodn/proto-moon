@@ -142,6 +142,7 @@
 }
 .friendship-story__sub {
   margin: 0;
+  width: 100%;
   font-family: var(--font-family);
   font-size: 14px;
   line-height: 19px;
