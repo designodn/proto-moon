@@ -34,10 +34,10 @@
   padding-right: var(--space-4);
 }
 
-/* actions-bar внутри карточки — gap 8 (как в figma), отступ от подзаголовка 20. */
+/* actions-bar внутри карточки — gap 8 (как в figma), отступ от подзаголовка 32. */
 .feed-birthday .actions-bar {
   gap: var(--space-2);
-  margin-top: var(--space-5);
+  margin-top: var(--space-8);
 }
 
 /* Иконки кнопок — маска через .icon.__src (currentColor: белая в primary,
@@ -86,7 +86,7 @@
 
 /* ============================================================
    TEXT — заголовок и подзаголовок по центру. Макс. ширина
-   заголовка 320, подзаголовка 240; между ними 8.
+   заголовка 320, подзаголовок — во всю ширину; между ними 8.
    ============================================================ */
 .feed-birthday__title,
 .feed-birthday__text {
@@ -96,10 +96,10 @@
 }
 .feed-birthday__title {
   max-width: 320px;
-  margin-top: var(--space-4);   /* аватары → заголовок */
+  margin-top: var(--space-5);   /* аватары → заголовок: 20 */
 }
 .feed-birthday__text {
-  max-width: 240px;
+  max-width: 100%;              /* подзаголовок во всю ширину контейнера */
   margin-top: var(--space-2);   /* заголовок → подзаголовок: 8 */
   color: var(--dynamic-text-and-icons-base-primary);
 }
