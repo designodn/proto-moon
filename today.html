@@ -66,7 +66,7 @@
      ============================================================ */
   .tg-carousel {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
@@ -152,8 +152,9 @@
      «Друзья на сайте» — аватар + имя + online-точка.
      ============================================================ */
   .tg-friend {
-    width: auto;
+    width: 90px;
     min-width: 90px;
+    max-width: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -174,7 +175,14 @@
     width: 100%;
     text-align: center;
     color: var(--dynamic-text-and-icons-base-primary);
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  /* Имя и фамилия — каждая в одну строку; длинная фамилия обрезается в «…». */
+  .tg-friend__name span {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* ============================================================
@@ -444,7 +452,7 @@
         </div>
 
         <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) — под картинкой дня -->
-        <div class="tg-sec-head" style="padding: var(--space-3) var(--space-4);">
+        <div class="tg-sec-head" style="padding: 0 var(--space-4) var(--space-3);">
           <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
@@ -488,7 +496,14 @@
           '<div class="tg-friend__ava"><div class="avatar __size-56 __type-image"><img alt=""></div></div>' +
           '<div class="tg-friend__name ds-title-m"></div>';
         item.querySelector('img').src = p.photo;
-        item.querySelector('.tg-friend__name').textContent = p.name;
+        // Имя — первой строкой, фамилия — второй (каждая в своём span, чтобы
+        // длинная фамилия обрезалась в «…», см. .tg-friend__name span).
+        var nameEl = item.querySelector('.tg-friend__name');
+        var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+        var parts = String(p.name || '').trim().split(/\s+/);
+        nameEl.innerHTML = parts.length > 1
+          ? '<span>' + esc(parts[0]) + '</span><span>' + esc(parts.slice(1).join(' ')) + '</span>'
+          : '<span>' + esc(p.name) + '</span>';
         row.appendChild(item);
       });
     })();
