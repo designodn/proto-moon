@@ -152,18 +152,15 @@
 
     // Футер по фазам:
     //   hero  — «Перейти к фотомарафону» (secondary) + «Далее» (primary)
-    //   combo — «Перейти к фотомарафону» (primary, последний слайд). Кнопка
-    //           остаётся видна на этом шаге, а не прячется на время анимации.
+    //   combo — те же две кнопки, что и на hero (последний слайд): secondary
+    //           «Перейти к фотомарафону» + primary «Далее» (на последнем шаге
+    //           «Далее» закрывает онбординг, см. обработчик nextWrap).
     //   hidden — спрятан
     function setFooter(mode) {
       footer.classList.toggle('__hidden', mode === 'hidden');
-      if (mode === 'hero') {
+      if (mode === 'hero' || mode === 'combo') {
         ctaWrap.style.display = 'block'; nextWrap.style.display = 'block';
         ctaBtn.className = 'button-container __style-secondary';
-        ctaLabel.textContent = 'Перейти к фотомарафону';
-      } else if (mode === 'combo') {
-        ctaWrap.style.display = 'block'; nextWrap.style.display = 'none';
-        ctaBtn.className = 'button-container __style-primary';
         ctaLabel.textContent = 'Перейти к фотомарафону';
       }
     }
@@ -197,7 +194,11 @@
 
     el.querySelector('.omar__close').addEventListener('click', close);
     ctaBtn.addEventListener('click', go);
-    nextWrap.querySelector('button').addEventListener('click', function () { goTo(index + 1); });
+    nextWrap.querySelector('button').addEventListener('click', function () {
+      // «Далее»: на последнем слайде закрывает онбординг, иначе — следующий слайд.
+      if (index >= last) close();
+      else goTo(index + 1);
+    });
 
     // Свайп вверх → следующая страница; вниз → предыдущая.
     var sy = null, sdy = 0;
