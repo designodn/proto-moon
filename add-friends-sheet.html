@@ -202,19 +202,30 @@
 
 <div class="fp-scene" id="fpScene">
 
-  <button class="fp__close nav-bar__back" data-href="lenta-q3.html" aria-label="Закрыть">
+  <button class="fp__close" data-href="lenta-q3.html" aria-label="Закрыть">
     <span class="icon __slot-close"></span>
   </button>
-  <!-- Возврат крестика — на страницу, которая открыла шторку (?back). По
-       умолчанию lenta-q3.html (исторический поток), для открытия из lenta.html
-       приходит ?back=lenta.html. -->
+  <!-- Возврат крестика — на ленту Q3 (по умолчанию), либо на страницу из ?back.
+       Шторка открывается через location.replace (см. lenta-q3.html), поэтому
+       запись ленты в истории затёрта — history.back() увёл бы МИМО ленты.
+       Навигируем явно через location.replace; флаг screenNavBack сохраняет
+       анимацию «назад». nav-bar__back НЕ ставим — иначе общий back-обработчик
+       (screen-transition.js) сделал бы history.back(). -->
   <script>
     (function () {
+      var close = document.querySelector('.fp__close');
+      if (!close) return;
+      var target = 'lenta-q3.html';
       try {
         var back = new URLSearchParams(location.search).get('back');
-        var close = document.querySelector('.fp__close');
-        if (back && close) close.setAttribute('data-href', back);
+        if (back) { target = back; close.setAttribute('data-href', back); }
       } catch (e) {}
+      close.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        try { sessionStorage.setItem('screenNavBack', '1'); } catch (_) {}
+        location.replace(target);
+      });
     })();
   </script>
 

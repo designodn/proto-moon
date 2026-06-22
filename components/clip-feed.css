@@ -124,7 +124,7 @@
   gap: var(--space-2);
 }
 
-/* Mute-кнопка справа у нижнего края, чуть выше actions-bar: иконка 32 с тенью. */
+/* Mute-кнопка справа у нижнего края, чуть выше actions-bar: иконка 24 с тенью. */
 .clip-feed__mute {
   position: absolute;
   right: var(--space-4);
