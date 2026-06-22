@@ -50,7 +50,8 @@ const FEEDS = {
     cmd: 'scripts/fetch-q3.mjs --tribune',
   },
 };
-const FEED = FEEDS[process.argv.includes('--tribune') ? 'tribune' : 'q3'];
+const IS_TRIBUNE = process.argv.includes('--tribune');
+const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : 'q3'];
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа
 
@@ -250,6 +251,24 @@ function authorHeader(id, time, { subscribe = false } = {}) {
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
             </div>${sub}
           </div></div></div>`;
+}
+
+/** Компактная шапка постов Трибуны: иконка 20 + имя (ds-title-s) + «Подписаться»
+ *  (button __size-28) справа. Без времени и крошек. Стили/центрирование/высота
+ *  (= аватарка) — модификатор .feed-header.__tribune (components/feed-header.css). */
+function authorHeaderTribune(id) {
+  return `          <header class="feed-header __tribune __no-breadcrumbs">
+            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-20 __type-image">${img(personPhoto(id))}</div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">${esc(personName(id))}</div>
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>
+          </header>`;
 }
 
 /** Хлебные крошки из колонок «тема»/«рубрика» (последняя — активная). Если обе
@@ -522,13 +541,16 @@ function renderPost(p, idx, opts = {}) {
       // Крошки «тема / рубрика» (если заданы в листе) — над шапкой автора,
       // как в NV-ленте. Шапку заворачиваем в feed-header (тот же паттерн, что
       // в комментах-как-фид), иначе оставляем uni-cell как есть.
+      // В Трибуне — компактная шапка: иконка 20 + имя + «Подписаться» 28.
       const crumbs = breadcrumbs(p.tema, p.rubrika);
-      const header = crumbs
-        ? `          <header class="feed-header">
+      const header = IS_TRIBUNE
+        ? authorHeaderTribune(aid)
+        : crumbs
+          ? `          <header class="feed-header">
 ${crumbs}
 ${authorHeaderFn(aid, time, { subscribe })}
           </header>`
-        : authorHeaderFn(aid, time, { subscribe });
+          : authorHeaderFn(aid, time, { subscribe });
       // Заголовок из колонки «заголовок» (если задан) — крупный ds-title-xl,
       // 4px до текста (заголовок+текст в одной группе, см. text-feed.css).
       const body = title
@@ -1061,7 +1083,7 @@ ${mediaInner}
             </div>
           </div>`;
       return `        <article class="text-feed island">
-${authorHeader(commenter, time, { subscribe: true })}
+${IS_TRIBUNE ? authorHeaderTribune(commenter) : authorHeader(commenter, time, { subscribe: true })}
 
 ${cafText(title)}
 ${preview}
