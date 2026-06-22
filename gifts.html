@@ -359,7 +359,19 @@
     // Итерация IDX=[3,2,1] идёт «back → front», чтобы applyCard перерисовал
     // нижние карточки первыми (z-index уже задан в CSS). 4 — карточка
     // «принять все» в самом конце ряда.
-    var IDX = [3, 2, 1, 4];
+    // ── Флаг карточки «Принять все» ──────────────────────────────────────
+    // Массовое принятие по тапу + финальный «комок» (autoFinish). Выключена по
+    // просьбе: финиш теперь по последней обычной карточке. КОД СОХРАНЁН —
+    // ACCEPT_ALL=true возвращает прежнее поведение (карточку, bulk-accept, финал).
+    var ACCEPT_ALL = false;
+    var ACCEPT_ALL_I = 4;
+    var IDX = ACCEPT_ALL ? [3, 2, 1, 4] : [3, 2, 1];
+    // Выключено → убираем accept-all из стейтов и прячем элемент (HTML/JS остаётся).
+    if (!ACCEPT_ALL) {
+      STATES.forEach(function (s) { delete s.cards[ACCEPT_ALL_I]; });
+      var _aaEl = root.querySelector('.gift-card.__accept-all');
+      if (_aaEl) _aaEl.style.display = 'none';
+    }
 
     var els = {};
     IDX.forEach(function (i) {
@@ -653,7 +665,7 @@
       var GUTTER = 5;
       var snapped = 0;                // последняя зафиксированная позиция
       var downAcceptAll = false;      // тап начат на карточке «принять все»?
-      var acceptAllI = IDX[IDX.length - 1];  // data-i карточки «принять все» (4)
+      var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять все» (4)
       var finishing = false;          // идёт авто-финиш (приняли всё по одной)
 
       // Авто-финиш: приняли все подарки по одному → карточка «принять все» сама
@@ -708,7 +720,7 @@
       // карточек > 1) — особый: карточка «принять все» прижата правым краем к 12px
       // от края экрана (как крестик), а не в общей колонке.
       function panForSnap(target) {
-        if (target !== minSnap || liveCards.length <= 1) return target * STEP;
+        if (!ACCEPT_ALL || target !== minSnap || liveCards.length <= 1) return target * STEP;
         var vpW = scene.clientWidth || window.innerWidth;
         var lastI = liveCards[liveCards.length - 1];
         var cxLast = rowState[lastI].cx;
@@ -882,10 +894,15 @@
               els[j].style.transition = '';
             });
           }, SHIFT_DUR + 30);
-          // Приняли все по одному — осталась только карточка «принять все»:
-          // она сама улетает вниз + конфетти + финал.
-          if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
-            setTimeout(autoFinish, SHIFT_DUR);
+          // Приняли все по одному → финал (конфетти + «Подарки приняты»).
+          // С accept-all: остаётся её карточка, она сама улетает вниз (autoFinish).
+          // Без accept-all: ряд опустел на последней карточке → финал сразу.
+          if (ACCEPT_ALL) {
+            if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
+              setTimeout(autoFinish, SHIFT_DUR);
+            }
+          } else if (liveCards.length === 0) {
+            setTimeout(showAllAccepted, SHIFT_DUR);
           }
         }
 

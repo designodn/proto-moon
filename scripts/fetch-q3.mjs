@@ -186,6 +186,9 @@ const HANG_RE = new RegExp('(^|[\\s>(«"])(' + HANG_WORDS.join('|') + ')\\s+', '
 // пробелом. Применяется ко всей прозе карточек (заголовок/текст/описание/комменты)
 // ДО esc() —   экранирование не трогает, так что переживает шаблоны.
 const nbsp = s => String(s ?? '').replace(HANG_RE, (_, pre, w) => pre + w + ' ');
+// noWidow — приклеивает ПОСЛЕДНЕЕ слово к предыдущему неразрывным пробелом
+// (U+00A0), чтобы одно слово не «улетало» одиночкой на новую строку.
+const noWidow = s => String(s ?? '').replace(/\s+(\S+)\s*$/, ' $1');
 const annivProse = s => esc(String(s ?? ''))
   .replace(/\r\n?|\n/g, '<br>')
   .replace(HANG_RE, (_, pre, w) => pre + w + ' ');
@@ -265,12 +268,14 @@ function breadcrumbs(tema, rubrika) {
  *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
 function activityLine(header) {
   if (!header) return '';
-  const parts = String(header).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
+  // noWidow — чтобы последнее слово шапки не «улетало» одиночкой на новую строку.
+  const parts = String(noWidow(header)).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
   let html = '';
   for (let i = 0; i < parts.length; i++) {
-    html += (i % 2 === 0) ? esc(parts[i]) : `<b>${esc(firstName(parts[i]) || parts[i])}</b>`;
+    html += (i % 2 === 0) ? esc(parts[i]) : `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
   }
-  return `          <div class="text-feed__activity ds-caption-m">${html}</div>\n`;
+  // ds-body-m — как текст обычного поста в ленте, рядом с которым стоит шапка.
+  return `          <div class="text-feed__activity ds-body-m">${html}</div>\n`;
 }
 
 /** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
@@ -291,6 +296,26 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
             <p class="${bodyClass}">
               ${esc(head)}<span class="text-feed__body-full">${esc(tail)}</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
             </p>
+          </label>`;
+}
+
+/** caf-text (comment-as-feed): крупный текст коммента. Длинный (> CAF_CLAMP) →
+ *  режем по слову, хвост прячем, «ещё» — ИНЛАЙН в конце видимого текста и
+ *  приклеено неразрывным (U+00A0) к последнему слову, чтобы не висело одно.
+ *  Короткий → простой <p> с no-widow на последнем слове. */
+const CAF_CLAMP = 120;
+function cafText(title) {
+  const t = String(title ?? '');
+  if (t.length <= CAF_CLAMP) {
+    return `          <p class="caf-text">${esc(noWidow(t))}</p>`;
+  }
+  let cut = t.lastIndexOf(' ', CAF_CLAMP);
+  if (cut < CAF_CLAMP * 0.5) cut = CAF_CLAMP;
+  const head = t.slice(0, cut);
+  const tail = t.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  return `          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">${esc(head)}<span class="caf-text__full">${esc(tail)}</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
           </label>`;
 }
 
@@ -1038,11 +1063,7 @@ ${mediaInner}
       return `        <article class="text-feed island">
 ${authorHeader(commenter, time, { subscribe: true })}
 
-          <label class="caf-text-wrap">
-            <input type="checkbox" hidden>
-            <p class="caf-text">${esc(title)}</p>
-            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
-          </label>
+${cafText(title)}
 ${preview}
 ${actionsBar(likes, comments, reshares)}
         </article>`;
