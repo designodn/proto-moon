@@ -111,7 +111,7 @@
   text-overflow: ellipsis;
 }
 .friend-big-card__caption {
-  color: var(--dynamic-text-and-icons-base-secondary);
+  color: var(--dynamic-text-and-icons-base-primary);
   font-size: 15px;
   line-height: 20px;
   /* Резервируем строку, даже если города/возраста нет — карточки равной высоты. */
@@ -123,9 +123,13 @@
 /* «.friend-big-card__mutual» — модификатор-спейсер на .avatars-view,
    отступ сверху + центрирование строки (стек аватарок + текст). */
 .friend-big-card__mutual {
-  /* Прибиваем блок общих друзей к низу инфо (над кнопкой); имя+город — сверху. */
-  margin-top: auto;
+  /* Общие друзья — на фиксированном отступе 16 от блока «имя + город». */
+  margin-top: 16px;
   justify-content: center;
+}
+/* Текст «N общих друзей» — primary (как имя/город). */
+.friend-big-card__mutual .avatars-view__text {
+  color: var(--dynamic-text-and-icons-base-primary);
 }
 
 /* ============================================================
@@ -149,8 +153,10 @@
   position: absolute;
   inset: 0;
   border-radius: 36px;
+  /* Градиент из макета (Figma 4794:15608): яркое янтарное ядро в середине
+     нижней части карточки → насыщенный красно-оранжевый к краям. */
   background:
-    radial-gradient(circle 405px at 50% 92%,
+    radial-gradient(circle 405px at 50% 60%,
       #ffb44a 0%,
       #ff8224 16%,
       #f55418 32%,
