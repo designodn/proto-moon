@@ -452,5 +452,9 @@
   gap: var(--space-2);
   width: 100%;
   min-width: 0;
+  /* Карточка ≤ 220 → сетка 2×220 + gap, центрируется. Общий размер для
+     сториз и клипов (контекст добавляет только скролл/скейл). */
+  max-width: calc(220px * 2 + var(--space-2));
+  margin-inline: auto;
 }
 .vvz-section__grid > .vvz-card { min-width: 0; }
