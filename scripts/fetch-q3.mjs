@@ -299,6 +299,26 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
           </label>`;
 }
 
+/** caf-text (comment-as-feed): крупный текст коммента. Длинный (> CAF_CLAMP) →
+ *  режем по слову, хвост прячем, «ещё» — ИНЛАЙН в конце видимого текста и
+ *  приклеено неразрывным (U+00A0) к последнему слову, чтобы не висело одно.
+ *  Короткий → простой <p> с no-widow на последнем слове. */
+const CAF_CLAMP = 120;
+function cafText(title) {
+  const t = String(title ?? '');
+  if (t.length <= CAF_CLAMP) {
+    return `          <p class="caf-text">${esc(noWidow(t))}</p>`;
+  }
+  let cut = t.lastIndexOf(' ', CAF_CLAMP);
+  if (cut < CAF_CLAMP * 0.5) cut = CAF_CLAMP;
+  const head = t.slice(0, cut);
+  const tail = t.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  return `          <label class="caf-text-wrap">
+            <input type="checkbox" hidden>
+            <p class="caf-text">${esc(head)}<span class="caf-text__full">${esc(tail)}</span><span class="caf-text__more"><span class="caf-text__more-show"> ещё</span><span class="caf-text__more-hide"> скрыть</span></span></p>
+          </label>`;
+}
+
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */
 function media(photos) {
   if (!photos.length) return '';
@@ -1063,11 +1083,7 @@ ${mediaInner}
             </div></div></div>
           </header>
 
-          <label class="caf-text-wrap">
-            <input type="checkbox" hidden>
-            <p class="caf-text">${esc(noWidow(title))}</p>
-            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
-          </label>
+${cafText(title)}
 ${preview}
 ${actionsBar(likes, comments, reshares)}
         </article>`;

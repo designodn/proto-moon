@@ -29,38 +29,20 @@
   line-height: 28px;
   font-weight: 400;
   color: var(--dynamic-text-and-icons-base-primary);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  overflow: hidden;
 }
-.caf-text-wrap > input:checked ~ .caf-text {
-  -webkit-line-clamp: unset;
-  overflow: visible;
-}
-/* «ещё/скрыть» — оранжевое (accent), показываем только при реальном overflow
-   (класс is-clampable вешает JS в lenta-q3.html). */
+/* Обрезка по словам (head/tail в разметке, как в обычных постах): хвост скрыт,
+   «ещё» — ИНЛАЙН в конце видимого текста (приклеено неразрывным к последнему
+   слову, см. cafText() в scripts/fetch-q3.mjs). По чекбоксу разворачиваем
+   хвост и меняем «ещё»→«скрыть». */
+.caf-text__full { display: none; }
+.caf-text-wrap > input:checked ~ .caf-text .caf-text__full { display: inline; }
 .caf-text__more {
-  display: none;
-  margin-top: var(--space-1);
   cursor: pointer;
-  font-family: var(--font-family);
-  font-size: var(--font-size-200);
-  line-height: var(--line-height-200);
   color: var(--dynamic-text-and-icons-status-accent);
 }
-.caf-text-wrap.is-clampable .caf-text__more {
-  display: inline-block;
-}
-.caf-text__more-hide {
-  display: none;
-}
-.caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-show {
-  display: none;
-}
-.caf-text-wrap > input:checked ~ .caf-text__more .caf-text__more-hide {
-  display: inline;
-}
+.caf-text__more-hide { display: none; }
+.caf-text-wrap > input:checked ~ .caf-text .caf-text__more-show { display: none; }
+.caf-text-wrap > input:checked ~ .caf-text .caf-text__more-hide { display: inline; }
 
 
 /* Подзаголовок шапки «Комментарий к <автор оригинала>» — строго в одну строку
