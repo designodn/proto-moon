@@ -21,8 +21,8 @@
  *   </div>
  *   <div class="fc-input">…поле ответа…</div>                      ← опц.
  *
- * Отступы (по макету): между комментами 12; actions поста → первый коммент 8;
- * последний коммент → «Посмотреть» 12; в комменте имя↔текст 4, текст↔кнопки 4,
+ * Отступы (по макету): между комментами 16; пост → первый коммент 4;
+ * последний коммент → «Посмотреть» 16; в комменте имя↔текст 4, текст↔кнопки 4,
  * между кнопками 12; ава↔тело 8.
  */
 
@@ -33,11 +33,11 @@
      чтобы отступ был частью бокса коммента, а не «пустым» гэпом. */
   padding: 0 var(--space-4);        /* 16 — выравнивание по контенту карточки */
 }
-/* Зазор actions-bar поста → первый коммент = 8 (без нахлёста). Стопка text-feed
-   даёт gap 12 между actions и fc-list — тянем на −4, чтобы вышло ровно 8. Сверху
-   у первого коммента ещё свой padding-top 20 (как у всех). */
+/* Зазор пост → первый коммент = 4. Стопка text-feed даёт gap 12 между actions и
+   fc-list — гасим его целиком (−12), верхний отступ задаёт сам padding-top
+   первого коммента (4). */
 .text-feed > .fc-list {
-  margin-top: calc(var(--space-2) - var(--space-3));   /* −4 → зазор 8 */
+  margin-top: calc(0px - var(--space-3));   /* −12: гасим gap text-feed */
 }
 
 /* ── один комментарий ─────────────────────────────────────────────────────── */
@@ -46,24 +46,28 @@
   display: flex;
   gap: var(--space-2);              /* 8 между авой-блоком и телом */
   align-items: flex-start;
-  padding-top: var(--space-5);      /* 20 над каждым комментом (вместо gap) */
+  padding-top: var(--space-4);      /* 16 между комментами (вместо gap) */
+}
+/* Первый коммент — верхний отступ 4 (между остальными остаётся 16). */
+.fc-comment:first-child {
+  padding-top: var(--space-1);      /* 4 */
 }
 /* Связующий трунк (как в старом comment-thread): вертикаль слева, соединяющая
-   локоть этого коммента с локтем следующего. Тянется от верха локтя (padding 20
-   + margin 2 = 22) вниз и на 22 в следующий коммент (его padding 20 + margin 2),
-   попадая ровно в верх его локтя. У последнего/одиночного коммента вниз не идёт. */
+   локоть этого коммента с локтем следующего. Локоть стоит на (padding − 4):
+   при padding 16 это 12. Тянется от своего локтя (12) вниз на 12 в следующий
+   коммент, попадая ровно в верх его локтя. У последнего/одиночного — не идёт. */
 .fc-comment::before {
   content: "";
   position: absolute;
   left: 0;
   width: 2px;
-  top: 16px;
-  bottom: -16px;
-  background: #E4DED9;
+  top: 12px;
+  bottom: -12px;
+  background: #F0EDEB;
 }
-/* Первый коммент ИЗ НЕСКОЛЬКИХ — риску продлеваем ВВЕРХ на 20px (через padding). */
+/* Первый коммент: его локоть на (padding 4 − 4) = 0, оттуда трунк идёт вниз. */
 .fc-comment:first-child::before {
-  top: calc(16px - var(--space-5));   /* −4: на 20 выше локтя */
+  top: 0;
 }
 /* Последний/одиночный коммент — трунк вниз не рисуем: у последнего линия приходит
    сверху (от предыдущего), у одиночного линии нет вовсе (без риски на 20px). */
@@ -80,14 +84,14 @@
   gap: var(--space-2);              /* 8 между локтем и авой */
 }
 /* Ручка-ответ └ — короткий локоть слева от авы. In-flow (не absolute!), занимает
-   12px. Цвет #E4DED9 (сплошной, 100%). */
+   12px. Цвет #F0EDEB (сплошной, 100%). */
 .fc-comment__handle {
   flex-shrink: 0;
   width: 12px;
   height: 14px;
   margin-top: -4px;                 /* низ локтя (загиб) попадает на центр авы 20px */
-  border-left: 2px solid #E4DED9;
-  border-bottom: 2px solid #E4DED9;
+  border-left: 2px solid #F0EDEB;
+  border-bottom: 2px solid #F0EDEB;
   border-bottom-left-radius: 8px;
 }
 
@@ -151,10 +155,10 @@
   gap: var(--space-3);              /* 12 между кнопками */
 }
 
-/* «Посмотреть все комментарии / ответы» — 12 от последнего коммента (gap убран). */
+/* «Посмотреть все комментарии / ответы» — 16 от последнего коммента (gap убран). */
 .fc-more {
   display: flex;
-  padding-top: var(--space-3);
+  padding-top: var(--space-4);
 }
 
 /* ── поле ответа ──────────────────────────────────────────────────────────── */
@@ -172,10 +176,13 @@
   align-items: center;
   gap: var(--space-2);
   height: 44px;
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
   background: var(--dynamic-surface-base-tertiary);
-  border: 1px solid var(--dynamic-stroke-contrast-low);
   border-radius: 11px;              /* высота / 4 */
+  /* Обводка 1px ПОВЕРХ края инпута (outline с отриц. offset), а не снаружи —
+     не влияет на размер поля. Как у хайрлайна аватара. */
+  outline: 1px solid var(--dynamic-stroke-contrast-low);
+  outline-offset: -1px;
 }
 .fc-input__text {
   flex: 1;
@@ -200,5 +207,5 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-  color: var(--dynamic-text-and-icons-accent-primary, var(--dynamic-text-and-icons-base-secondary));
+  color: var(--dynamic-text-and-icons-base-primary);
 }

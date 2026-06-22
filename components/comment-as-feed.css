@@ -46,7 +46,7 @@
   display: none;
   margin-top: var(--space-1);
   cursor: pointer;
-  color: var(--dynamic-text-and-icons-status-accent);
+  color: var(--dynamic-text-and-icons-base-secondary);
 }
 .caf-text-wrap.is-clampable .caf-text__more { display: inline-block; }
 .caf-text__more-hide { display: none; }

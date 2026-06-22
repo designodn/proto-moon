@@ -58,10 +58,12 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  /* Хайрлайн-обводка фото 1px, чтобы светлые снимки не сливались с фоном. */
-  box-sizing: border-box;
   border-radius: 50%;
-  border: 1px solid var(--dynamic-stroke-contrast-low);
+  /* Хайрлайн-обводка фото 1px ПОВЕРХ картинки: outline с отрицательным offset
+     лежит на внутреннем крае круга и не уменьшает само фото (border-box делал
+     фото на 1px меньше). Чтобы светлые снимки не сливались с фоном. */
+  outline: 1px solid var(--dynamic-stroke-contrast-low);
+  outline-offset: -1px;
 }
 
 /* Size variants — keep visual rhythm with the 4px grid */

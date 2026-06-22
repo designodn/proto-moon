@@ -76,7 +76,7 @@
 .ds-display-m   { font-family: var(--font-family); font-size: 24px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
 
 .ds-title-xl,
-.header.__size-xl .header__title { font-family: var(--font-family); font-size: 27px; line-height: 36px; font-weight: 600; letter-spacing: 0; }
+.header.__size-xl .header__title { font-family: var(--font-family); font-size: 24px; line-height: 1.1; font-weight: 600; letter-spacing: 0; }
 
 .ds-title-l,
 .header.__size-l .header__title  { font-family: var(--font-family); font-size: 21px; line-height: 28px; font-weight: 600; letter-spacing: 0; }
