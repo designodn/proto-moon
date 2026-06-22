@@ -269,5 +269,20 @@
            '<div class="vvz-section__grid" data-vvz-grid>' + cards + '</div>';
   }
 
-  window.VvzCard = { render: render, section: section };
+  // Единая CTA-кнопка ВВЗ-слайдов «во всю ширину» (клипы и сториз рисуют её
+  //   одинаково). По умолчанию стеклянный стиль secondary-on-color (как во
+  //   ВВЗ); style можно переопределить (напр. 'primary' для именинной сториз).
+  //   VvzCard.cta({ label?: 'Показать всех', style?: 'secondary-on-color' })
+  function cta(opts) {
+    opts = opts || {};
+    var label = opts.label || 'Показать всех';
+    var style = opts.style || 'secondary-on-color';
+    return '<div class="button-wrapper __size-44 __style-' + style + '">' +
+             '<button class="button-container __style-' + style + '" type="button">' +
+               '<span class="button-content">' + label + '</span>' +
+             '</button>' +
+           '</div>';
+  }
+
+  window.VvzCard = { render: render, section: section, cta: cta };
 })();

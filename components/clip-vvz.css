@@ -28,24 +28,28 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   row-gap: var(--space-4);
   /* Низ: CTA «Показать всех» прижат на 12px над таб-баром.
      Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
   padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
            calc(49px + 12px);
 }
-/* Заголовок и сетка — общий компонент .vvz-section (vvz-card.css).
-   Здесь только специфика клипа: сетка скроллится внутри средней строки
-   .klip__vvz-inner и прижата к верху. */
-.klip__vvz-inner .vvz-section__grid {
-  align-content: start;
+/* Заголовок + сетка — общий .vvz-section (vvz-card.css). Здесь они лежат в
+   .klip__vvz-body, который центрирует пару по вертикали (как .moment__body в
+   сториз через justify-content: safe center) и скроллится, если не влезает. */
+.klip__vvz-body {
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  gap: var(--space-4);
 }
-.klip__vvz-inner .vvz-section__grid::-webkit-scrollbar { display: none; }
+.klip__vvz-body::-webkit-scrollbar { display: none; }
 .klip__vvz-cta { display: flex; }
 .klip__vvz-cta .button-wrapper { flex: 1 1 0; }
 .klip__vvz-cta .button-container { width: 100%; }

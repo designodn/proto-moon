@@ -318,12 +318,15 @@
           // (стеклянная). Для именинной сториз и любых других кейсов можно
           // передать s.cta.style = 'primary' (или другой DS-стиль).
           var ctaStyle = s.cta.style || 'secondary-on-color';
-          cta.innerHTML =
-            '<div class="button-wrapper __size-44 __style-' + ctaStyle + '">' +
-              '<button class="button-container __style-' + ctaStyle + '" type="button">' +
-                '<span class="button-content"></span>' +
-              '</button>' +
-            '</div>';
+          // Кнопка — общий VvzCard.cta (та же, что во ВВЗ-слайде клипов).
+          // Фолбэк-разметка на случай, если vvz-card.js не подключён.
+          cta.innerHTML = (window.VvzCard && window.VvzCard.cta)
+            ? window.VvzCard.cta({ label: s.cta.label, style: ctaStyle })
+            : '<div class="button-wrapper __size-44 __style-' + ctaStyle + '">' +
+                '<button class="button-container __style-' + ctaStyle + '" type="button">' +
+                  '<span class="button-content"></span>' +
+                '</button>' +
+              '</div>';
           cta.querySelector('.button-content').textContent = s.cta.label;
           if (typeof s.cta.onClick === 'function') {
             cta.querySelector('button').addEventListener('click', s.cta.onClick);

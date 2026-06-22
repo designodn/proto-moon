@@ -18,24 +18,23 @@
     opts = opts || {};
     var title = opts.title || 'Возможно, вы знакомы';
     var people = opts.people || [];
-    var cta = opts.cta || 'Показать всех';
-    // Заголовок + сетку карточек собирает единый компонент VvzCard.section
-    // (он же — в сториз-ВВЗ, см. moment.js vvzSlide).
+    var ctaLabel = opts.cta || 'Показать всех';
+    // Заголовок + сетку карточек собирает единый компонент VvzCard.section,
+    // а CTA-кнопку — VvzCard.cta (оба — общие с сториз-ВВЗ, см. moment.js).
     var section = (window.VvzCard && window.VvzCard.section)
       ? window.VvzCard.section({ title: title, people: people })
+      : '';
+    var ctaHtml = (window.VvzCard && window.VvzCard.cta)
+      ? window.VvzCard.cta({ label: ctaLabel })
       : '';
 
     return '' +
       '<section class="klip __vvz" data-klip data-vvz>' +
         '<div class="klip__vvz-inner">' +
-          section +
-          '<div class="klip__vvz-cta">' +
-            '<div class="button-wrapper __size-44 __style-secondary-on-color">' +
-              '<button class="button-container __style-secondary-on-color" type="button">' +
-                '<span class="button-content">' + cta + '</span>' +
-              '</button>' +
-            '</div>' +
-          '</div>' +
+          // .klip__vvz-body центрирует пару «заголовок + сетка» по вертикали
+          // (как .moment__body в сториз), CTA прижата снизу.
+          '<div class="klip__vvz-body">' + section + '</div>' +
+          '<div class="klip__vvz-cta">' + ctaHtml + '</div>' +
         '</div>' +
       '</section>';
   }
