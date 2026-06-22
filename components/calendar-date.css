@@ -27,16 +27,15 @@
   vertical-align: middle;
 }
 
-/* Металлические «клипсы» спирали сверху — тёмный градиент с оранжевым низом
-   (Figma calendar 2d). Чуть выступают над листом. */
+/* Металлические «клипсы» спирали сверху — только тёмный градиент (Figma).
+   Выступают на 2px над листом (верх листа top:3px). */
 .calendar-date__tab {
   position: absolute;
-  top: -1px;
+  top: 1px;
   width: 2.5px;
   height: 5px;
   border-radius: 999px;
   background: linear-gradient(180deg, #575960 0%, #2e2f33 100%);
-  border-bottom: 1.5px solid #e56b00;
   z-index: 3;
 }
 .calendar-date__tab:nth-of-type(1) { left: 6px; }
@@ -53,7 +52,6 @@
   border: 1.5px solid #e3d0c3;
   border-radius: 6px;
   background: linear-gradient(180deg, #ffffff 59%, #f7f4f2 71%, #ecd8cb 111%);
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,15 +59,18 @@
   padding-top: 5px;
 }
 
-/* Оранжевая «шапочка» календаря (Figma 8658-109726) */
+/* Оранжевая «шапочка» календаря (Figma 8658-109726). Лежит ПОВЕРХ обводки —
+   уходит на 1.5px за край листа (перекрывает верхний контур #e3d0c3),
+   верхние углы скруглены под лист. */
 .calendar-date__body::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
+  top: -1.5px;
+  left: -1.5px;
+  right: -1.5px;
+  height: 6.5px;
   background: #e56b00;
+  border-radius: 6px 6px 0 0;
 }
 
 /* Число месяца — по центру, тёмное (в макете Rounded Mplus Bold → системный bold) */
