@@ -160,8 +160,6 @@
     cursor: pointer;
   }
   .tg-friend:active { transform: scale(0.95); }
-  /* первый аватар выравниваем по старту хедера: гасим инсет центрирования в ячейке */
-  .tg-friend:first-child { margin-left: calc((56px - 90px) / 2); }
   .tg-friend__ava { position: relative; }
   .tg-friend__dot {
     position: absolute;
@@ -176,7 +174,6 @@
     text-align: center;
     color: var(--dynamic-text-and-icons-base-primary);
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   /* ============================================================
@@ -389,23 +386,23 @@
             </div>
             <div class="tg-news__list">
               <div class="tg-news__item">
-                <div class="avatar __size-24 __type-placeholder"></div>
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
                 <div class="tg-news__text ds-body-l">ЦИК: выборы депутатов Госдумы пройдут с 18 по 20 сентября</div>
               </div>
               <div class="tg-news__item">
-                <div class="avatar __size-24 __type-placeholder"></div>
+                <div class="avatar __size-24 __type-image"><img src="https://336118.selcdn.ru/Gutsy-Culebra/products/RBC-Companies-Logo.png" alt=""></div>
                 <div class="tg-news__text ds-body-l">Летчик-космонавт и депутат ГД Александр Самокутяев умер в возрасте 56 лет</div>
               </div>
               <div class="tg-news__item">
-                <div class="avatar __size-24 __type-placeholder"></div>
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
                 <div class="tg-news__text ds-body-l">Слово «преддверие» вызвало самые большие проблемы на ЕГЭ по русскому языку</div>
               </div>
               <div class="tg-news__item">
-                <div class="avatar __size-24 __type-placeholder"></div>
+                <div class="avatar __size-24 __type-image"><img src="https://336118.selcdn.ru/Gutsy-Culebra/products/RBC-Companies-Logo.png" alt=""></div>
                 <div class="tg-news__text ds-body-l">«Единая Россия» предложила заменить предупреждениями штрафы за мелкие нарушения</div>
               </div>
               <div class="tg-news__item">
-                <div class="avatar __size-24 __type-placeholder"></div>
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
                 <div class="tg-news__text ds-body-l">Трамп назвал условие возвращения санкций против российской нефти</div>
               </div>
             </div>
@@ -420,7 +417,7 @@
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
                    style="background-image: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
-            <video class="tg-roulette__video" src="assets/today/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
+            <video class="tg-roulette__video" src="assets/koleso/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-xl">Колесо призов</div>
@@ -433,6 +430,12 @@
             </div>
           </article>
         </section>
+
+        <!-- Заголовок «Какой сегодня день» (padding-bottom 0 → до баннера ровно
+             12px через gap .tg-feed) -->
+        <div class="tg-sec-head" style="padding: var(--space-2) var(--space-4) 0;">
+          <header class="header"><div class="header__title ds-title-xl">Какой сегодня день</div></header>
+        </div>
 
         <!-- Картинка дня -->
         <div class="tg-island">

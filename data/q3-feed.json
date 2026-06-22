@@ -395,7 +395,7 @@
     },
     {
       "id": "row-16",
-      "type": "marathon",
+      "type": "photo",
       "author": "8",
       "tema": "",
       "rubrika": "",
@@ -408,8 +408,8 @@
       "photosRaw": [
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
       ],
-      "likes": "",
-      "comments": "",
+      "likes": "4",
+      "comments": "2",
       "reshares": "",
       "link": "",
       "marathon": "РадостьДетства",

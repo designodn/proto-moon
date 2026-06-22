@@ -389,12 +389,15 @@
           // (стеклянная). Для именинной сториз и любых других кейсов можно
           // передать s.cta.style = 'primary' (или другой DS-стиль).
           var ctaStyle = s.cta.style || 'secondary-on-color';
-          cta.innerHTML =
-            '<div class="button-wrapper __size-44 __style-' + ctaStyle + '">' +
-              '<button class="button-container __style-' + ctaStyle + '" type="button">' +
-                '<span class="button-content"></span>' +
-              '</button>' +
-            '</div>';
+          // Кнопка — общий VvzCard.cta (та же, что во ВВЗ-слайде клипов).
+          // Фолбэк-разметка на случай, если vvz-card.js не подключён.
+          cta.innerHTML = (window.VvzCard && window.VvzCard.cta)
+            ? window.VvzCard.cta({ label: s.cta.label, style: ctaStyle })
+            : '<div class="button-wrapper __size-44 __style-' + ctaStyle + '">' +
+                '<button class="button-container __style-' + ctaStyle + '" type="button">' +
+                  '<span class="button-content"></span>' +
+                '</button>' +
+              '</div>';
           cta.querySelector('.button-content').textContent = s.cta.label;
           if (typeof s.cta.onClick === 'function') {
             cta.querySelector('button').addEventListener('click', s.cta.onClick);
@@ -418,14 +421,13 @@
     var root = this.root;
     var run = function () {
       var body = root.querySelector('.moment__body');
-      var inner = body && body.querySelector('.moment__body-inner');
+      var inner = body && body.querySelector('.vvz-section');
       if (!inner) return;
       inner.style.zoom = '';
-      var cs = getComputedStyle(body);
-      var avail = body.clientHeight
-        - parseFloat(cs.paddingTop || 0)
-        - parseFloat(cs.paddingBottom || 0);
-      var natural = inner.offsetHeight;
+      // .vvz-section растянута на всю высоту body (flex:1), поэтому доступная
+      // высота — её clientHeight, а натуральная высота контента — scrollHeight.
+      var avail = inner.clientHeight;
+      var natural = inner.scrollHeight;
       if (avail > 0 && natural > avail) {
         inner.style.zoom = (avail / natural).toFixed(4);
       }
@@ -774,10 +776,10 @@
     var section = (window.VvzCard && window.VvzCard.section)
       ? window.VvzCard.section({ title: opts.title, people: people })
       : '';
-    // Обёртка .moment__body-inner — единый блок (заголовок + сетка), который
-    // viewer масштабирует (zoom), если он не влезает по высоте на маленьком
-    // экране (см. _fitBody в moment.js).
-    var body = '<div class="moment__body-inner">' + section + '</div>';
+    // section — это .vvz-section (заголовок + сетка): сам центрируется и
+    // скроллится в .moment__body; viewer масштабирует его (zoom), если он не
+    // влезает по высоте на маленьком экране (см. _fitBody в moment.js).
+    var body = section;
     var slide = {
       body: body,
       // Фон ВВЗ-сториз — картинка-подложка (оранжево-чёрный градиент сверху-

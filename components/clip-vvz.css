@@ -13,9 +13,11 @@
  * Структура:
  *   <section class="klip __vvz">
  *     <div class="klip__vvz-inner">
- *       <h2 class="vvz-section__title ds-title-xl">Возможно, вы знакомы</h2>
- *       <div class="vvz-section__grid"> …VvzCard… </div>
- *       <div class="klip__vvz-cta"> …button… </div>
+ *       <div class="vvz-section">              ← общий компонент (vvz-card.css)
+ *         <h2 class="vvz-section__title …">Возможно, вы знакомы</h2>
+ *         <div class="vvz-section__grid"> …VvzCard… </div>
+ *       </div>
+ *       <div class="klip__vvz-cta"> …button (VvzCard.cta)… </div>
  *     </div>
  *   </section>
  */
@@ -28,22 +30,17 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   row-gap: var(--space-4);
+  /* Низ: CTA «Показать всех» прижат на 12px над таб-баром.
+     Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
   padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
-           calc(108px + env(safe-area-inset-bottom, 0px));
+           calc(49px + 12px);
 }
-/* Заголовок и сетка — общий компонент .vvz-section (vvz-card.css).
-   Здесь только специфика клипа: сетка скроллится внутри средней строки
-   .klip__vvz-inner и прижата к верху. */
-.klip__vvz-inner .vvz-section__grid {
-  align-content: start;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.klip__vvz-inner .vvz-section__grid::-webkit-scrollbar { display: none; }
+/* Заголовок + сетка — общий компонент .vvz-section (vvz-card.css): он сам
+   забирает высоту средней зоны .klip__vvz-inner, центрирует пару по вертикали
+   (justify-content: safe center) и скроллится, если не влезает. CTA снизу. */
 .klip__vvz-cta { display: flex; }
 .klip__vvz-cta .button-wrapper { flex: 1 1 0; }
 .klip__vvz-cta .button-container { width: 100%; }
