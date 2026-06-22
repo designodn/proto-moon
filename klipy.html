@@ -481,9 +481,22 @@
       }
 
       // ВВЗ-слайд — через компонент ClipVvz; люди из «Люди» (vvz-1..vvz-4).
-      var vvzPeople = ['vvz-1', 'vvz-2', 'vvz-3', 'vvz-4'].map(function (id) {
+      // Аватарки общих друзей (avatars-view) берём из реальных людей people.js,
+      // как в сториз: первым двум карточкам показываем «N общих друзей».
+      var mutualPool = ((window.DS_PEOPLE && window.DS_PEOPLE.list) || [])
+        .filter(function (p) { return p.photo; })
+        .map(function (p) { return p.photo; });
+      var MUTUAL_COUNTS = [18, 12];
+      var vvzPeople = ['vvz-1', 'vvz-2', 'vvz-3', 'vvz-4'].map(function (id, i) {
         var p = person(id);
-        return { name: p.name || '', img: p.photo || '' };
+        var card = { name: p.name || '', img: p.photo || '' };
+        // 3 аватарки стека из people.js (со сдвигом, чтобы у карточек были
+        // разные лица). Показываем только когда людей в пуле хватает.
+        if (i < MUTUAL_COUNTS.length && mutualPool.length >= 3) {
+          card.mutuals = MUTUAL_COUNTS[i];
+          card.m = mutualPool.slice(i, i + 3);
+        }
+        return card;
       });
       function vvzHTML() {
         return window.ClipVvz ? window.ClipVvz.render({ people: vvzPeople }) : '';

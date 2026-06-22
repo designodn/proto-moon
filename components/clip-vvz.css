@@ -35,7 +35,7 @@
   row-gap: var(--space-4);
   /* Низ: CTA «Показать всех» прижат на 12px над таб-баром.
      Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
-  padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
+  padding: calc(68px + env(safe-area-inset-top, 0px)) var(--space-4)
            calc(49px + 12px);
 }
 /* Заголовок + сетка — общий компонент .vvz-section (vvz-card.css): он сам
