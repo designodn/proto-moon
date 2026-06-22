@@ -1021,25 +1021,13 @@ ${mediaInner}
     }
 
     /* ── comment-as-feed: коммент как отдельная карточка ленты ──
-       feed-header (крошки + автор + «Комментарий к <автор оригинала>») →
+       authorHeader (ава 44 + имя + время + кнопка «Подписаться») →
        крупный текст коммента (caf-text 22/26) → превью оригинального поста
        (бордерная reshare-card: иконка-репост + заголовок + сниппет) →
        actions-bar. Ответы (ветку) добавит attachComments (лейблы «ответы»).
-       Автор: id[0] — комментатор (шапка), id[1] — автор оригинала. */
+       Автор: id[0] — комментатор (шапка). */
     case 'comment-as-feed': {
       const commenter = aid;          // ids[0]
-      const original = ids[1] || '';
-      const crumbs = (p.tema || p.rubrika)
-        ? `
-            <nav class="breadcrumbs">${p.tema ? `
-              <a class="breadcrumbs__item" href="#">${esc(p.tema)}</a>` : ''}${(p.tema && p.rubrika) ? `
-              <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${p.rubrika ? `
-              <span class="breadcrumbs__item __state-on">${esc(p.rubrika)}</span>` : ''}
-            </nav>`
-        : '';
-      const sub = original
-        ? `Комментарий к <span class="caf-header__to">${esc(personName(original))}</span>`
-        : 'Комментарий';
       const preview = `          <div class="text-feed__reshare-card caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
@@ -1048,15 +1036,7 @@ ${mediaInner}
             </div>
           </div>`;
       return `        <article class="text-feed island">
-          <header class="feed-header">${crumbs}
-            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-              <div class="avatar __size-44 __type-image${original ? ' __has-addon' : ''}">${img(personPhoto(commenter))}${original ? `<div class="avatar __size-20 __type-image caf-ava__addon">${img(personPhoto(original))}</div>` : ''}</div>
-              <div class="contents-view-container uni-cell-additional-content">
-                <div class="ds-title-m feed-header__name">${esc(personName(commenter))}</div>
-                <div class="ds-caption-m caf-header__sub">${sub}</div>
-              </div>
-            </div></div></div>
-          </header>
+${authorHeader(commenter, time, { subscribe: true })}
 
           <label class="caf-text-wrap">
             <input type="checkbox" hidden>
