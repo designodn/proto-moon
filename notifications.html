@@ -30,17 +30,25 @@
     --tabs-view-padding-top: var(--space-1);
     /* нижний паддинг даёт .tabs-row.__scroll — чтобы линия активного таба
        и разделитель совпали по вертикали */
+    /* Счётчики не должны обрезаться контейнером табов. */
+    overflow: visible;
   }
 
-  /* Список оповещений — плоские ряды; гэп между ячейками = cell-view-vertical,
-     паддинги: верх 16, бока 16, низ 32 */
+  /* Список оповещений — плоские ряды; гэп между ячейками 16,
+     паддинги: верх 16, бока 16, низ 0 (нижний воздух даёт margin-top таб-бара). */
   .ll-notifs-list {
     display: flex; flex-direction: column;
-    gap: var(--dynamic-cell-view-vertical-default);
-    padding: var(--space-4) var(--space-4) var(--space-8);
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-4) 0;
   }
 
-  /* .ll-tabbar → components/app-shell.css */
+  /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), а в конце
+     доскролла встаёт в поток. Перебиваем fixed из app-shell.css. */
+  .ll-tabbar {
+    position: sticky;
+    bottom: 0;
+    margin-top: var(--space-3);
+  }
 
   .gift-trigger { cursor: pointer; }
   .gift-trigger:active .notification-cell__title { opacity: 0.6; }
@@ -110,8 +118,7 @@
       <div class="ll-notifs-list" id="notifsList">
         <!-- Баннер: точка входа в шит массового принятия подарков (только таб «Все») -->
         <div class="accept-banner">
-          <div class="ds-title-s accept-banner__title">У вас несколько новых подарков</div>
-          <div class="ds-body-m accept-banner__subtitle">Можно принять все из них сразу</div>
+          <div class="ds-title-m accept-banner__title">У вас несколько новых подарков</div>
           <div class="button-wrapper __size-44 __full-width accept-banner__btn"><button class="button-container __style-primary" data-href="gifts.html"><span class="button-content">Посмотреть</span></button></div>
         </div>
 
@@ -178,18 +185,18 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TABBAR -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- TABBAR — внутри скролла, sticky снизу (встраивается в лейаут в конце) -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
     </div>
@@ -204,12 +211,24 @@
       var list = document.getElementById('notifsList');
       if (!row || !list) return;
       var cells = list.querySelectorAll('.notification-cell');
+      // Демо-счётчики разделов (разнообразные). «Все» = сумма; «Разное» —
+      // считаем по фактическим ячейкам.
+      var COUNTS = { friends: 3, gifts: 3, groups: 5, games: 1 };
+      var allCount = 0;
+      Object.keys(COUNTS).forEach(function (k) { allCount += COUNTS[k]; });
       Array.prototype.forEach.call(row.querySelectorAll('.tab-wrapper'), function (tab) {
         var f = tab.getAttribute('data-filter');
-        var count = 0;
-        Array.prototype.forEach.call(cells, function (c) {
-          if (f === 'all' || c.getAttribute('data-cat') === f) count++;
-        });
+        var count;
+        if (f === 'all') {
+          count = allCount;
+        } else if (COUNTS.hasOwnProperty(f)) {
+          count = COUNTS[f];
+        } else {
+          count = 0;
+          Array.prototype.forEach.call(cells, function (c) {
+            if (c.getAttribute('data-cat') === f) count++;
+          });
+        }
         var content = tab.querySelector('.content');
         var counter = content && content.querySelector('.counter-inline');
         if (count > 0) {

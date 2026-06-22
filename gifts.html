@@ -59,12 +59,12 @@
     letter-spacing: 0;
     color: var(--dynamic-text-and-icons-base-primary);
     margin: 0;
-    top: 249px;
+    top: 210px;
     transition: opacity 280ms ease-out;
   }
   .gp.__state-2 .gp__title,
   .gp.__state-3 .gp__title,
-  .gp.__state-4 .gp__title { top: 130px; }
+  .gp.__state-4 .gp__title { top: 96px; }
 
   /* NV-режим: заголовок не на ds-* классе, поэтому nv-fonts его не ловит —
      форсим NV-дисплейный кат через маркер .__nv (ставит screen-transition.js). */
@@ -149,6 +149,21 @@
   }
   .gp-confetti svg { display: block; }
 
+  /* Финальная кнопка «Закрыть» — появляется через 2с после конфетти. Secondary
+     56, по 16px от краёв экрана, прижата к низу. Прячется до показа. */
+  .gp__finish {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 24px;
+    z-index: 25;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 320ms ease, transform 320ms ease;
+  }
+  .gp__finish.__shown { opacity: 1; transform: none; pointer-events: auto; }
+  .gp__finish .button-wrapper,
+  .gp__finish .button-container { width: 100%; }
+
   @media (prefers-reduced-motion: reduce) {
     .gp__title { transition: none !important; }
   }
@@ -169,7 +184,7 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=23" alt=""></div>
-          <span class="gift-card__name ds-body-m">Виктория Петрова</span>
+          <span class="gift-card__name ds-title-s">Виктория Петрова</span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="https://gifotkrytki.ru/_ph/2/2/933237960.gif" alt="" loading="lazy">
@@ -190,7 +205,7 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=47" alt=""></div>
-          <span class="gift-card__name ds-body-m">Мария Иванова</span>
+          <span class="gift-card__name ds-title-s">Мария Иванова</span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="https://i.pinimg.com/originals/66/e6/94/66e694e55cbeb513cb966a8fe3eace42.gif" alt="" loading="lazy">
@@ -211,7 +226,7 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="https://i.pravatar.cc/72?img=12" alt=""></div>
-          <span class="gift-card__name ds-body-m">Дмитрий Кузнецов</span>
+          <span class="gift-card__name ds-title-s">Дмитрий Кузнецов</span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="https://i.pinimg.com/originals/6a/ce/be/6acebe49b3f9ded9c96e66c095d0a4c0.gif" alt="" loading="lazy">
@@ -241,6 +256,13 @@
   </main>
 
   <div class="gp-confetti" id="gpConfetti" aria-hidden="true"></div>
+
+  <!-- Финальная кнопка «Закрыть» (показывается через 2с после конфетти). -->
+  <div class="gp__finish" id="gpFinish" aria-hidden="true">
+    <div class="button-wrapper __size-56">
+      <button class="button-container __style-secondary" type="button" id="gpFinishClose"><span class="button-content">Закрыть</span></button>
+    </div>
+  </div>
 
 </div>
 
@@ -312,38 +334,38 @@
     //   scale = unrotated_w / 300
     var STATES = [
       // Стейт 1 — закрытый стак. opacity 0 (карточки скрыты, появляются на стейте 2).
-      { title: 249, cards: {
+      { title: 210, cards: {
           3: { cx: 185.600, cy: 526.545, s: 0.50246, r: -6.46,  o: 0 },
           2: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0.50,  o: 0 },
           1: { cx: 179.842, cy: 558.120, s: 0.50246, r:  9.78,  o: 0 },
           4: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0,     o: 0 }
       }},
       // Стейт 2 — раскрытый веер. Карточка 4 («принять все») скрыта (o:0).
-      { title: 130, cards: {
+      { title: 96, cards: {
           3: { cx: 154.014, cy: 377.251, s: 0.74440, r: -7.21,  o: 1 },
           2: { cx: 237.871, cy: 479.750, s: 0.74440, r:  15,    o: 1 },
           1: { cx: 135.122, cy: 560.177, s: 0.74440, r: -16.48, o: 1 },
           4: { cx: 185.503, cy: 540.341, s: 0.50246, r:  0,     o: 0 }
       }},
-      // Стейт 3 — в ряд, шаг 316 (300 + gap 16). cy 490 — ряд центрирован
-      // по вертикали (нижняя кнопка убрана). Карточка 4 — в конце ряда.
-      { title: 130, cards: {
-          3: { cx: 275, cy: 490, s: 1, r: 0, o: 1 },
-          2: { cx: 591, cy: 490, s: 1, r: 0, o: 1 },
-          1: { cx: 907, cy: 490, s: 1, r: 0, o: 1 },
-          4: { cx: 1223, cy: 490, s: 1, r: 0, o: 1 }
+      // Стейт 3 — в ряд (вход), шаг 316 (300 + gap 16), сдвинут вправо на +109.
+      { title: 96, cards: {
+          3: { cx: 289, cy: 490, s: 1, r: 0, o: 1 },
+          2: { cx: 605, cy: 490, s: 1, r: 0, o: 1 },
+          1: { cx: 921, cy: 490, s: 1, r: 0, o: 1 },
+          4: { cx: 1237, cy: 490, s: 1, r: 0, o: 1 }
       }},
-      // Стейт 4 — сдвинут влево, первая карточка с гаттером 16px от левого края.
-      { title: 130, cards: {
-          3: { cx: 166, cy: 490, s: 1, r: 0, o: 1 },
-          2: { cx: 482, cy: 490, s: 1, r: 0, o: 1 },
-          1: { cx: 798, cy: 490, s: 1, r: 0, o: 1 },
-          4: { cx: 1114, cy: 490, s: 1, r: 0, o: 1 }
+      // Стейт 4 — ряд (покой). Карточки ЦЕНТРИРУЮТСЯ по горизонтали: первая
+      // (data-i 3) в центре (cx 180), шаг 316 — снап центрирует каждую карточку.
+      { title: 96, cards: {
+          3: { cx: 180, cy: 490, s: 1, r: 0, o: 1 },
+          2: { cx: 496, cy: 490, s: 1, r: 0, o: 1 },
+          1: { cx: 812, cy: 490, s: 1, r: 0, o: 1 },
+          4: { cx: 1128, cy: 490, s: 1, r: 0, o: 1 }
       }},
       // Стейт 5 (exit) — «Принять все» внизу. Карточки ужимаются до
       // стейта 1 (scale 0.50246, рутации той же стопки) и уходят ВНИЗ
       // за viewport (cy ≈ +310 к state 1), opacity → 0. Title едет вниз.
-      { title: 312, cards: {
+      { title: 396, cards: {
           3: { cx: 185.600, cy: 836.510, s: 0.50246, r: -6.46,  o: 0 },
           2: { cx: 185.503, cy: 850.341, s: 0.50246, r:  0.50,  o: 0 },
           1: { cx: 179.842, cy: 868.120, s: 0.50246, r:  9.78,  o: 0 },
@@ -540,10 +562,15 @@
       titleEl.style.transition = 'top 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 280ms ease-out';
       titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
       fireConfetti();
-      // Через пару секунд шторка автоматически закрывается.
-      setTimeout(function () {
+      // Через 2с после запуска конфетти показываем secondary-кнопку «Закрыть».
+      var finish = document.getElementById('gpFinish');
+      var finishBtn = document.getElementById('gpFinishClose');
+      if (finishBtn) finishBtn.addEventListener('click', function () {
         var closeBtn = document.querySelector('.gp__close');
         if (closeBtn) closeBtn.click();
+      });
+      setTimeout(function () {
+        if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
       }, 2000);
     }
 
