@@ -38,7 +38,7 @@
   background: none;
   border: 0;
   padding: 0;
-  color: var(--dynamic-text-and-icons-base-tertiary);
+  color: var(--dynamic-text-and-icons-base-primary);
   cursor: pointer;
   transition: color var(--ds-animation-duration) var(--ds-animation-easing),
               var(--ds-transition-transform);
