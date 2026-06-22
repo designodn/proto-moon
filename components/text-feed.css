@@ -105,7 +105,7 @@
 .text-feed__titled {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 6px;
 }
 .text-feed__title {
   margin: 0;
