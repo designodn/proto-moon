@@ -507,6 +507,7 @@
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
     stopNotifications();              // в меню пуши не показываем (только локскрин)
+    if (window.OkNotifs) window.OkNotifs.clearShown();  // снять залипшие с локскрина
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
