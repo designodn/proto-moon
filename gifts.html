@@ -534,6 +534,11 @@
     // цепочки «Принять все», и из processCard, когда liveCards опустел.
     function showAllAccepted() {
       titleEl.innerHTML = 'Вы приняли<br>все подарки';
+      // Финальный текст плавно съезжает в центр экрана по вертикали.
+      var pageH = window.innerHeight || document.documentElement.clientHeight;
+      var th = titleEl.offsetHeight || 80;
+      titleEl.style.transition = 'top 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 280ms ease-out';
+      titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
       fireConfetti();
       // Через пару секунд шторка автоматически закрывается.
       setTimeout(function () {

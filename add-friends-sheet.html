@@ -765,9 +765,10 @@
     // автоматически закрывается (клик по крестику → переход на ленту).
     function showAllAccepted() {
       titleEl.innerHTML = 'Вы подружились<br>со всеми';
-      // Финальный текст — по центру экрана по вертикали.
+      // Финальный текст плавно съезжает в центр экрана по вертикали.
       var pageH = window.innerHeight || document.documentElement.clientHeight;
       var th = titleEl.offsetHeight || 80;
+      titleEl.style.transition = 'top 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 280ms ease-out';
       titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
       fireConfetti();
       // Через 2с после запуска конфетти показываем secondary-кнопку «Закрыть».
