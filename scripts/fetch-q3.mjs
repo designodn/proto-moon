@@ -942,7 +942,7 @@ ${hint}          <div class="clip-feed ll-clipc__player">
                 <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
               </div>${subBtn}
             </div>
-            <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="32" height="32" alt=""></button>
+            <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>
 ${actionsBar(likes, comments, reshares)}
         </article>`;
