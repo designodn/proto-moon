@@ -36,7 +36,7 @@
   height: 6px;
   border-radius: 999px;
   background: linear-gradient(180deg, #575960 0%, #2e2f33 100%);
-  border-bottom: 1.5px solid var(--static-surface-status-accent, #e56b00);
+  border-bottom: 1.5px solid #e56b00;
   z-index: 3;
 }
 .calendar-date__tab:nth-of-type(1) { left: 7px; }
