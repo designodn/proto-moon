@@ -160,8 +160,6 @@
     cursor: pointer;
   }
   .tg-friend:active { transform: scale(0.95); }
-  /* первый аватар выравниваем по старту хедера: гасим инсет центрирования в ячейке */
-  .tg-friend:first-child { margin-left: calc((56px - 90px) / 2); }
   .tg-friend__ava { position: relative; }
   .tg-friend__dot {
     position: absolute;
@@ -420,7 +418,7 @@
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
                    style="background-image: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
-            <video class="tg-roulette__video" src="assets/today/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
+            <video class="tg-roulette__video" src="assets/koleso/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
             <div class="cover-card__body">
               <div class="cover-card__top">
                 <div class="cover-card__title ds-title-xl">Колесо призов</div>
