@@ -145,8 +145,10 @@
   .splash.is-loaded .splash__logo { opacity: 1; filter: blur(0); }
   .splash__logo svg,
   .splash__logo img { display: block; width: 100%; height: 100%; }
-  /* оранжевый логотип → белый для контраста на оранжевом фоне */
-  .splash__logo-img { filter: brightness(0) invert(1); }
+  /* splashLogo.png — оранжевая squircle-плитка с белыми буквами «ОК».
+     На оранжевом фоне плитка визуально сливается с градиентом, остаются
+     только белые буквы. Без CSS-фильтра — иначе и плитка, и буквы стали
+     бы одним белым квадратом. */
 
   /* Подпись «народная соцсеть» — 50px от низа (параметры из Figma) */
   .splash__subtitle {
@@ -548,8 +550,8 @@
   <!-- ============== SPLASH приложения ОК (показывается при открытии) ============== -->
   <div class="splash" id="splash" style="display:none">
     <div class="splash__logo" id="splashLogo">
-      <!-- Официальный логотип ОК (78×78). На оранжевом сплеше делаем белым
-           CSS-фильтром для контраста. -->
+      <!-- Официальный логотип ОК: оранжевая плитка сливается с фоном,
+           видны только белые буквы (без CSS-фильтра, см. .splash__logo выше). -->
       <img src="assets/icons/splashLogo.png" alt="ОК" class="splash__logo-img">
     </div>
     <div class="splash__subtitle">народная соцсеть</div>
