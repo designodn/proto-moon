@@ -599,8 +599,11 @@
 .moment__bday-content {
   position: relative;
   z-index: 1;
+  /* На всю ширину вьюпорта, боковые отступы 16. */
+  width: 100%;
+  box-sizing: border-box;
   /* Над CTA-кнопкой ещё 44 (bottom CTA) + 44 (высота CTA) + 16 (gap). */
-  padding: 0 var(--space-3) calc(44px + 44px + var(--space-4));
+  padding: 0 var(--space-4) calc(44px + 44px + var(--space-4));
   text-align: center;
   color: var(--static-text-and-icons-base-inverse-primary);
 }
