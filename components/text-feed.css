@@ -190,7 +190,7 @@
   margin-inline: var(--space-4);
   padding: var(--space-3);          /* 12 */
   position: relative;               /* база для оверлей-рамки ::after */
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
 }
 /* Обводка — отдельный слой ::after поверх содержимого, а не outline/border:
@@ -202,9 +202,10 @@
   content: "";
   position: absolute;
   inset: 0;
-  border: 2px solid var(--dynamic-stroke-contrast-low);
-  border-radius: inherit;           /* радиус карточки (в .caf-контексте 12, иначе 20):
-                                       хардкод 20 вылезал за overflow-клип 12 → углы срезались */
+  border: 2px solid var(--dynamic-stroke-contrast-low);  /* толщина 2, оффсет -2:
+                                       inset:0 для 2px-штриха = flush к краю (== outline-offset -2) */
+  border-radius: inherit;           /* всегда == радиусу карточки (12), без хардкода —
+                                       иначе дуга штриха вылезала бы за overflow-клип */
   pointer-events: none;
 }
 
