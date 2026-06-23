@@ -134,11 +134,10 @@
     }
     if (btnWrap) {
       if (btnWrap.dataset.originalHtml == null) btnWrap.dataset.originalHtml = btnWrap.innerHTML;
-      // Кнопка становится secondary «Отменить». Именно secondary (не on-color):
-      // карточка сохраняет светлый фон, поэтому on-color (белый текст) был бы
-      // не виден. secondary = тёмный текст на светлой подложке.
+      // Кнопка «Отменить» — primary-on-color (карточка ВВЗ тёмная: белая кнопка
+      // с тёмным текстом читается поверх static-tertiary-подложки).
       btnWrap.innerHTML =
-        '<button class="button-container __style-secondary" type="button">' +
+        '<button class="button-container __style-primary-on-color" type="button">' +
           '<span class="button-content">Отменить</span>' +
         '</button>';
     }

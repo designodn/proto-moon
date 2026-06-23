@@ -290,10 +290,9 @@
   pointer-events: none;
 }
 
-/* CTA «Показать всех» в ВВЗ отстоит от низа так же, как кнопка в дне рождения
-   (базовый .moment__cta bottom 44). */
+/* CTA «Показать всех» в ВВЗ — 16px от низа вьюпорта. */
 .moment.__view-body .moment__cta {
-  bottom: 44px;
+  bottom: 16px;
 }
 /* Body тянется до самого низа — карточки уезжают под CTA, а нижний блюр
    (.moment__cta-blur) их размывает. padding-bottom оставляет воздух под
@@ -310,9 +309,6 @@
   bottom: 0;
   padding-top: 12px;
   padding-bottom: 92px;
-  /* Грид ВВЗ — во всю ширину (CTA позиционируется отдельно со своим паддингом,
-     заголовок центрируется текстом). Грид сам центрируется в пределах max-width. */
-  padding-inline: 0;
 }
 
 /* Нижний блюр — мягкая размытая полоса под CTA. Лежит над карточками
@@ -603,8 +599,11 @@
 .moment__bday-content {
   position: relative;
   z-index: 1;
+  /* На всю ширину вьюпорта, боковые отступы 16. */
+  width: 100%;
+  box-sizing: border-box;
   /* Над CTA-кнопкой ещё 44 (bottom CTA) + 44 (высота CTA) + 16 (gap). */
-  padding: 0 var(--space-3) calc(44px + 44px + var(--space-4));
+  padding: 0 var(--space-4) calc(44px + 44px + var(--space-4));
   text-align: center;
   color: var(--static-text-and-icons-base-inverse-primary);
 }

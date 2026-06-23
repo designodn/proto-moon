@@ -62,7 +62,7 @@
     letter-spacing: 0;
     color: var(--dynamic-text-and-icons-base-primary);
     margin: 0;
-    top: 96px;
+    top: 56px;
     transition: opacity 280ms ease-out;
   }
   /* Положение заголовка по стейтам задаётся из JS (STATES[i].title). */
@@ -540,7 +540,7 @@
       // Стейт 2 — РАЗЛЁТ: облако кружков С ЗАЗОРАМИ, без наложений, по центру и
       // в границах экрана (bbox-центр ≈ 180/468). ⌀ слегка уменьшены, чтобы 7
       // кружков развести без перекрытий в ширину 390.
-      { title: 96, cards: {
+      { title: 56, cards: {
           1: { cx: 229, cy: 333, s: 0.65330, r: 0, o: 1 },  // ⌀196 (крупный, верх-право)
           2: { cx: 224, cy: 578, s: 0.56000, r: 0, o: 1 },  // ⌀168 (низ-право)
           3: { cx:  79, cy: 453, s: 0.50000, r: 0, o: 1 },  // ⌀150 (лево)
@@ -550,7 +550,7 @@
       }},
       // Стейт 3 — в ряд (вход), шаг 316 (300 + gap 16), сдвинут вправо на +109.
       // cy 480 — ряд центрирован по вертикали (нижняя кнопка убрана).
-      { title: 96, cards: {
+      { title: 56, cards: {
           1: { cx:  289, cy: 480, s: 1, r: 0, o: 1 },
           2: { cx:  605, cy: 480, s: 1, r: 0, o: 1 },
           3: { cx:  921, cy: 480, s: 1, r: 0, o: 1 },
@@ -560,7 +560,7 @@
       }},
       // Стейт 4 — ряд (покой). Карточки ЦЕНТРИРУЮТСЯ по горизонтали: card1 в
       // центре (cx 180), шаг 316 — снап центрирует каждую карточку (в т.ч. последнюю).
-      { title: 96, cards: {
+      { title: 56, cards: {
           1: { cx:  180, cy: 480, s: 1, r: 0, o: 1 },
           2: { cx:  496, cy: 480, s: 1, r: 0, o: 1 },
           3: { cx:  812, cy: 480, s: 1, r: 0, o: 1 },
@@ -583,7 +583,7 @@
       // Стейт 6 (collapse) — кружки СХЛОПЫВАЮТСЯ в плотный комок по центру НА МЕСТЕ
       // (все в точку 180, 455), видимы (o:1). Промежуточный бит перед падением:
       // разлёт (стейт 2) → схлопнулись здесь → полетели вниз (стейт 5).
-      { title: 96, cards: {
+      { title: 56, cards: {
           1: { cx: 180, cy: 455, s: 0.42234, r: 0, o: 1 },
           2: { cx: 180, cy: 455, s: 0.48377, r: 0, o: 1 },
           3: { cx: 180, cy: 455, s: 0.46317, r: 0, o: 1 },
@@ -693,12 +693,18 @@
     // ряд-лейауте и фиксируем --fp-row-card-h / ROW_CARD_H — чтобы при входе в
     // ряд карточки сразу были равной высоты и не «растягивались» на глазах.
     function measureRowCardH() {
-      root.classList.remove('__state-1');     // снять кружковый лейаут (margin-top фото)
+      // Снимаем текущие стейт-классы (ряд-лейаут для замера), потом возвращаем —
+      // функция безопасна для повторного вызова (напр. после догрузки шрифтов),
+      // в каком бы стейте ни была штора.
+      var stateCls = Array.prototype.filter.call(root.classList, function (c) {
+        return c.indexOf('__state-') === 0;
+      });
+      stateCls.forEach(function (c) { root.classList.remove(c); });   // снять кружковый лейаут (margin-top фото)
       root.classList.add('__measuring');
       var maxH = 0;
       IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
       root.classList.remove('__measuring');
-      root.classList.add('__state-1');
+      stateCls.forEach(function (c) { root.classList.add(c); });
       if (maxH) {
         root.style.setProperty('--fp-row-card-h', maxH + 'px');
         ROW_CARD_H = maxH;
@@ -711,6 +717,17 @@
 
     applyState(0);
     root.classList.add('__state-1');
+
+    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера —
+    // тогда высота карточки в ряду меняется на глазах при входе. Перемеряем по
+    // fonts.ready и переприменяем текущий стейт, чтобы высота не «доезжала».
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        measureRowCardH();
+        recenterRow();
+        applyState(current);
+      });
+    }
 
     // Пересчёт центрирования при ресайзе/смене ориентации.
     window.addEventListener('resize', function () {

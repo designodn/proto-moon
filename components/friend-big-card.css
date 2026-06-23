@@ -120,13 +120,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Минимальный зазор до ав «общих друзей»: когда margin-top:auto у .mutual
+     схлопывается (низкая карточка), gap всё равно не меньше 16. */
+  margin-bottom: 16px;
 }
 /* «.friend-big-card__mutual» — модификатор-спейсер на .avatars-view,
    отступ сверху + центрирование строки (стек аватарок + текст). */
 .friend-big-card__mutual {
-  /* Общие друзья ПРИБИТЫ К КНОПКЕ: margin-top:auto толкает блок к низу инфо,
-     поэтому он всегда стоит вплотную над кнопкой «Дружить» (зазор 20 задаёт
-     padding-top у accept), независимо от длины имени/города. */
+  /* Общие друзья ВСЕГДА прижаты к низу инфо (вплотную над кнопкой «Дружить»):
+     margin-top:auto толкает блок вниз. Минимальный зазор до caption (16) держит
+     margin-bottom у .friend-big-card__caption — на случай низкой карточки. */
   margin-top: auto;
   justify-content: center;
 }
