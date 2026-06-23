@@ -215,11 +215,15 @@
   pointer-events: auto;
 }
 
-/* .__accepted — «Написать» гаснет НА МЕСТЕ (не двигаясь), «Принять» остаётся
-   на месте (не уезжает). Пустой нижний слот схлопывается позже — в __settled. */
+/* .__accepted — «Написать» гаснет, «Принять» уезжает вниз на её место
+   (translateY 64 = высота кнопки 56 + gap 8), прибиваясь к низу карточки.
+   Высоту карточки не меняем. Пустой верхний слот схлопывается в __settled. */
 .gift-card.__accepted .gift-card__btn-write {
   opacity: 0;
   pointer-events: none;
+}
+.gift-card.__accepted .gift-card__btn-accept {
+  transform: translateY(64px);
 }
 /* Корзину показываем только до «Принять». */
 .gift-card.__accepted .gift-card__trash {
