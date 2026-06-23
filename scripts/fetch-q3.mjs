@@ -407,7 +407,7 @@ function cafTextTw(title) {
 function inlineCount(slot, n) {
   const num = parseInt(n, 10);
   const label = (Number.isFinite(num) && num > 0) ? esc(String(num)) : '';
-  return `              <span class="button-inline-wrapper __size-16 __view-tertiary"><button class="button-inline __size-16"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-${slot}"></span>${label}</span></button></span>`;
+  return `              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-${slot}"></span>${label}</span></button></span>`;
 }
 
 /** Ряд из 3 счётчиков twitter-like: комментарии · репосты (reshare) · классы. */
@@ -622,6 +622,8 @@ function renderCommentThread(p) {
  *  (карточки-острова). Клип с комментами рисуется как island (см. case 'clip'),
  *  так что отдельная обработка full-bleed не нужна. Без комментов — как есть. */
 function attachComments(card, p) {
+  // comment-as-feed сам встраивает ветку ответов внутрь .caf__stack (см. case).
+  if (p.type === 'comment-as-feed') return card;
   const block = renderCommentThread(p);
   if (!block) return card;
   const i = card.lastIndexOf('</article>');
@@ -1214,20 +1216,26 @@ ${mediaInner}
               <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
+      // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
+      // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
+      // comment-as-feed ничего не добавляет — см. его guard).
       return `        <article class="caf __twitter-like island">
-          <div class="caf__row">
-            <div class="caf__aside">
-              <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>${line}
-            </div>
-            <div class="caf__content">
-              <div class="caf__head">
-                <span class="ds-title-s caf__name">${esc(personName(commenter))}</span>
-                <span class="ds-body-m caf__date">· ${esc(time)}</span>
+          <div class="caf__stack">
+            <div class="caf__row">
+              <div class="caf__aside">
+                <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>${line}
               </div>
+              <div class="caf__content">
+                <div class="caf__head">
+                  <span class="ds-title-s caf__name">${esc(personName(commenter))}</span>
+                  <span class="ds-body-m caf__date">· ${esc(time)}</span>
+                </div>
 ${cafTextTw(title)}
 ${preview}
 ${cafActions(comments, reshares, likes)}
+              </div>
             </div>
+${renderCommentThread(p)}
           </div>
         </article>`;
     }
