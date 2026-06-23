@@ -58,7 +58,9 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
-  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css), карточки 220 по дефолту */
+  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css), карточки 220 по дефолту.
+     padding-top 16 (--space-4) — page-scoped, чтобы не трогать компонент и ленту. */
+  .vvz-portlet { padding-top: var(--space-4); }
 
   /* Секции «Важные / Все друзья» — заголовок (как .vvz-portlet__title) + список .user-cell.
      Между ячейками вертикальный gap, тот же что в guests.html (--space-4). */
@@ -73,8 +75,6 @@
     padding: 0 var(--space-4);
     padding-left: calc(var(--space-4) + 2px);
   }
-  /* Override DS gap правого слота .user-cell: 6px вместо 16px (как просили) */
-  .ll-fr-section .user-cell__actions { gap: var(--space-1-5); }
 </style>
 </head>
 <body>
@@ -335,7 +335,7 @@
           <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
           <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
           <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
         </div>
       </div>
     </div>
