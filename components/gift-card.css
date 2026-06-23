@@ -21,7 +21,7 @@
  *         <span class="button-inline-wrapper __size-24 __view-primary gift-card__trash">
  *           <button class="button-inline __size-24" aria-label="Отклонить">
  *             <span class="button-inline__content">
- *               <span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('assets/icons/trash_24.svg')"></span>
+ *               <span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('../assets/icons/trash_24.svg')"></span>
  *             </span>
  *           </button>
  *         </span>
