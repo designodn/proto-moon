@@ -463,14 +463,11 @@
 .moment__quick::-webkit-scrollbar {
   display: none;
 }
-/* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст),
-   закреплена слева при скролле эмодзи. */
+/* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст).
+   Скроллится вместе со всем рядом (не закреплена). */
 .moment__quick-write {
   flex: 0 0 auto;
   display: flex;
-  position: sticky;
-  left: 0;
-  z-index: 1;
 }
 .moment__quick-write .button-container {
   width: auto;
