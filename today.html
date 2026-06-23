@@ -18,7 +18,9 @@
   .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .phone-frame__feed::-webkit-scrollbar { display: none; }
   .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
-  .ll-tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; }
+  /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), встаёт в
+     поток в конце доскролла. Перебиваем fixed из app-shell.css. */
+  .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
 
   /* Оранжевая локация справа в навбаре */
   .tg-location { color: var(--static-surface-status-accent); }
@@ -31,8 +33,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding-top: var(--space-2);
-    padding-bottom: calc(72px + var(--space-6));
+    padding-top: 0;                       /* без отступа под аппбаром до блока новостей */
+    padding-bottom: var(--space-8);       /* 32 */
   }
   /* Острова контента — поля по 8px (как во всех discovery-фреймах Figma) */
   .tg-island { padding: 0 var(--space-2); }
@@ -393,7 +395,7 @@
             <div class="tg-news__title ds-title-xl">Сейчас в СМИ</div>
             <div class="tg-news__tabs">
               <button type="button" class="tg-news__tab __active">Главное</button>
-              <button type="button" class="tg-news__tab">Москва</button>
+              <button type="button" class="tg-news__tab">Санкт-Петербург</button>
               <button type="button" class="tg-news__tab">Происшествия</button>
             </div>
             <div class="tg-news__list">
@@ -443,9 +445,9 @@
           </article>
         </section>
 
-        <!-- Заголовок «Какой сегодня день» (padding-bottom 0 → до баннера ровно
+        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до баннера ровно
              12px через gap .tg-feed) -->
-        <div class="tg-sec-head" style="padding: var(--space-2) var(--space-4) 0;">
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
           <header class="header"><div class="header__title ds-title-xl">Какой сегодня день</div></header>
         </div>
 
@@ -455,24 +457,24 @@
         </div>
 
         <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) — под картинкой дня -->
-        <div class="tg-sec-head" style="padding: 0 var(--space-4) var(--space-3);">
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
           <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
         <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4); scroll-padding-left: var(--space-4);"></div>
       </div>
-    </div>
 
-    <!-- ===== TABBAR ===== -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- ===== TABBAR — внутри скролла, sticky снизу ===== -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
     </div>

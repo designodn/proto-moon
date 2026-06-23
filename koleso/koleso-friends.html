@@ -28,7 +28,7 @@
 
   .rf {
     display: flex; flex-direction: column; gap: var(--space-4);
-    padding: var(--space-2) var(--space-4) 32px;
+    padding: 0 var(--space-4) 32px;
   }
   /* инфо-баннер (кликабельный → штора с правилами) */
   .rf-banner {
@@ -145,7 +145,7 @@
       <!-- КОНТЕНТ -->
       <div class="rf">
         <button class="rf-banner ds-body-m" id="banner" type="button">
-          <span class="rf-banner__text">Отправим вашему другу приглашение в&nbsp;чат, можно отправить не больше 10 приглашений в&nbsp;день</span>
+          <span class="rf-banner__text">Отправим вашему другу приглашение в&nbsp;чат, можно отправить не&nbsp;больше 10&nbsp;приглашений в&nbsp;день</span>
         </button>
 
         <div class="rf-list" id="list">
@@ -154,7 +154,7 @@
             <div class="avatar __size-56 __type-icon"><span class="icon __size-24 __slot-reshare"></span></div>
             <div class="user-cell__body">
               <div class="ds-title-s user-cell__title">Друга нет в ОК?</div>
-              <div class="ds-caption-m user-cell__time">Отправьте ссылку</div>
+              <div class="ds-body-m user-cell__time">Отправьте ссылку</div>
             </div>
             <div class="user-cell__actions">
               <div class="button-wrapper __size-28"><button class="button-container __style-secondary" id="share-btn"><span class="button-content">Поделиться</span></button></div>
@@ -220,8 +220,8 @@
     var extra = ['vvz-1', 'vvz-2', 'vvz-3']
       .map(function (id) { return ALL.filter(function (p) { return p.id === id; })[0]; })
       .filter(Boolean);
-    var FRIENDS = nums.concat(extra).map(function (p, i) {
-      return { n: p.name, photo: p.photo, sent: i === 0 };
+    var FRIENDS = nums.concat(extra).map(function (p) {
+      return { n: p.name, photo: p.photo, sent: false };
     });
 
     function esc(s) {
@@ -244,7 +244,7 @@
       cell.className = 'user-cell';
       cell.dataset.name = f.n;
       cell.dataset.photo = f.photo || '';
-      // первого друга показываем как уже приглашённого — сразу «Перейти»
+      // при первом открытии все друзья — со кнопкой «Пригласить» (sent:false)
       cell.innerHTML =
         '<div class="avatar __size-56 __type-image"><img src="' + esc(f.photo) + '" alt=""></div>' +
         '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + esc(f.n) + '</div></div>' +
@@ -279,7 +279,7 @@
     // ── Таймер ожидания после приглашения ────────────────────────
     // Используем штатный стейт кнопки __state-timered (радиальная заливка),
     // текст «Пригласить» сохраняем; по окончании — меняем на «Перейти».
-    var TIMER_SEC = 5;
+    var TIMER_SEC = 3;
     function startTimer(wrapper) {
       var btn = wrapper.querySelector('.button-container');
       var label = btn.querySelector('.button-content');
@@ -288,9 +288,10 @@
       btn.style.setProperty('--timered-animation-duration', TIMER_SEC + 's');
       label.textContent = 'Приглашаем';
       setTimeout(function () {
-        wrapper.className = 'button-wrapper __size-28 rf-go';
-        btn.classList.remove('__state-timered');
-        label.textContent = 'Перейти';
+        // По окончании прогресса ставим ЧИСТУЮ дефолтную кнопку «Перейти»
+        // (свежий HTML), чтобы не оставался залитый оверлей от __state-timered.
+        var actions = wrapper.parentNode;
+        if (actions) actions.innerHTML = goBtnHTML();
       }, TIMER_SEC * 1000);
     }
 
@@ -347,12 +348,7 @@
     function openSheet(el) { el.classList.add('__open'); el.setAttribute('aria-hidden', 'false'); }
     function closeSheet(el) { el.classList.remove('__open'); el.setAttribute('aria-hidden', 'true'); }
 
-    document.getElementById('banner').addEventListener('click', function () {
-      openSheet(document.getElementById('rules-sheet'));
-    });
-    document.getElementById('info-btn').addEventListener('click', function () {
-      openSheet(document.getElementById('howto-sheet'));
-    });
+    // Шторки по тапу на баннер и на «i» отключены (по запросу).
     document.addEventListener('click', function (e) {
       if (!e.target.closest('[data-sheet-close]')) return;
       var open = document.querySelector('.rf-sheet.__open');
