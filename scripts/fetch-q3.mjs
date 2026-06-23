@@ -240,17 +240,19 @@ const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
 function authorHeader(id, time, { subscribe = false } = {}) {
-  const sub = subscribe ? `
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>` : '';
+  // Кнопка «Подписаться» — на ОДНОЙ строке с именем (feed-header__line) внутри
+  // текстовой колонки, время — строкой ниже (эталон Figma 4833-29163). Имя тянется
+  // (эллипсис, feed-header__name), кнопка прижата вправо и центрируется по строке.
+  const btn = `<label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>`;
+  const nameLine = subscribe
+    ? `<div class="feed-header__line"><div class="ds-title-s feed-header__name">${esc(personName(id))}</div>${btn}</div>`
+    : `<div class="ds-title-s">${esc(personName(id))}</div>`;
   return `          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(id))}</div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">${esc(personName(id))}</div>
+              ${nameLine}
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
-            </div>${sub}
+            </div>
           </div></div></div>`;
 }
 
@@ -1016,19 +1018,20 @@ ${actionsBar(likes, comments, reshares)}
       });
       const openUrl = `klipy.html?${q}`;
 
+      // Шапка клипа (оверлей на видео): кнопка «Подписаться» (для сообществ) — на
+      // ОДНОЙ строке с именем (feed-header__line), время — строкой ниже. Имя тянется
+      // (feed-header__name), кнопка центрируется по строке имени (эталон Figma 4833-29163).
+      const clipBtn = `<label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe"><input type="checkbox" hidden><span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>`;
+      const clipName = isGroupId(aid)
+        ? `<div class="feed-header__line"><div class="ds-title-s feed-header__name">${esc(personName(aid))}</div>${clipBtn}</div>`
+        : `<div class="ds-title-s">${esc(personName(aid))}</div>`;
+
       // Клип С комментами: ТОТ ЖЕ full-bleed клип (видео 9:16 + оверлей автора +
       // mute), но actions-bar и ветка комментов крепятся НИЖЕ на белом (эталон
       // «Комменты Клип»). Плеер заворачиваем в island-карточку; comment-thread
       // добавит attachComments перед </article>. Actions-overlay на видео НЕТ —
       // счётчики уходят в белый actions-bar под клипом.
       if ((p.threadComments || []).length) {
-        const subBtn = isGroupId(aid)
-          ? `
-              <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
-                <input type="checkbox" hidden>
-                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-              </label>`
-          : '';
         const hint = p.header
           ? `          <div class="ds-title-s ll-clipc__hint">${esc(p.header)}</div>\n`
           : '';
@@ -1039,9 +1042,9 @@ ${hint}          <div class="clip-feed ll-clipc__player">
             <div class="clip-feed__header">
               <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
               <div class="clip-feed__txt">
-                <div class="ds-title-s">${esc(personName(aid))}</div>
+                ${clipName}
                 <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
-              </div>${subBtn}
+              </div>
             </div>
             <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>
@@ -1061,7 +1064,7 @@ ${actionsBar(likes, comments, reshares)}
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
             <div class="clip-feed__txt">
-              <div class="ds-title-s">${esc(personName(aid))}</div>
+              ${clipName}
               <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
             </div>
           </div>

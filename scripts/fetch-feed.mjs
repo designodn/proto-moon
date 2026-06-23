@@ -141,11 +141,17 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
   // На медиа цвет подзаголовка задаёт .feed-header.__on-media (белый), inline не ставим.
   const subStyle = onMedia ? '' : ` style="${SECONDARY}"`;
   const sub = subtitle ? `\n            <div class="ds-caption-m"${subStyle}>${esc(subtitle)}</div>` : '';
+  // Кнопка «Подписаться» стоит на ОДНОЙ строке с именем (feed-header__line) внутри
+  // текстовой колонки, время — строкой ниже (эталон Figma 4833-29163). Имя тянется
+  // (эллипсис), кнопка прижата вправо. Без подписки — просто имя в строку.
+  const nameLine = subscribe
+    ? `<div class="feed-header__line">${name}${subscribeBtn()}</div>`
+    : name;
   return `        <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
           ${avatar}
           <div class="contents-view-container uni-cell-additional-content">
-            ${name}${sub}
-          </div>${subscribe ? '\n          ' + subscribeBtn() : ''}
+            ${nameLine}${sub}
+          </div>
         </div></div></div>`;
 }
 
