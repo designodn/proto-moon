@@ -143,8 +143,9 @@
    (feed-header__line) до 28px, имя (ds-title-s, lh20) центрируется → под текстом
    свес, из-за чего время уезжает от текста имени. Подтягиваем время вверх
    отрицательным margin — ТОЛЬКО для постов с группой + кнопкой «Подписаться»
-   (гейт по самой кнопке; посты-людей не трогаем). */
-.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: -6px; }
+   (гейт по самой кнопке; посты-людей не трогаем). Значение — общий токен
+   --feed-group-time-margin-top (см. feed-base.css). */
+.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: var(--feed-group-time-margin-top); }
 
 /* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
 .text-feed .actions-bar {
