@@ -282,9 +282,9 @@ function authorHeaderTribune(id) {
 
 /** Хлебные крошки из колонок «тема»/«рубрика» (последняя — активная). Если обе
  *  пусты → ''. Разметка как в комментах-как-фид и в NV-ленте. */
-function breadcrumbs(tema, rubrika) {
+function breadcrumbs(tema, rubrika, extraClass = '') {
   if (!tema && !rubrika) return '';
-  return `            <nav class="breadcrumbs">${tema ? `
+  return `            <nav class="breadcrumbs${extraClass ? ' ' + extraClass : ''}">${tema ? `
               <a class="breadcrumbs__item" href="#">${esc(tema)}</a>` : ''}${(tema && rubrika) ? `
               <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${rubrika ? `
               <span class="breadcrumbs__item __state-on">${esc(rubrika)}</span>` : ''}
@@ -330,7 +330,8 @@ function activityLine(header) {
     if (i % 2 === 1) {
       // id-токен → имя жирным; запоминаем пол для спряжения глагола следом.
       feminize = personGender(parts[i]) === 'ж';
-      html += `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
+      // Полное имя (ФИ), не только имя — целиком в title S.
+      html += `<span class="ds-title-s">${esc(personName(parts[i]) || parts[i])}</span>`;
     } else {
       let seg = parts[i];
       // Первое слово после женского имени — глагол: муж. «-л» → жен. «-ла».
@@ -1216,10 +1217,14 @@ ${mediaInner}
               <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
+      // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
+      // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
+      const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+      const crumbs = cafCrumbs ? '\n' + cafCrumbs : '';
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
       // comment-as-feed ничего не добавляет — см. его guard).
-      return `        <article class="caf __twitter-like island">
+      return `        <article class="caf __twitter-like island">${crumbs}
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">

@@ -139,6 +139,13 @@
   color: var(--dynamic-text-and-icons-base-secondary);
 }
 
+/* Шапка поста-сообщества: кнопка «Подписаться» (size-28) раздувает строку имени
+   (feed-header__line) до 28px, имя (ds-title-s, lh20) центрируется → под текстом
+   свес (28-20)/2 = 4px, из-за чего время уезжает от текста имени. Подтягиваем
+   время вверх отрицательным margin. Гейт по самой кнопке: посты-людей (без
+   button-subscribe) не трогаем, иначе имя слиплось бы с временем. */
+.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: -4px; }
+
 /* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
 .text-feed .actions-bar {
   gap: var(--space-2);
@@ -182,7 +189,11 @@
   gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
   padding: var(--space-3);          /* 12 */
-  border: 2px solid var(--dynamic-stroke-contrast-low);
+  /* Обводка — инсет-аутлайн (offset -1) ПОВЕРХ края, а не бордер: бордер съедал
+     бы ширину, из-за чего картинка не дотягивалась до края. С аутлайном
+     full-bleed медиа = 100% ширины карточки, а штрих лежит поверх. */
+  outline: 1px solid var(--dynamic-stroke-contrast-low);
+  outline-offset: -1px;
   border-radius: 20px;
   overflow: hidden;
 }
