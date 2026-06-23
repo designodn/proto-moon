@@ -453,8 +453,15 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  /* Родитель кнопок не клипит контент — overflow видимый (без скролла/обрезки). */
-  overflow: visible;
+  /* Эмодзи прокручиваются по горизонтали, «Написать» закреплён слева (sticky).
+     Скрываем нативный скроллбар, инерционный скролл на тач-устройствах. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.moment__quick::-webkit-scrollbar {
+  display: none;
 }
 /* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст),
    закреплена слева при скролле эмодзи. */
