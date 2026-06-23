@@ -145,8 +145,10 @@
        • transition:none — кнопка/фото встают в финал мгновенно (иначе offsetHeight
          ловит max-height-переход 360ms в полёте → недомер);
        • --friend-big-card-scale:1 — рамка ровно 1px (border-width: calc(1px/scale)
-         при мелком scale даёт 2px/сторону и +2px к боксу). */
-  .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1; }
+         при мелком scale даёт 2px/сторону и +2px к боксу). --friend-big-card-scale
+         applyCard пишет ИНЛАЙНОМ, поэтому перебиваем !important, иначе замер
+         идёт с живым scale (0.42 в кучке → толстая рамка → +6px, недетерминизм). */
+  .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1 !important; }
   .fp.__measuring .friend-big-card,
   .fp.__measuring .friend-big-card * { transition: none !important; }
   .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; }
@@ -765,28 +767,14 @@
     applyState(0);
     root.classList.add('__state-1');
 
-    // Высота карточки в ряду зависит от АСИНХРОННОГО контента: веб-шрифт
-    // (OK Sans Display) и аватарки «общих друзей» догружаются после первого
-    // замера и меняют высоту инфо-блока (напр. 556→550, когда сядут картинки).
-    // Если замерить рано, морф приезда «приземлит» карточку на устаревшую высоту,
-    // а поздний замер её поправит — высота скакнёт уже в покое. Поэтому стартуем
-    // интро только КОГДА шрифт и картинки готовы: тогда замер финальный и его не
-    // придётся править на лету. Кап по таймауту — не залипать на медленной сети.
-    function whenContentReady(cb) {
-      var fired = false;
-      function go() { if (!fired) { fired = true; cb(); } }
-      var waits = [];
-      if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
-      var imgs = root.querySelectorAll('.friend-big-card img');
-      Array.prototype.forEach.call(imgs, function (img) {
-        if (img.complete) return;
-        waits.push(new Promise(function (res) {
-          img.addEventListener('load',  res, { once: true });
-          img.addEventListener('error', res, { once: true });
-        }));
+    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера и
+    // изменить метрики строк. Перемеряем по fonts.ready тем же детерминированным
+    // measureRowCardH и переприменяем стейт ТОЛЬКО если высота реально изменилась
+    // (обычно — no-op: замер не зависит от scale/transition, см. .__measuring).
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        if (measureRowCardH()) { recenterRow(); applyState(current); }
       });
-      if (waits.length) Promise.all(waits).then(go); else go();
-      setTimeout(go, 1200);  // кап
     }
 
     // Пересчёт центрирования при ресайзе/смене ориентации.
@@ -1275,26 +1263,21 @@
       applyState(3);
       attachSwipe();
     } else {
-      whenContentReady(function () {
-        // Финальный замер высоты ряда ДО показа (кучка ещё невидима, o:0) —
-        // дальше высоту не трогаем, поздней ступеньки не будет.
-        if (measureRowCardH()) { recenterRow(); applyState(current); }
-        setTimeout(function () {
-          transitionTo(1, {
-            mode: 'spring',
-            onDone: function () {
-              setTimeout(function () {
-                transitionTo(2, {
-                  mode: 'css', duration: EASE_DUR, easing: 'ease-out',
-                  onDone: function () {
-                    transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
-                  }
-                });
-              }, PAUSE_BETWEEN);
-            }
-          });
-        }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
-      });
+      setTimeout(function () {
+        transitionTo(1, {
+          mode: 'spring',
+          onDone: function () {
+            setTimeout(function () {
+              transitionTo(2, {
+                mode: 'css', duration: EASE_DUR, easing: 'ease-out',
+                onDone: function () {
+                  transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
+                }
+              });
+            }, PAUSE_BETWEEN);
+          }
+        });
+      }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
     }
   })();
 </script>
