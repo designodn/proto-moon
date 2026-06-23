@@ -214,7 +214,7 @@ function marathonPromo(hashtag, joined) {
     ? 'Вы уже участвуете, посмотрите другие фото марафона '
     : 'Загружайте фото и участвуйте в марафоне ';
   return `            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-title-m marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
               <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
             </div>`;
 }
@@ -737,7 +737,7 @@ ${avatarsStack(likesView.avatars)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -963,7 +963,7 @@ ${actionsBar(likes, comments, reshares)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
@@ -1100,7 +1100,7 @@ ${moreBtn({ style: 'on-image' })}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+          <div class="ds-title-l">${esc(title || 'Ваш клип из воспоминаний')}</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
 ${mediaInner}
@@ -1112,7 +1112,7 @@ ${mediaInner}
                 </span></button>
               </div>
               <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
-                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
               </div>
