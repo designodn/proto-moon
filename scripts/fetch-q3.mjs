@@ -604,7 +604,7 @@ function renderCommentThread(p) {
   // отрисованных в fc-list); для comment-as-feed (ответы) — всегда.
   const showMore = asReplies || Number(p.comments) > 2;
   const more = showMore
-    ? `\n            <div class="fc-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    ? `\n            <div class="fc-more${asReplies ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
   // Поле ответа: ава 44 + поле size-44 (радиус = высота/4) + иконка send справа.
   const input = `          <div class="fc-input">

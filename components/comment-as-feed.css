@@ -151,12 +151,13 @@
   gap: var(--space-2);              /* 8 */
 }
 
-/* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
+/* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам,
+   8 снизу. */
 .caf.__twitter-like .caf__row {
   display: flex;
   gap: var(--space-3);              /* 12 между авой и контентом */
   align-items: stretch;            /* палка-aside тянется на всю высоту ряда */
-  padding: 0 var(--space-4);        /* 16 по бокам */
+  padding: 0 var(--space-4) var(--space-2);   /* 16 по бокам, 8 снизу */
 }
 
 /* Левая колонка: ава 44 сверху, под ней «палка» до низа ряда. */
@@ -229,4 +230,9 @@
 }
 .caf__actions .button-inline.__size-16 {
   --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
+}
+
+/* Поле ответа (.fc-input) в comment-as-feed — верхний отступ 4. */
+.caf.__twitter-like .fc-input {
+  padding-top: var(--space-1);      /* 4 */
 }
