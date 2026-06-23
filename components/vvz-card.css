@@ -63,10 +63,13 @@
 .vvz-card.__clicked { transform: scale(0.98); }
 
 /* Вариант СТОРИЗ — карточка занимает всю ширину ячейки грида (moment__body-grid).
-   avatars-view общих друзей — только здесь (см. правило ниже + __has-mutuals). */
+   avatars-view общих друзей — только здесь (см. правило ниже + __has-mutuals).
+   Фон — static-surface-base-tertiary (тёмно-полупрозрачный): карточка лежит на
+   тёмной подложке ВВЗ-сториз/клипов, поэтому НЕ светлый dynamic-tertiary. */
 .vvz-card.__stories {
   flex: 1 1 auto;
   width: auto;
+  background-color: var(--static-surface-base-tertiary);
 }
 
 /* Вариант СООБЩЕНИЯ — фикс. ширина 160 (как дефолт). Кнопка «Дружить»
