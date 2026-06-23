@@ -220,8 +220,17 @@
     var extra = ['vvz-1', 'vvz-2', 'vvz-3']
       .map(function (id) { return ALL.filter(function (p) { return p.id === id; })[0]; })
       .filter(Boolean);
+    // people.js хранит фото относительно КОРНЯ (assets/people/…), а эта страница
+    // лежит в koleso/ — без префикса ../ браузер ищет koleso/assets/… и ава 404-ит.
+    // Префикс уходит и в data-photo → дальше в koleso-chat.html (тоже в koleso/),
+    // там фото берётся as-is, поэтому нормализуем один раз у источника.
+    function localPhoto(src) {
+      src = String(src == null ? '' : src);
+      if (/^(https?:|data:|\.\.?\/)/.test(src)) return src;   // абсолютный/data/уже относительный
+      return src.indexOf('assets/') === 0 ? '../' + src : src;
+    }
     var FRIENDS = nums.concat(extra).map(function (p) {
-      return { n: p.name, photo: p.photo, sent: false };
+      return { n: p.name, photo: localPhoto(p.photo), sent: false };
     });
 
     function esc(s) {
