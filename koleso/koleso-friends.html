@@ -21,27 +21,9 @@
 
   .rf {
     display: flex; flex-direction: column; gap: var(--space-4);
-    padding: var(--space-2) var(--space-4) 96px;
+    padding: 0 var(--space-4) var(--space-4);
   }
-  .mp-sheet__list { margin-top: var(--space-4); overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: var(--space-4); }  /* 16 до первой ячейки */
-  .mp-sheet__list::-webkit-scrollbar { display: none; }
-
-  /* кнопка-инвайт / статус «Отправлено» */
-  .rf-sent {
-    display: inline-flex; align-items: center;
-    height: 28px; padding: 0 10px; border-radius: 10px;
-    background: var(--static-surface-status-contrast-positive);
-    color: var(--dynamic-text-and-icons-status-positive);
-    font-size: 13px; font-weight: 600; white-space: nowrap;
-  }
-
-  /* sticky-кнопка снизу */
-  .rf-bottom {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-    padding: var(--space-3) var(--space-4) calc(var(--space-4) + 8px);
-    background: linear-gradient(180deg, rgba(247,244,242,0) 0%, var(--dynamic-surface-base-secondary) 28%);
-  }
-  .rf-bottom .button-wrapper, .rf-bottom .button-container { width: 100%; }
+  /* .mp-sheet__list — из компонента components/invite-list.css (через ../index.css) */
 </style>
 </head>
 <body>
@@ -69,65 +51,17 @@
         </div>
       </div>
 
-      <!-- КОНТЕНТ -->
+      <!-- КОНТЕНТ — список приглашений (компонент invite-list) -->
       <div class="rf">
-        <div class="mp-sheet__list" id="list">
-          <!-- строки друзей вставляются из JS -->
+        <div class="mp-sheet__list" data-invite-list data-chat-url="koleso-chat.html" data-photo-base="../">
+          <!-- ячейки друзей рендерит components/invite-list.js -->
         </div>
-      </div>
-    </div>
-
-    <!-- Sticky CTA -->
-    <div class="rf-bottom">
-      <div class="button-wrapper __size-56 __full-width">
-        <button class="button-container __style-primary" id="invite-all"><span class="button-content">Пригласить всех сразу</span></button>
       </div>
     </div>
   </div>
 
-  <script>
-    var FRIENDS = [
-      { n: 'Марина Миронова',    img: 47, sent: true },
-      { n: 'Алексей Отрыв',      img: 12 },
-      { n: 'Николай Валерьевич', img: 13 },
-      { n: 'Виктория Шульская',  img: 45 },
-      { n: 'Артем Андреев',      img: 33 },
-      { n: 'Семёныч',            img: 52 },
-      { n: 'Аня Фёдорова',       img: 49 }
-    ];
-
-    var list = document.getElementById('list');
-    FRIENDS.forEach(function (f) {
-      var cell = document.createElement('div');
-      cell.className = 'user-cell';
-      cell.innerHTML =
-        '<div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/112?img=' + f.img + '" alt=""></div>' +
-        '<div class="user-cell__body"><div class="ds-title-s user-cell__title">' + f.n + '</div></div>' +
-        '<div class="user-cell__actions"></div>';
-      var actions = cell.querySelector('.user-cell__actions');
-      if (f.sent) {
-        actions.innerHTML = '<span class="rf-sent">Отправлено</span>';
-      } else {
-        actions.innerHTML =
-          '<div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Пригласить</span></button></div>';
-      }
-      list.appendChild(cell);
-    });
-
-    // тап «Пригласить» → «Отправлено»
-    list.addEventListener('click', function (e) {
-      var btn = e.target.closest('.button-wrapper.__size-28');
-      if (!btn) return;
-      var sent = document.createElement('span');
-      sent.className = 'rf-sent';
-      sent.textContent = 'Отправлено';
-      btn.replaceWith(sent);
-    });
-
-    // «Пригласить всех сразу» → назад на колесо с заработанным билетом
-    document.getElementById('invite-all').addEventListener('click', function () {
-      location.href = 'koleso.html?tickets=1';
-    });
-  </script>
+  <!-- Список друзей — компонент invite-list (люди из people.js, кнопки/диалог в invite-list.js) -->
+  <script src="../data/people.js"></script>
+  <script src="../components/invite-list.js"></script>
 </body>
 </html>

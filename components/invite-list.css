@@ -1,0 +1,24 @@
+/**
+ * OK Design System — InviteList
+ *
+ * Список друзей для приглашения (фотомарафон): прокручиваемая колонка
+ * .user-cell (ава 56 + имя + кнопка «Пригласить»). Логику рендера и кнопок
+ * (таймер «Приглашаем» → «Перейти» → диалог чата) даёт components/invite-list.js.
+ *
+ *   <div class="mp-sheet__list" data-invite-list
+ *        data-chat-url="../marathon-chat.html" data-theme="#РадостьДетства"></div>
+ *   <script src="../data/people.js"></script>
+ *   <script src="../components/invite-list.js"></script>
+ *
+ * Имя класса .mp-sheet__list сохранено (исторически список жил в шторке
+ * фотомарафона .mp-sheet); сам по себе он не требует шторки.
+ */
+.mp-sheet__list {
+  margin-top: var(--space-4);             /* 16 до первой ячейки */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);                    /* 16 между ячейками */
+}
+.mp-sheet__list::-webkit-scrollbar { display: none; }
