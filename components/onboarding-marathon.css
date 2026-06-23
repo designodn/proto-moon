@@ -47,7 +47,6 @@
   flex: 0 0 100%;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: calc(env(safe-area-inset-top, 0px) + 88px) var(--space-4) 0;
