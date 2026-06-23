@@ -858,7 +858,9 @@ ${actionsBar(likes, comments, reshares)}
       const isAi = type === 'ai-gift-received';
       const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
-      let cta, btnWrap = '', icon, btnStyle = '__style-secondary', cardMod = '';
+      // По умолчанию (обычный подарок/открытка) — модификатор __gift с тёплой
+      // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ниже ставит __ai-gift.
+      let cta, btnWrap = '', icon, btnStyle = '__style-secondary', cardMod = ' __gift';
       if (isAi) {
         cta = 'Создать подарок из фото';
         btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
