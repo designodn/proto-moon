@@ -709,10 +709,10 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      // Поднятый fp__title (ряд-стейты 2–4): top = 25%·H − высота тайтла,
-      // т.е. нижний край заголовка встаёт ровно на 25% высоты экрана.
+      // Поднятый fp__title (ряд-стейты 2–4): top = 15%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 15% высоты экрана.
       var titleH = titleEl.offsetHeight || 80;
-      var raisedTop = Math.max(0, Math.round(pageH * 0.25 - titleH));
+      var raisedTop = Math.max(0, Math.round(pageH * 0.15 - titleH));
       STATES[1].title = raisedTop;
       STATES[2].title = raisedTop;
       STATES[3].title = raisedTop;
