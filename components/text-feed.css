@@ -98,6 +98,13 @@
   padding-left: var(--space-4);
   padding-right: var(--space-4);
 }
+/* …но reshare-card — самодостаточный бордерный блок со своим паддингом 12.
+   Общее правило выше (0,2,0) иначе ставит ему боковой 16, а media гасит лишь 12 →
+   картинка не дотягивалась до края на 4px. Возвращаем 12 (равная специфичность,
+   правило позже по источнику → побеждает). */
+.text-feed > .text-feed__reshare-card {
+  padding-inline: var(--space-3);
+}
 
 /* Заголовок поста (из колонки «заголовок»): ds-title-l, отступ до
    текста — 4px. Заголовок и текст лежат в одной группе, чтобы перебить
@@ -188,7 +195,7 @@
   flex-direction: column;
   gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
-  padding: var(--space-3);          /* 12 */
+  padding: var(--space-3);          /* 12 — равномерно со всех сторон */
   position: relative;               /* база для оверлей-рамки ::after */
   border-radius: 12px;
   overflow: hidden;
@@ -237,11 +244,16 @@
 }
 
 /* media в reshare-card: edge-to-edge — отрицательные margin'ы
-   гасят inline-паддинг карточки. Если media — первый/последний ребёнок,
-   также гасится верхний/нижний паддинг (углы клипуются overflow:hidden). */
+   гасят inline-паддинг карточки (12, см. правило ниже). Если media —
+   первый/последний ребёнок, также гасится верхний/нижний паддинг.
+   ширину на весь контейнер даёт flex-stretch (align-items:stretch по умолчанию) —
+   итем без явной width растягивается и симметрично уходит в bleed; аспект задаётся
+   inline (style="aspect-ratio:…"), overflow:hidden клипует картинку по этому
+   аспекту и по радиусу карточки. */
 .text-feed__reshare-card-media {
   position: relative;
   margin-inline: calc(-1 * var(--space-3));   /* bleed под паддинг 12 */
+  overflow: hidden;
   background-color: var(--dynamic-surface-contrast-low);
 }
 /* Картинка после контента — отступ до неё 12 (gap карточки 6 + ещё 6). */
@@ -275,10 +287,14 @@
   color: var(--dynamic-text-and-icons-base-primary);
 }
 
-.text-feed__reshare-card-media img {
+/* Картинка/видео заполняют медиа-блок целиком (object-fit:cover), аспект держит
+   сам блок (style="aspect-ratio:…"). height:100% от заданного аспектом размера →
+   position:absolute в разметке не нужен. */
+.text-feed__reshare-card-media > img,
+.text-feed__reshare-card-media > video {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
 }
 
