@@ -64,6 +64,7 @@
   --gc-accept-gap: 8px;
   --gc-accept-margin: 16px;
   --gc-accept-h: calc(var(--gc-btn-h) * 2 + var(--gc-accept-gap));          /* 120 — две кнопки */
+  --gc-accept-shift: calc(var(--gc-btn-h) + var(--gc-accept-gap));          /* 64 — сдвиг «Принять» вниз на место «Написать» */
   --gc-active-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-accept-h));  /* 486 */
   --gc-settled-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-btn-h));    /* 422 */
 
@@ -235,7 +236,14 @@
   pointer-events: none;
 }
 .gift-card.__accepted .gift-card__btn-accept {
-  transform: translateY(64px);
+  transform: translateY(var(--gc-accept-shift));
+}
+/* На тапе DS-press ставит scale(0.95) на тот же wrapper и перетирает сдвиг —
+   кнопка прыгает вверх. Сохраняем и сдвиг, и press-scale (кроме __settled,
+   где сдвига уже нет). Спецификация выше DS-правила .button-wrapper:active. */
+.gift-card.__accepted:not(.__settled) .gift-card__btn-accept:active,
+.gift-card.__accepted:not(.__settled) .gift-card__btn-accept.__clicked {
+  transform: translateY(var(--gc-accept-shift)) scale(0.95);
 }
 /* Корзину показываем только до «Принять». */
 .gift-card.__accepted .gift-card__trash {
