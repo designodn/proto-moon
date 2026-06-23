@@ -137,7 +137,7 @@
     background: var(--dynamic-surface-base-inverse-primary);
     color: var(--dynamic-text-and-icons-base-inverse-primary);
   }
-  /* Видео-фон карточки рулетки (PNG в background-image карточки — постер-фолбэк). */
+  /* Видео-фон карточки рулетки (статичный кадр — в poster видео как фолбэк). */
   .tg-roulette__video {
     position: absolute;
     inset: 0;
@@ -438,7 +438,7 @@
         <section class="tg-island">
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
-                   style="background-image: url('assets/today/ruletka-segodnya-fon.png'); cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
+                   style="cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
             <video class="tg-roulette__video" src="assets/koleso/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
             <div class="cover-card__body">
               <div class="cover-card__bottom cover-card__cta">
