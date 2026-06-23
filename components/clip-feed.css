@@ -67,7 +67,7 @@
   border: 0;
 }
 
-/* Скрим под шапкой клипа — линейный градиент 100→0 сверху вниз (высота 80),
+/* Скрим под шапкой клипа — линейный градиент 100→0 сверху вниз (высота 120),
    чтобы белый текст шапки читался поверх любого кадра. Лежит между видео
    (z0) и шапкой (z2). */
 .clip-feed::before {
@@ -76,7 +76,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 120px;
   z-index: 1;
   background: linear-gradient(to bottom, var(--static-surface-special-layer-tertiary), transparent);
   pointer-events: none;
