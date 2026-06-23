@@ -139,8 +139,18 @@
   /* Тех. класс для предварительного замера высоты карточки в ряду (на старте,
      пока карточки невидимы): ряд-лейаут — фото без верхнего отступа, кнопка
      «Дружить» развёрнута. JS снимает offsetHeight и фиксирует --fp-row-card-h
-     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах. */
-  .fp.__measuring .friend-big-card { height: auto; min-height: 0; }
+     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах.
+     Мерим ИСТИННЫЙ дизайн-бокс детерминированно, иначе замер разойдётся с
+     живой высотой и attachSwipe потом дёрнет recenter со ступенькой scale:
+       • transition:none — кнопка/фото встают в финал мгновенно (иначе offsetHeight
+         ловит max-height-переход 360ms в полёте → недомер);
+       • --friend-big-card-scale:1 — рамка ровно 1px (border-width: calc(1px/scale)
+         при мелком scale даёт 2px/сторону и +2px к боксу). --friend-big-card-scale
+         applyCard пишет ИНЛАЙНОМ, поэтому перебиваем !important, иначе замер
+         идёт с живым scale (0.42 в кучке → толстая рамка → +6px, недетерминизм). */
+  .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1 !important; }
+  .fp.__measuring .friend-big-card,
+  .fp.__measuring .friend-big-card * { transition: none !important; }
   .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; }
 
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
@@ -156,6 +166,16 @@
     opacity: 1; pointer-events: auto;
     max-height: 100px; padding: 20px 16px 16px;  /* 20 — зазор «авы → кнопка» */
   }
+
+  /* Морф кружок→карточка: высоту (margin-top фото + max-height/padding кнопки)
+     на время приезда ведёт JS из того же прогресса, что и translate/scale
+     (см. transitionTo). Поэтому здесь выключаем CSS-transition'ы именно этих
+     свойств, оставляя анимироваться только косметику (скругление фото,
+     проявление кнопки). Без этого margin-top (600ms) и max-height (360ms)
+     разъезжаются: кнопка раскрывается раньше, чем съезжает фото, контент на
+     миг перерастает итоговую высоту — и бокс «прыгает» (≈576→550). */
+  .fp.__morphing .friend-big-card__photo { transition: border-radius 600ms ease; }
+  .fp.__morphing .friend-big-card__accept { transition: opacity 320ms ease; }
 
   /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
      Фиксируем высоту 460 даже в ряду (где остальные карточки height:auto) —
@@ -628,6 +648,30 @@
       if (s.o !== undefined) el.style.opacity = s.o.toFixed(3);
     }
 
+    // ── МОРФ ВЫСОТЫ кружок↔карточка как функция прогресса ───────────
+    // m: 0 = кружок (фото центрировано margin-top:80, кнопка свёрнута),
+    //    1 = карточка в ряду (фото вверху, кнопка раскрыта). Высоту ведём из
+    // того же p, что и translate/scale, — margin-top фото и max-height кнопки
+    // меняются синхронно, контент монотонен и не перерастает итоговую высоту,
+    // поэтому бокс не «прыгает». На время морфа висит класс .__morphing.
+    function morphFactor(idx) { return (idx === 2 || idx === 3) ? 1 : 0; }  // ряд (state-3/4) = карточка
+    function applyMorph(el, m) {
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = (80 * (1 - m)).toFixed(2) + 'px';
+      if (accept) {
+        accept.style.maxHeight     = (100 * m).toFixed(2) + 'px';
+        accept.style.paddingTop    = (20 * m).toFixed(2) + 'px';
+        accept.style.paddingBottom = (16 * m).toFixed(2) + 'px';
+      }
+    }
+    function clearMorph(el) {  // вернуть управление CSS-классам (значения уже = финальным)
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = '';
+      if (accept) { accept.style.maxHeight = ''; accept.style.paddingTop = ''; accept.style.paddingBottom = ''; }
+    }
+
     var current = 0;
     var animating = false;
     var panOffset = 0;
@@ -705,11 +749,16 @@
       IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
       root.classList.remove('__measuring');
       stateCls.forEach(function (c) { root.classList.add(c); });
-      if (maxH) {
+      // Замер детерминированный (см. CSS .__measuring) → значение стабильно от
+      // вызова к вызову. Применяем и сообщаем, поменялось ли (>0.5px) — чтобы
+      // повторный замер (fonts.ready / attachSwipe) не дёргал recenter впустую.
+      if (maxH && Math.abs(maxH - ROW_CARD_H) > 0.5) {
         root.style.setProperty('--fp-row-card-h', maxH + 'px');
         ROW_CARD_H = maxH;
         if (els[8]) els[8].style.height = maxH + 'px';
+        return true;
       }
+      return false;
     }
     measureRowCardH();
 
@@ -718,14 +767,13 @@
     applyState(0);
     root.classList.add('__state-1');
 
-    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера —
-    // тогда высота карточки в ряду меняется на глазах при входе. Перемеряем по
-    // fonts.ready и переприменяем текущий стейт, чтобы высота не «доезжала».
+    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера и
+    // изменить метрики строк. Перемеряем по fonts.ready тем же детерминированным
+    // measureRowCardH и переприменяем стейт ТОЛЬКО если высота реально изменилась
+    // (обычно — no-op: замер не зависит от scale/transition, см. .__measuring).
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () {
-        measureRowCardH();
-        recenterRow();
-        applyState(current);
+        if (measureRowCardH()) { recenterRow(); applyState(current); }
       });
     }
 
@@ -823,9 +871,9 @@
       }
       setTimeout(function () {
         if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
-        // Авто-скрытие шторки: спустя 2с после появления кнопки «Закрыть»
-        // (≈5с после последнего принятия — конфетти t0, кнопка t0+2с, закрытие t0+4с).
-        setTimeout(autoClose, 2000);
+        // Авто-скрытие шторки: спустя 6с после появления кнопки «Закрыть»
+        // (конфетти t0, кнопка t0+2с, закрытие t0+8с).
+        setTimeout(autoClose, 6000);
       }, 2000);
     }
 
@@ -866,7 +914,16 @@
       // кружковый вид задаётся классами __state-1/2/5).
       if (toIdx >= 2) root.classList.add('__cards-revealed');
 
+      // Морфим высоту синхронно с движением только когда пересекаем границу
+      // кружок↔карточка (напр. вход в ряд state-2→state-3).
+      var fm = morphFactor(prevIdx), tm = morphFactor(toIdx);
+      var isMorph = fm !== tm;
+
       function done() {
+        if (isMorph) {
+          IDX.forEach(function (i) { clearMorph(els[i]); });
+          root.classList.remove('__morphing');
+        }
         applyState(toIdx);
         animating = false;
         if (toIdx === 3) attachSwipe();
@@ -874,6 +931,11 @@
       }
 
       if (reducedMotion()) { done(); return; }
+
+      if (isMorph) {
+        root.classList.add('__morphing');                       // CSS-transition'ы высоты — выкл
+        IDX.forEach(function (i) { applyMorph(els[i], fm); });   // стартовое значение до 1-го кадра (без глитча)
+      }
 
       var dur, progress;
       if (opts.mode === 'spring') {
@@ -907,6 +969,7 @@
             r:  fc.r  + (tc.r  - fc.r)  * p,
             o:  fo    + (to_   - fo)    * op
           }, 0);
+          if (isMorph) applyMorph(els[i], fm + (tm - fm) * p);  // высота — из того же p
         });
         titleEl.style.top =
           (from.title + (to.title - from.title) * p).toFixed(3) + 'px';
@@ -920,20 +983,11 @@
       if (scene.dataset.swipeAttached) return;
       scene.dataset.swipeAttached = '1';
 
-      // Высота карточки «принять всех» вровень с самой высокой + точный пересчёт
-      // центра/масштаба по фактической высоте карточки. Делаем ДО вычисления STEP —
-      // шаг ряда зависит от масштабированных cx.
-      var maxH = 0;
-      [1, 2, 3, 4, 5].forEach(function (i) {
-        if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
-      });
-      // Высота уже зафиксирована на старте (measureRowCardH). Пересчитываем только
-      // если фактическая заметно разошлась (напр. перенос строки после загрузки) —
-      // иначе лишний applyState дал бы микро-сдвиг ряда.
-      if (maxH && Math.abs(maxH - ROW_CARD_H) > 1) {
-        if (els[8]) els[8].style.height = maxH + 'px';
-        root.style.setProperty('--fp-row-card-h', maxH + 'px');
-        ROW_CARD_H = maxH;
+      // Высота уже зафиксирована на старте (measureRowCardH, детерминированный
+      // дизайн-бокс). Перемеряем ТЕМ ЖЕ методом (не живым offsetHeight, который
+      // зависит от текущего scale через border-width) — recenter сработает только
+      // если высота реально изменилась (напр. перенос строки), без ложной ступеньки.
+      if (measureRowCardH()) {
         recenterRow();
         applyState(current);
       }
