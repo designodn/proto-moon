@@ -107,6 +107,11 @@
   flex-direction: column;
   gap: 2px;
 }
+/* __bottom всегда прижат к низу — даже если это единственный потомок body
+   (без __top justify-content:space-between иначе кладёт его наверх). */
+.cover-card__bottom {
+  margin-top: auto;
+}
 
 /* ============================================================
    ТИПОГРАФИКА
