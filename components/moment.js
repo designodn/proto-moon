@@ -222,13 +222,12 @@
           '</div>' +
           '<div class="moment__bday-content">' +
             '<p class="moment__bday-kicker">' + (s.bday.kicker || 'Сегодня') + '</p>' +
-            // Заголовок и ФИ — каждое слово на свой строке (как в макете):
-            // «День / рождения», «Анастасии / Фоминой».
+            // Заголовок и ФИ переносятся естественно по ширине контейнера.
             '<h2 class="moment__bday-heading">' +
-              (s.bday.heading || 'День рождения').split(' ').join('<br>') +
+              (s.bday.heading || 'День рождения') +
             '</h2>' +
             '<p class="moment__bday-name">' +
-              (s.bday.name || '').split(' ').join('<br>') +
+              (s.bday.name || '') +
             '</p>' +
           '</div>';
 
