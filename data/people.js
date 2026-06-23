@@ -116,7 +116,7 @@ window.DS_PEOPLE_DATA = [
     "subtitle": "",
     "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&dpr=2",
     "media": "image",
-    "gender": "",
+    "gender": "ж",
     "age": 92,
     "city": "",
     "bio": ""
@@ -269,6 +269,28 @@ window.DS_PEOPLE_DATA = [
     "name": "Папа на кухне",
     "subtitle": "",
     "photo": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqksNqxeidegiHmxBjQtV4bUb-aw_txmEHzs22FQ6ouBgHVGw96IoHZ5aGTokbAiwvr5daqxmOpgZ05OBiC4aIne6k38_V9Ttm7LyzZq0snYrGf5DR6DR7gwlSILk-RdBwMvfJnYimQns9UqKYQHjxlyowoDRNHc5203RNTtTXbxw-jyPcjrPmujD-xmD-gAAACk&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-10",
+    "name": "Живой дачный уголок",
+    "subtitle": "",
+    "photo": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqNd1ho-na1UmY5ejrbKClE-8MTkaRChbgCRQ1B78wrWRTEGIQdMTpZ-lcK93Y9KwjeAYbG1eQM768Ye5_zeXOh_SUT7P2BmlKHtQvyKEtlR_L8jJYSizMcb41y6VZLVMvtFa0OXJ4kjeyjJkuakvmTTV0e1KCLAiX2lxql03uWYzNp4FF26xWrt4LNeWWwAAACk&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-11",
+    "name": "Забытые моряки",
+    "subtitle": "",
+    "photo": "https://735606.selcdn.ru/thumbnails/photos/2018/09/03/54q7nziswegetpr0_1024.jpg",
     "media": "image",
     "gender": "",
     "age": null,
