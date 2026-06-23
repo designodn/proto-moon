@@ -200,8 +200,10 @@
   white-space: nowrap;
 }
 
-/* Текст коммента (body-m, тот же inline-«ещё» через feed-more) — 4 от шапки. */
-.caf__text {
+/* Текст коммента (body-m, тот же inline-«ещё» через feed-more) — 4 от шапки.
+   Селектор с .caf__content, чтобы перебить .text-feed__body{margin:0}
+   (text-feed.css импортируется позже). */
+.caf__content .caf__text {
   margin: var(--space-1) 0 0;       /* 4 сверху */
   color: var(--dynamic-text-and-icons-base-primary);
   overflow-wrap: anywhere;
