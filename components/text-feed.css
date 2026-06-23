@@ -527,8 +527,10 @@
 .marathon__tile:nth-child(3) {
   margin-left: -64px;
 }
-/* средняя плитка — поверх соседних */
+/* средняя плитка — поверх соседних; наклон задаём в компоненте (вправо на 0.3°
+   от базовых -4.17° → -3.87°), перебивая инлайновую --marathon-tile-rotate. */
 .marathon__tile:nth-child(2) {
+  --marathon-tile-rotate: -3.87deg !important;
   z-index: 1;
 }
 

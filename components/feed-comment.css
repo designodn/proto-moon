@@ -210,3 +210,93 @@
   cursor: pointer;
   color: var(--dynamic-text-and-icons-base-primary);
 }
+
+/* ============================================================
+   TWITTER-LIKE — модификатор под comment-as-feed.__twitter-like.
+   Ответ показан тем же твиттер-рядом, что и сама карточка-коммент
+   (см. comment-as-feed.css): ава 44 + вертикальная «палка»-трунк
+   слева, контент справа (имя · дата → текст → действия). Геометрия
+   ряда (ава 44 + gap 12) совпадает с .caf__row, поэтому трунк
+   проходит сквозь весь стек непрерывно. Вместо локтя-handle и авы 20
+   — прямая палка, как у карточки выше.
+
+     <div class="fc-list __twitter-like">
+       <div class="fc-comment __twitter-like">
+         <div class="fc-comment__aside">
+           <div class="avatar __size-44 __type-image">…</div>
+           <span class="fc-comment__line"></span>      ← палка вниз
+         </div>
+         <div class="fc-comment__body">
+           <div class="fc-comment__head">
+             <span class="ds-title-s fc-comment__author">Имя</span>
+             <span class="ds-body-m fc-comment__date">· дата</span>
+           </div>
+           <p class="fc-comment__text ds-body-m feed-more__text">…</p>
+           <div class="fc-comment__actions">…Ответить · Класс…</div>
+         </div>
+       </div>
+       <div class="fc-more">…Посмотреть все ответы…</div>
+     </div>
+   ============================================================ */
+.fc-list.__twitter-like {
+  padding: 0;                       /* боковые 16 даёт сам ряд */
+}
+
+.fc-comment.__twitter-like {
+  gap: var(--space-3);              /* 12 между авой и телом (как в .caf__row) */
+  padding: 0 var(--space-4);        /* 16 по бокам */
+  align-items: stretch;             /* aside тянется на высоту ряда → палка flex:1 не схлопывается */
+  /* Вертикальный ритм даёт padding-bottom тела (8) — не padding-top, чтобы
+     трунк-«палка» тянулся до авы следующего ряда без разрыва. */
+}
+.fc-comment.__twitter-like:first-child {
+  padding-top: 0;
+}
+/* Старый трунк (::before) и локоть-handle в твиттер-ряду не нужны. */
+.fc-comment.__twitter-like::before { display: none; }
+.fc-comment.__twitter-like .fc-comment__handle { display: none; }
+
+/* Левая колонка: ава 44 сверху, под ней «палка» до низа ряда. */
+.fc-comment.__twitter-like .fc-comment__aside {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);              /* 8: ава ↔ палка */
+}
+.fc-comment__line {
+  flex: 1 0 auto;
+  width: 2px;
+  background: var(--dynamic-stroke-contrast-low);
+}
+/* У последнего/одиночного ответа палку вниз не тянем. */
+.fc-comment.__twitter-like:not(:has(~ .fc-comment)) .fc-comment__line {
+  display: none;
+}
+
+/* Тело: снизу 8 (трунк дотягивается до следующего ряда). */
+.fc-comment.__twitter-like .fc-comment__body {
+  padding-bottom: var(--space-2);   /* 8 */
+}
+
+/* Строка 1: имя + «· дата» в одну строку, дата вторичным цветом. */
+.fc-comment.__twitter-like .fc-comment__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);              /* 4 между именем и датой */
+  min-width: 0;
+}
+.fc-comment.__twitter-like .fc-comment__author {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fc-comment.__twitter-like .fc-comment__date {
+  flex-shrink: 0;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  white-space: nowrap;
+}
+
+/* «Посмотреть все ответы» — выравниваем под контент (ава 44 + gap 12). */
+.fc-list.__twitter-like .fc-more {
+  padding-left: calc(var(--space-4) + 44px + var(--space-3));
+  padding-right: var(--space-4);
+}

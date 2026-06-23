@@ -22,7 +22,9 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
 
+const CHECK_ONLY = process.argv.includes('--check');
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Марафон';
 const SHEET_GID = 123647512;       // лист рейтинга работ (место · автор · фото · классы)
@@ -102,7 +104,7 @@ function renderEntries(entries) {
 
   // Лента (места 2+) — masonry в 2 колонки, только пропорции 1:1 и 3:4 (без «больших»).
   // Для каждой работы:
-  //   • колонка — принудительная (поле col) либо текущая более короткая (баланс высот);
+  //   • колонка — принудительная (поле col) либо менее заполненная (делим поровну);
   //   • пропорция — из данных (если 1:1/3:4) либо чередование с предыдущей в колонке,
   //     чтобы 1:1 и 3:4 не шли подряд.
   const cols = [
@@ -114,14 +116,16 @@ function renderEntries(entries) {
     let ci;
     if (forced === 'left'  || forced === 'a' || forced === '1') ci = 0;
     else if (forced === 'right' || forced === 'b' || forced === '2') ci = 1;
-    else ci = cols[0].h <= cols[1].h ? 0 : 1;   // в более короткую
+    else ci = cols[0].html.length <= cols[1].html.length ? 0 : 1;   // поровну
 
     const c = cols[ci];
     const given = String(e.ratio || '').trim();
     const ratio = (given === '1:1' || given === '3:4') ? given
       : c.last === '3:4' ? '1:1'
       : c.last === '1:1' ? '3:4'
-      : (ci === 1 ? '3:4' : '1:1');              // первая в колонке: левая — 1:1, правая — 3:4 (колонки в противофазе)
+      : (ci === 0 ? '1:1' : '3:4');               // колонки стартуют с разных
+                                                   // пропорций — чтобы рядом не
+                                                   // стояли одинаковые
 
     c.html.push(card({ ...e, ratio }, i + 2, false));
     c.h += TILE_H[ratio] + FOOTER_H;
@@ -203,6 +207,19 @@ async function main() {
     // иначе сохраняем порядок строк.
     if (entries.some(e => e.place != null))
       entries.sort((a, b) => (a.place ?? 1e9) - (b.place ?? 1e9));
+
+    // Фото работ запекаются в marathon.html (корень) → кэшируем локально, чтобы
+    // не зависеть от чужих CDN. Аватары авторов уже локальные (из people.json).
+    const cache = createMediaCache({
+      root: ROOT, dirRel: 'assets/marathon',
+      manifestPath: resolve(ROOT, 'data/marathon-media.json'), dryRun: CHECK_ONLY,
+    });
+    for (const e of entries) e.photo = await cache.resolveUrl(e.photo);
+    cache.save();
+    console.log('  ' + cache.report());
+
+    if (CHECK_ONLY) { console.log('(--check) Ссылки проверены, ничего не записано.'); return; }
+
     // мету (шапку) сохраняем из существующего json — её в листе работ нет.
     const prev = JSON.parse(readFileSync(resolve(ROOT, 'data/marathon.json'), 'utf8'));
     data = { _readme: prev._readme, meta: prev.meta, entries };
