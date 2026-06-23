@@ -232,6 +232,13 @@
   --overlay-opacity: 0.16;
 }
 
+/* Primary — без press-оверлея (осветления) при нажатии: остаётся только
+   scale(0.95) на wrapper. Hover-оверлей сохраняем. */
+.button-container.__style-primary:not(:disabled):not(.__state-loading):not(.__state-disabled):active,
+.button-container.__style-primary:not(:disabled):not(.__state-loading):not(.__state-disabled).__clicked {
+  --overlay-opacity: 0;
+}
+
 /* ============================================================
    STATE: LOADING — shimmer sweep
    ============================================================ */
