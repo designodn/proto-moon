@@ -50,14 +50,13 @@
     position: relative;
     width: 140px; height: 140px;
     border-radius: 24px;
-    overflow: hidden;
     background: var(--dynamic-surface-contrast-low);
     user-select: none;
   }
   .ll-sg-preview__poster img {
     display: block;
     width: 100%; height: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   /* Поле «Сообщение к открытке» — линейное (одна линия снизу) поле + счётчик */
@@ -210,7 +209,6 @@
 
         <!-- Приватность открытки -->
         <div class="ll-sg-row" role="button" tabindex="0">
-          <img class="ll-icon ll-sg-row__icon" src="assets/icons/privacy_16_20.svg" width="24" height="24" alt="">
           <span class="ds-body-l ll-sg-row__label">Приватность открытки</span>
           <span class="ds-body-l ll-sg-row__value">Публичный</span>
         </div>
@@ -241,25 +239,14 @@
           <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Друзья со звездой"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/user_star_24.svg" width="24" height="24" alt=""></span></button></span>
         </div>
 
-        <!-- Friend cells — DS uni-cell -->
+        <!-- Friend cells — DS uni-cell. Люди из data/people.js (people-data.js
+             резолвит data-person-avatar / data-person-name по id). -->
         <div class="uni-cell-wrapper ll-sg-friend">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=23" alt=""></div>
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="1" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Никита Мизин</div>
-              </div>
-              <span class="ds-body-m ll-sg-friend__sent">Отправлено</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-sg-friend">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=47" alt=""></div>
-              <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Татьяна Бровина</div>
+                <div class="ds-title-s ll-sg-friend__name" data-person-name="1"></div>
               </div>
               <div class="button-wrapper __size-36">
                 <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
@@ -271,9 +258,9 @@
         <div class="uni-cell-wrapper ll-sg-friend">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=49" alt=""></div>
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="2" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Галина Мартынова</div>
+                <div class="ds-title-s ll-sg-friend__name" data-person-name="2"></div>
               </div>
               <div class="button-wrapper __size-36">
                 <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
@@ -285,9 +272,9 @@
         <div class="uni-cell-wrapper ll-sg-friend">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=12" alt=""></div>
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="3" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Дмитрий Кузнецов</div>
+                <div class="ds-title-s ll-sg-friend__name" data-person-name="3"></div>
               </div>
               <div class="button-wrapper __size-36">
                 <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
@@ -299,9 +286,9 @@
         <div class="uni-cell-wrapper ll-sg-friend">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=32" alt=""></div>
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="4" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Елена Воронцова</div>
+                <div class="ds-title-s ll-sg-friend__name" data-person-name="4"></div>
               </div>
               <div class="button-wrapper __size-36">
                 <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
@@ -313,63 +300,9 @@
         <div class="uni-cell-wrapper ll-sg-friend">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=14" alt=""></div>
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="5" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Сергей Лебедев</div>
-              </div>
-              <span class="ds-body-m ll-sg-friend__sent">Отправлено</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-sg-friend">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=20" alt=""></div>
-              <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Ольга Семёнова</div>
-              </div>
-              <div class="button-wrapper __size-36">
-                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-sg-friend">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=8" alt=""></div>
-              <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Андрей Никитин</div>
-              </div>
-              <div class="button-wrapper __size-36">
-                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-sg-friend">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=24" alt=""></div>
-              <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Мария Соколова</div>
-              </div>
-              <div class="button-wrapper __size-36">
-                <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-sg-friend">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <div class="avatar __size-44 __type-image"><img src="https://i.pravatar.cc/96?img=53" alt=""></div>
-              <div class="uni-cell-additional-content">
-                <div class="ds-title-s ll-sg-friend__name">Павел Морозов</div>
+                <div class="ds-title-s ll-sg-friend__name" data-person-name="5"></div>
               </div>
               <div class="button-wrapper __size-36">
                 <button class="button-container __style-primary" data-give><span class="button-content">Отправить</span></button>
@@ -385,6 +318,9 @@
   </div>
 
   <script src="components/back-button.js"></script>
+  <!-- Реальные люди в ячейках друзей (data-person-* → people-data.js) -->
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
   <script>
     // Подставляем картинку + цену preview по ?gift= из gifts-catalog.
     (function () {

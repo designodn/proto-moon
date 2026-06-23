@@ -59,6 +59,23 @@
   text-overflow: ellipsis;
 }
 
+/* Имя + кнопка «Подписаться» (для групп) в одной строке, центр по вертикали;
+   время — строкой ниже (эталон Figma 4833-29163). Имя тянется (эллипсис),
+   кнопка прижата вправо и не сжимается. */
+.feed-header__line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+.feed-header__line > .feed-header__name {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.feed-header__line > .button-subscribe {
+  flex-shrink: 0;
+}
+
 /* Оверлей на медиа (клип) — весь текст шапки белый (имя + время). */
 .feed-header.__on-media,
 .feed-header.__on-media .feed-header__name,
