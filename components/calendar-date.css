@@ -75,9 +75,9 @@
   position: absolute;
   left: -2px;
   right: -2px;
-  /* число на 2px ниже (центр бокса смещён вниз: top 4→6, bottom 2→0) */
-  top: 6px;
-  bottom: 0;
+  /* число чуть ниже центра (top 4→5, bottom 2→1 → центр смещён вниз на 1px) */
+  top: 5px;
+  bottom: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
