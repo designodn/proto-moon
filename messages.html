@@ -31,9 +31,11 @@
 
   /* Список диалогов — компонент message-cell (components/message-cell.css) */
 
-  /* FAB — написать сообщение (DS button-circle, фикс. позиция) */
+  /* FAB — написать сообщение (DS button-circle). Позиция привязана к таббару:
+     лежит внутри .ll-tabbar и отсчитывается от его верхней кромки (bottom:100%),
+     зазор 16 — независимо от реальной высоты таббара/safe-area. */
   .ll-fab {
-    position: fixed; right: 16px; bottom: calc(var(--tabbar-height) + 16px); z-index: 60;
+    position: absolute; right: 16px; bottom: calc(100% + 16px); z-index: 60;
     border-radius: 50%;
     box-shadow: 0 8px 20px -6px rgba(0,0,0,0.32);
   }
@@ -296,13 +298,12 @@
 
     </div>
 
-    <!-- FAB — DS button-circle -->
-    <div class="ll-fab button-circle-wrapper __size-56 __style-primary">
-      <button class="button-circle" aria-label="Написать сообщение"><img class="ll-fab__icon" src="assets/icons/add_24.svg" width="28" height="28" alt=""></button>
-    </div>
-
-    <!-- TABBAR -->
+    <!-- TABBAR (несёт FAB — позиция FAB привязана к таббару) -->
     <div class="ll-tabbar">
+      <!-- FAB — DS button-circle, позиционируется относительно .ll-tabbar -->
+      <div class="ll-fab button-circle-wrapper __size-56 __style-primary">
+        <button class="button-circle" aria-label="Написать сообщение"><img class="ll-fab__icon" src="assets/icons/add_24.svg" width="28" height="28" alt=""></button>
+      </div>
       <div class="tabbar __platform-android">
         <div class="tabbar__row">
           <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
