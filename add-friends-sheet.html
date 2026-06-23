@@ -450,9 +450,17 @@
       return parts.join(', ');
     }
     var withPhoto = people.filter(function (p) { return p && p.photo; });
-    function randomPhoto() {
-      if (!withPhoto.length) return null;
-      return withPhoto[Math.floor(Math.random() * withPhoto.length)].photo;
+    // N РАЗНЫХ случайных фото (без повторов внутри одной карточки): тасуем копию
+    // реестра и берём первые n. exclude — фото самого человека карточки.
+    function distinctPhotos(n, exclude) {
+      var pool = withPhoto
+        .map(function (p) { return p.photo; })
+        .filter(function (ph) { return ph && ph !== exclude; });
+      for (var k = pool.length - 1; k > 0; k--) {
+        var j = Math.floor(Math.random() * (k + 1));
+        var t = pool[k]; pool[k] = pool[j]; pool[j] = t;
+      }
+      return pool.slice(0, n);
     }
     for (var i = 0; i < 5; i++) {
       var p = people[i];
@@ -465,10 +473,12 @@
       if (capEl) capEl.textContent = caption(p);
       var img = card.querySelector('.friend-big-card__photo img');
       if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
-      // Общие друзья — случайные аватарки из реестра.
-      card.querySelectorAll('.friend-big-card__mutual .avatar img').forEach(function (a) {
-        var ph = randomPhoto();
-        if (ph) { a.src = ph; a.alt = ''; }
+      // Общие друзья — РАЗНЫЕ случайные аватарки из реестра (без повторов
+      // в пределах одной карточки и без фото самого человека).
+      var mutualImgs = card.querySelectorAll('.friend-big-card__mutual .avatar img');
+      var photos = distinctPhotos(mutualImgs.length, p.photo);
+      mutualImgs.forEach(function (a, k) {
+        if (photos[k]) { a.src = photos[k]; a.alt = ''; }
       });
     }
   })();
@@ -628,11 +638,12 @@
       titleEl.style.top = st.title + 'px';
     }
 
-    // Динамическое центрирование ряда по вертикали между заголовком и низом
-    // экрана + ужимание на низких вьюпортах. Если при масштабе 1 зазор
-    // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
-    // зазор стал ровно 48. cy задаёт центр свободного места.
+    // Ряд (карусель) прижат под заголовок: верх карточек на TITLE_GAP=24px ниже
+    // низа заголовка (а не центрируется по вертикали) — заголовок с каруселью
+    // подняты выше. На низких вьюпортах карточку ужимаем (по всем сторонам),
+    // чтобы влезла, сохраняя минимальный зазор снизу.
     var ROW_CARD_H = 548, ROW_HALF = 230, MIN_GAP = 48;  // ROW_CARD_H уточняется по факту в attachSwipe
+    var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(разлёт),2(вход),3(ряд) — снимаем один раз
     function recenterRow() {
       if (!BASE) {
@@ -652,7 +663,9 @@
       if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
-      var centerY = titleBottom + avail / 2;
+      // Верх карточки = titleBottom + TITLE_GAP. Визуальный верх карточки в ряду =
+      // centerY - (ROW_CARD_H * s)/2 (см. applyCard/rowCy), отсюда centerY.
+      var centerY = titleBottom + TITLE_GAP + (ROW_CARD_H * s) / 2;
       // Ряд (стейты 2,3): все на rowCy, шаг (cx) сжимаем к центру сетки (180) на s.
       var rowCy = centerY - (ROW_CARD_H / 2 - ROW_HALF);
       [2, 3].forEach(function (si) {
@@ -787,8 +800,15 @@
         var closeBtn = document.querySelector('.fp__close');
         if (closeBtn) closeBtn.click();
       });
+      function autoClose() {
+        var closeBtn = document.querySelector('.fp__close');
+        if (closeBtn) closeBtn.click();
+      }
       setTimeout(function () {
         if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+        // Авто-скрытие шторки: спустя 2с после появления кнопки «Закрыть»
+        // (≈5с после последнего принятия — конфетти t0, кнопка t0+2с, закрытие t0+4с).
+        setTimeout(autoClose, 2000);
       }, 2000);
     }
 
