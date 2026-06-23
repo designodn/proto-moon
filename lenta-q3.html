@@ -2618,10 +2618,6 @@
       list.appendChild(cell);
     });
 
-    var DAILY_LIMIT = 10, STORE_KEY = 'mp_invited_today';
-    function getInvited() { var v = parseInt(sessionStorage.getItem(STORE_KEY), 10); if (isNaN(v)) { v = FRIENDS.filter(function (f) { return f.sent; }).length; sessionStorage.setItem(STORE_KEY, v); } return v; }
-    function inviteOne() { var n = getInvited(); if (n >= DAILY_LIMIT) return false; sessionStorage.setItem(STORE_KEY, n + 1); return true; }
-
     var TIMER_SEC = 3;
     function startTimer(wrapper) {
       var btn = wrapper.querySelector('.button-container'), label = btn.querySelector('.button-content');
@@ -2642,7 +2638,7 @@
 
     list.addEventListener('click', function (e) {
       var invite = e.target.closest('.rf-invite');
-      if (invite) { if (!inviteOne()) { showToast('Вы пригласили всех друзей на сегодня'); return; } startTimer(invite); return; }
+      if (invite) { startTimer(invite); return; }
       var go = e.target.closest('.rf-go');
       if (go) goToChat(go.closest('.user-cell'));
     });
