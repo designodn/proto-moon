@@ -163,6 +163,16 @@
   filter: brightness(0) invert(1);
 }
 
+/* Та же история в secondary/tertiary: монохромный глиф <img class="ll-icon">
+   несёт свой fill (#000) и не наследует --button-color. В светлой теме он
+   совпадает с текстом (оба #000), а в тёмной остаётся чёрным при белом тексте.
+   Приводим иконку к цвету текста кнопки (base-primary): в тёмной теме — белая.
+   Цветной бейдж «Класс» (button-klass__icon-filled) исключаем — его не инверсим. */
+:root.__ui-theme_dark .button-container.__style-secondary .ll-icon:not(.button-klass__icon-filled),
+:root.__ui-theme_dark .button-container.__style-tertiary .ll-icon:not(.button-klass__icon-filled) {
+  filter: brightness(0) invert(1);
+}
+
 /* Negative — red tint bg, red text */
 .button-container.__style-negative {
   --button-color: var(--dynamic-text-and-icons-status-negative);

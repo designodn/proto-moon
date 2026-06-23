@@ -227,7 +227,7 @@ function marathonBlock(raw, joined) {
   return `
           <div class="text-feed__marathon">
 ${marathonPromo(hashtag, joined)}
-            <div class="button-wrapper __size-44 __full-width" style="display:block">
+            <div class="button-wrapper __size-36 __full-width" style="display:block">
               <button class="button-container __style-${style}" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
             </div>
           </div>`;
@@ -751,7 +751,7 @@ ${avatarsStack(likesView.avatars)}
           </div>
 ${likesBlock}
 
-          <div class="actions-bar __otd">
+          <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
@@ -880,7 +880,8 @@ ${actionsBar(likes, comments, reshares)}
       const giverId = ids[1] || ids[0];
       // По умолчанию (обычный подарок/открытка) — модификатор __gift с тёплой
       // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ниже ставит __ai-gift.
-      // Обычный подарок/открытка — праймари-кнопка без ведущей иконки.
+      // Обычный подарок/открытка — праймари-кнопка. Иконка подарка слева
+      // только у открытки; у обычного подарка кнопка без иконки.
       let cta, icon = '', btnStyle = '__style-primary', cardMod = ' __gift';
       if (isAi) {
         cta = 'Создать подарок из фото';
@@ -889,8 +890,10 @@ ${actionsBar(likes, comments, reshares)}
         icon = llIcon('sparkles_16_20.svg');
       } else if (/подар/i.test(caption)) {
         cta = 'Сделать подарок';
+        icon = '';   // обычный подарок — кнопка без иконки слева
       } else {
         cta = 'Сделать открытку';
+        icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
             <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
@@ -947,9 +950,9 @@ ${actionsBar(likes, comments, reshares)}
           <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
           <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
 
-          <div class="actions-bar __friendversary">
+          <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -975,7 +978,7 @@ ${actionsBar(likes, comments, reshares)}
             </div>
           </div>
 
-          <div class="actions-bar __tagged">
+          <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
