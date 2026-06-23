@@ -456,12 +456,9 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
-  /* эмодзи-ряд может быть длиннее ширины — скроллим по горизонтали без полосы. */
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  /* Родитель кнопок не клипит контент — overflow видимый (без скролла/обрезки). */
+  overflow: visible;
 }
-.moment__quick::-webkit-scrollbar { display: none; }
 /* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст),
    закреплена слева при скролле эмодзи. */
 .moment__quick-write {
