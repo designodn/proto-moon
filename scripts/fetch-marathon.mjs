@@ -102,7 +102,7 @@ function renderEntries(entries) {
 
   // Лента (места 2+) — masonry в 2 колонки, только пропорции 1:1 и 3:4 (без «больших»).
   // Для каждой работы:
-  //   • колонка — принудительная (поле col) либо текущая более короткая (баланс высот);
+  //   • колонка — принудительная (поле col) либо менее заполненная (делим поровну);
   //   • пропорция — из данных (если 1:1/3:4) либо чередование с предыдущей в колонке,
   //     чтобы 1:1 и 3:4 не шли подряд.
   const cols = [
@@ -114,7 +114,7 @@ function renderEntries(entries) {
     let ci;
     if (forced === 'left'  || forced === 'a' || forced === '1') ci = 0;
     else if (forced === 'right' || forced === 'b' || forced === '2') ci = 1;
-    else ci = cols[0].h <= cols[1].h ? 0 : 1;   // в более короткую
+    else ci = cols[0].html.length <= cols[1].html.length ? 0 : 1;   // поровну
 
     const c = cols[ci];
     const given = String(e.ratio || '').trim();
