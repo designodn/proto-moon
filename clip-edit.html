@@ -55,7 +55,7 @@
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
     pointer-events: none;
   }
-  /* «Редактировать» — DS-кнопка (__style-primary-on-color). Локально только
+  /* «Редактировать» — DS-кнопка (__style-secondary-on-color). Локально только
      не даём ей растягиваться. */
   .ce-edit { flex: 0 0 auto; }
 
@@ -100,7 +100,7 @@
   /* Подпись-период сверху по центру. */
   .ce-title {
     position: absolute;
-    top: var(--space-5);
+    top: 160px;
     left: 0; right: 0;
     z-index: 2;
     text-align: center;
@@ -191,7 +191,7 @@
           <button class="button-inline __size-24" id="ceClose" aria-label="Закрыть"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __slot-close"></span></span></button>
         </span>
         <div class="button-wrapper __size-36 ce-edit">
-          <button class="button-container __style-primary-on-color" id="ceEdit"><span class="button-content">Редактировать</span></button>
+          <button class="button-container __style-secondary-on-color" id="ceEdit"><span class="button-content">Редактировать</span></button>
         </div>
       </div>
 
@@ -333,6 +333,7 @@
       try {
         sessionStorage.setItem('klipyBack', 'lenta-q3.html');
         sessionStorage.setItem('newClip', JSON.stringify(newClip));
+        sessionStorage.setItem('newClipCelebrate', '1');   // одноразовое конфетти на klipy
       } catch (_) {}
       location.href = 'klipy.html';
     });

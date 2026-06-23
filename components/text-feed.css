@@ -505,6 +505,9 @@
   align-items: center;
   justify-content: center;
   padding-block: var(--space-2);
+  /* левая плитка повёрнута сильнее и вылезает левее — сдвигаем веер вправо,
+     чтобы боковые зазоры были симметричны и левая плитка не липла к краю */
+  transform: translateX(4px);
 }
 .marathon__tile {
   position: relative;
@@ -518,10 +521,16 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .marathon__tile:not(:first-child) {
-  margin-left: -40px;
+  margin-left: -52px;
 }
-/* средняя плитка — поверх соседних */
+/* правую плитку подтягиваем к центру чуть сильнее — она упиралась в край экрана */
+.marathon__tile:nth-child(3) {
+  margin-left: -64px;
+}
+/* средняя плитка — поверх соседних; наклон задаём в компоненте (вправо на 0.3°
+   от базовых -4.17° → -3.87°), перебивая инлайновую --marathon-tile-rotate. */
 .marathon__tile:nth-child(2) {
+  --marathon-tile-rotate: -3.87deg !important;
   z-index: 1;
 }
 

@@ -65,3 +65,9 @@
   background: var(--static-surface-status-accent);
   box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
 }
+/* Прибиваем индикатор прямо в нижний-левый угол аватара (0;0), без вылета. */
+.user-cell .avatar.__size-56 .avatar__addon.__pos-bl {
+  top: auto;
+  bottom: 0;
+  left: 0;
+}
