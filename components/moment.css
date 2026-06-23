@@ -290,10 +290,9 @@
   pointer-events: none;
 }
 
-/* CTA «Показать всех» в ВВЗ отстоит от низа так же, как кнопка в дне рождения
-   (базовый .moment__cta bottom 44). */
+/* CTA «Показать всех» в ВВЗ — 16px от низа вьюпорта. */
 .moment.__view-body .moment__cta {
-  bottom: 44px;
+  bottom: 16px;
 }
 /* Body тянется до самого низа — карточки уезжают под CTA, а нижний блюр
    (.moment__cta-blur) их размывает. padding-bottom оставляет воздух под
