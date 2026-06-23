@@ -214,7 +214,7 @@ function marathonPromo(hashtag, joined) {
     ? 'Вы уже участвуете, посмотрите другие фото марафона '
     : 'Загружайте фото и участвуйте в марафоне ';
   return `            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-title-m marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
               <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
             </div>`;
 }
@@ -731,12 +731,12 @@ ${avatarsStack(likesView.avatars)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
               <div class="avatar __size-24 __type-image">${img(personPhoto(aid))}</div>
-              <div class="ds-body-m text-feed__reshare-card-author-name">Вы</div>
+              <div class="ds-title-s text-feed__reshare-card-author-name">Вы</div>
             </div>
 
             <p class="ds-body-m text-feed__body">${esc(text)}</p>${mediaBlock}
@@ -746,7 +746,7 @@ ${likesBlock}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end">
@@ -941,7 +941,7 @@ ${authorHeaderFn(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -956,7 +956,7 @@ ${authorHeaderFn(aid, time)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
@@ -970,7 +970,7 @@ ${authorHeaderFn(aid, time)}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
           </div>
@@ -1095,7 +1095,7 @@ ${moreBtn({ style: 'on-image' })}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+          <div class="ds-title-l">${esc(title || 'Ваш клип из воспоминаний')}</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
 ${mediaInner}
@@ -1103,11 +1103,11 @@ ${mediaInner}
             <div class="actions-bar ll-memclip__actions">
               <div class="button-wrapper __size-44 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">
-                  ${SHARE_SVG}Поделиться
+                  Поделиться
                 </span></button>
               </div>
               <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
-                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
               </div>

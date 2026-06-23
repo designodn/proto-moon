@@ -117,13 +117,6 @@
   --button-color: var(--static-text-and-icons-base-inverse-primary);
   --button-background-color: var(--static-surface-status-accent);
 }
-/* В праймари-кнопке ведущая иконка не показывается — только текст. Ловим и
-   .icon/.ll-icon, и голый <svg> в контенте (например SHARE_SVG у кнопок
-   «Поделиться» в on-this-day / tagged-photo / memclip). Кнопки actions-bar
-   (коммент / репост / класс / троеточие) не затронуты: они secondary/on-image. */
-.button-container.__style-primary .icon,
-.button-container.__style-primary .ll-icon,
-.button-container.__style-primary .button-content > svg { display: none; }
 
 /* Secondary — translucent bg, theme text */
 .button-container.__style-secondary {
