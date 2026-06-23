@@ -909,7 +909,7 @@ ${authorHeaderFn(aid, time)}
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
           </div>
