@@ -128,8 +128,11 @@ function subscribeBtn() {
   return `<label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>`;
 }
 
-/** Шапка автора (uni-cell). id — число/строка из people, либо {name} для рекламы. */
-function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', subscribe = true, literalName = null, onMedia = false } = {}) {
+/** Шапка автора (uni-cell). id — число/строка из people, либо {name} для рекламы.
+ *  staticTime=true — время рендерится как статичный текст (напр. «5 лет назад»);
+ *  staticTime=false (умолч.) — добавляется класс feed-header__time + data-feed-hm,
+ *  текст проставит компонент feed-date.js по позиции в ленте. */
+function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', subscribe = true, literalName = null, onMedia = false, staticTime = false } = {}) {
   let avatar, name;
   if (literalName != null) {
     avatar = `<div class="avatar __size-${size} __type-initials">${esc(initialsOf(literalName))}</div>`;
@@ -140,7 +143,14 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
   }
   // На медиа цвет подзаголовка задаёт .feed-header.__on-media (белый), inline не ставим.
   const subStyle = onMedia ? '' : ` style="${SECONDARY}"`;
-  const sub = subtitle ? `\n            <div class="ds-caption-m"${subStyle}>${esc(subtitle)}</div>` : '';
+  let sub = '';
+  if (subtitle) {
+    if (staticTime) {
+      sub = `\n            <div class="ds-caption-m"${subStyle}>${esc(subtitle)}</div>`;
+    } else {
+      sub = `\n            <div class="ds-caption-m feed-header__time"${subStyle} data-feed-hm="${esc(subtitle)}"></div>`;
+    }
+  }
   // Кнопка «Подписаться» стоит на ОДНОЙ строке с именем (feed-header__line) внутри
   // текстовой колонки, время — строкой ниже (эталон Figma 4833-29163). Имя тянется
   // (эллипсис), кнопка прижата вправо. Без подписки — просто имя в строку.
@@ -157,8 +167,8 @@ function authorHeader(id, { size = 36, nameClass = 'ds-title-s', subtitle = '', 
 
 /** Верхушка фида (feed-header): крошки СВЕРХУ + строка автора.
  *  Ава 44, имя через ds-title-m в 1 строку (feed-header__name), под именем —
- *  ВРЕМЯ всегда (не «Сообщество»). */
-function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null, onMedia = false } = {}) {
+ *  ВРЕМЯ всегда (не «Сообщество»). staticTime пробрасывается в authorHeader. */
+function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-m', subscribe = true, literalName = null, onMedia = false, staticTime = false } = {}) {
   const crumbs = breadcrumbs(tema, rubrika);
   const cell = authorHeader(id, {
     size,
@@ -167,6 +177,7 @@ function feedHeader(id, { tema, rubrika, time, size = 44, nameClass = 'ds-title-
     subscribe,
     literalName,
     onMedia,
+    staticTime,
   });
   const cls = onMedia ? 'feed-header __on-media' : 'feed-header';
   return `        <header class="${cls}">${crumbs ? '\n' + crumbs : ''}\n${cell}\n        </header>`;
@@ -329,7 +340,7 @@ ${actionsBar(likes, comments, reshares, { style: 'on-image', barClass: 'clip-fee
       const inRoster = !!PEOPLE[String(author)];
       const subtitle = (inRoster && PEOPLE[String(author)].subtitle) || 'Реклама 0+';
       const header = authorHeader(inRoster ? author : null, {
-        size: 44, subtitle, subscribe: false,
+        size: 44, subtitle, subscribe: false, staticTime: true,
         literalName: inRoster ? null : author,
       });
       const parts = [
@@ -455,7 +466,7 @@ ${more}
       const self = String(author) === 'my_profile';
       // Реплай-блок с обводкой: автор (как в feed-header) + текст + фото.
       const reply = [
-        feedHeader(author, { time: '5 лет назад', subscribe: false }),
+        feedHeader(author, { time: '5 лет назад', staticTime: true, subscribe: false }),
         text ? `          <p class="ds-body-m feed-memory__text">${esc(text)}</p>` : '',
         mediaPhoto(photos),
       ].filter(Boolean).join('\n');

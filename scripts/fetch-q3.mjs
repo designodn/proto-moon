@@ -131,8 +131,9 @@ const RESHARE_INNER_AUTHOR = 8;
 // Заполняется в main(): EXTRAS[post.id] = COMPANION[post.type] (привязка к типу).
 const EXTRAS = {};
 
-/* Дефолтное время поста (время — «реквизит» шаблона, в листе его нет). */
-const TIMES = ['9:12', '12:48', 'вчера, 18:02', 'пн, 12:03', '10:05', '8:42', 'вчера, 21:10', '14:02', '11:18', '7:30', '20:10', 'вт, 9:33', '17:46', '12:48', '15:20', '12:48'];
+/* Дефолтное время поста — только HH:MM (относительный день проставляет
+ * components/feed-date.js по позиции в ленте: верх = сегодня → вчера → «12 мая»). */
+const TIMES = ['9:12', '12:48', '18:02', '12:03', '10:05', '8:42', '21:10', '14:02', '11:18', '7:30', '20:10', '9:33', '17:46', '12:48', '15:20', '12:48'];
 
 /* ── CSV ──────────────────────────────────────────────────────────────────── */
 function parseCsv(text) {
@@ -256,7 +257,7 @@ function authorHeader(id, time, { subscribe = false } = {}) {
             <div class="avatar __size-44 __type-image">${img(personPhoto(id))}</div>
             <div class="uni-cell-additional-content">
               ${nameLine}
-              <div class="ds-caption-s text-feed__time">${esc(time)}</div>
+              <div class="ds-caption-s text-feed__time" data-feed-hm="${esc(time)}"></div>
             </div>
           </div></div></div>`;
 }
