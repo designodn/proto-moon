@@ -44,14 +44,15 @@
 
   /* .ll-tabbar → components/app-shell.css */
 
-  /* Диалоги «Давно не общались» — закреплены наверху списка. Вместо превью
-     сообщения и времени показываем подпись «Давно не общались» и кнопку
-     «Написать» (primary, 28) справа. Тап по строке или по кнопке открывает
-     чат с человеком (chat.html?id=…). */
+  /* Диалоги «Давно не общались» — закреплены наверху списка. Вместо имени и
+     превью — одна строка «Давно не общались с {имя}» (имя подставляется по
+     data-person-name) и кнопка «Написать» (primary, 28) справа. Тап по строке
+     или по кнопке открывает чат с человеком (chat.html?id=…). */
   .ll-messages [data-dno-item] { cursor: pointer; }
   .message-cell .uni-cell-additional-content { flex: 1 1 auto; min-width: 0; }
   .message-cell__action { flex: 0 0 auto; }
-  .message-cell__hint { color: var(--dynamic-text-and-icons-base-secondary); }
+  /* Строка-подпись «Давно не общались с …» вместо имени — может переноситься */
+  .ll-messages [data-dno-item] .message-cell__name { white-space: normal; }
 </style>
 </head>
 <body>
@@ -151,11 +152,11 @@
 
           <div class="vvz-card __message" data-dismiss-target>
             <div class="vvz-card__media">
-              <img data-person-avatar="vvz-4" alt="">
+              <img data-person-avatar="1" alt="">
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="vvz-4">Александр Кириевич</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="1">Александра Бачурина</div>
               <div class="vvz-card__subtitle ds-body-m">8 общих друзей</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
@@ -165,11 +166,11 @@
 
           <div class="vvz-card __message" data-dismiss-target>
             <div class="vvz-card__media">
-              <img data-person-avatar="11" alt="">
+              <img data-person-avatar="2" alt="">
               <span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary"><button class="button-inline __size-16" aria-label="Скрыть" data-dismiss><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-close"></span></span></button></span>
             </div>
             <div class="vvz-card__content">
-              <div class="vvz-card__title ds-title-s" data-person-name="11">Ольга Стрельникова</div>
+              <div class="vvz-card__title ds-title-s" data-person-name="2">Сергей Чернышов</div>
               <div class="vvz-card__subtitle ds-body-m">6 общих друзей</div>
               <div class="vvz-card__btn button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary" style="width:100%;"><span class="button-content">Дружить</span></button>
@@ -184,17 +185,14 @@
       <div class="ll-messages">
 
         <!-- Давно не общались — закреплены наверху списка. Без превью/времени:
-             подпись «Давно не общались» + кнопка «Написать» (primary, 28).
+             одна строка «Давно не общались с {имя}» + кнопка «Написать» (28).
              Тап по строке или кнопке → чат с человеком (chat.html?id=…). -->
-        <div class="uni-cell-wrapper" data-dno-item onclick="location.href='chat.html?id=7'">
+        <div class="uni-cell-wrapper" data-dno-item onclick="location.href='chat.html?id=11'">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell message-cell __read">
-              <div class="avatar __size-56 __type-image"><img data-person-avatar="7" alt=""></div>
+              <div class="avatar __size-56 __type-image"><img data-person-avatar="11" alt=""></div>
               <div class="uni-cell-additional-content">
-                <div class="message-cell__name ds-title-s" data-person-name="7">Алёна Ящук</div>
-                <div class="message-cell__row">
-                  <span class="message-cell__hint ds-body-m">Давно не общались</span>
-                </div>
+                <div class="message-cell__name ds-body-m">Давно не общались с <span class="ds-title-s" data-person-name="11"></span></div>
               </div>
               <div class="message-cell__action button-wrapper __size-28 __style-primary">
                 <button class="button-container __style-primary"><span class="button-content">Написать</span></button>

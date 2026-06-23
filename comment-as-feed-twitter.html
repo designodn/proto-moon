@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comment-as-Feed — twitter-like</title>
+<link rel="stylesheet" href="index.css">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: var(--dynamic-surface-base-primary);
+    font-family: var(--font-family);
+    color: var(--dynamic-text-and-icons-base-primary);
+  }
+  .stage {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 24px 0 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .stage__title {
+    padding: 0 16px;
+    color: var(--dynamic-text-and-icons-base-secondary);
+  }
+</style>
+</head>
+<body>
+
+  <main class="stage">
+
+    <div class="stage__title ds-caption-s">comment-as-feed · модификатор twitter-like</div>
+
+    <article class="caf __twitter-like island">
+      <div class="caf__stack">
+
+      <!-- Сама карточка-коммент (твиттер-ряд) -->
+      <div class="caf__row">
+        <div class="caf__aside">
+          <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&amp;dpr=2" alt=""></div>
+          <span class="caf__line" aria-hidden="true"></span>
+        </div>
+        <div class="caf__content">
+          <div class="caf__head">
+            <span class="ds-title-s caf__name">Станислав Вахрушев</span>
+            <span class="ds-body-m caf__date">· 8 июня</span>
+          </div>
+
+          <label class="feed-more caf__text-wrap">
+            <input type="checkbox" hidden>
+            <p class="ds-body-m text-feed__body feed-more__text caf__text">Непременно с дырдочкой! Беляшнаш как грица. Жарю в глубокой сковороде, масла чтобы много, и каждый беляш отправляю<span class="feed-more__full"> в масличко аккуратненько, чтобы не забрызгало)))</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+
+          <!-- Превью оригинала: автор, который шёл вторым в авторах -->
+          <div class="text-feed__reshare-card">
+            <div class="text-feed__reshare-card-author">
+              <div class="avatar __size-24 __type-image"><img src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqksNqxeidegiHmxBjQtV4bUb-aw_txmEHzs22FQ6ouBgHVGw96IoHZ5aGTokbAiwvr5daqxmOpgZ05OBiC4aIne6k38_V9Ttm7LyzZq0snYrGf5DR6DR7gwlSILk-RdBwMvfJnYimQns9UqKYQHjxlyowoDRNHc5203RNTtTXbxw-jyPcjrPmujD-xmD-gAAACk&amp;dpr=2" alt=""></div>
+              <div class="ds-body-m text-feed__reshare-card-author-name">Инга на кухне</div>
+            </div>
+            <p class="ds-body-m text-feed__body">Домашние беляши с мясом. Всегда готовлю сразу двойную порцию</p>
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 240 / 135"><img src="https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg" alt=""></div>
+          </div>
+
+          <!-- 3 счётчика: комментарии · репосты · классы -->
+          <div class="caf__actions">
+            <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>34</span></button></span>
+            <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>5</span></button></span>
+            <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>62</span></button></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ответы: тот же твиттер-ряд (fc-comment __twitter-like) -->
+      <div class="fc-list __twitter-like">
+        <div class="fc-comment __twitter-like">
+          <div class="fc-comment__aside">
+            <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&amp;dpr=2" alt=""></div>
+            <span class="fc-comment__line" aria-hidden="true"></span>
+          </div>
+          <div class="fc-comment__body">
+            <div class="fc-comment__head">
+              <span class="ds-title-s fc-comment__author">Неля Щипанова (Галяутдинова)</span>
+              <span class="ds-body-m fc-comment__date">· 8 июня</span>
+            </div>
+            <p class="fc-comment__text ds-body-m feed-more__text">И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой</p>
+            <div class="fc-comment__actions">
+              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>14</span></button></span>
+            </div>
+          </div>
+        </div>
+        <div class="fc-comment __twitter-like">
+          <div class="fc-comment__aside">
+            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&amp;dpr=2" alt=""></div>
+            <span class="fc-comment__line" aria-hidden="true"></span>
+          </div>
+          <div class="fc-comment__body">
+            <div class="fc-comment__head">
+              <span class="ds-title-s fc-comment__author">Любовь Бесова (Кожемяко)</span>
+              <span class="ds-body-m fc-comment__date">· 8 июня</span>
+            </div>
+            <p class="fc-comment__text ds-body-m feed-more__text">Когда переворачиваешь на другую сторону надо накрыть крышкой</p>
+            <div class="fc-comment__actions">
+              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>8</span></button></span>
+            </div>
+          </div>
+        </div>
+        <div class="fc-more __twitter-like">
+          <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span>
+        </div>
+      </div>
+
+      <!-- Поле ответа -->
+      <div class="fc-input">
+        <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&amp;dpr=2" alt=""></div>
+        <div class="fc-input__field">
+          <input class="fc-input__text" placeholder="Написать ответ…">
+          <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+        </div>
+      </div>
+
+      </div>
+    </article>
+
+  </main>
+
+</body>
+</html>

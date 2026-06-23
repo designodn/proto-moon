@@ -187,9 +187,9 @@
 .text-feed__reshare-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-3);          /* 12 */
   border: 2px solid var(--dynamic-stroke-contrast-low);
   border-radius: 20px;
   overflow: hidden;
@@ -205,7 +205,7 @@
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;
-  gap: var(--space-1-5);
+  gap: var(--space-2);              /* 8 между авой и именем */
 }
 .text-feed__reshare-card-author-name {
   flex: 1 1 0;
@@ -214,6 +214,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Имя автора всегда title-s (а не body-m из разметки): единственное отличие
+     от body-m — вес 600. Централизованно перебиваем здесь, чтобы не править
+     класс в каждом месте, где рендерится reshare-card. text-feed.css
+     импортируется позже tokens.css → при равной специфичности (0,1,0) бьёт
+     .ds-body-m. */
+  font-weight: 600;
 }
 
 /* media в reshare-card: edge-to-edge — отрицательные margin'ы
@@ -221,14 +227,18 @@
    также гасится верхний/нижний паддинг (углы клипуются overflow:hidden). */
 .text-feed__reshare-card-media {
   position: relative;
-  margin-inline: calc(-1 * var(--space-4));
+  margin-inline: calc(-1 * var(--space-3));   /* bleed под паддинг 12 */
   background-color: var(--dynamic-surface-contrast-low);
 }
+/* Картинка после контента — отступ до неё 12 (gap карточки 6 + ещё 6). */
+.text-feed__reshare-card-media:not(:first-child) {
+  margin-top: var(--space-1-5);
+}
 .text-feed__reshare-card-media:first-child {
-  margin-top: calc(-1 * var(--space-4));
+  margin-top: calc(-1 * var(--space-3));
 }
 .text-feed__reshare-card-media:last-child {
-  margin-bottom: calc(-1 * var(--space-4));
+  margin-bottom: calc(-1 * var(--space-3));
 }
 /* ============================================================
    LINK — мета-блок превью ссылки внутри reshare-card:
@@ -535,8 +545,10 @@
 .marathon__tile:nth-child(3) {
   margin-left: -64px;
 }
-/* средняя плитка — поверх соседних */
+/* средняя плитка — поверх соседних; наклон задаём в компоненте (вправо на 0.3°
+   от базовых -4.17° → -3.87°), перебивая инлайновую --marathon-tile-rotate. */
 .marathon__tile:nth-child(2) {
+  --marathon-tile-rotate: -3.87deg !important;
   z-index: 1;
 }
 

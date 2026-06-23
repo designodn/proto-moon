@@ -22,15 +22,17 @@
   .ll-guests {
     display: flex; flex-direction: column;
     gap: var(--space-5);
-    padding: 0 var(--space-4) 96px;
+    padding: 0 var(--space-4) var(--space-8);
   }
-  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга.
-     padding-top 16 (--space-4) — page-scoped, чтобы не трогать компонент и ленту. */
+  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга. */
   .ll-guests .vvz-portlet {
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
-    padding-top: var(--space-4);
+    padding-top: 0;
+    padding-bottom: 0;
   }
+  /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну (page-scoped). */
+  .ll-guests .vvz-portlet__header { align-items: baseline; }
 
   /* ── Баннер «Невидимка»: DS-токены, акцентный orange tint ─────── */
   .ll-nevidimka {
@@ -66,6 +68,11 @@
   /* Ячейка гостя — DS-компонент .user-cell (components/user-cell.css). */
 
   /* «Возможно, вы знакомы» — компонент .vvz-portlet (карточки 220px по дефолту) */
+
+  /* Таббар — sticky в потоке ленты: стоит под контентом, не перекрывает
+     последнюю ячейку (переопределяем fixed из app-shell). Лежит последним
+     элементом внутри .phone-frame__feed; отступ 32 даёт padding-bottom .ll-guests. */
+  .ll-tabbar { position: sticky; }
 </style>
 </head>
 <body>
@@ -162,6 +169,7 @@
         </section>
 
         <!-- Возможно вы знакомы — DS vvz-card.__default (horizontal row, dismissible) -->
+        <div class="ll-guests__section">
         <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
           <header class="vvz-portlet__header">
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
@@ -246,22 +254,25 @@
 
           </div>
         </section>
+        </div>
 
       </div>
-    </div>
 
-    <!-- TABBAR -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- TABBAR — sticky внизу ленты: стоит в потоке под контентом, не висит
+           поверх. Отступ 32 от последней ячейки даёт padding-bottom у .ll-guests. -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
