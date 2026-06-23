@@ -187,11 +187,17 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="assets/people/1.jpg" alt=""></div>
-          <span class="gift-card__name ds-title-s">Виктория Петрова</span>
+          <div class="gift-card__cell-text">
+            <span class="gift-card__name ds-title-s">Виктория Петрова</span>
+            <span class="gift-card__date ds-caption-m">12 мая</span>
+          </div>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="https://gifotkrytki.ru/_ph/2/2/933237960.gif" alt="" loading="lazy">
         </div>
+      </div>
+      <div class="gift-card__price" aria-hidden="true">
+        <span class="price-tag">10 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -210,11 +216,17 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="assets/people/2.jpg" alt=""></div>
-          <span class="gift-card__name ds-title-s">Мария Иванова</span>
+          <div class="gift-card__cell-text">
+            <span class="gift-card__name ds-title-s">Мария Иванова</span>
+            <span class="gift-card__date ds-caption-m">12 мая</span>
+          </div>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="assets/embedded/76fb5861fc455666.gif" alt="" loading="lazy">
         </div>
+      </div>
+      <div class="gift-card__price" aria-hidden="true">
+        <span class="price-tag">10 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -233,11 +245,17 @@
       <div class="gift-card__slot">
         <div class="gift-card__cell">
           <div class="avatar __size-36 __type-image"><img src="assets/people/3.jpg" alt=""></div>
-          <span class="gift-card__name ds-title-s">Дмитрий Кузнецов</span>
+          <div class="gift-card__cell-text">
+            <span class="gift-card__name ds-title-s">Дмитрий Кузнецов</span>
+            <span class="gift-card__date ds-caption-m">12 мая</span>
+          </div>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="assets/embedded/45db6af953cc53bb.gif" alt="" loading="lazy">
         </div>
+      </div>
+      <div class="gift-card__price" aria-hidden="true">
+        <span class="price-tag">10 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -294,6 +312,13 @@
       var av = card.querySelector('.gift-card__cell .avatar img');
       if (av && p.photo) { av.src = p.photo; av.alt = p.name; }
     }
+    // Случайная дата под именем (формат «12 мая»).
+    var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    document.querySelectorAll('.gift-card__date').forEach(function (el) {
+      var day = 1 + Math.floor(Math.random() * 28);
+      el.textContent = day + ' ' + MONTHS[Math.floor(Math.random() * 12)];
+    });
   })();
 </script>
 <!-- Lottie-плеер для конфетти на финал «Принять все». -->
@@ -908,17 +933,36 @@
         el.classList.add('__accepted');
         var btn   = el.querySelector('.gift-card__btn-accept .button-container');
         var label = btn && btn.querySelector('.button-content');
-        if (btn) { btn.classList.remove('__style-primary'); btn.classList.add('__style-positive'); }
+        if (btn) {
+          btn.classList.remove('__style-primary');
+          btn.classList.add('__style-positive', '__state-timered');
+          // Таймеред-заливка идёт ровно те же 3с, что кнопка висит «Принято».
+          btn.style.setProperty('--timered-animation-duration', '3s');
+        }
         if (label) label.textContent = 'Принято';
         setTimeout(function () {
-          if (btn) { btn.classList.remove('__style-positive'); btn.classList.add('__style-secondary'); }
+          if (btn) { btn.classList.remove('__style-positive', '__state-timered'); btn.classList.add('__style-secondary'); }
           if (label) label.textContent = 'Отправить «Спасибо»';
+          // Плавная смена подарка (crossfade): гасим, меняем src, проявляем.
           var img = el.querySelector('.gift-card__photo');
           if (img) {
             var cur = img.getAttribute('src');
             var pool = GIFTS.filter(function (g) { return g !== cur; });
-            img.src = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+            var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+            img.style.transition = 'opacity 280ms ease';
+            img.style.opacity = '0';
+            setTimeout(function () {
+              img.src = next;
+              requestAnimationFrame(function () { img.style.opacity = '1'; });
+            }, 280);
           }
+          // Прайс с ценой под подарком (плавно — через класс __thanks).
+          var priceEl = el.querySelector('.price-tag');
+          if (priceEl) {
+            var PRICES = [10, 25, 50, 99, 149];
+            priceEl.textContent = PRICES[Math.floor(Math.random() * PRICES.length)] + ' ОК';
+          }
+          el.classList.add('__thanks');
         }, 3000);
       }
 
