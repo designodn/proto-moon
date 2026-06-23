@@ -241,6 +241,12 @@
        (screen-transition.js) сделал бы history.back(). -->
   <script>
     (function () {
+      // Шторка показана → помечаем гейт «afs-seen», чтобы возврат в ленту не
+      // переоткрывал её снова (баг «закрывается со второго раза»: при заходе
+      // напрямую из меню ОК флаг не выставлялся, и гейт в lenta-q3 на первом
+      // закрытии открывал ту же шторку заново).
+      try { sessionStorage.setItem('afs-seen', '1'); } catch (_) {}
+
       var close = document.querySelector('.fp__close');
       if (!close) return;
       var target = 'lenta-q3.html';
