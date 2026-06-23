@@ -63,10 +63,13 @@
 .vvz-card.__clicked { transform: scale(0.98); }
 
 /* Вариант СТОРИЗ — карточка занимает всю ширину ячейки грида (moment__body-grid).
-   avatars-view общих друзей — только здесь (см. правило ниже + __has-mutuals). */
+   avatars-view общих друзей — только здесь (см. правило ниже + __has-mutuals).
+   Фон — static-surface-base-tertiary (тёмно-полупрозрачный): карточка лежит на
+   тёмной подложке ВВЗ-сториз/клипов, поэтому НЕ светлый dynamic-tertiary. */
 .vvz-card.__stories {
   flex: 1 1 auto;
   width: auto;
+  background-color: var(--static-surface-base-tertiary);
 }
 
 /* Вариант СООБЩЕНИЯ — фикс. ширина 160 (как дефолт). Кнопка «Дружить»
@@ -469,11 +472,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: min-content;
   gap: var(--space-2);
-  width: 100%;
   min-width: 0;
-  /* Карточка ≤ 220 → сетка 2×220 + gap, центрируется. Общий размер для
-     сториз и клипов (контекст добавляет только скролл/скейл). */
-  max-width: calc(220px * 2 + var(--space-2));
-  margin-inline: auto;
+  /* Без горизонтальных отступов: грид full-bleed — гасим боковой паддинг
+     контейнера (space-4 у .moment__body / .klip__vvz-inner), карточки занимают
+     всю ширину. Заголовок и CTA остаются с отступами контейнера. */
+  margin-inline: calc(-1 * var(--space-4));
 }
 .vvz-section__grid > .vvz-card { min-width: 0; }

@@ -37,6 +37,14 @@
            '</div>';
   }
 
+  // Склонение «общий друг / общих друга / общих друзей» по числу.
+  function mutualsLabel(n) {
+    var n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return n + ' общий друг';
+    if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return n + ' общих друга';
+    return n + ' общих друзей';
+  }
+
   function render(p) {
     if (!p) return '';
     var hasMutuals = p.mutuals && p.m && p.m.length;
@@ -47,7 +55,7 @@
       : PLACEHOLDER_AVATAR + PLACEHOLDER_AVATAR + PLACEHOLDER_AVATAR;
     // Без общих друзей сабтайтл фиксированный «Подобрали для вас» (по Figma
      // 2260:68219). С общими — «N общих друзей».
-    var subtitle = hasMutuals ? (p.mutuals + ' общих друзей') : 'Подобрали для вас';
+    var subtitle = hasMutuals ? mutualsLabel(p.mutuals) : 'Подобрали для вас';
     return [
       '<div class="vvz-card __stories' + (hasMutuals ? ' __has-mutuals' : '') + '" data-vvz-card>',
         '<span class="vvz-card__close button-inline-wrapper __size-16 __view-secondary">',
