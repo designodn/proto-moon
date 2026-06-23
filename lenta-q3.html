@@ -2556,5 +2556,21 @@
     });
   })();
   </script>
+
+  <!-- Заголовок «Новая лента» перед первым comment-as-feed -->
+  <script>
+    (function () {
+      var feed = document.querySelector('.ll-feed');
+      if (!feed) return;
+      var firstCaf = feed.querySelector('.caf');
+      if (!firstCaf) return;
+      var header = document.createElement('div');
+      header.className = 'ds-title-s';
+      header.style.padding = '16px';
+      header.style.textAlign = 'center';
+      header.textContent = 'Новая лента';
+      firstCaf.parentNode.insertBefore(header, firstCaf);
+    })();
+  </script>
 </body>
 </html>
