@@ -107,13 +107,13 @@
 }
 
 /* Линейный градиент сверху — для читаемости header'а.
-   160h, opacity 0.4, black → transparent (как в Figma). */
+   120h, линейный от верха (самое тёмное) к низу (прозрачный). */
 .moment__scrim {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 160px;
+  height: 120px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
   pointer-events: none;
   z-index: 1;
@@ -453,15 +453,23 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
+  /* эмодзи-ряд может быть длиннее ширины — скроллим по горизонтали без полосы. */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-/* «Написать» — primary-кнопка, забирает всё свободное место слева. */
+.moment__quick::-webkit-scrollbar { display: none; }
+/* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст),
+   закреплена слева при скролле эмодзи. */
 .moment__quick-write {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   display: flex;
-  min-width: 0;
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 .moment__quick-write .button-container {
-  width: 100%;
+  width: auto;
 }
 /* Иконка отправки внутри кнопки — белая (DS-svg несёт свой чёрный fill). */
 .moment__quick-write .button-content img {
