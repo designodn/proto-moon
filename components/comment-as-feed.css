@@ -148,12 +148,13 @@
 }
 
 /* Единый контейнер: ряд-коммент + список ответов (.fc-list) + поле (.fc-input).
-   Без паддингов, вертикальный ритм — gap 8. */
+   Вертикальный ритм — gap 8. Сверху 4 — отступ «крошки → ряд» (перенесён сюда
+   с .caf__crumbs, чтобы у самих крошек не было верхнего паддинга). */
 .caf.__twitter-like .caf__stack {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);              /* 8 */
-  padding: 0;
+  padding: var(--space-1) 0 0;      /* 4 сверху */
 }
 
 /* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
@@ -236,6 +237,10 @@
 .caf__actions .button-inline.__size-20 {
   --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
 }
+/* Иконки счётчиков — на единой сетке 16/20, чтобы вес штриха совпадал
+   с klass-outline (а не тоньше, как у comment_24/reshare_24). */
+.caf__actions .icon.__slot-comment { --icon-src: url('../assets/icons/comment_16_20.svg'); }
+.caf__actions .icon.__slot-reshare { --icon-src: url('../assets/icons/reshare_16_20.svg'); }
 
 /* Поле ответа (.fc-input) в comment-as-feed — верхний отступ 4, gap 12
    (ава ↔ поле, как в твиттер-ряду). */
@@ -244,8 +249,9 @@
   gap: var(--space-3);              /* 12 */
 }
 
-/* Хлебные крошки (тема/рубрика) над комментом — отступ 4 (по бокам 16
-   для выравнивания с контентом карточки). */
+/* Хлебные крошки (тема/рубрика) над комментом — без верхнего паддинга
+   (вертикальный отступ до ряда даёт .caf__stack), по бокам 16 для
+   выравнивания с контентом карточки. */
 .caf.__twitter-like .caf__crumbs {
-  padding: var(--space-1) var(--space-4);   /* 4 верт., 16 по бокам */
+  padding: 0 var(--space-4);   /* 16 по бокам */
 }
