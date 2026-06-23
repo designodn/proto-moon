@@ -494,7 +494,14 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      // Поднятый gp__title (стейты 2–4): top = 25%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 25% высоты экрана.
+      var titleH = titleEl.offsetHeight || 80;
+      var raisedTop = Math.max(0, Math.round(pageH * 0.25 - titleH));
+      STATES[1].title = raisedTop;
+      STATES[2].title = raisedTop;
+      STATES[3].title = raisedTop;
+      var titleBottom = STATES[3].title + titleH;
       var avail = pageH - titleBottom;
       var s = 1;
       if (finishActive) {
@@ -971,18 +978,27 @@
             if (closeBtn) closeBtn.click();
           });
         }
+        // Через 300мс карточки «оседают»: высота уменьшается так, что прайс
+        // встаёт в 16px над кнопкой; ряд перецентрируется под кнопку «Закрыть».
+        // Анимация медленная (500мс).
         setTimeout(function () {
-          if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
-          // Перескейливаем ряд под кнопку (зазор 32) — плавно.
+          ROW_CARD_H = 422;            // компактная высота осевшей карточки
           finishActive = true;
+          IDX.forEach(function (j) {
+            els[j].classList.add('__settled');
+            els[j].style.transition = 'transform 500ms ease';
+          });
           recenterRow();
-          IDX.forEach(function (j) { els[j].style.transition = 'transform 320ms ease'; });
           requestAnimationFrame(function () {
             IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
           });
           setTimeout(function () {
             IDX.forEach(function (j) { els[j].style.transition = ''; });
-          }, 360);
+          }, 540);
+        }, 300);
+        // Кнопка «Закрыть» — через 500мс.
+        setTimeout(function () {
+          if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
         }, 500);
       }
 
