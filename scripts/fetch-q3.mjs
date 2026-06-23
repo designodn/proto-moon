@@ -1207,9 +1207,11 @@ ${mediaInner}
               <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
       // Фото оригинала (если есть ссылка) — медиа reshare-card, отступ до него 12
       // даёт сам компонент (.text-feed__reshare-card-media:not(:first-child)).
-      // img заполняет бокс 16/9 (cover), иначе height:auto схлопывает картинку.
+      // img абсолютом внутри бокса: высоту держит aspect-ratio 16/9 контейнера
+      // (position:relative из базы), а картинка заполняет его cover'ом. Через
+      // height:100% в потоке загруженная img диктовала бы свой нативный ratio.
       const previewMedia = photos.length ? `
-              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
       return `        <article class="caf __twitter-like island">
