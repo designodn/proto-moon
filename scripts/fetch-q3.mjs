@@ -44,13 +44,16 @@ const FEEDS = {
     name: 'Q3-посты',  gid: '1662648328',     // стабильный gid листа Q3-постов
     json: 'data/q3-feed.json', html: 'lenta-q3.html',
     cmd: 'scripts/fetch-q3.mjs',              // подпись в маркере FEED:START
+    // Фото запекаются в lenta-q3.html (корень) → кэшируем локально, чтобы не
+    // зависеть от чужих CDN (ссылки протухают). Копия → assets/q3/<hash>.<ext>.
+    mediaDir: 'assets/q3', mediaManifest: 'data/q3-media.json',
   },
   tribune: {
     name: 'Трибуна',   gid: '803749593',      // лист трибуны (та же схема, что Q3)
     json: 'data/tribune-feed.json', html: 'tribune.html',
     cmd: 'scripts/fetch-q3.mjs --tribune',
     // Фото запекаются в tribune.html (корень) → кэшируем локально, чтобы не
-    // зависеть от чужих CDN. У Q3 кэш не включён (mediaDir не задан).
+    // зависеть от чужих CDN.
     mediaDir: 'assets/tribune', mediaManifest: 'data/tribune-media.json',
   },
 };
@@ -1370,30 +1373,34 @@ async function main() {
       }
     }
 
-    // Кэшируем фото локально (только там, где задан mediaDir — Трибуна).
-    // Подменяем URL в p.photos ДО записи json/рендера, чтобы и json, и HTML
-    // ссылались на assets/<feed>/… . Внешние ссылки протухают — копия остаётся.
-    if (FEED.mediaDir) {
-      const cache = createMediaCache({
-        root: ROOT, dirRel: FEED.mediaDir,
-        manifestPath: resolve(ROOT, FEED.mediaManifest), dryRun: CHECK_ONLY,
-      });
-      for (const p of posts) {
-        if (Array.isArray(p.photos) && p.photos.length)
-          p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
-      }
-      cache.save();
-      console.log('  ' + cache.report());
-    }
-
-    if (CHECK_ONLY) {
-      console.log('(--check) Ссылки проверены, ничего не записано.');
-      return;
-    }
-
-    writeFileSync(resolve(ROOT, FEED.json),
-      JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}» (gid ${SHEET_GID})`, 'как_обновить': `node ${FEED.cmd}  (офлайн-реген: node ${FEED.cmd} --offline)` }, posts }, null, 2) + '\n');
   }
+
+  // Кэшируем фото локально (для лент с mediaDir — Q3 и Трибуна). Гоняем и в
+  // онлайне, и в офлайне: офлайн-прогон «замораживает» уже вшитые в json внешние
+  // ссылки (скачивает их в assets/<feed>/ и переписывает p.photos на локальные).
+  // Подменяем URL в p.photos ДО записи json/рендера, чтобы и json, и HTML
+  // ссылались на assets/<feed>/… . Внешние ссылки протухают — копия остаётся.
+  // photosRaw оставляем как есть — это запись исходного источника.
+  if (FEED.mediaDir) {
+    const cache = createMediaCache({
+      root: ROOT, dirRel: FEED.mediaDir,
+      manifestPath: resolve(ROOT, FEED.mediaManifest), dryRun: CHECK_ONLY,
+    });
+    for (const p of posts) {
+      if (Array.isArray(p.photos) && p.photos.length)
+        p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
+    }
+    cache.save();
+    console.log('  ' + cache.report());
+  }
+
+  if (CHECK_ONLY) {
+    console.log('(--check) Ссылки проверены, ничего не записано.');
+    return;
+  }
+
+  writeFileSync(resolve(ROOT, FEED.json),
+    JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}» (gid ${SHEET_GID})`, 'как_обновить': `node ${FEED.cmd}  (офлайн-реген: node ${FEED.cmd} --offline)` }, posts }, null, 2) + '\n');
 
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
