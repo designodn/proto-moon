@@ -214,7 +214,7 @@ function marathonPromo(hashtag, joined) {
     ? 'Вы уже участвуете, посмотрите другие фото марафона '
     : 'Загружайте фото и участвуйте в марафоне ';
   return `            <div class="marathon-promo">
-              <p class="ds-title-m marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
               <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
             </div>`;
 }
@@ -240,24 +240,17 @@ const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
 function authorHeader(id, time, { subscribe = false } = {}) {
-  // «Подписаться» (для групп) — в ОДНОЙ строке с именем, центр по вертикали
-  // (эталон Figma 4833-29163): имя + кнопка = .feed-header__line, время ниже.
   const sub = subscribe ? `
-                <label class="button-wrapper __size-28 button-subscribe">
-                  <input type="checkbox" hidden>
-                  <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-                </label>` : '';
-  const name = `<div class="ds-title-s feed-header__name">${esc(personName(id))}</div>`;
-  const nameLine = subscribe
-    ? `<div class="feed-header__line">${name}${sub}
-              </div>`
-    : name;
+            <label class="button-wrapper __size-28 button-subscribe">
+              <input type="checkbox" hidden>
+              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+            </label>` : '';
   return `          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(id))}</div>
             <div class="uni-cell-additional-content">
-              ${nameLine}
+              <div class="ds-title-s">${esc(personName(id))}</div>
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
-            </div>
+            </div>${sub}
           </div></div></div>`;
 }
 
@@ -365,11 +358,20 @@ function clampMore(text, { textClass = 'ds-body-m text-feed__body', clamp = CLAM
   }
   let cut = s.lastIndexOf(' ', clamp);
   if (cut < clamp * 0.5) cut = clamp;
-  const head = s.slice(0, cut);
+  let head = s.slice(0, cut);
   const tail = s.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  // Если видимая «голова» кончается знаком препинания — прячем его в превью
+  // (переносим в скрытый хвост): «…» должно приклеиваться к слову, а не к запятой.
+  // В развёрнутом виде знак возвращается (full = punct + tail = исходный текст).
+  let full = tail;
+  const punct = head.match(/[.,;:!?…·–—]+$/);
+  if (punct && head.length > punct[0].length) {
+    head = head.slice(0, -punct[0].length);
+    full = punct[0] + tail;
+  }
   return `          <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="${textClass} feed-more__text">${esc(head)}<span class="feed-more__full">${esc(tail)}</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="${textClass} feed-more__text">${esc(head)}<span class="feed-more__full">${esc(full)}</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>`;
 }
 
@@ -406,14 +408,21 @@ ${cells}
 const llIcon = (file, cls = 'll-icon', w = 20) =>
   `<img class="${cls}" src="assets/icons/${file}" width="${w}" height="${w}" alt="">`;
 
-/** Кнопка-счётчик (comment / reshare). Пустой счётчик → 0. */
+/** Кнопка-счётчик (comment / reshare). Нет значения или 0 → только иконка
+ *  (число не выводим). */
 function countBtn(file, n, { style = 'secondary' } = {}) {
-  return `            <div class="button-wrapper __size-36"><button class="button-container __style-${style}"><span class="button-content">${llIcon(file)}${esc(n || 0)}</span></button></div>`;
+  const num = parseInt(n, 10);
+  const label = (Number.isFinite(num) && num > 0) ? esc(String(num)) : '';
+  return `            <div class="button-wrapper __size-36"><button class="button-container __style-${style}"><span class="button-content">${llIcon(file)}${label}</span></button></div>`;
 }
 
-/** Кнопка «класс» с --button-klass-count. Пустой счётчик → 0. */
+/** Кнопка «класс» с --button-klass-count. Нет значения или 0 → только иконка
+ *  (класс __no-count прячет нулевой счётчик через CSS; после тапа counter-increment
+ *  делает 1 и счётчик снова виден — см. components/actions-bar.css). */
 function klassBtn(likes, { style = 'secondary' } = {}) {
-  return `            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: ${esc(likes || 0)};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}${llIcon('klass_filled_16_20.svg', 'll-icon button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>`;
+  const num = parseInt(likes, 10);
+  const has = Number.isFinite(num) && num > 0;
+  return `            <label class="button-wrapper __size-36 button-klass${has ? '' : ' __no-count'}" style="--button-klass-count: ${has ? num : 0};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}${llIcon('klass_filled_16_20.svg', 'll-icon button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>`;
 }
 
 /** «Троеточие» (__pinned-end). */
@@ -532,11 +541,10 @@ function renderCommentThread(p) {
   const asReplies = p.type === 'comment-as-feed';
   const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
   const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
-  // «Посмотреть …» — показываем, когда отрисованных в fc-list комментов меньше,
-  // чем по счётчику поста (значит, видны не все — есть что «посмотреть»). Это
-  // покрывает и случай «всего 2, показан 1». Для comment-as-feed — всегда.
-  const total = Number(p.comments);
-  const showMore = asReplies || (Number.isFinite(total) && total > list.length);
+  // «Посмотреть …» — в обычной ленте показываем, только если у поста всего
+  // больше 2 комментов (счётчик из actions-bar, поле comments — не число
+  // отрисованных в fc-list); для comment-as-feed (ответы) — всегда.
+  const showMore = asReplies || Number(p.comments) > 2;
   const more = showMore
     ? `\n            <div class="fc-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
@@ -727,12 +735,12 @@ ${avatarsStack(likesView.avatars)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-l">${esc(title)}</div>
+          <div class="ds-title-xl">${esc(title)}</div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
               <div class="avatar __size-24 __type-image">${img(personPhoto(aid))}</div>
-              <div class="ds-title-s text-feed__reshare-card-author-name">Вы</div>
+              <div class="ds-body-m text-feed__reshare-card-author-name">Вы</div>
             </div>
 
             <p class="ds-body-m text-feed__body">${esc(text)}</p>${mediaBlock}
@@ -742,7 +750,7 @@ ${likesBlock}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                Поделиться
+                ${SHARE_SVG}Поделиться
               </span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end">
@@ -762,7 +770,7 @@ ${likesBlock}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeaderFn(aid, time)}
+${activityLine(p.header)}${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -773,7 +781,7 @@ ${authorHeaderFn(aid, time)}
 ${feedText(text)}${mediaBlock}
           </div>
 ${actionsBar(likes, comments, reshares)}
-        </article>`;
+        </article>`.replace(/\n\n+/g, '\n\n');
     }
 
     /* ── Added Friend — добавил в друзья (встроенная friend-row) ── */
@@ -938,7 +946,7 @@ ${actionsBar(likes, comments, reshares)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -953,7 +961,7 @@ ${actionsBar(likes, comments, reshares)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-l">${esc(title)}</div>
+          <div class="ds-title-xl">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
@@ -967,7 +975,7 @@ ${actionsBar(likes, comments, reshares)}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                Поделиться
+                ${SHARE_SVG}Поделиться
               </span></button>
             </div>
           </div>
@@ -1029,11 +1037,9 @@ ${hint}          <div class="clip-feed ll-clipc__player">
             <div class="clip-feed__header">
               <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
               <div class="clip-feed__txt">
-                <div class="clip-feed__line">
-                  <div class="ds-title-s">${esc(personName(aid))}</div>${subBtn}
-                </div>
+                <div class="ds-title-s">${esc(personName(aid))}</div>
                 <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
-              </div>
+              </div>${subBtn}
             </div>
             <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>
@@ -1092,7 +1098,7 @@ ${moreBtn({ style: 'on-image' })}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-l">${esc(title || 'Ваш клип из воспоминаний')}</div>
+          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
 ${mediaInner}
@@ -1100,11 +1106,11 @@ ${mediaInner}
             <div class="actions-bar ll-memclip__actions">
               <div class="button-wrapper __size-44 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">
-                  Поделиться
+                  ${SHARE_SVG}Поделиться
                 </span></button>
               </div>
               <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
-                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
               </div>
