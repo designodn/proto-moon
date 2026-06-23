@@ -36,12 +36,14 @@
   /* Верх: высота навбара (кнопки back/add: top safe+12 + 40px = 52) + 12.
      Низ: CTA «Показать всех» прижат на 12px над таб-баром.
      Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
-  padding: calc(env(safe-area-inset-top, 0px) + 52px + 12px) var(--space-4)
+  /* Гор. паддинг 0: грид ВВЗ во всю ширину (центрируется в пределах max-width),
+     CTA получает свой отступ ниже. */
+  padding: calc(env(safe-area-inset-top, 0px) + 52px + 12px) 0
            calc(49px + 12px);
 }
 /* Заголовок + сетка — общий компонент .vvz-section (vvz-card.css): он сам
    забирает высоту средней зоны .klip__vvz-inner, центрирует пару по вертикали
    (justify-content: safe center) и скроллится, если не влезает. CTA снизу. */
-.klip__vvz-cta { display: flex; }
+.klip__vvz-cta { display: flex; padding-inline: var(--space-4); }
 .klip__vvz-cta .button-wrapper { flex: 1 1 0; }
 .klip__vvz-cta .button-container { width: 100%; }
