@@ -71,6 +71,15 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
   let manifest = {};
   try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')); } catch { /* первый запуск */ }
 
+  // Файлы, которыми кэш управлял РАНЕЕ (из старого манифеста). Прунить можно
+  // только их: статические ассеты в той же папке (напр. assets/gifts/thanks-*.gif,
+  // на которые ссылается gifts.html напрямую) кэш не создавал и трогать не должен.
+  const managed = new Set();
+  for (const k in manifest) {
+    const f = manifest[k] && manifest[k].file;
+    if (f) managed.add(f);
+  }
+
   const next = {};
   const used = new Set();              // имена файлов, на которые сослались в этом прогоне
   const done = new Map();              // url → результат (дедуп в рамках прогона)
@@ -139,8 +148,12 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
   function save({ prune = true } = {}) {
     if (dryRun) return;
     if (prune && existsSync(dir)) {
+      // Удаляем ТОЛЬКО осиротевшие файлы кэша (были в старом манифесте, в этом
+      // прогоне не использованы). Файлы вне manifest — не наши, не трогаем.
       for (const f of readdirSync(dir)) {
-        if (!used.has(f)) { try { unlinkSync(resolve(dir, f)); } catch { /* ignore */ } }
+        if (managed.has(f) && !used.has(f)) {
+          try { unlinkSync(resolve(dir, f)); } catch { /* ignore */ }
+        }
       }
     }
     writeFileSync(manifestPath, JSON.stringify(next, null, 2) + '\n');

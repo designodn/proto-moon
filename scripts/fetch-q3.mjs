@@ -789,8 +789,8 @@ ${avatarsStack(likesView.avatars)}
             <span class="ds-body-m ll-otd__likes-text">${esc(likesView.text)}</span>
           </div>` : '';
       const mediaBlock = photos[0] ? `
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/240; overflow:hidden">
-              ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/240">
+              ${img(photos[0])}
             </div>` : '';
       return `        <article class="text-feed island">
           <div class="ll-otd__caption ds-body-m">
@@ -828,8 +828,8 @@ ${likesBlock}
     case 'reshare-post': {
       const inner = RESHARE_INNER_AUTHOR;
       const mediaBlock = photos[0] ? `
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 4/3; overflow: hidden">
-              ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 4/3">
+              ${img(photos[0])}
             </div>` : '';
       return `        <article class="text-feed island">
 ${activityLine(p.header)}${authorHeaderFn(aid, time)}
@@ -909,7 +909,7 @@ ${authorHeaderFn(aid, time)}
       const linkTitle = mTitle || p.linkMeta?.title || x.title || domain;
       const linkDescr = mDesc || p.linkMeta?.description || x.description || '';
       const preview = photos[0]
-        ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; overflow: hidden">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`
+        ? `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164">${img(photos[0])}</div>`
         : `            <div class="text-feed__reshare-card-media" style="aspect-ratio: 328/164; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"></div>`;
       return `        <article class="text-feed island">
 ${authorHeaderFn(aid, time)}
@@ -954,8 +954,8 @@ ${actionsBar(likes, comments, reshares)}
         icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
-            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1; overflow: hidden">
-              ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
+            <div class="text-feed__reshare-card-media" style="aspect-ratio: 1">
+              ${img(photos[0])}
             </div>` : '';
       return `        <article class="text-feed island">
 ${authorHeaderFn(aid, time)}
