@@ -282,6 +282,29 @@ function breadcrumbs(tema, rubrika) {
             </nav>`;
 }
 
+/** Шапка comment-as-feed (модификатор .feed-header.__caf): крошки сверху +
+ *  автор-комментатор (ава 44 с доп-авой того, К КОМУ коммент) + подзаголовок
+ *  «Комментарий к <автор оригинала>». commenter — ids[0] (большая ава, имя),
+ *  to — ids[1] (маленькая доп-ава, может быть и сообществом group-*). Если to
+ *  не задан — доп-ава и подзаголовок не выводятся. «Подписаться» — справа. */
+function cafHeader(commenter, to) {
+  const addon = to ? `
+              <div class="avatar __size-20 __type-image feed-header__ava-addon">${img(personPhoto(to))}</div>` : '';
+  const sub = to ? `
+                <div class="ds-caption-m feed-header__sub">Комментарий к <span class="feed-header__to">${esc(personName(to))}</span></div>` : '';
+  return `            <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+              <div class="avatar __size-44 __type-image${to ? ' __has-addon' : ''}">${img(personPhoto(commenter))}${addon}
+              </div>
+              <div class="uni-cell-additional-content">
+                <div class="ds-title-s feed-header__name">${esc(personName(commenter))}</div>${sub}
+              </div>
+              <label class="button-wrapper __size-28 button-subscribe">
+                <input type="checkbox" hidden>
+                <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+              </label>
+            </div></div></div>`;
+}
+
 /** Строка-активность над автором («почему пост в ленте»), слот text-feed__activity.
  *  Колонка «шапка». Токен id_<id> → имя человека из people.json (жирным):
  *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
@@ -1071,7 +1094,17 @@ ${mediaInner}
        actions-bar. Ответы (ветку) добавит attachComments (лейблы «ответы»).
        Автор: id[0] — комментатор (шапка). */
     case 'comment-as-feed': {
-      const commenter = aid;          // ids[0]
+      const commenter = aid;          // ids[0] — автор коммента (большая ава, имя)
+      const to = ids[1];              // ids[1] — к кому коммент (маленькая доп-ава)
+      const crumbs = breadcrumbs(p.tema, p.rubrika);
+      // Шапка-модификатор .feed-header.__caf: крошки + автор + «Комментарий к …».
+      // В Трибуне — компактная шапка (как у остальных постов), без доп-авы/крошек.
+      const header = IS_TRIBUNE
+        ? authorHeaderTribune(commenter)
+        : `          <header class="feed-header __caf">${crumbs ? `
+${crumbs}` : ''}
+${cafHeader(commenter, to)}
+          </header>`;
       const preview = `          <div class="text-feed__reshare-card caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
@@ -1080,7 +1113,7 @@ ${mediaInner}
             </div>
           </div>`;
       return `        <article class="text-feed island">
-${IS_TRIBUNE ? authorHeaderTribune(commenter) : authorHeader(commenter, time, { subscribe: true })}
+${header}
 
 ${cafText(title)}
 ${preview}
