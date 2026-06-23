@@ -16,7 +16,9 @@
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
 
+const CHECK_ONLY = process.argv.includes('--check');
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SHEET = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const GID = '1382684946';
@@ -54,6 +56,22 @@ for (const r of rows) {
   if (!type) continue;
   const images = r.slice(1).map(s => s.trim()).filter(Boolean);
   sets[type] = images.map((image, i) => ({ id: `${type}-${i + 1}`, image, price: '0 ОК' }));
+}
+
+// Кэшируем картинки подарков локально (gifts.js грузится в gifts-catalog.html,
+// корень) — внешние ссылки/гифки протухают, копия (с тем же типом) остаётся.
+const cache = createMediaCache({
+  root: ROOT, dirRel: 'assets/gifts',
+  manifestPath: resolve(ROOT, 'data/gifts-media.json'), dryRun: CHECK_ONLY,
+});
+for (const list of Object.values(sets))
+  for (const g of list) g.image = await cache.resolveUrl(g.image);
+cache.save();
+console.log('  ' + cache.report());
+
+if (CHECK_ONLY) {
+  console.log('(--check) Ссылки проверены, ничего не записано.');
+  process.exit(0);
 }
 
 writeFileSync(resolve(ROOT, 'data/gifts.json'), JSON.stringify(sets, null, 2) + '\n');

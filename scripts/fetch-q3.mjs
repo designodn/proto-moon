@@ -30,6 +30,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 
@@ -48,9 +49,13 @@ const FEEDS = {
     name: 'Трибуна',   gid: '803749593',      // лист трибуны (та же схема, что Q3)
     json: 'data/tribune-feed.json', html: 'tribune.html',
     cmd: 'scripts/fetch-q3.mjs --tribune',
+    // Фото запекаются в tribune.html (корень) → кэшируем локально, чтобы не
+    // зависеть от чужих CDN. У Q3 кэш не включён (mediaDir не задан).
+    mediaDir: 'assets/tribune', mediaManifest: 'data/tribune-media.json',
   },
 };
 const IS_TRIBUNE = process.argv.includes('--tribune');
+const CHECK_ONLY = process.argv.includes('--check');
 const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : 'q3'];
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа
@@ -1288,6 +1293,27 @@ async function main() {
         if (meta) { p.linkMeta = meta; console.log(`  ↳ ${p.id}: «${meta.title}»`); }
         else console.warn(`  ⚠️  ${p.id}: мету ${p.link} прочитать не вышло — впиши «Заголовок / Подзаголовок» в колонку «описание» (или останется заглушка)`);
       }
+    }
+
+    // Кэшируем фото локально (только там, где задан mediaDir — Трибуна).
+    // Подменяем URL в p.photos ДО записи json/рендера, чтобы и json, и HTML
+    // ссылались на assets/<feed>/… . Внешние ссылки протухают — копия остаётся.
+    if (FEED.mediaDir) {
+      const cache = createMediaCache({
+        root: ROOT, dirRel: FEED.mediaDir,
+        manifestPath: resolve(ROOT, FEED.mediaManifest), dryRun: CHECK_ONLY,
+      });
+      for (const p of posts) {
+        if (Array.isArray(p.photos) && p.photos.length)
+          p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
+      }
+      cache.save();
+      console.log('  ' + cache.report());
+    }
+
+    if (CHECK_ONLY) {
+      console.log('(--check) Ссылки проверены, ничего не записано.');
+      return;
     }
 
     writeFileSync(resolve(ROOT, FEED.json),

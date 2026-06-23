@@ -27,7 +27,9 @@
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
 
+const CHECK_ONLY = process.argv.includes('--check');
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_GID = '907583109';             // вкладка «Сториз»
 const SHEET_NAME = 'Сториз';
@@ -113,6 +115,19 @@ async function main() {
     if (photo) story.image = photo;
     stories.push(story);
   }
+
+  // Кэшируем картинки слайдов локально (stories.js грузится в lenta-q3.html,
+  // корень) — внешние ссылки протухают, копия остаётся. Аватары авторов
+  // резолвятся через DS_PEOPLE и уже локальные.
+  const cache = createMediaCache({
+    root: ROOT, dirRel: 'assets/stories',
+    manifestPath: resolve(ROOT, 'data/stories-media.json'), dryRun: CHECK_ONLY,
+  });
+  for (const s of stories) if (s.image) s.image = await cache.resolveUrl(s.image);
+  cache.save();
+  console.log('  ' + cache.report());
+
+  if (CHECK_ONLY) { console.log('(--check) Ссылки проверены, ничего не записано.'); return; }
 
   const readme = {
     'источник': `Google-таблица, лист «${SHEET_NAME}» (gid ${SHEET_GID})`,
