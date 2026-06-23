@@ -58,23 +58,30 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
-  /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css), карточки 220 по дефолту.
-     padding-top 16 (--space-4) — page-scoped, чтобы не трогать компонент и ленту. */
-  .vvz-portlet { padding-top: var(--space-4); }
-
-  /* Секции «Важные / Все друзья» — заголовок (как .vvz-portlet__title) + список .user-cell.
-     Между ячейками вертикальный gap, тот же что в guests.html (--space-4). */
-  .ll-fr-section { padding-top: var(--space-3); }
+  /* Секции «Важные / Все друзья» — заголовок + список .user-cell. */
   .ll-fr-section__title { padding: 0 var(--space-4) var(--space-3); }
   .ll-fr-section__list {
     display: flex; flex-direction: column;
     gap: var(--space-4);
-    /* Левый паддинг = паддинг заголовка (16) + оптический left-bearing
-       шрифта ds-title-l (~2px), чтобы левый край аватара совпадал с началом
-       текста заголовка, а не выезжал левее. */
-    padding: 0 var(--space-4);
-    padding-left: calc(var(--space-4) + 2px);
   }
+
+  /* Группа: vvz-portlet + обе секции в одном контейнере.
+     Гэп 16, гор. паддинги 16, верх 16, низ 32. Сами секции — без собственных
+     паддингов; горизонтальный отступ контента задаёт группа → всё по 16. */
+  .ll-fr-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-4) var(--space-8);
+  }
+  .ll-fr-group > .vvz-portlet,
+  .ll-fr-group > .ll-fr-section { padding: 0; }
+  .ll-fr-group .vvz-portlet__header,
+  .ll-fr-group .vvz-portlet__row,
+  .ll-fr-group .ll-fr-section__title,
+  .ll-fr-group .ll-fr-section__list { padding-left: 0; padding-right: 0; }
+  /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну. */
+  .ll-fr-group .vvz-portlet__header { align-items: baseline; }
 </style>
 </head>
 <body>
@@ -146,6 +153,7 @@
         </button>
       </div>
 
+      <div class="ll-fr-group">
       <!-- Возможно, вы знакомы — DS-компонент .vvz-portlet (Header с «Ещё» + ряд 220px vvz-card.__default). -->
       <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
         <header class="vvz-portlet__header">
@@ -321,9 +329,10 @@
           </div>
 
         </div>
-
-        <div style="height: calc(var(--tabbar-height) + 12px)"></div>
       </section>
+      </div>
+
+      <div style="height: calc(var(--tabbar-height) + 12px)"></div>
 
     </div>
 
