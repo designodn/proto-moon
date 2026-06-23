@@ -860,18 +860,17 @@ ${actionsBar(likes, comments, reshares)}
       const giverId = ids[1] || ids[0];
       // По умолчанию (обычный подарок/открытка) — модификатор __gift с тёплой
       // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ниже ставит __ai-gift.
-      let cta, btnWrap = '', icon, btnStyle = '__style-secondary', cardMod = ' __gift';
+      let cta, icon, btnStyle = '__style-secondary', cardMod = ' __gift';
       if (isAi) {
         cta = 'Создать подарок из фото';
-        btnWrap = '';             // auto-ширина (троеточие остаётся __pinned-end справа)
         btnStyle = '__style-ai-gift';
         cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
-        icon = `<img class="ll-icon" src="assets/icons/sparkes_filled_24.svg" width="20" height="20" alt="">`;
+        icon = llIcon('sparkles_16_20.svg');
       } else if (/подар/i.test(caption)) {
-        cta = 'Отправить подарок';
+        cta = 'Сделать подарок';
         icon = llIcon('gift_16_20.svg');
       } else {
-        cta = 'Отправить открытку';
+        cta = 'Сделать открытку';
         icon = llIcon('gift_16_20.svg');
       }
       const mediaBlock = photos[0] ? `
@@ -892,11 +891,11 @@ ${authorHeaderFn(aid, time)}
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-36${btnWrap}">
+            <div class="button-wrapper __size-44 __full-width">
               <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
           </div>
+${actionsBar(likes, comments, reshares)}
         </article>`;
     }
 
