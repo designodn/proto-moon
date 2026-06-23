@@ -22,15 +22,15 @@
   .ll-guests {
     display: flex; flex-direction: column;
     gap: var(--space-5);
-    padding: 0 var(--space-4) 96px;
+    padding: 0 var(--space-4) var(--space-8);
   }
-  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга.
-     padding-top 16 (--space-4) — page-scoped, чтобы не трогать компонент и ленту. */
+  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга. */
   .ll-guests .vvz-portlet {
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
-    padding-top: var(--space-4);
   }
+  /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну (page-scoped). */
+  .ll-guests .vvz-portlet__header { align-items: baseline; }
 
   /* ── Баннер «Невидимка»: DS-токены, акцентный orange tint ─────── */
   .ll-nevidimka {
@@ -162,6 +162,7 @@
         </section>
 
         <!-- Возможно вы знакомы — DS vvz-card.__default (horizontal row, dismissible) -->
+        <div class="ll-guests__section">
         <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
           <header class="vvz-portlet__header">
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
@@ -246,6 +247,7 @@
 
           </div>
         </section>
+        </div>
 
       </div>
     </div>
