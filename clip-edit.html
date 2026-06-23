@@ -29,39 +29,54 @@
   .status-bar { color: #fff; }
   .status-bar img { filter: brightness(0) invert(1); }
 
-  /* Верхняя панель: ✕ слева, «Редактировать» справа. */
+  /* Верхняя панель: ✕ слева, «Редактировать» справа.
+     Абсолют, прижата к верху экрана, поверх превью — как шапка сторизов. */
   .ce-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-2) var(--space-4);
+    padding: 0 var(--space-4);
   }
-  .ce-close {
-    width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
-    border: 0; padding: 0; border-radius: 50%;
-    background: transparent; cursor: pointer;
+  /* Градиент-подложка под шапкой — как в сторизах: тёмный сверху, плавно в ноль. */
+  .ce-top::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 160px;
+    z-index: -1;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+    pointer-events: none;
   }
-  .ce-close img { filter: brightness(0) invert(1); }
-  /* «Редактировать» — DS-кнопка (__style-secondary-on-color): фростед-светлая
-     на тёмном. Локально только не даём ей растягиваться. */
+  /* «Редактировать» — DS-кнопка (__style-secondary-on-color). Локально только
+     не даём ей растягиваться. */
   .ce-edit { flex: 0 0 auto; }
 
-  /* Превью-кадр клипа: крупный портретный остров по центру. */
+  /* Превью-кадр клипа: full-bleed на всю площадь под шапкой; скругление только
+     снизу (сверху flush, низ — 32). */
   .ce-stage {
     flex: 1 1 auto;
     min-height: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-2) var(--space-4) var(--space-4);
+    padding: 0;
+    border-radius: 0 0 32px 32px;
+    overflow: hidden;
   }
   .ce-preview {
     position: relative;
     width: 100%;
-    max-height: 100%;
-    aspect-ratio: 9 / 16;
-    border-radius: 20px;
+    height: 100%;
     overflow: hidden;
     background: #111;
   }
@@ -85,7 +100,7 @@
   /* Подпись-период сверху по центру. */
   .ce-title {
     position: absolute;
-    top: var(--space-5);
+    top: 160px;
     left: 0; right: 0;
     z-index: 2;
     text-align: center;
@@ -150,9 +165,9 @@
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
   }
 
-  /* Нижний CTA «Создать клип» — оранжевый primary во всю ширину, высота 56 (DS). */
+  /* Нижний CTA «Создать клип» — оранжевый primary во всю ширину, высота 36 (DS). */
   .ce-cta {
-    padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   }
 </style>
 </head>
@@ -172,10 +187,10 @@
 
       <!-- Верхняя панель -->
       <div class="ce-top">
-        <button class="ce-close" id="ceClose" aria-label="Закрыть">
-          <img src="assets/icons/close_24.svg" width="24" height="24" alt="">
-        </button>
-        <div class="button-wrapper __size-44 ce-edit">
+        <span class="button-inline-wrapper __size-24 __view-primary-on-color ce-close">
+          <button class="button-inline __size-24" id="ceClose" aria-label="Закрыть"><span class="button-inline__content"><span class="button-inline__icon icon __size-24 __slot-close"></span></span></button>
+        </span>
+        <div class="button-wrapper __size-36 ce-edit">
           <button class="button-container __style-secondary-on-color" id="ceEdit"><span class="button-content">Редактировать</span></button>
         </div>
       </div>
@@ -198,7 +213,7 @@
 
       <!-- Нижний CTA → проваливаемся в полноэкранный плеер клипов (klipy.html) -->
       <div class="ce-cta">
-        <div class="button-wrapper __size-56 __full-width">
+        <div class="button-wrapper __size-36 __full-width">
           <button class="button-container __style-primary" id="ceCreate"><span class="button-content">Создать клип</span></button>
         </div>
       </div>
@@ -312,12 +327,13 @@
       var newClip = {
         photos: (d && d.photos && d.photos.length) ? d.photos : [],
         label: (d && d.label) || 'Лето 2026',
-        name: 'Анфиса Тимирбаева(Абдуллина)',
+        name: 'Анфиса Тимирбаева (Абдуллина)',
         ava: 'https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2'
       };
       try {
         sessionStorage.setItem('klipyBack', 'lenta-q3.html');
         sessionStorage.setItem('newClip', JSON.stringify(newClip));
+        sessionStorage.setItem('newClipCelebrate', '1');   // одноразовое конфетти на klipy
       } catch (_) {}
       location.href = 'klipy.html';
     });

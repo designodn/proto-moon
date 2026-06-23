@@ -22,7 +22,9 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
 
+const CHECK_ONLY = process.argv.includes('--check');
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Марафон';
 const SHEET_GID = 123647512;       // лист рейтинга работ (место · автор · фото · классы)
@@ -205,6 +207,19 @@ async function main() {
     // иначе сохраняем порядок строк.
     if (entries.some(e => e.place != null))
       entries.sort((a, b) => (a.place ?? 1e9) - (b.place ?? 1e9));
+
+    // Фото работ запекаются в marathon.html (корень) → кэшируем локально, чтобы
+    // не зависеть от чужих CDN. Аватары авторов уже локальные (из people.json).
+    const cache = createMediaCache({
+      root: ROOT, dirRel: 'assets/marathon',
+      manifestPath: resolve(ROOT, 'data/marathon-media.json'), dryRun: CHECK_ONLY,
+    });
+    for (const e of entries) e.photo = await cache.resolveUrl(e.photo);
+    cache.save();
+    console.log('  ' + cache.report());
+
+    if (CHECK_ONLY) { console.log('(--check) Ссылки проверены, ничего не записано.'); return; }
+
     // мету (шапку) сохраняем из существующего json — её в листе работ нет.
     const prev = JSON.parse(readFileSync(resolve(ROOT, 'data/marathon.json'), 'utf8'));
     data = { _readme: prev._readme, meta: prev.meta, entries };

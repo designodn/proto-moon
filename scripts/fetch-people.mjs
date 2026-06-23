@@ -2,26 +2,40 @@
 /**
  * fetch-people.mjs — выкачивает лист «Люди» из Google-таблицы в data/people.json + data/people.js
  *
- *   node scripts/fetch-people.mjs
+ *   node scripts/fetch-people.mjs            # собрать + скачать фото в assets/people/
+ *   node scripts/fetch-people.mjs --check    # только проверить ссылки (ничего не качать/писать)
  *
  * Требование: таблица должна быть открыта «всем, у кого есть ссылка» (просмотр).
  * Источник: https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID>/edit
  *
- * Для каждой ссылки на фото скрипт проверяет Content-Type:
- *   image/*  → media: "image"
- *   video/*  → media: "video"  (живое фото — в прототипе рендерится <video>)
- *   иначе/нет → media: null    (заглушка / битая ссылка)
+ * Фото НЕ хотлинкаются, а скачиваются локально в assets/people/<id>.<ext>, потому что
+ * исходные ссылки (okcdn.ru, gstatic и пр.) со временем протухают. В data/people-media.json
+ * хранится манифест (id → исходный URL + хэш картинки), по нему скрипт на каждом прогоне
+ * понимает, что изменилось:
+ *   🖼  без изменений         — URL и картинка те же
+ *   🔁 заменено               — в таблице другой URL
+ *   ♻️  обновлено              — URL тот же, но картинка по нему изменилась
+ *   ⚠️  протухло               — исходник умер (403/не-картинка); оставляем последнюю копию
+ *   🆕 новое                  — фото скачано впервые
+ *
+ * В people.json/.js поле photo указывает на локальный путь (assets/people/<id>.<ext>);
+ * components/people-data.js резолвит его относительно своего расположения.
  */
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Люди';
+const CHECK_ONLY = process.argv.includes('--check');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
+const MEDIA_DIR = resolve(ROOT, 'assets/people');
+const MEDIA_DIR_REL = 'assets/people';            // как пишем в people.json (от корня репо)
+const MANIFEST_PATH = resolve(ROOT, 'data/people-media.json');
 
 // gviz отдаёт CSV по имени листа
 const csvUrl =
@@ -55,6 +69,11 @@ function parseAge(raw) {
   return m ? Number(m[0]) : null;
 }
 
+/** Имя: если перед «(» (девичья фамилия) нет пробела — добавляем его. */
+function normName(raw) {
+  return String(raw || '').trim().replace(/\s*\(/g, ' (');
+}
+
 /** Город: "нет"/пусто → "", иначе с заглавной буквы */
 function normCity(raw) {
   const s = String(raw || '').trim();
@@ -62,27 +81,69 @@ function normCity(raw) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Определяет тип медиа: сперва по Content-Type, при неудаче — по расширению.
- *  Фолбэк нужен для хостов с бот-защитой (отдают 503/403/HTML вместо image/*),
- *  где ссылка всё равно ведёт на картинку/видео (напр. fiesta.ru). */
-async function detectMedia(url) {
-  if (!url || !/^https?:\/\//.test(url) || /\/\.\.\.|\.\.\.jpg/.test(url)) return null;
-  try {
-    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(15000) });
-    if (res.ok) {
-      const ct = (res.headers.get('content-type') || '').toLowerCase();
-      if (ct.startsWith('image/')) return 'image';
-      if (ct.startsWith('video/')) return 'video';
-    }
-  } catch { /* падаем в эвристику по расширению ниже */ }
-  const path = url.split(/[?#]/)[0].toLowerCase();
+/** Безопасное имя файла из id (1, vvz-3, my_profile). */
+function safeId(id) {
+  return String(id).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
+/** Расширение по Content-Type, фолбэк — по URL. */
+function extFor(contentType, url) {
+  const ct = (contentType || '').toLowerCase();
+  const map = {
+    'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+    'image/gif': 'gif', 'image/avif': 'avif', 'image/bmp': 'bmp', 'image/svg+xml': 'svg',
+    'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov',
+  };
+  for (const k in map) if (ct.startsWith(k)) return map[k];
+  const m = (url || '').split(/[?#]/)[0].toLowerCase().match(/\.(jpe?g|png|webp|gif|avif|bmp|svg|mp4|webm|mov|m4v)$/);
+  if (m) return m[1] === 'jpeg' ? 'jpg' : m[1];
+  return 'jpg';
+}
+
+function mediaKind(contentType, url) {
+  const ct = (contentType || '').toLowerCase();
+  if (ct.startsWith('image/')) return 'image';
+  if (ct.startsWith('video/')) return 'video';
+  const path = (url || '').split(/[?#]/)[0].toLowerCase();
   if (/\.(jpe?g|png|webp|gif|avif|bmp|svg)$/.test(path)) return 'image';
   if (/\.(mp4|webm|mov|m4v)$/.test(path)) return 'video';
   return null;
 }
 
+/** Скачивает байты по URL. → { ok, kind, ext, hash, bytes } | { ok:false } */
+async function download(url) {
+  if (!url || !/^https?:\/\//.test(url) || /\/\.\.\.|\.\.\.jpg/.test(url)) return { ok: false };
+  try {
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(20000) });
+    if (!res.ok) return { ok: false };
+    const ct = res.headers.get('content-type') || '';
+    const kind = mediaKind(ct, url);
+    if (!kind) return { ok: false };
+    const bytes = Buffer.from(await res.arrayBuffer());
+    if (!bytes.length) return { ok: false };
+    return { ok: true, kind, ext: extFor(ct, url), hash: createHash('sha256').update(bytes).digest('hex'), bytes };
+  } catch {
+    return { ok: false };
+  }
+}
+
+/** Удаляет старые файлы assets/people/<id>.* (на случай смены расширения). */
+function cleanupFor(id, keepFile) {
+  const prefix = safeId(id) + '.';
+  for (const f of readdirSync(MEDIA_DIR)) {
+    if (f.startsWith(prefix) && f !== keepFile) {
+      try { unlinkSync(resolve(MEDIA_DIR, f)); } catch { /* ignore */ }
+    }
+  }
+}
+
+function loadManifest() {
+  try { return JSON.parse(readFileSync(MANIFEST_PATH, 'utf8')); }
+  catch { return {}; }
+}
+
 async function main() {
-  console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
+  console.log(`→ Тяну «${SHEET_NAME}» из таблицы…${CHECK_ONLY ? ' (--check, без записи)' : ''}`);
   const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
   if (!res.ok) {
     throw new Error(
@@ -99,35 +160,86 @@ async function main() {
         iGender = col('пол'), iAge = col('возраст'), iCity = col('город'), iBio = col('о себе');
   const at = (cols, i) => (i >= 0 ? (cols[i] || '').trim() : '');
 
+  if (!CHECK_ONLY) mkdirSync(MEDIA_DIR, { recursive: true });
+  const manifest = loadManifest();
+  const nextManifest = {};
+  const stats = { same: 0, replaced: 0, changed: 0, stale: 0, fresh: 0, none: 0 };
+  const now = new Date().toISOString();
+
   const people = [];
   for (const cols of body) {
     let idRaw = at(cols, iId);
-    const name = at(cols, iName);
+    const name = normName(at(cols, iName));
     if (!idRaw || !name) continue; // пропускаем пустые болванки
     idRaw = idRaw.replace(/^vv+z-(\d+)$/i, 'vvz-$1'); // чиним опечатки vvvz-N → vvz-N
     const id = /^\d+$/.test(idRaw) ? Number(idRaw) : idRaw; // числовой или строковый (my_profile, vvz-N)
-    const photo = at(cols, iPhoto) || null;
-    const media = await detectMedia(photo);
+    const key = String(id);
+    const srcUrl = at(cols, iPhoto) || null;
+    const prev = manifest[key] || null;
+
+    let photo = null, media = null, flag = '⚠️', note = '';
+
+    if (!srcUrl) {
+      flag = '·'; note = 'нет ссылки'; stats.none++;
+    } else {
+      const dl = await download(srcUrl);
+      if (dl.ok) {
+        const file = `${safeId(id)}.${dl.ext}`;
+        media = dl.kind;
+        photo = `${MEDIA_DIR_REL}/${file}`;
+        // классификация изменения
+        if (!prev) { flag = '🆕'; note = 'новое'; stats.fresh++; }
+        else if (prev.src !== srcUrl) { flag = '🔁'; note = 'заменено'; stats.replaced++; }
+        else if (prev.hash !== dl.hash) { flag = '♻️'; note = 'обновлено'; stats.changed++; }
+        else { flag = '🖼'; note = ''; stats.same++; }
+
+        if (!CHECK_ONLY) {
+          writeFileSync(resolve(MEDIA_DIR, file), dl.bytes);
+          cleanupFor(id, file);
+        }
+        nextManifest[key] = { src: srcUrl, file, type: media, hash: dl.hash, status: 'ok', checkedAt: now };
+      } else if (prev && prev.file && existsSync(resolve(MEDIA_DIR, prev.file))) {
+        // исходник умер, но локальная копия есть — сохраняем её, помечаем как протухший источник
+        flag = '⚠️'; note = `протухло (источник умер; оставлена копия ${prev.file})`; stats.stale++;
+        media = prev.type; photo = `${MEDIA_DIR_REL}/${prev.file}`;
+        nextManifest[key] = { ...prev, src: srcUrl, status: 'stale', checkedAt: now };
+      } else {
+        flag = '⚠️'; note = 'битая ссылка (копии нет)'; stats.none++;
+        nextManifest[key] = { src: srcUrl, file: null, type: null, hash: null, status: 'dead', checkedAt: now };
+      }
+    }
+
     people.push({
       id,
       name,
       subtitle: at(cols, iSub),       // столбец «текст» — подпись под именем (напр. у рекламы)
-      photo: media ? photo : null,
+      photo,
       media,
       gender: at(cols, iGender),
       age: parseAge(at(cols, iAge)),
       city: normCity(at(cols, iCity)),
       bio: at(cols, iBio),
     });
-    const flag = media === 'image' ? '🖼' : media === 'video' ? '🎬' : '⚠️';
-    console.log(`  ${flag} #${id} ${name}`);
+    console.log(`  ${flag} #${id} ${name}${note ? ' — ' + note : ''}`);
+  }
+
+  console.log(
+    `\nИтого: 🖼 ${stats.same} без изм · 🆕 ${stats.fresh} новых · 🔁 ${stats.replaced} заменено · ` +
+    `♻️ ${stats.changed} обновлено · ⚠️ ${stats.stale} протухло · ✗ ${stats.none} без фото`
+  );
+
+  if (CHECK_ONLY) {
+    console.log('\n(--check) Ничего не записано. Прогони без флага, чтобы скачать/обновить.');
+    return;
   }
 
   const json = {
     _readme: {
       'что_это': 'Реестр реальных людей для прототипа. Источник — Google-таблица «люди», лист «Люди».',
       'источник': `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`,
-      'как_обновить': 'node scripts/fetch-people.mjs  (перезаписывает people.json и people.js)',
+      'как_обновить': 'node scripts/fetch-people.mjs  (скачивает фото в assets/people/, перезаписывает people.json/.js)',
+      'проверить_ссылки': 'node scripts/fetch-people.mjs --check  (показывает протухшие/заменённые, ничего не пишет)',
+      'фото': 'photo указывает на локальную копию assets/people/<id>.<ext>; манифест источников — data/people-media.json',
       'как_использовать_в_разметке':
         'Подключите data/people.js + components/people-data.js. Имя — [data-person-name="ID"], ' +
         'аватар (img) — [data-person-avatar="ID"], фон-блюр (div) — [data-person-bg="ID"].',
@@ -141,9 +253,10 @@ async function main() {
     '/* Сгенерировано scripts/fetch-people.mjs — НЕ редактировать вручную. */\n' +
     'window.DS_PEOPLE_DATA = ' + JSON.stringify(people, null, 2) + ';\n'
   );
+  writeFileSync(MANIFEST_PATH, JSON.stringify(nextManifest, null, 2) + '\n');
 
   const ok = people.filter(p => p.media).length;
-  console.log(`✓ Записано ${people.length} чел. (с медиа: ${ok}) → data/people.json, data/people.js`);
+  console.log(`✓ Записано ${people.length} чел. (с медиа: ${ok}) → data/people.json, data/people.js, data/people-media.json`);
 }
 
 main().catch(err => { console.error('✗', err.message); process.exit(1); });

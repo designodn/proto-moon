@@ -22,13 +22,15 @@
   .ll-guests {
     display: flex; flex-direction: column;
     gap: var(--space-5);
-    padding: var(--space-4) var(--space-4) 96px;
+    padding: 0 var(--space-4) var(--space-8);
   }
-  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга */
+  /* «Возможно, вы знакомы» — full-bleed: компенсируем 16 родительского паддинга. */
   .ll-guests .vvz-portlet {
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
   }
+  /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну (page-scoped). */
+  .ll-guests .vvz-portlet__header { align-items: baseline; }
 
   /* ── Баннер «Невидимка»: DS-токены, акцентный orange tint ─────── */
   .ll-nevidimka {
@@ -96,7 +98,7 @@
         <!-- Баннер «Невидимка» -->
         <div class="ll-nevidimka" role="group" aria-label="Невидимка">
           <div class="ll-nevidimka__text">
-            <div class="ds-title-s">Невидимка</div>
+            <div class="ds-title-m">Невидимка</div>
             <div class="ds-body-m ll-nevidimka__subtitle">Другие пользователи не увидят, что вы заходили в их профили</div>
           </div>
           <label class="ll-switch" aria-label="Включить невидимку">
@@ -160,10 +162,11 @@
         </section>
 
         <!-- Возможно вы знакомы — DS vvz-card.__default (horizontal row, dismissible) -->
+        <div class="ll-guests__section">
         <section class="vvz-portlet" data-dismiss-row aria-label="Возможно вы знакомы">
           <header class="vvz-portlet__header">
             <div class="vvz-portlet__title ds-title-l">Возможно, вы знакомы</div>
-            <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
+            <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20" data-href="vvz.html"><span class="button-inline__content">Ещё</span></button></span>
           </header>
 
           <div class="vvz-portlet__row">
@@ -244,6 +247,7 @@
 
           </div>
         </section>
+        </div>
 
       </div>
     </div>
@@ -257,7 +261,7 @@
           <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
           <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
           <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu __state-on" aria-label="Меню"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
         </div>
       </div>
     </div>
