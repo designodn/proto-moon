@@ -67,7 +67,12 @@
 .vvz-portlet__row {
   display: flex;
   gap: var(--space-2);
-  padding: 0 var(--space-4);
+  /* Вертикальный воздух (8px) + равный отрицательный margin: позиция ряда не
+     меняется, но скроллбокс (overflow-x:auto клипает по Y) не срезает карточки
+     сверху/снизу при press-анимации (scale-овершут). Горизонтальный скролл цел. */
+  padding: var(--space-2) var(--space-4);
+  margin-top: calc(var(--space-2) * -1);
+  margin-bottom: calc(var(--space-2) * -1);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;

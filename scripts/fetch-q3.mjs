@@ -396,6 +396,29 @@ function cafText(title) {
   return clampMore(title, { textClass: 'caf-text ds-title-l', clamp: CAF_CLAMP });
 }
 
+/** Текст коммента в twitter-like-раскладке (.caf.__twitter-like): не крупный
+ *  caf-text, а обычный body-m, как тело поста в ленте (тот же inline-«ещё»). */
+function cafTextTw(title) {
+  return clampMore(title, { textClass: 'ds-body-m text-feed__body caf__text', clamp: CLAMP });
+}
+
+/** Инлайн-счётчик для actions twitter-like: button-inline 16 tertiary,
+ *  иконка-маска + число. 0/пусто → только иконка (число не выводим). */
+function inlineCount(slot, n) {
+  const num = parseInt(n, 10);
+  const label = (Number.isFinite(num) && num > 0) ? esc(String(num)) : '';
+  return `              <span class="button-inline-wrapper __size-16 __view-tertiary"><button class="button-inline __size-16"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-${slot}"></span>${label}</span></button></span>`;
+}
+
+/** Ряд из 3 счётчиков twitter-like: комментарии · репосты (reshare) · классы. */
+function cafActions(comments, reshares, likes) {
+  return `              <div class="caf__actions">
+${inlineCount('comment', comments)}
+${inlineCount('reshare', reshares)}
+${inlineCount('klass-outline', likes)}
+              </div>`;
+}
+
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */
 function media(photos) {
   if (!photos.length) return '';
@@ -523,7 +546,30 @@ async function fetchLinkMeta(url) {
 /* Один коммент по макету «comment v0.2»: ручка-ответ + ава 20 слева, имя
  * (title-s), текст (body-m), действия «Ответить · Класс» (кнопки size-20,
  * у «Ответить» иконки нет). Имя/ава запекаются inline из people.json. */
-function commentItem(authorId, text) {
+function commentItem(authorId, text, { tw = false, time = '' } = {}) {
+  const body = `${clampMore(nbsp(resolveNames(text)), { textClass: 'fc-comment__text ds-body-m', clamp: FC_CLAMP })}
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>`;
+  // twitter-like (внутри comment-as-feed): тот же твиттер-ряд, что и карточка
+  // выше — ава 44 + «палка»-трунк слева, имя + «· время» в head (как caf__head).
+  // Палку вниз у последнего ответа гасит CSS (:not(:has(~ .fc-comment))).
+  if (tw) {
+    return `            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image">${img(personPhoto(authorId))}</div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">${esc(personName(authorId))}</span>${time ? `
+                  <span class="ds-body-m fc-comment__date">· ${esc(time)}</span>` : ''}
+                </div>
+${body}
+              </div>
+            </div>`;
+  }
   return `            <div class="fc-comment">
               <div class="fc-comment__aside">
                 <span class="fc-comment__handle" aria-hidden="true"></span>
@@ -531,11 +577,7 @@ function commentItem(authorId, text) {
               </div>
               <div class="fc-comment__body">
                 <div class="fc-comment__author ds-title-s">${esc(personName(authorId))}</div>
-${clampMore(nbsp(resolveNames(text)), { textClass: 'fc-comment__text ds-body-m', clamp: FC_CLAMP })}
-                <div class="fc-comment__actions">
-                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
-                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
-                </div>
+${body}
               </div>
             </div>`;
 }
@@ -544,11 +586,17 @@ ${clampMore(nbsp(resolveNames(text)), { textClass: 'fc-comment__text ds-body-m',
 function renderCommentThread(p) {
   const list = p.threadComments || [];
   if (!list.length) return '';
-  const items = list.map(c => commentItem(c.authorId, c.text)).join('\n');
   // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
   // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
   // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
+  // Внутри comment-as-feed ответы рисуем в twitter-like (тот же ряд, что карточка).
   const asReplies = p.type === 'comment-as-feed';
+  // Времени на отдельный ответ в данных нет — в twitter-like берём из TIMES
+  // (разное на каждый ответ), в том же формате, что и «· время» у caf__head.
+  const items = list.map((c, j) => commentItem(c.authorId, c.text, {
+    tw: asReplies,
+    time: asReplies ? TIMES[(j + 1) % TIMES.length] : '',
+  })).join('\n');
   const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
   const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
   // «Посмотреть …» — в обычной ленте показываем, только если у поста всего
@@ -556,7 +604,7 @@ function renderCommentThread(p) {
   // отрисованных в fc-list); для comment-as-feed (ответы) — всегда.
   const showMore = asReplies || Number(p.comments) > 2;
   const more = showMore
-    ? `\n            <div class="fc-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    ? `\n            <div class="fc-more${asReplies ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
   // Поле ответа: ава 44 + поле size-44 (радиус = высота/4) + иконка send справа.
   const input = `          <div class="fc-input">
@@ -566,7 +614,8 @@ function renderCommentThread(p) {
               <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>`;
-  return `          <div class="fc-list">\n${items}${more}\n          </div>\n${input}`;
+  const listClass = asReplies ? 'fc-list __twitter-like' : 'fc-list';
+  return `          <div class="${listClass}">\n${items}${more}\n          </div>\n${input}`;
 }
 
 /** Прицепить комменты к готовой карточке: вставка перед последним </article>
@@ -1132,37 +1181,54 @@ ${mediaInner}
         </article>`;
     }
 
-    /* ── comment-as-feed: коммент как отдельная карточка ленты ──
-       authorHeader (ава 44 + имя + время + кнопка «Подписаться») →
-       крупный текст коммента (caf-text 22/26) → превью оригинального поста
-       (бордерная reshare-card: иконка-репост + заголовок + сниппет) →
-       actions-bar. Ответы (ветку) добавит attachComments (лейблы «ответы»).
-       Автор: id[0] — комментатор (шапка). */
+    /* ── comment-as-feed: коммент как отдельная карточка ленты (twitter-like) ──
+       Двухколоночный «твиттер-ряд» (.caf.__twitter-like): слева ава 44 +
+       вертикальная «палка»-трунк, справа — имя · дата → текст коммента (body-m)
+       → превью оригинала (reshare-card с автором, который шёл вторым в авторах)
+       → 3 инлайн-счётчика (комменты · репосты · классы). Ответы (ветку) добавит
+       attachComments — тоже в twitter-like (fc-comment.__twitter-like), трунк
+       проходит сквозь весь стек. Авторы: ids[0] — комментатор, ids[1] — автор
+       оригинала (в превью). */
     case 'comment-as-feed': {
-      const commenter = aid;          // ids[0] — автор коммента (большая ава, имя)
-      const to = ids[1];              // ids[1] — к кому коммент (маленькая доп-ава)
-      const crumbs = breadcrumbs(p.tema, p.rubrika);
-      // Шапка-модификатор .feed-header.__caf: крошки + автор + «Комментарий к …».
-      // В Трибуне — компактная шапка (как у остальных постов), без доп-авы/крошек.
-      const header = IS_TRIBUNE
-        ? authorHeaderTribune(commenter)
-        : `          <header class="feed-header __caf">${crumbs ? `
-${crumbs}` : ''}
-${cafHeader(commenter, to)}
-          </header>`;
-      const preview = `          <div class="text-feed__reshare-card __caf caf-preview">
-            <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
-            <div class="text-feed__link caf-preview__body">${text ? `
-              <div class="ds-title-s caf-preview__title">${esc(text)}</div>` : ''}${p.desc ? `
-              <p class="ds-body-m caf-preview__snippet">${esc(nbsp(resolveNames(p.desc)))}</p>` : ''}
+      const commenter = aid;          // ids[0] — автор коммента (ава 44 + имя)
+      const to = ids[1];              // ids[1] — автор оригинала (в карточке-превью)
+      // «Палку» вниз рисуем только если есть ответы, иначе линия повиснет.
+      const hasReplies = (p.threadComments || []).length > 0;
+      const line = hasReplies ? `
+              <span class="caf__line" aria-hidden="true"></span>` : '';
+      // Превью оригинала: автор (ава 24 + имя) + текст оригинала (его заголовок).
+      const orig = text || nbsp(resolveNames(p.desc)) || '';
+      const previewAuthor = to ? `
+              <div class="text-feed__reshare-card-author">
+                <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
+                <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
+              </div>` : '';
+      const previewBody = orig ? `
+              <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
+      // Фото оригинала (если есть ссылка) — медиа reshare-card, отступ до него 12
+      // даёт сам компонент (.text-feed__reshare-card-media:not(:first-child)).
+      // img абсолютом внутри бокса: высоту держит aspect-ratio 16/9 контейнера
+      // (position:relative из базы), а картинка заполняет его cover'ом. Через
+      // height:100% в потоке загруженная img диктовала бы свой нативный ratio.
+      const previewMedia = photos.length ? `
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
+      const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
+            </div>` : '';
+      return `        <article class="caf __twitter-like island">
+          <div class="caf__row">
+            <div class="caf__aside">
+              <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>${line}
             </div>
-          </div>`;
-      return `        <article class="text-feed island">
-${header}
-
-${cafText(title)}
+            <div class="caf__content">
+              <div class="caf__head">
+                <span class="ds-title-s caf__name">${esc(personName(commenter))}</span>
+                <span class="ds-body-m caf__date">· ${esc(time)}</span>
+              </div>
+${cafTextTw(title)}
 ${preview}
-${actionsBar(likes, comments, reshares)}
+${cafActions(comments, reshares, likes)}
+            </div>
+          </div>
         </article>`;
     }
 
