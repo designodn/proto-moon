@@ -1217,15 +1217,15 @@ ${mediaInner}
               <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
+      // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
+      // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
+      const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+      const crumbs = cafCrumbs ? '\n' + cafCrumbs : '';
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
       // comment-as-feed ничего не добавляет — см. его guard).
-      // Крошки «тема / рубрика» из листа — над рядом-комментом, внутри стека
-      // (gap 8 даёт сам .caf__stack). caf__crumbs добавляет гор. паддинг 16.
-      const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
-      return `        <article class="caf __twitter-like island">
-          <div class="caf__stack">${cafCrumbs ? `
-${cafCrumbs}` : ''}
+      return `        <article class="caf __twitter-like island">${crumbs}
+          <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>${line}

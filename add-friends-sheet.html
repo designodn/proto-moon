@@ -469,7 +469,10 @@
       if (p.city) parts.push(p.city);
       return parts.join(', ');
     }
-    var withPhoto = people.filter(function (p) { return p && p.photo; });
+    // Только люди (не сообщества) — у групп id-строка вида "group-N". Общие
+    // друзья должны быть людьми, поэтому группы из пула исключаем.
+    function isGroup(p) { return typeof p.id === 'string' && p.id.indexOf('group-') === 0; }
+    var withPhoto = people.filter(function (p) { return p && p.photo && !isGroup(p); });
     // N РАЗНЫХ случайных фото (без повторов внутри одной карточки): тасуем копию
     // реестра и берём первые n. exclude — фото самого человека карточки.
     function distinctPhotos(n, exclude) {

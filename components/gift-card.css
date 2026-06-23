@@ -32,9 +32,20 @@
  *     </button>
  *   </article>
  *
+ *     <div class="gift-card__accept">
+ *       <div class="button-wrapper __size-56 gift-card__btn-accept">
+ *         <button class="button-container __style-primary">…Принять…</button>
+ *       </div>
+ *       <div class="button-wrapper __size-56 gift-card__btn-write">
+ *         <button class="button-container __style-secondary">…Написать…</button>
+ *       </div>
+ *     </div>
+ *
  * МОДИФИКАТОР:
- *   .__active — показывает trash (top-right) и кнопку «Принять» внизу;
- *                gap между slot и accept становится 20px (был 10).
+ *   .__active   — показывает trash (top-right) и две кнопки внизу.
+ *   .__accepted — нажали «Принять»: «Написать» гаснет, «Принять» съезжает на её
+ *                 место; стиль/текст кнопки меняет JS (positive «Принято» →
+ *                 secondary «Отправить Спасибо»), подарок — на случайный другой.
  */
 
 .gift-card {
@@ -141,12 +152,17 @@
   overflow: hidden;
   margin-top: 0;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   transition: height 240ms ease-out,
               opacity 240ms ease-out,
               margin-top 240ms ease-out;
 }
 .gift-card__accept .button-wrapper { width: 100%; }
 .gift-card__accept .button-container { width: 100%; }
+.gift-card__btn-write { transition: transform 500ms cubic-bezier(0, -0.3, 0.5, 1.3),
+                                    opacity 240ms ease-out; }
 
 /* ============================================================
    TRASH — кружок 36×36 в правом верхнем углу. Скрыт по умолчанию.
@@ -177,20 +193,30 @@
    .__active — открываем trash и кнопку «Принять»
    ============================================================ */
 .gift-card.__active {
-  /* Карточка вырастает на высоту accept-блока (56px) + gap (16px).
-     За счёт `top: 0` (см. gifts.html) визуально она растёт ВНИЗ — слот
-     и картинка остаются в исходном положении, не сжимаются. */
-  height: 422px;
+  /* Карточка вырастает на высоту accept-блока (две кнопки 56 + gap 8 = 120px)
+     + отступ 16px. За счёт `top: 0` (см. gifts.html) визуально она растёт ВНИЗ —
+     слот и картинка остаются в исходном положении, не сжимаются. */
+  height: 486px;
 }
 .gift-card.__active .gift-card__trash {
   opacity: 1;
   pointer-events: auto;
 }
 .gift-card.__active .gift-card__accept {
-  height: 56px;
+  height: 120px;
   opacity: 1;
   margin-top: 16px;
   pointer-events: auto;
+}
+
+/* .__accepted — «Написать» гаснет, «Принять» съезжает на её место
+   (translateY 64 = высота кнопки 56 + gap 8). */
+.gift-card.__accepted .gift-card__btn-write {
+  opacity: 0;
+  pointer-events: none;
+}
+.gift-card.__accepted .gift-card__btn-accept {
+  transform: translateY(64px);
 }
 
 /* ============================================================
