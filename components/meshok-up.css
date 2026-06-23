@@ -119,6 +119,10 @@
 .nav-bar.__type-publish .nav-bar__trailing {
   gap: var(--space-4);
 }
+/* Отступ между элементами слева (кнопка «Опубликовать» + иконка-календарь) = 20 */
+.nav-bar.__type-publish .nav-bar__leading {
+  gap: var(--space-5);
+}
 
 /* ============================================================
    TYPE: SEARCH — back + растянутый поисковый input + button-circle.

@@ -78,20 +78,28 @@
 /* Превью оригинального поста: ряд «иконка-репост + контент».
    Базу (бордер/паддинг/overflow) даёт text-feed__reshare-card; здесь меняем
    раскладку на горизонтальную и радиус под эталон (12). */
-/* Специфичность .text-feed__reshare-card.caf-preview (0,2,0) — чтобы перебить
+/* __caf — модификатор reshare-card под comment-as-feed (как __ai-gift).
+   Специфичность .text-feed__reshare-card.__caf (0,2,0) — чтобы перебить
    .text-feed__reshare-card{flex-direction:column} (text-feed.css импортируется
    ПОЗЖЕ comment-as-feed.css; при равной специфичности побеждал бы column →
    иконка вставала бы СВЕРХУ, а нужно СЛЕВА). */
-.text-feed__reshare-card.caf-preview {
+.text-feed__reshare-card.__caf {
   flex-direction: row;
   gap: var(--space-2);              /* 8 между иконкой и текстом */
   align-items: flex-start;
   padding: var(--space-3);          /* 12 (вместо 16 из reshare-card) */
-  border-radius: 21px;
+  border-radius: 12px;
 }
 .caf-preview__icon {
   flex-shrink: 0;
-  color: var(--dynamic-text-and-icons-base-secondary);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+/* Заголовок оригинала — обрезка в 2 строки. */
+.caf-preview__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 /* Сниппет тела оригинала — вторичный цвет, обрезка в 2 строки. */
 .caf-preview__snippet {

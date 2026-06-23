@@ -121,3 +121,43 @@
 .feed-base > .feed-header.__tribune {
   margin-bottom: calc(var(--space-2) - var(--space-3));
 }
+
+/* ============================================================
+   MODIFIER __caf — шапка карточки comment-as-feed (коммент как пост).
+   Отличия от базовой шапки:
+     • основная ава 44 несёт ДОП-аву (.feed-header__ava-addon) — маленький
+       аватар того, К КОМУ коммент (человек/сообщество), в правом-нижнем углу;
+     • под именем — не время, а подзаголовок «Комментарий к <автор>»
+       (.feed-header__sub, одна строка с эллипсисом; имя оригинала акцентнее —
+       .feed-header__to).
+   Разметка: <header class="feed-header __caf"> + крошки + uni-cell с
+   аватаром .__has-addon (вложенная ава .feed-header__ava-addon).
+   ============================================================ */
+
+/* Доп-ава в правом-нижнем углу основной 44-авы: на абсолюте, выходит на 2px
+   вправо/вниз за её границы. Кольцо цвета карточки визуально отделяет доп-аву
+   от основной. Родитель несёт .__has-addon (overflow:visible), иначе клипнётся. */
+.feed-header.__caf .feed-header__ava-addon {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
+
+/* Подзаголовок «Комментарий к <автор>» — строго одна строка (эллипсис), как
+   имя выше. Имя оригинала (.feed-header__to) чуть акцентнее. */
+.feed-header.__caf .feed-header__sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.feed-header.__caf .feed-header__to {
+  font-weight: 500;
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+/* В шапке comment-as-feed кнопку «Подписаться» не показываем — скрываем
+   принудительно (разметка её всё равно содержит для единообразия). */
+.feed-header.__caf .button-subscribe {
+  display: none;
+}
