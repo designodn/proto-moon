@@ -95,13 +95,13 @@
   width: 100%;
 }
 
-/* Текстовая колонка ячейки: имя + дата (gap 4). */
+/* Текстовая колонка ячейки: имя + дата (gap 2). */
 .gift-card__cell-text {
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .gift-card__name {
