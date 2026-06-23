@@ -186,11 +186,18 @@
     <article class="gift-card" data-i="3">
       <div class="gift-card__slot">
         <div class="gift-card__cell">
-          <div class="avatar __size-36 __type-image"><img src="assets/people/1.jpg" alt=""></div>
+          <div class="avatar __size-36 __type-image"><img src="assets/people/9.jpg" alt=""></div>
           <div class="gift-card__cell-text">
-            <span class="gift-card__name ds-title-s">Виктория Петрова</span>
+            <span class="gift-card__name ds-title-s">Екатерина )))))</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
+          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+            <button class="button-inline __size-20" aria-label="Отклонить">
+              <span class="button-inline__content">
+                <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
+              </span>
+            </button>
+          </span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="https://gifotkrytki.ru/_ph/2/2/933237960.gif" alt="" loading="lazy">
@@ -207,19 +214,23 @@
           <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Отклонить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
     </article>
 
     <article class="gift-card" data-i="2">
       <div class="gift-card__slot">
         <div class="gift-card__cell">
-          <div class="avatar __size-36 __type-image"><img src="assets/people/2.jpg" alt=""></div>
+          <div class="avatar __size-36 __type-image"><img src="assets/people/10.jpg" alt=""></div>
           <div class="gift-card__cell-text">
-            <span class="gift-card__name ds-title-s">Мария Иванова</span>
+            <span class="gift-card__name ds-title-s">Александр Попов</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
+          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+            <button class="button-inline __size-20" aria-label="Отклонить">
+              <span class="button-inline__content">
+                <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
+              </span>
+            </button>
+          </span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="assets/embedded/76fb5861fc455666.gif" alt="" loading="lazy">
@@ -236,19 +247,23 @@
           <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Отклонить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
     </article>
 
     <article class="gift-card" data-i="1">
       <div class="gift-card__slot">
         <div class="gift-card__cell">
-          <div class="avatar __size-36 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+          <div class="avatar __size-36 __type-image"><img src="assets/people/vvz-1.jpg" alt=""></div>
           <div class="gift-card__cell-text">
-            <span class="gift-card__name ds-title-s">Дмитрий Кузнецов</span>
+            <span class="gift-card__name ds-title-s">Карасев Дмитрий</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
+          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+            <button class="button-inline __size-20" aria-label="Отклонить">
+              <span class="button-inline__content">
+                <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
+              </span>
+            </button>
+          </span>
         </div>
         <div class="gift-card__img">
           <img class="gift-card__photo" src="assets/embedded/45db6af953cc53bb.gif" alt="" loading="lazy">
@@ -265,9 +280,6 @@
           <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
         </div>
       </div>
-      <button class="gift-card__trash" aria-label="Отклонить">
-        <img src="assets/icons/trash_16_20.svg" alt="">
-      </button>
     </article>
 
     <!-- Последняя карточка «Принять все» — точка входа в массовое принятие.
@@ -301,9 +313,12 @@
 <script>
   (function () {
     var people = window.DS_PEOPLE_DATA || [];
-    var order = [3, 2, 1];  // data-i слева→направо
+    var byId = {};
+    people.forEach(function (p) { byId[p.id] = p; });
+    var order = [3, 2, 1];           // data-i слева→направо
+    var pick  = [9, 10, 'vvz-1'];    // конкретные отправители (id)
     for (var k = 0; k < order.length; k++) {
-      var p = people[k];
+      var p = byId[pick[k]];
       if (!p) continue;
       var card = document.querySelector('.gift-card[data-i="' + order[k] + '"]');
       if (!card) continue;
