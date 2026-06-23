@@ -29,6 +29,8 @@
      OkNotifs.reset()                  — сбросить индекс
      OkNotifs.setMode('lock'|'heads-up') — переключить раскладку
      OkNotifs.setItems(array)          — подменить список пушей
+     OkNotifs.showAll()                — показать все пуши СРАЗУ, статично
+                                          (без entry-анимации и тайминга)
      OkNotifs.fire(itemOrIndex)        — показать пуш СЕЙЧАС (не двигая
                                           расписание). Можно передать
                                           объект или индекс из NOTIFS.
@@ -202,7 +204,8 @@
     );
   }
 
-  function addNotif(data) {
+  function addNotif(data, opts) {
+    opts = opts || {};
     var b = box(); if (!b) return;
     var el = document.createElement('div');
     el.className = 'notif';
@@ -213,6 +216,27 @@
     if (data.image) el.querySelector('.notif__thumb img').src = data.image;
     b.appendChild(el);
     attachSwipe(el);
+
+    // Статичный режим: карточка появляется сразу, без entry-анимации и без
+    // авто-дисмисса (showAll). Лишние сверх MAX_STACK гасим.
+    if (opts.noAnim) {
+      el.style.transition = 'none';
+      el.style.transform  = '';
+      el.style.opacity    = '';
+      if (isHeadsUp(b)) {
+        restackHeadsUp(b);
+      } else {
+        var aliveS = [];
+        for (var s = 0; s < b.children.length; s++) {
+          if (!b.children[s].__leaving) aliveS.push(b.children[s]);
+        }
+        while (aliveS.length > MAX_STACK) dismiss(aliveS.shift());
+      }
+      if (!opts.persist) {
+        el.__hideTimer = setTimeout(function () { dismiss(el); }, data.lifetime || NOTIF_LIFETIME);
+      }
+      return;
+    }
 
     // Entry-анимация зависит от режима.
     if (isHeadsUp(b)) {
@@ -296,6 +320,21 @@
     tick();
   }
 
+  /* Показать ВСЕ пуши сразу, статично — без entry-анимации и без тайминга
+     (никакого расписания delay). Карточки висят, пока их не снимут вручную
+     (свайп) или не уедет весь стек (unlock). */
+  function showAll() {
+    var b = box(); if (!b) return;
+    if (timer) { clearTimeout(timer); timer = null; }
+    clearShown();
+    var lim = Math.min(NOTIFS.length, MAX_STACK);
+    for (var i = 0; i < lim; i++) {
+      addNotif(NOTIFS[i], { noAnim: true, persist: true });
+    }
+    setIdx(NOTIFS.length);
+    setNextAt(0);
+  }
+
   function clearShown() {
     var b = box(); if (!b) return;
     for (var i = 0; i < b.children.length; i++) {
@@ -328,6 +367,7 @@
     reset: reset,
     setMode: setMode,
     setItems: setItems,
+    showAll: showAll,
     fire: fire,
     fireNext: fireNext,
     clearShown: clearShown

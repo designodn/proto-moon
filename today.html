@@ -157,7 +157,10 @@
     max-width: 90px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* Аватар и имя прижаты к левому краю плитки, чтобы первый аватар вставал
+       на одну вертикаль с заголовком секции (центрирование вдавливало его
+       внутрь на (90-56)/2 = 17px). Расстояние между аватарами не меняется. */
+    align-items: flex-start;
     gap: 8px;
     cursor: pointer;
   }
@@ -173,7 +176,7 @@
   }
   .tg-friend__name {
     width: 100%;
-    text-align: center;
+    text-align: left;
     color: var(--dynamic-text-and-icons-base-primary);
   }
   /* Имя и фамилия — каждая в одну строку; длинная фамилия обрезается в «…». */
