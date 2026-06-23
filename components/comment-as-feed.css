@@ -154,7 +154,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);              /* 8 */
-  padding: var(--space-1) 0 0;      /* 4 сверху */
+  padding: var(--space-3) 0 0;      /* 12 сверху */
 }
 
 /* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
