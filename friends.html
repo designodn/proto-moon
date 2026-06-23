@@ -74,10 +74,15 @@
     gap: var(--space-4);
     padding: var(--space-4) var(--space-4) var(--space-8);
   }
-  .ll-fr-group > .vvz-portlet,
   .ll-fr-group > .ll-fr-section { padding: 0; }
-  .ll-fr-group .vvz-portlet__header,
-  .ll-fr-group .vvz-portlet__row,
+  /* «Возможно, вы знакомы» — full-bleed как в гостях: гасим 16 паддинга группы
+     отрицательным margin, header/row держат свой центральный паддинг 16. */
+  .ll-fr-group > .vvz-portlet {
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: calc(var(--space-4) * -1);
+    padding-top: 0;
+    padding-bottom: 0;
+  }
   .ll-fr-group .ll-fr-section__title,
   .ll-fr-group .ll-fr-section__list { padding-left: 0; padding-right: 0; }
   /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну. */
