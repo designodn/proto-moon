@@ -880,7 +880,8 @@ ${actionsBar(likes, comments, reshares)}
       const giverId = ids[1] || ids[0];
       // По умолчанию (обычный подарок/открытка) — модификатор __gift с тёплой
       // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ниже ставит __ai-gift.
-      // Обычный подарок/открытка — праймари-кнопка с ведущей иконкой подарка.
+      // Обычный подарок/открытка — праймари-кнопка. Иконка подарка слева
+      // только у открытки; у обычного подарка кнопка без иконки.
       let cta, icon = '', btnStyle = '__style-primary', cardMod = ' __gift';
       if (isAi) {
         cta = 'Создать подарок из фото';
@@ -889,7 +890,7 @@ ${actionsBar(likes, comments, reshares)}
         icon = llIcon('sparkles_16_20.svg');
       } else if (/подар/i.test(caption)) {
         cta = 'Сделать подарок';
-        icon = llIcon('gift_16_20.svg');
+        icon = '';   // обычный подарок — кнопка без иконки слева
       } else {
         cta = 'Сделать открытку';
         icon = llIcon('gift_16_20.svg');
