@@ -55,9 +55,22 @@
 .gift-card {
   --gift-card-scale: 1;
 
+  /* Высоты карточки вычисляем из частей, а не хардкодим:
+       base    — карточка без блока кнопок (cell + img + паддинги);
+       active  = base + отступ + ДВЕ кнопки (Принять/Написать);
+       settled = base + отступ + ОДНА кнопка (после приёма всех). */
+  --gc-base-h: 350px;
+  --gc-btn-h: 56px;
+  --gc-accept-gap: 8px;
+  --gc-accept-margin: 16px;
+  --gc-accept-h: calc(var(--gc-btn-h) * 2 + var(--gc-accept-gap));          /* 120 — две кнопки */
+  --gc-accept-shift: calc(var(--gc-btn-h) + var(--gc-accept-gap));          /* 64 — сдвиг «Принять» вниз на место «Написать» */
+  --gc-active-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-accept-h));  /* 486 */
+  --gc-settled-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-btn-h));    /* 422 */
+
   position: relative;
   width: 300px;
-  height: 350px;
+  height: var(--gc-base-h);
   box-sizing: border-box;
   background: #fff;
   /* border принудительно 1px независимо от scale — компенсируем через calc */
@@ -199,19 +212,19 @@
    .__active — открываем trash и кнопку «Принять»
    ============================================================ */
 .gift-card.__active {
-  /* Карточка вырастает на высоту accept-блока (две кнопки 56 + gap 8 = 120px)
-     + отступ 16px. За счёт `top: 0` (см. gifts.html) визуально она растёт ВНИЗ —
-     слот и картинка остаются в исходном положении, не сжимаются. */
-  height: 486px;
+  /* Карточка вырастает на высоту accept-блока (две кнопки + gap) + отступ.
+     За счёт `top: 0` (см. gifts.html) визуально она растёт ВНИЗ — слот и
+     картинка остаются в исходном положении, не сжимаются. */
+  height: var(--gc-active-h);
 }
 .gift-card.__active .gift-card__trash {
   opacity: 1;
   pointer-events: auto;
 }
 .gift-card.__active .gift-card__accept {
-  height: 120px;
+  height: var(--gc-accept-h);
   opacity: 1;
-  margin-top: 16px;
+  margin-top: var(--gc-accept-margin);
   pointer-events: auto;
 }
 
@@ -223,7 +236,14 @@
   pointer-events: none;
 }
 .gift-card.__accepted .gift-card__btn-accept {
-  transform: translateY(64px);
+  transform: translateY(var(--gc-accept-shift));
+}
+/* На тапе DS-press ставит scale(0.95) на тот же wrapper и перетирает сдвиг —
+   кнопка прыгает вверх. Сохраняем и сдвиг, и press-scale (кроме __settled,
+   где сдвига уже нет). Спецификация выше DS-правила .button-wrapper:active. */
+.gift-card.__accepted:not(.__settled) .gift-card__btn-accept:active,
+.gift-card.__accepted:not(.__settled) .gift-card__btn-accept.__clicked {
+  transform: translateY(var(--gc-accept-shift)) scale(0.95);
 }
 /* Корзину показываем только до «Принять». */
 .gift-card.__accepted .gift-card__trash {
@@ -255,8 +275,8 @@
 /* После приёма ВСЕХ подарков карточки «оседают» (JS добавляет __settled с
    пролагом 300мс): блок кнопок схлопывается до одной кнопки, высота карточки
    уменьшается так, что прайс встаёт в 16px над кнопкой. Анимация медленная. */
-.gift-card.__settled { height: 422px; transition: height 500ms ease; }
-.gift-card.__settled .gift-card__accept { height: 56px; transition: height 500ms ease; }
+.gift-card.__settled { height: var(--gc-settled-h); transition: height 500ms ease; }
+.gift-card.__settled .gift-card__accept { height: var(--gc-btn-h); transition: height 500ms ease; }
 .gift-card.__settled .gift-card__btn-write { display: none; }
 .gift-card.__settled .gift-card__btn-accept {
   transform: none;

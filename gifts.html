@@ -476,7 +476,11 @@
     // экрана + ужимание на низких вьюпортах. Если при масштабе 1 зазор
     // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
     // зазор стал ровно 48. Высота карточки подарка в ряду — 422 (__active).
-    var ROW_CARD_H = 486, ROW_HALF = 175, MIN_GAP = 48;
+    // Высоты карточки считаем из частей (синхронно с gift-card.css), не хардкодим.
+    var GC_BASE_H = 350, GC_BTN_H = 56, GC_ACCEPT_GAP = 8, GC_ACCEPT_MARGIN = 16;
+    var ACTIVE_CARD_H  = GC_BASE_H + GC_ACCEPT_MARGIN + (GC_BTN_H * 2 + GC_ACCEPT_GAP); // 486 (две кнопки)
+    var SETTLED_CARD_H = GC_BASE_H + GC_ACCEPT_MARGIN + GC_BTN_H;                        // 422 (одна кнопка)
+    var ROW_CARD_H = ACTIVE_CARD_H, ROW_HALF = GC_BASE_H / 2, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
     // Когда все подарки разобраны и снизу появилась кнопка «Закрыть» — ряд
@@ -982,7 +986,7 @@
         // встаёт в 16px над кнопкой; ряд перецентрируется под кнопку «Закрыть».
         // Анимация медленная (500мс).
         setTimeout(function () {
-          ROW_CARD_H = 422;            // компактная высота осевшей карточки
+          ROW_CARD_H = SETTLED_CARD_H; // компактная высота осевшей карточки (вычислена)
           finishActive = true;
           IDX.forEach(function (j) {
             els[j].classList.add('__settled');
