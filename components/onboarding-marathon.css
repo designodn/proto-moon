@@ -179,9 +179,9 @@
   position: relative;
   width: 360px;
   height: 132px;
-  /* верх 16 — текст↔графика (как во втором блоке); низ 24 — минимум до
+  /* верх 8 — текст↔графика; низ 24 — минимум до
      заголовка второго блока (резервируем при центрировании). */
-  margin: var(--space-4) auto var(--space-6);
+  margin: var(--space-2) auto var(--space-6);
 }
 .omar-chipgrp {
   position: absolute;
@@ -207,7 +207,7 @@
 .omar-slide.is-active .omar-chipgrp--garden  { animation-delay: 1.15s; }
 
 /* подзаголовок тематики проявляется уже после всех тегов */
-.omar-topics__sub { opacity: 0; transition: opacity .4s ease; }
+.omar-topics__sub { opacity: 0; transition: opacity .4s ease; margin-top: var(--space-1); }   /* верх 4 — заголовок↔подзаголовок */
 .omar-slide--combo.is-active .omar-topics__sub { opacity: 1; transition-delay: 1.4s; }
 
 .omar-chip {
@@ -261,14 +261,14 @@
   align-self: center;
   width: 160px;
   height: 160px;
-  margin-top: var(--space-4);
+  margin-top: 0;
   object-fit: contain;
 }
 /* блок «Голосуйте» скрыт, пока не наступила фаза голосования (все переходы 200мс) */
 .omar-vote { opacity: 0; transition: opacity .2s ease; }
 .omar-slide--combo.__vote .omar-vote { opacity: 1; }
 /* подзаголовок скрыт, пока стикер увеличен; появляется, когда стикер встаёт на место */
-.omar-vote__sub { opacity: 0; transition: opacity .2s ease; }
+.omar-vote__sub { opacity: 0; transition: opacity .2s ease; margin-top: var(--space-1); }   /* верх 4 — заголовок↔подзаголовок */
 .omar-slide--combo.__vote-settle .omar-vote__sub { opacity: 1; }
 /* стикер: вырастает «бампом» до ×2 (нелинейно, с овершутом), затем встаёт на место */
 .omar-vote .omar-stickers { opacity: 0; transform: rotate(-15deg) scale(.2); transition: opacity .2s ease, transform .5s cubic-bezier(.34, 1.56, .64, 1); }
