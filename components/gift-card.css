@@ -13,24 +13,26 @@
  *     <div class="gift-card__slot">
  *       <div class="gift-card__cell">
  *         <div class="avatar __size-36 __type-image"><img …></div>
- *         <span class="gift-card__name ds-body-m">Виктория Петрова</span>
+ *         <div class="gift-card__cell-text">
+ *           <span class="gift-card__name ds-title-s">Виктория Петрова</span>
+ *           <span class="gift-card__date ds-caption-m">12 мая</span>
+ *         </div>
+ *         <!-- trash справа в ячейке: button-inline primary -->
+ *         <span class="button-inline-wrapper __size-24 __view-primary gift-card__trash">
+ *           <button class="button-inline __size-24" aria-label="Отклонить">
+ *             <span class="button-inline__content">
+ *               <span class="button-inline__icon icon __size-24 __src" style="--icon-src:url('assets/icons/trash_24.svg')"></span>
+ *             </span>
+ *           </button>
+ *         </span>
  *       </div>
  *       <div class="gift-card__img">
  *         <img class="gift-card__photo" src="…" alt="">
- *         <!-- или декоративный плакат: <div class="gift-card__poster">…</div> -->
  *       </div>
  *     </div>
  *
- *     <div class="gift-card__accept">
- *       <div class="button-wrapper __size-56">
- *         <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
- *       </div>
- *     </div>
- *
- *     <button class="gift-card__trash" aria-label="Удалить">
- *       <img src="assets/icons/trash_16_20.svg" alt="">
- *     </button>
- *   </article>
+ *     <!-- прайс под подарком (появляется в финале «Отправить Спасибо») -->
+ *     <div class="gift-card__price"><span class="price-tag">10 ОК</span></div>
  *
  *     <div class="gift-card__accept">
  *       <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -40,12 +42,14 @@
  *         <button class="button-container __style-secondary">…Написать…</button>
  *       </div>
  *     </div>
+ *   </article>
  *
  * МОДИФИКАТОР:
- *   .__active   — показывает trash (top-right) и две кнопки внизу.
+ *   .__active   — показывает trash (справа в ячейке) и две кнопки внизу.
  *   .__accepted — нажали «Принять»: «Написать» гаснет, «Принять» съезжает на её
  *                 место; стиль/текст кнопки меняет JS (positive «Принято» →
- *                 secondary «Отправить Спасибо»), подарок — на случайный другой.
+ *                 secondary «Отправить Спасибо»), подарок — на случайный другой,
+ *                 под ним появляется прайс (.__thanks). Trash скрывается.
  */
 
 .gift-card {
@@ -181,29 +185,15 @@
                                     opacity 240ms ease-out; }
 
 /* ============================================================
-   TRASH — кружок 36×36 в правом верхнем углу. Скрыт по умолчанию.
+   TRASH — button-inline (primary) в ячейке справа. Скрыт по умолчанию,
+   показывается в .__active, прячется после «Принять» (.__accepted).
    ============================================================ */
 .gift-card__trash {
-  position: absolute;
-  top: 19px;
-  right: 19px;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(8px);
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-shrink: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 240ms ease-out;
-  z-index: 2;
 }
-.gift-card__trash img { width: 20px; height: 20px; display: block; }
 
 /* ============================================================
    .__active — открываем trash и кнопку «Принять»
@@ -244,6 +234,9 @@
    плавно (высота + opacity). До этого свёрнут. */
 .gift-card__price {
   flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 0;
   opacity: 0;
   margin-top: 0;
