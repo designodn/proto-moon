@@ -251,6 +251,17 @@
   margin-top: 8px;
 }
 
+/* После приёма ВСЕХ подарков карточки «оседают» (JS добавляет __settled с
+   пролагом 300мс): блок кнопок схлопывается до одной кнопки, высота карточки
+   уменьшается так, что прайс встаёт в 16px над кнопкой. Анимация медленная. */
+.gift-card.__settled { height: 422px; transition: height 500ms ease; }
+.gift-card.__settled .gift-card__accept { height: 56px; transition: height 500ms ease; }
+.gift-card.__settled .gift-card__btn-write { display: none; }
+.gift-card.__settled .gift-card__btn-accept {
+  transform: none;
+  transition: transform 500ms ease;
+}
+
 /* ============================================================
    .__accepting — нажали «Принять»: радиальный градиент заливает
    карточку снизу-вверх, поверх появляется галочка.
