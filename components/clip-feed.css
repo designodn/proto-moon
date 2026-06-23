@@ -113,10 +113,10 @@
 /* Высота строки имени = auto: её держит кнопка «Подписаться» (size-28 = 28px).
    Имя (ds-title-s, lh20) центрировано в этой строке → под ТЕКСТОМ имени остаётся
    свес (28-20)/2 = 4px, из-за чего время уезжает от имени. Подтягиваем время
-   вверх отрицательным margin -8 (тот же оффсет, что у группового text-feed) —
+   вверх отрицательным margin -6 (тот же оффсет, что у группового text-feed) —
    ТОЛЬКО для клипов-сообществ с кнопкой «Подписаться» (гейт по самой кнопке;
    клипы-людей не трогаем). */
-.clip-feed__txt:has(.clip-feed__subscribe) .clip-feed__time { margin-top: -8px; }
+.clip-feed__txt:has(.clip-feed__subscribe) .clip-feed__time { margin-top: -6px; }
 .clip-feed__time {
   color: var(--static-text-and-icons-base-inverse-secondary);
 }
