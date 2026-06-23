@@ -62,7 +62,7 @@
 
       <div class="ch-msg">
         <div class="ch-card">
-          <img class="ch-card__media" id="mcCardMedia" src="https://picsum.photos/seed/mar-share/488/274" alt="" onerror="this.style.visibility='hidden'">
+          <img class="ch-card__media" src="assets/marathon/03902011710051cf.jpg" alt="" onerror="this.style.visibility='hidden'">
           <div class="ch-card__body">
             <div class="ds-body-m ch-card__title" id="mcCardTitle">Фотомарафон #РадостьДетства</div>
             <div class="ds-caption-m ch-card__source">Одноклассники</div>
@@ -98,19 +98,6 @@
       var ct = document.getElementById('mcCardTitle');
       if (ct) ct.textContent = 'Фотомарафон ' + hashtag;
     }
-    // Картинка в карточке приглашения — любая работа из фотомарафона
-    // (data/marathon.json). Если json недоступен — остаётся плейсхолдер.
-    (function () {
-      var media = document.getElementById('mcCardMedia');
-      if (!media || typeof fetch !== 'function') return;
-      fetch('data/marathon.json').then(function (r) { return r.json(); }).then(function (d) {
-        var entries = ((d && d.entries) || []).filter(function (e) { return e && e.photo; });
-        if (!entries.length) return;
-        var pick = entries[Math.floor(Math.random() * entries.length)];
-        media.src = pick.photo;
-      }).catch(function () {});
-    })();
-
     var ava = document.getElementById('peer-ava');
     var avaImg = ava.querySelector('img');
     if (photo) {
