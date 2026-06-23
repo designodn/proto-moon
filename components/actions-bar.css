@@ -100,9 +100,10 @@
    (.__full-width), оставляя только текст. Кнопку «···» (.__pinned-end) не
    трогаем — у неё иконка осмысленна.
    ============================================================ */
-/* on-this-day / tagged-photo — «Поделиться» без svg-иконки share. */
+/* on-this-day / tagged-photo / memclip — «Поделиться» без svg-иконки share. */
 .actions-bar.__otd .__full-width .button-content > svg,
-.actions-bar.__tagged .__full-width .button-content > svg {
+.actions-bar.__tagged .__full-width .button-content > svg,
+.actions-bar.ll-memclip__actions .__full-width .button-content > svg {
   display: none;
 }
 /* friendversary — «Поздравить друга» без иконки-подарка. */
