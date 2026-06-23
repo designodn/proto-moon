@@ -949,7 +949,7 @@ ${authorHeaderFn(aid, time)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
