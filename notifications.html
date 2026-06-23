@@ -32,6 +32,12 @@
        и разделитель совпали по вертикали */
     /* Счётчики не должны обрезаться контейнером табов. */
     overflow: visible;
+    /* Sticky-вкладки: навбар уезжает при листании, вкладки прилипают к верху
+       (фон секундари, чтобы ячейки не просвечивали; z-index над списком). */
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--dynamic-surface-base-secondary);
   }
   /* …и самой пилюлей таба (база ставит overflow: hidden — клипает счётчик). */
   .ll-notifs-tabs .tab { overflow: visible; }
