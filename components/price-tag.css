@@ -27,7 +27,9 @@
 
 .price-tag {
   --price-tag-height: 24px;
-  --price-tag-tip-width: 14px;
+  /* Ширина «уголка» = высоте × (14/24) — соотношение сторон язычка фиксировано,
+     поэтому он скейлится вместе с высотой контейнера (а не остаётся 14px). */
+  --price-tag-tip-width: calc(var(--price-tag-height) * 14 / 24);
   --price-tag-bg: var(--static-surface-status-accent);
 
   position: relative;
@@ -56,20 +58,21 @@
 }
 
 /* «Уголок» слева — отдельный пседоблок, выходит за пределы тела через
-   right: 100%. clip-path с evenodd: первая subpath — внешний контур
-   уголка, вторая subpath — круг-«дырка» (вырезается из заливки,
-   делая прозрачное отверстие, через которое видно фон страницы). */
+   right: 100%. Форма (контур + круглая «дырка») задана SVG-маской с
+   fill-rule:evenodd: дырка — вторая subpath, вырезается из заливки. Маска
+   тянется на всю высоту (mask-size 100% 100%), а бокс держит соотношение
+   сторон 14/24 (aspect-ratio + height:100%) — поэтому уголок скейлится по
+   высоте контейнера без искажения пропорций. */
 .price-tag::before {
   content: '';
   position: absolute;
   top: 0;
-  bottom: 0;
   right: 100%;
-  width: var(--price-tag-tip-width);
+  height: 100%;
+  aspect-ratio: 14 / 24;
   background-color: var(--price-tag-bg);
-  clip-path: path(evenodd,
-    'M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z \
-     M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z');
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
 
 /* Шов между «уголком» и телом — тонкая сплошная перемычка цвета тега ровно

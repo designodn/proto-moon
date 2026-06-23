@@ -15,8 +15,9 @@
  *
  * data-photo-base: people.js хранит photo как корне-относительный путь
  * (assets/people/1.jpg). Для страниц в подпапке (koleso/) к <img src> нужен
- * префикс «../». В ?photo= диалога уходит ИСХОДНЫЙ путь (marathon-chat.html в
- * корне и резолвит его корне-относительно).
+ * префикс «../». Диалог (data-chat-url) живёт в той же папке, что и список,
+ * поэтому в ?photo= уходит ТОТ ЖЕ префиксированный путь. Для страниц в корне
+ * photo-base пустой — без изменений.
  */
 (function () {
   function esc(s) {
@@ -90,7 +91,7 @@
     function goToChat(cell) {
       location.href = chatUrl +
         '?name=' + encodeURIComponent(cell.dataset.name || '') +
-        '&photo=' + encodeURIComponent(cell.dataset.photo || '') +
+        '&photo=' + encodeURIComponent(photoBase + (cell.dataset.photo || '')) +
         (theme ? '&theme=' + encodeURIComponent(theme) : '');
     }
 
