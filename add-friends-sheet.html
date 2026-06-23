@@ -157,6 +157,16 @@
     max-height: 100px; padding: 20px 16px 16px;  /* 20 — зазор «авы → кнопка» */
   }
 
+  /* Морф кружок→карточка: высоту (margin-top фото + max-height/padding кнопки)
+     на время приезда ведёт JS из того же прогресса, что и translate/scale
+     (см. transitionTo). Поэтому здесь выключаем CSS-transition'ы именно этих
+     свойств, оставляя анимироваться только косметику (скругление фото,
+     проявление кнопки). Без этого margin-top (600ms) и max-height (360ms)
+     разъезжаются: кнопка раскрывается раньше, чем съезжает фото, контент на
+     миг перерастает итоговую высоту — и бокс «прыгает» (≈576→550). */
+  .fp.__morphing .friend-big-card__photo { transition: border-radius 600ms ease; }
+  .fp.__morphing .friend-big-card__accept { transition: opacity 320ms ease; }
+
   /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
      Фиксируем высоту 460 даже в ряду (где остальные карточки height:auto) —
      поэтому селектор со специфичностью стейта. */
@@ -628,6 +638,30 @@
       if (s.o !== undefined) el.style.opacity = s.o.toFixed(3);
     }
 
+    // ── МОРФ ВЫСОТЫ кружок↔карточка как функция прогресса ───────────
+    // m: 0 = кружок (фото центрировано margin-top:80, кнопка свёрнута),
+    //    1 = карточка в ряду (фото вверху, кнопка раскрыта). Высоту ведём из
+    // того же p, что и translate/scale, — margin-top фото и max-height кнопки
+    // меняются синхронно, контент монотонен и не перерастает итоговую высоту,
+    // поэтому бокс не «прыгает». На время морфа висит класс .__morphing.
+    function morphFactor(idx) { return (idx === 2 || idx === 3) ? 1 : 0; }  // ряд (state-3/4) = карточка
+    function applyMorph(el, m) {
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = (80 * (1 - m)).toFixed(2) + 'px';
+      if (accept) {
+        accept.style.maxHeight     = (100 * m).toFixed(2) + 'px';
+        accept.style.paddingTop    = (20 * m).toFixed(2) + 'px';
+        accept.style.paddingBottom = (16 * m).toFixed(2) + 'px';
+      }
+    }
+    function clearMorph(el) {  // вернуть управление CSS-классам (значения уже = финальным)
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = '';
+      if (accept) { accept.style.maxHeight = ''; accept.style.paddingTop = ''; accept.style.paddingBottom = ''; }
+    }
+
     var current = 0;
     var animating = false;
     var panOffset = 0;
@@ -866,7 +900,16 @@
       // кружковый вид задаётся классами __state-1/2/5).
       if (toIdx >= 2) root.classList.add('__cards-revealed');
 
+      // Морфим высоту синхронно с движением только когда пересекаем границу
+      // кружок↔карточка (напр. вход в ряд state-2→state-3).
+      var fm = morphFactor(prevIdx), tm = morphFactor(toIdx);
+      var isMorph = fm !== tm;
+
       function done() {
+        if (isMorph) {
+          IDX.forEach(function (i) { clearMorph(els[i]); });
+          root.classList.remove('__morphing');
+        }
         applyState(toIdx);
         animating = false;
         if (toIdx === 3) attachSwipe();
@@ -874,6 +917,11 @@
       }
 
       if (reducedMotion()) { done(); return; }
+
+      if (isMorph) {
+        root.classList.add('__morphing');                       // CSS-transition'ы высоты — выкл
+        IDX.forEach(function (i) { applyMorph(els[i], fm); });   // стартовое значение до 1-го кадра (без глитча)
+      }
 
       var dur, progress;
       if (opts.mode === 'spring') {
@@ -907,6 +955,7 @@
             r:  fc.r  + (tc.r  - fc.r)  * p,
             o:  fo    + (to_   - fo)    * op
           }, 0);
+          if (isMorph) applyMorph(els[i], fm + (tm - fm) * p);  // высота — из того же p
         });
         titleEl.style.top =
           (from.title + (to.title - from.title) * p).toFixed(3) + 'px';
