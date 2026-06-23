@@ -76,6 +76,16 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
+  /* Навбар: между иконками инфо и настроек — 20 */
+  .nav-bar.__type-search .nav-bar__trailing { gap: var(--space-5); }
+
+  /* Разделитель между группами разделов меню. */
+  .ll-menu-divider {
+    height: 1px;
+    margin: var(--space-2) var(--space-4);
+    background: var(--dynamic-stroke-contrast-low);
+  }
+
   /* .ll-tabbar → components/app-shell.css */
 </style>
 </head>
@@ -104,6 +114,7 @@
             <input class="text-input __size-36 ds-body-m" type="search" placeholder="Поиск в ОК">
           </div>
           <div class="nav-bar__trailing">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Информация"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/info_circle_24.svg" width="24" height="24" alt=""></span></button></span>
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Настройки"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/settings_24.svg" width="24" height="24" alt=""></span></button></span>
           </div>
         </div>
@@ -117,7 +128,7 @@
               <div class="ds-title-l ll-profile-title" data-user-name>Александра Первомайская</div>
               <div class="ds-body-m ll-profile-subtitle">Перейти в профиль</div>
             </div>
-            <div class="avatar __size-56 __type-image"><img src="https://i.pravatar.cc/120?img=49" data-user-avatar alt=""></div>
+            <div class="avatar __size-72 __type-image"><img src="https://i.pravatar.cc/120?img=49" data-user-avatar alt=""></div>
           </div>
         </div>
       </a>
@@ -160,7 +171,7 @@
         </button>
         <button class="ll-quick__item" type="button">
           <span class="ll-quick__tile">
-            <img class="ll-icon" src="assets/icons/video_24.svg" width="28" height="28" alt="">
+            <img class="ll-icon" src="assets/icons/videocam_24.svg" width="28" height="28" alt="">
           </span>
           <span class="ll-quick__label">Видео</span>
         </button>
@@ -203,41 +214,14 @@
         </button>
       </div>
 
-      <!-- СПИСОК РАЗДЕЛОВ -->
+      <!-- СПИСОК РАЗДЕЛОВ (по макету Figma) -->
       <div class="ll-menu-list">
 
         <div class="uni-cell-wrapper ll-menu-item">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/photo_24.svg" width="24" height="24" alt=""></span>
-              <div class="uni-cell-additional-content"><div class="ds-body-l">Фото</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-menu-item">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/balloons_24.svg" width="24" height="24" alt=""></span>
-              <div class="uni-cell-additional-content"><div class="ds-body-l">Праздники</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-menu-item" data-href="gifts-catalog.html" role="link" tabindex="0">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/gift_24.svg" width="24" height="24" alt=""></span>
-              <div class="uni-cell-additional-content"><div class="ds-body-l">Подарки</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="uni-cell-wrapper ll-menu-item">
-          <div class="uni-cell-container __state-enabled">
-            <div class="uni-cell">
-              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/clips_24.svg" width="24" height="24" alt=""></span>
-              <div class="uni-cell-additional-content"><div class="ds-body-l">Клипы</div></div>
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/services_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Приложения</div></div>
             </div>
           </div>
         </div>
@@ -254,8 +238,82 @@
         <div class="uni-cell-wrapper ll-menu-item">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/moment_24.svg" width="24" height="24" alt=""></span>
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/photo_moment_clock_24.svg" width="24" height="24" alt=""></span>
               <div class="uni-cell-additional-content"><div class="ds-body-l">Моменты</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/promote_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Рекламный кабинет</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/hearts_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Знакомства</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ll-menu-divider"></div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/ok_circle_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Пополнить счёт</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/wallet_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Платежи и подписки</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/shield_safety_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Политика конфиденциальности</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/help_circle_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Помощь</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/settings_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Настройки</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="uni-cell-wrapper ll-menu-item">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <span class="ll-menu-icon"><img class="ll-icon" src="assets/icons/logout_24.svg" width="24" height="24" alt=""></span>
+              <div class="uni-cell-additional-content"><div class="ds-body-l">Выйти</div></div>
             </div>
           </div>
         </div>
