@@ -82,6 +82,11 @@
   .ll-fr-group .ll-fr-section__list { padding-left: 0; padding-right: 0; }
   /* Заголовок портлета и кнопка «Ещё» — выравнивание по бейзлайну. */
   .ll-fr-group .vvz-portlet__header { align-items: baseline; }
+
+  /* Таббар — sticky в потоке ленты: стоит под контентом, не перекрывает
+     последнюю ячейку (переопределяем fixed из app-shell). Лежит последним
+     элементом внутри .phone-frame__feed. */
+  .ll-tabbar { position: sticky; }
 </style>
 </head>
 <body>
@@ -332,21 +337,19 @@
       </section>
       </div>
 
-      <div style="height: calc(var(--tabbar-height) + 12px)"></div>
-
-    </div>
-
-    <!-- TABBAR -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-ios">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- TABBAR — sticky внизу ленты: стоит в потоке под контентом, не висит поверх -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-ios">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
