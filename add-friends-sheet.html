@@ -165,6 +165,13 @@
      одинаковым до и после замера → transition не запускается. */
   .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; opacity: 1; }
 
+  /* Транзишены полностью выключены — для атомарного коммита состояния ПОСЛЕ
+     замера: возвращаем стейт и снимаем __measuring под этим классом, чтобы
+     measure-значения (кнопка opacity:1/max-height, card-радиус фото) НЕ
+     анимировались в кружковые стейтовые → иначе кнопка мелькает на старте/1→2. */
+  .fp.__no-anim .friend-big-card,
+  .fp.__no-anim .friend-big-card * { transition: none !important; }
+
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
      кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
      При раскрытии карточка подрастает вниз, фото остаётся на месте. */
@@ -769,13 +776,15 @@
       root.classList.add('__measuring');
       var maxH = 0;
       IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
-      // Возвращаем стейт-классы ВНУТРИ __measuring (transition:none) и форсим
-      // reflow — кружковый border-radius/опускание фото фиксируются мгновенно.
-      // Иначе при снятии __measuring проигрывается переход карточка→кружок на
-      // старте (фото мигает квадратом, потом «перетекает» в кружок).
+      // Возврат стейта и снятие __measuring — под выключенными transition'ами
+      // (__no-anim) с принудительным reflow. Иначе measure-значения (кнопка
+      // opacity:1/max-height, card-радиус фото) при возврате в кружковый стейт
+      // АНИМИРУЮТСЯ → кнопка/фото мелькают на старте и на переходе 1→2.
+      root.classList.add('__no-anim');
       stateCls.forEach(function (c) { root.classList.add(c); });
-      void root.offsetHeight;
       root.classList.remove('__measuring');
+      void root.offsetHeight;
+      root.classList.remove('__no-anim');
       // Замер детерминированный (см. CSS .__measuring) → значение стабильно от
       // вызова к вызову. Применяем и сообщаем, поменялось ли (>0.5px) — чтобы
       // повторный замер (fonts.ready / attachSwipe) не дёргал recenter впустую.
