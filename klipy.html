@@ -272,9 +272,24 @@
   }
   .klipy-sheet__row .icon { color: var(--dynamic-text-and-icons-base-secondary); }
   .klipy-sheet__cancel .button-container { width: 100%; }
+
+  /* Конфетти-Lottie при показе только что созданного клипа: поверх всего экрана.
+     Контейнер на весь экран + slice (см. JS) → анимация тянется по высоте,
+     ширина обрезается краями экрана. overflow hidden срезает выход за края. */
+  .klipy-confetti {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .klipy-confetti svg { width: 100%; height: 100%; }
 </style>
 </head>
 <body>
+  <!-- Конфетти по факту создания клипа (одноразово, флаг newClipCelebrate) -->
+  <div class="klipy-confetti" id="klipyConfetti" aria-hidden="true"></div>
+
   <div class="phone-frame klipy">
 
     <!-- Скрытый switch для тактильной отдачи на iOS (Safari 17.4+): программный
@@ -633,8 +648,42 @@
             memFrames[ci].classList.add('__active');
           }, 3000);
         }
+
+        // Конфетти один раз — сразу после создания клипа (флаг от clip-edit).
+        // Не повторяется при обновлении/возврате: ключ снимаем при чтении.
+        var celebrate = false;
+        try {
+          celebrate = sessionStorage.getItem('newClipCelebrate') === '1';
+          if (celebrate) sessionStorage.removeItem('newClipCelebrate');
+        } catch (_) {}
+        if (celebrate) playConfetti();
       }
     });
+
+    // Конфетти-Lottie на весь экран (lottie-web грузим лениво из CDN).
+    function ensureLottie() {
+      if (window.lottie) return Promise.resolve(window.lottie);
+      return new Promise(function (res, rej) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+        s.onload = function () { res(window.lottie); };
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    function playConfetti() {
+      var host = document.getElementById('klipyConfetti');
+      if (!host) return;
+      ensureLottie().then(function (lottie) {
+        host.innerHTML = '';
+        var anim = lottie.loadAnimation({
+          container: host, renderer: 'svg', loop: false, autoplay: true,
+          rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+          path: 'assets/lottie/confetti.json'
+        });
+        anim.addEventListener('complete', function () { anim.destroy(); host.innerHTML = ''; });
+      }).catch(function () {});
+    }
 
     // 4) Лайк — outline ↔ filled (красный) + правка счётчика.
     document.addEventListener('click', function (e) {
