@@ -413,7 +413,7 @@ function countBtn(file, n, { style = 'secondary' } = {}) {
 
 /** Кнопка «класс» с --button-klass-count. Пустой счётчик → 0. */
 function klassBtn(likes, { style = 'secondary' } = {}) {
-  return `            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: ${esc(likes || 0)};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}${llIcon('klass_filled_16_20.svg', 'll-icon button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>`;
+  return `            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: ${esc(likes || 0)};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}<img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>`;
 }
 
 /** «Троеточие» (__pinned-end). */

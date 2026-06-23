@@ -56,6 +56,15 @@
 .button-klass:has(> input:checked) .button-klass__icon-outline { display: none; }
 .button-klass:has(> input:checked) .button-klass__icon-filled  { display: inline-flex; }
 
+/* Нажатое состояние «Класс» (как в Figma): золотой полупрозрачный фон
+   (DS-токен base-yellow-saturated-translucent-20 = rgba(219,153,12,.2)).
+   Иконка filled — цветной бейдж assets/badges/ico_klass_colored_16_20.svg. */
+.button-klass:has(> input:checked) .button-container {
+  --button-background-color: var(--base-yellow-saturated-translucent-20);
+}
+/* Цветной бейдж не перекрашиваем инверсией в on-image-контексте (клип/медиа). */
+.button-container.__style-on-image .button-klass__icon-filled.ll-icon { filter: none; }
+
 /* Счётчик рендерится из CSS-counter — автоматически +1 при :checked */
 .button-klass__count::before {
   content: counter(klass-count);
