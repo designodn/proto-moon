@@ -139,6 +139,14 @@
   color: var(--dynamic-text-and-icons-base-secondary);
 }
 
+/* Шапка поста-сообщества: кнопка «Подписаться» (size-28) раздувает строку имени
+   (feed-header__line) до 28px, имя (ds-title-s, lh20) центрируется → под текстом
+   свес (28-20)/2 = 4px. Колоночный gap (2px) добавлялся бы сверху и давал 6px до
+   времени. Убираем gap — время садится вплотную к низу строки, ровно на 4px ниже
+   текста имени. Гейт по самой кнопке: у постов-ЛЮДЕЙ (без button-subscribe) gap
+   остаётся 2px, иначе имя слиплось бы с временем (там строка = высоте имени). */
+.text-feed .uni-cell-additional-content:has(.button-subscribe) { gap: 0; }
+
 /* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
 .text-feed .actions-bar {
   gap: var(--space-2);
