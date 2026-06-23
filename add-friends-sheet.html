@@ -103,26 +103,33 @@
      плавно сворачиваются обратно в кружки. Морф задаётся transition'ами в
      friend-big-card.css. На первом рендере класс __state-1 уже стоит в разметке,
      поэтому стартовый переход карточка→кружок НЕ проигрывается. */
-  .fp.__state-1 .friend-big-card,
-  .fp.__state-2 .friend-big-card,
-  .fp.__state-5 .friend-big-card,
-  .fp.__state-6 .friend-big-card {
+  /* По умолчанию карточка выглядит как голый кружок-фото: chrome (фон/рамка/
+     тень) и инфо СКРЫТЫ. Так на старте — до проявления ряда — мелькать нечему,
+     виден только круг. Chrome/инфо проявляем ТОЛЬКО в ряд-стейтах 3/4 (морф
+     кружок→карточка), а не гасим в кружковых — иначе ловим вспышку карточки. */
+  .fp .friend-big-card {
     background: transparent;
     border-color: transparent;
     box-shadow: none;
   }
+  .fp .friend-big-card .friend-big-card__info { opacity: 0; }
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card {
+    background: #fff;
+    border-color: #e7e7e7;
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08),
+                0 2px 6px  rgba(0, 0, 0, 0.06);
+  }
+  .fp.__state-3 .friend-big-card .friend-big-card__info,
+  .fp.__state-4 .friend-big-card .friend-big-card__info { opacity: 1; }
+
+  /* В кружковых стейтах фото — круг 300×300, центрировано (margin-top 80). */
   .fp.__state-1 .friend-big-card .friend-big-card__photo,
   .fp.__state-2 .friend-big-card .friend-big-card__photo,
   .fp.__state-5 .friend-big-card .friend-big-card__photo,
   .fp.__state-6 .friend-big-card .friend-big-card__photo {
     margin-top: 80px;
     border-radius: 50%;
-  }
-  .fp.__state-1 .friend-big-card .friend-big-card__info,
-  .fp.__state-2 .friend-big-card .friend-big-card__info,
-  .fp.__state-5 .friend-big-card .friend-big-card__info,
-  .fp.__state-6 .friend-big-card .friend-big-card__info {
-    opacity: 0;
   }
 
   /* Логика высоты как в gift-card: фото ФИКСИРОВАННОЙ высоты (300×300 квадрат),
