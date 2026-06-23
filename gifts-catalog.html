@@ -59,25 +59,16 @@
     padding: 0 var(--space-4);
   }
 
-  /* Получатель (приход с годовщины: ?to=<id>): аватар + ФИ + разделитель снизу
-     (с гор. паддингами 16, через ::after). Показывается через .__on (JS). */
+  /* Получатель (приход с годовщины: ?to=<id>): аватар + ФИ.
+     Показывается через .__on (JS). */
   .ll-gc-recipient {
     display: none;
     position: relative;
     align-items: center;
     gap: var(--space-2);
-    padding: 0 var(--space-4) var(--space-3);
+    padding: 0 var(--space-4);
   }
   .ll-gc-recipient.__on { display: flex; }
-  .ll-gc-recipient::after {
-    content: '';
-    position: absolute;
-    left: var(--space-4);
-    right: var(--space-4);
-    bottom: 0;
-    height: 1px;
-    background: var(--dynamic-stroke-contrast-low);
-  }
   .ll-gc-recipient__name { color: var(--dynamic-text-and-icons-base-primary); }
 
   /* Сетка подарков — 2×N, gap 12, бока 16 (низ острова даёт padding-bottom). */
