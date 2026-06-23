@@ -709,10 +709,10 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      // Поднятый fp__title (ряд-стейты 2–4): top = 15%·H − высота тайтла,
-      // т.е. нижний край заголовка встаёт ровно на 15% высоты экрана.
+      // Поднятый fp__title (ряд-стейты 2–4): top = 20%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 20% высоты экрана.
       var titleH = titleEl.offsetHeight || 80;
-      var raisedTop = Math.max(0, Math.round(pageH * 0.15 - titleH));
+      var raisedTop = Math.max(0, Math.round(pageH * 0.20 - titleH));
       STATES[1].title = raisedTop;
       STATES[2].title = raisedTop;
       STATES[3].title = raisedTop;
@@ -762,8 +762,13 @@
       root.classList.add('__measuring');
       var maxH = 0;
       IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
-      root.classList.remove('__measuring');
+      // Возвращаем стейт-классы ВНУТРИ __measuring (transition:none) и форсим
+      // reflow — кружковый border-radius/опускание фото фиксируются мгновенно.
+      // Иначе при снятии __measuring проигрывается переход карточка→кружок на
+      // старте (фото мигает квадратом, потом «перетекает» в кружок).
       stateCls.forEach(function (c) { root.classList.add(c); });
+      void root.offsetHeight;
+      root.classList.remove('__measuring');
       // Замер детерминированный (см. CSS .__measuring) → значение стабильно от
       // вызова к вызову. Применяем и сообщаем, поменялось ли (>0.5px) — чтобы
       // повторный замер (fonts.ready / attachSwipe) не дёргал recenter впустую.
