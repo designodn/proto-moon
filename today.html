@@ -15,7 +15,8 @@
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
                  background: var(--dynamic-surface-base-secondary); }
-  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+                        padding-top: var(--space-2); /* доп. верхний воздух на сайте (без OS status-bar) */ }
   .phone-frame__feed::-webkit-scrollbar { display: none; }
   .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
   /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), встаёт в
@@ -110,7 +111,16 @@
     overflow: hidden;
   }
   .tg-news__title { color: var(--dynamic-text-and-icons-base-primary); }
-  .tg-news__tabs { display: flex; gap: 6px; }
+  .tg-news__tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* до краёв карточки (паддинг 16) — чипсы скроллятся «под» край */
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+  .tg-news__tabs::-webkit-scrollbar { display: none; }
   .tg-news__tab {
     flex-shrink: 0;
     border: 0;
