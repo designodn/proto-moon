@@ -30,8 +30,28 @@
 
   function get(id) { return byId[String(id)] || null; }
 
+  // База для локальных фото: каталог, из которого подключён этот скрипт
+  // (на корневых страницах — "", в подпапках вроде new-vision/ — "../"),
+  // чтобы пути вида "assets/people/1.jpg" работали на любой глубине.
+  var BASE = (function () {
+    var s = document.currentScript;
+    if (!s) {
+      var ss = document.getElementsByTagName('script');
+      for (var i = ss.length - 1; i >= 0; i--) {
+        if (/people-data\.js(\?|$)/.test(ss[i].src)) { s = ss[i]; break; }
+      }
+    }
+    var src = s ? (s.getAttribute('src') || '') : '';
+    return src.replace(/components\/people-data\.js.*$/, '');
+  })();
+
+  function resolveSrc(u) {
+    if (!u) return u;
+    return /^(https?:)?\/\/|^data:|^\//.test(u) ? u : BASE + u; // абсолютные оставляем как есть
+  }
+
   function srcFor(p) {
-    return (p && p.photo) ? p.photo : FALLBACK;
+    return (p && p.photo) ? resolveSrc(p.photo) : FALLBACK;
   }
 
   /** Превращает <img data-person-avatar> в <video>, если медиа — видео. */
@@ -39,7 +59,7 @@
     var v = document.createElement('video');
     v.className = img.className;
     if (img.id) v.id = img.id;
-    v.src = p.photo;
+    v.src = resolveSrc(p.photo);
     v.muted = true; v.autoplay = true; v.loop = true; v.playsInline = true;
     v.setAttribute('muted', '');
     v.setAttribute('playsinline', '');
