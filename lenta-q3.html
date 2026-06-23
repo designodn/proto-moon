@@ -2221,6 +2221,8 @@
         if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
         // Реклама (ad-N) — не пользователь, профиль не открываем.
         if (cell.closest('.ll-ad')) return;
+        // Сообщество — у его шапки есть кнопка «Подписаться»; профиль не открываем.
+        if (cell.querySelector('.button-subscribe')) return;
         // Мой пост (фотомарафон) → личный профиль (без ?name).
         if (cell.closest('[data-self-post]')) { e.preventDefault(); location.href = 'profile.html'; return; }
         var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
