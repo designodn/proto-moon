@@ -222,13 +222,12 @@
           '</div>' +
           '<div class="moment__bday-content">' +
             '<p class="moment__bday-kicker">' + (s.bday.kicker || 'Сегодня') + '</p>' +
-            // Заголовок и ФИ — каждое слово на свой строке (как в макете):
-            // «День / рождения», «Анастасии / Фоминой».
+            // Заголовок и ФИ переносятся естественно по ширине контейнера.
             '<h2 class="moment__bday-heading">' +
-              (s.bday.heading || 'День рождения').split(' ').join('<br>') +
+              (s.bday.heading || 'День рождения') +
             '</h2>' +
             '<p class="moment__bday-name">' +
-              (s.bday.name || '').split(' ').join('<br>') +
+              (s.bday.name || '') +
             '</p>' +
           '</div>';
 
@@ -966,6 +965,49 @@
     return genitiveWord(parts[0] || '', g, false);
   }
 
+  // ============================================================
+  // ACCUSATIVE — склонение имени в винительный падеж для шаблона
+  //   «вы добавили <кого> в друзья» (френдверсари-фид). Для одушевлённых
+  //   мужских имён вин. = род. падежу (Александр→Александра), для женских
+  //   на -а/-я → -у/-ю (Ольга→Ольгу, Оля→Олю). Эвристика по окончаниям.
+  // ============================================================
+  function accusativeWord(w, gender) {
+    if (!w) return w;
+    var lower = w.toLowerCase();
+    var last = lower.slice(-1);
+    var last2 = lower.slice(-2);
+    var cut = function (n) { return w.slice(0, w.length - n); };
+
+    if (last2 === 'ия') return cut(1) + 'ю';   // Мария→Марию, Анастасия→Анастасию
+    if (last === 'я')   return cut(1) + 'ю';   // Оля→Олю, Илья→Илью
+    if (last === 'а')   return cut(1) + 'у';   // Ольга→Ольгу, Лиза→Лизу, Никита→Никиту
+    if (gender === 'f') return w;              // жен. имя на согласную/ь (Любовь) — не склоняем
+    if (last === 'й' || last === 'ь') return cut(1) + 'я'; // Алексей→Алексея, Игорь→Игоря
+    if (isConsonant(last)) return w + 'а';     // Александр→Александра, Иван→Ивана
+    return w;                                  // -о/-е/-и/-у — не склоняем
+  }
+  // Только имя (первое слово) в винительном падеже.
+  function accusativeFirst(name, gender) {
+    var parts = (name || '').replace(/\([^)]*\)/g, '').trim().split(/\s+/);
+    var g = normGender(gender) || inferGender(parts);
+    return accusativeWord(parts[0] || '', g);
+  }
+
+  // Авто-склонение: любой элемент с [data-name-acc="<имя в им. падеже>"]
+  // (опц. data-name-gender) получает имя человека в винительном падеже.
+  // Системно — разметке достаточно проставить атрибут, скрипт сам склоняет.
+  function applyAccusative(root) {
+    (root || document).querySelectorAll('[data-name-acc]').forEach(function (el) {
+      var nom = el.getAttribute('data-name-acc');
+      if (nom) el.textContent = accusativeFirst(nom, el.getAttribute('data-name-gender'));
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { applyAccusative(); });
+  } else {
+    applyAccusative();
+  }
+
   // Экспорт
   window.MomentViewer = {
     init:            function (root, options) { return new MomentViewer(root, options); },
@@ -976,6 +1018,8 @@
     friendshipSlide: friendshipSlide,
     genitive:        genitive,
     genitiveFirst:   genitiveFirst,
+    accusative:      accusativeWord,
+    accusativeFirst: accusativeFirst,
     palette:         DEFAULT_PALETTE,
     quickEmojis:     DEFAULT_QUICK_EMOJIS
   };
