@@ -67,13 +67,15 @@
 .vvz-portlet__row {
   display: flex;
   gap: var(--space-2);
-  /* Вертикальный воздух (8px) + равный отрицательный margin: позиция ряда не
-     меняется. overflow:visible — ряд ничего не клипает (ни по Y при press-scale,
-     ни по X), карточки видны целиком. */
-  padding: var(--space-2) var(--space-4);
-  margin-top: calc(var(--space-2) * -1);
-  margin-bottom: calc(var(--space-2) * -1);
-  overflow: visible;
+  /* Горизонтальный скролл (overflow-x:auto) неизбежно клипает по Y. Чтобы
+     press-овершут (scale за 1.0) и иконки не срезались сверху/снизу — даём
+     вертикальный запас padding'ом и гасим его равным отрицательным margin:
+     скроллбокс выше, позиция ряда не меняется, скролл по X цел. */
+  padding: var(--space-4) var(--space-4);
+  margin-top: calc(var(--space-4) * -1);
+  margin-bottom: calc(var(--space-4) * -1);
+  overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
