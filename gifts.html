@@ -933,6 +933,14 @@
         'assets/gifts/thanks-2.jpg',
         'assets/gifts/thanks-3.jpg'
       ];
+      // Сразу раздаём по одному уникальному подарку на карточку (без повторов).
+      var giftPool = GIFTS.slice();
+      for (var gi = giftPool.length - 1; gi > 0; gi--) {   // Fisher–Yates
+        var gj = Math.floor(Math.random() * (gi + 1));
+        var gt = giftPool[gi]; giftPool[gi] = giftPool[gj]; giftPool[gj] = gt;
+      }
+      var giftFor = {};
+      IDX.forEach(function (i, k) { giftFor[i] = giftPool[k % giftPool.length]; });
 
       // Когда все подарки разобраны (приняты/отклонены) — снизу появляется
       // secondary-кнопка «Закрыть» (выход не только по кресту), через 500мс.
@@ -978,9 +986,7 @@
           // Плавная смена подарка (crossfade): гасим, меняем src, проявляем.
           var img = el.querySelector('.gift-card__photo');
           if (img) {
-            var cur = img.getAttribute('src');
-            var pool = GIFTS.filter(function (g) { return g !== cur; });
-            var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+            var next = giftFor[i] || GIFTS[0];   // заранее назначенный, без повторов
             img.style.transition = 'opacity 280ms ease';
             img.style.opacity = '0';
             setTimeout(function () {
