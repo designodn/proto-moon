@@ -146,6 +146,10 @@
   display: flex;
   flex-direction: column;
 }
+/* 8 между самим комментом, списком ответов (.fc-list) и полем ввода (.fc-input). */
+.caf.__twitter-like {
+  gap: var(--space-2);              /* 8 */
+}
 
 /* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
 .caf.__twitter-like .caf__row {
@@ -171,14 +175,12 @@
   background: var(--dynamic-stroke-contrast-low);
 }
 
-/* Правая колонка — контент. Снизу 8 (как в макете), чтобы трунк дотягивался
-   до авы следующего ряда непрерывно. */
+/* Правая колонка — контент. */
 .caf__content {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding-bottom: var(--space-2);   /* 8 */
 }
 
 /* Строка 1: имя + «· дата» в одну строку, дата вторичным цветом. */
