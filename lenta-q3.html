@@ -1844,6 +1844,7 @@
                 <div class="ds-body-m text-feed__reshare-card-author-name">Наталья Атаманюк | Рецепты</div>
               </div>
               <p class="ds-body-m text-feed__body">ГОРБУШУ с кабачками готовлю так ВКУСНО, что дорогую рыбу не надо! Рецепт, который поменяет Ваше мнение о горбуше! Вкусно очень!</p>
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9"><img style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" src="https://www.russianfood.com/dycontent/images_upl/616/big_615030.jpg" alt=""></div>
             </div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>32</span></button></span>
@@ -2221,6 +2222,8 @@
         if (!t.closest('.avatar') && !t.closest('.ds-title-s') && !t.closest('.feed-header__name')) return;
         // Реклама (ad-N) — не пользователь, профиль не открываем.
         if (cell.closest('.ll-ad')) return;
+        // Сообщество — у его шапки есть кнопка «Подписаться»; профиль не открываем.
+        if (cell.querySelector('.button-subscribe')) return;
         // Мой пост (фотомарафон) → личный профиль (без ?name).
         if (cell.closest('[data-self-post]')) { e.preventDefault(); location.href = 'profile.html'; return; }
         var nameEl = cell.querySelector('.ds-title-s, .feed-header__name');
@@ -2553,6 +2556,22 @@
       });
     });
   })();
+  </script>
+
+  <!-- Заголовок «Новая лента» перед первым comment-as-feed -->
+  <script>
+    (function () {
+      var feed = document.querySelector('.ll-feed');
+      if (!feed) return;
+      var firstCaf = feed.querySelector('.caf');
+      if (!firstCaf) return;
+      var header = document.createElement('div');
+      header.className = 'ds-title-l';
+      header.style.padding = '16px';
+      header.style.textAlign = 'center';
+      header.textContent = 'Новая лента';
+      firstCaf.parentNode.insertBefore(header, firstCaf);
+    })();
   </script>
 </body>
 </html>

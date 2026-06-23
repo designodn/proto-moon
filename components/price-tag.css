@@ -13,13 +13,13 @@
  *
  * Размеры:
  *   --price-tag-height          высота тега (default 24)
- *   --price-tag-tip-width       ширина «уголка» слева (default 14)
+ *   --price-tag-tip-width       ширина «уголка» слева (default 15)
  *   --price-tag-bg              фон тега (default static-status-accent)
  *
  * Структура: сам элемент — flex-контейнер с фоном и скруглением справа.
- * Пседоэлемент ::before — «уголок» (тонкий язычок) слева, через clip-path
- * с квадратичной кривой (выпуклой наружу). ::after — «дырка» (тёмная
- * точка) в центре уголка.
+ * Пседоэлемент ::before — «уголок» (язычок с круглой «дыркой») слева: форма
+ * берётся из assets/tail-price.svg как маска, заливка — цвет тега, поэтому
+ * хвостик всегда совпадает по цвету с телом и примыкает к нему вплотную.
  *
  * Цвета фиксированные (static), потому что таг — UI-индикатор валюты, а не
  * адаптивный компонент. Тема не меняет его внешний вид.
@@ -27,9 +27,10 @@
 
 .price-tag {
   --price-tag-height: 24px;
-  /* Ширина «уголка» = высоте × (14/24) — соотношение сторон язычка фиксировано,
-     поэтому он скейлится вместе с высотой контейнера (а не остаётся 14px). */
-  --price-tag-tip-width: calc(var(--price-tag-height) * 14 / 24);
+  /* Ширина «уголка» = высоте × (15/24) — соотношение сторон язычка фиксировано
+     (как в assets/tail-price.svg, 15×24), поэтому он скейлится вместе с высотой
+     контейнера (а не остаётся 15px). */
+  --price-tag-tip-width: calc(var(--price-tag-height) * 15 / 24);
   --price-tag-bg: var(--static-surface-status-accent);
 
   position: relative;
@@ -57,36 +58,25 @@
   user-select: none;
 }
 
-/* «Уголок» слева — отдельный пседоблок, выходит за пределы тела через
-   right: 100%. Форма (контур + круглая «дырка») задана SVG-маской с
-   fill-rule:evenodd: дырка — вторая subpath, вырезается из заливки. Маска
-   тянется на всю высоту (mask-size 100% 100%), а бокс держит соотношение
-   сторон 14/24 (aspect-ratio + height:100%) — поэтому уголок скейлится по
-   высоте контейнера без искажения пропорций. */
+/* «Уголок» слева — отдельный пседоблок, выходит за пределы тела влево. Форма
+   (контур + круглая «дырка») берётся из assets/tail-price.svg как маска, а сам
+   блок залит цветом тега (--price-tag-bg) — поэтому хвостик всегда совпадает по
+   цвету с телом, в т.ч. в disabled-состоянии. Маска тянется на всю высоту
+   (mask-size 100% 100%), а бокс держит соотношение сторон 15/24 (aspect-ratio +
+   height:100%) — поэтому уголок скейлится по высоте без искажения пропорций.
+
+   Правый край SVG (x=15) — прямая вертикаль; чтобы хвостик примыкал к телу
+   вплотную без шва, сдвигаем его на 0.5px вглубь тела (right: calc(100% − 0.5px)). */
 .price-tag::before {
   content: '';
   position: absolute;
   top: 0;
-  right: 100%;
+  right: calc(100% - 0.5px);
   height: 100%;
-  aspect-ratio: 14 / 24;
+  aspect-ratio: 15 / 24;
   background-color: var(--price-tag-bg);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M 14 0 L 14 24 L 5.5 17 C -1 13.5 -1 10.5 5.5 7 Z M 7 12 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-}
-
-/* Шов между «уголком» и телом — тонкая сплошная перемычка цвета тега ровно
-   на стыке (по 1px в каждую сторону). Уголок остаётся на месте (right:100%),
-   а микро-пустота на границе закрывается. */
-.price-tag::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: calc(100% - 1px);
-  width: 2px;
-  background-color: var(--price-tag-bg);
-  pointer-events: none;
+  -webkit-mask: url("../assets/tail-price.svg") center / 100% 100% no-repeat;
+          mask: url("../assets/tail-price.svg") center / 100% 100% no-repeat;
 }
 
 /* ============================================================
