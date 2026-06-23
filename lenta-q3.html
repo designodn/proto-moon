@@ -2408,7 +2408,9 @@
           +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>'
           +   '<label class="button-wrapper __size-36 button-klass __no-count" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
           +   '<div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>'
-          + '</div>';
+          + '</div>'
+          + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-m marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
+          +   '<div class="button-wrapper __size-36 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
         // каждый новый пост — сразу после якоря, поэтому самый свежий оказывается сверху
         if (anchor && anchor.nextSibling) feed.insertBefore(art, anchor.nextSibling);
         else feed.insertBefore(art, feed.firstChild);
