@@ -44,6 +44,10 @@
   padding-top: var(--space-3);
   padding-bottom: var(--space-3);
 }
+/* Портлет не клипает карточки: ряд сам скроллит по X и держит вертикальный
+   запас. Перебиваем overflow:hidden у .island, когда портлет — остров (лента). */
+.vvz-portlet,
+.vvz-portlet.island { overflow: visible; }
 
 .vvz-portlet__header {
   display: flex;
@@ -67,13 +71,15 @@
 .vvz-portlet__row {
   display: flex;
   gap: var(--space-2);
-  /* Вертикальный воздух (8px) + равный отрицательный margin: позиция ряда не
-     меняется, но скроллбокс (overflow-x:auto клипает по Y) не срезает карточки
-     сверху/снизу при press-анимации (scale-овершут). Горизонтальный скролл цел. */
-  padding: var(--space-2) var(--space-4);
-  margin-top: calc(var(--space-2) * -1);
-  margin-bottom: calc(var(--space-2) * -1);
+  /* Горизонтальный скролл (overflow-x:auto) неизбежно клипает по Y. Чтобы
+     press-овершут (scale за 1.0) и иконки не срезались сверху/снизу — даём
+     вертикальный запас padding'ом и гасим его равным отрицательным margin:
+     скроллбокс выше, позиция ряда не меняется, скролл по X цел. */
+  padding: var(--space-4) var(--space-4);
+  margin-top: calc(var(--space-4) * -1);
+  margin-bottom: calc(var(--space-4) * -1);
   overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }

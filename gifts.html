@@ -204,7 +204,7 @@
         </div>
       </div>
       <div class="gift-card__price" aria-hidden="true">
-        <span class="price-tag">10 ОК</span>
+        <span class="price-tag">1 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -237,7 +237,7 @@
         </div>
       </div>
       <div class="gift-card__price" aria-hidden="true">
-        <span class="price-tag">10 ОК</span>
+        <span class="price-tag">1 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -270,7 +270,7 @@
         </div>
       </div>
       <div class="gift-card__price" aria-hidden="true">
-        <span class="price-tag">10 ОК</span>
+        <span class="price-tag">1 ОК</span>
       </div>
       <div class="gift-card__accept">
         <div class="button-wrapper __size-56 gift-card__btn-accept">
@@ -476,9 +476,16 @@
     // экрана + ужимание на низких вьюпортах. Если при масштабе 1 зазор
     // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
     // зазор стал ровно 48. Высота карточки подарка в ряду — 422 (__active).
-    var ROW_CARD_H = 486, ROW_HALF = 175, MIN_GAP = 48;
+    // Высоты карточки считаем из частей (синхронно с gift-card.css), не хардкодим.
+    var GC_BASE_H = 350, GC_BTN_H = 56, GC_ACCEPT_GAP = 8, GC_ACCEPT_MARGIN = 16;
+    var ACTIVE_CARD_H  = GC_BASE_H + GC_ACCEPT_MARGIN + (GC_BTN_H * 2 + GC_ACCEPT_GAP); // 486 (две кнопки)
+    var SETTLED_CARD_H = GC_BASE_H + GC_ACCEPT_MARGIN + GC_BTN_H;                        // 422 (одна кнопка)
+    var ROW_CARD_H = ACTIVE_CARD_H, ROW_HALF = GC_BASE_H / 2, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
+    // Когда все подарки разобраны и снизу появилась кнопка «Закрыть» — ряд
+    // масштабируем так, чтобы от низа карточек до кнопки был зазор ровно 32.
+    var finishActive = false;
     function recenterRow() {
       if (!BASE) {
         BASE = {};
@@ -491,10 +498,29 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      // Поднятый gp__title (стейты 2–4): top = 25%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 25% высоты экрана.
+      var titleH = titleEl.offsetHeight || 80;
+      var raisedTop = Math.max(0, Math.round(pageH * 0.25 - titleH));
+      STATES[1].title = raisedTop;
+      STATES[2].title = raisedTop;
+      STATES[3].title = raisedTop;
+      var titleBottom = STATES[3].title + titleH;
       var avail = pageH - titleBottom;
       var s = 1;
-      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+      if (finishActive) {
+        // Появилась кнопка «Закрыть» — следим, чтобы она НЕ налезала на карточки:
+        // минимум 16px от низа карточки до кнопки. Карточки НЕ увеличиваем сверх
+        // натурального размера (s ≤ 1) — только ужимаем, если иначе налезает.
+        var pageW = window.innerWidth || document.documentElement.clientWidth;
+        var BTN_RESERVE = 24 + 56;        // gp__finish: отступ снизу + высота кнопки
+        var FINISH_GAP = 16;              // зазор карточка → кнопка
+        var desiredBottom = pageH - BTN_RESERVE - FINISH_GAP;
+        var cardTop = titleBottom + TITLE_GAP;
+        s = (desiredBottom - cardTop) / ROW_CARD_H;
+        var widthCap = (pageW - 32) / 300;  // карточка не шире экрана (16px по краям)
+        s = Math.max(0.4, Math.min(s, 1, widthCap));
+      } else if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
       // Верх карточки = titleBottom + TITLE_GAP (фикс. зазор от заголовка).
@@ -927,15 +953,20 @@
       }
 
       // ── ACCEPT / DISMISS ────────────────────────────────────
-      // Пул случайных гифок-подарков для благодарности в ответ.
+      // Пул подарков для стейта «Спасибо» (благодарность в ответ).
       var GIFTS = [
-        'assets/gifts/0b5f1dfc84df8270.gif',
-        'assets/gifts/2c88625b66d012f5.gif',
-        'assets/gifts/5aa90cf1d5001c51.gif',
-        'assets/gifts/b4001253d8302881.gif',
-        'assets/gifts/bb5a45d04c2ef81d.gif',
-        'assets/gifts/d7d90bc43c674792.gif'
+        'assets/gifts/thanks-1.gif',
+        'assets/gifts/thanks-2.jpg',
+        'assets/gifts/thanks-3.jpg'
       ];
+      // Сразу раздаём по одному уникальному подарку на карточку (без повторов).
+      var giftPool = GIFTS.slice();
+      for (var gi = giftPool.length - 1; gi > 0; gi--) {   // Fisher–Yates
+        var gj = Math.floor(Math.random() * (gi + 1));
+        var gt = giftPool[gi]; giftPool[gi] = giftPool[gj]; giftPool[gj] = gt;
+      }
+      var giftFor = {};
+      IDX.forEach(function (i, k) { giftFor[i] = giftPool[k % giftPool.length]; });
 
       // Когда все подарки разобраны (приняты/отклонены) — снизу появляется
       // secondary-кнопка «Закрыть» (выход не только по кресту), через 500мс.
@@ -951,6 +982,25 @@
             if (closeBtn) closeBtn.click();
           });
         }
+        // Через 300мс карточки «оседают»: высота уменьшается так, что прайс
+        // встаёт в 16px над кнопкой; ряд перецентрируется под кнопку «Закрыть».
+        // Анимация медленная (500мс).
+        setTimeout(function () {
+          ROW_CARD_H = SETTLED_CARD_H; // компактная высота осевшей карточки (вычислена)
+          finishActive = true;
+          IDX.forEach(function (j) {
+            els[j].classList.add('__settled');
+            els[j].style.transition = 'transform 500ms ease';
+          });
+          recenterRow();
+          requestAnimationFrame(function () {
+            IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
+          });
+          setTimeout(function () {
+            IDX.forEach(function (j) { els[j].style.transition = ''; });
+          }, 540);
+        }, 300);
+        // Кнопка «Закрыть» — через 500мс.
         setTimeout(function () {
           if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
         }, 500);
@@ -981,9 +1031,7 @@
           // Плавная смена подарка (crossfade): гасим, меняем src, проявляем.
           var img = el.querySelector('.gift-card__photo');
           if (img) {
-            var cur = img.getAttribute('src');
-            var pool = GIFTS.filter(function (g) { return g !== cur; });
-            var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+            var next = giftFor[i] || GIFTS[0];   // заранее назначенный, без повторов
             img.style.transition = 'opacity 280ms ease';
             img.style.opacity = '0';
             setTimeout(function () {
@@ -993,10 +1041,7 @@
           }
           // Прайс с ценой под подарком (плавно — через класс __thanks).
           var priceEl = el.querySelector('.price-tag');
-          if (priceEl) {
-            var PRICES = [10, 25, 50, 99, 149];
-            priceEl.textContent = PRICES[Math.floor(Math.random() * PRICES.length)] + ' ОК';
-          }
+          if (priceEl) priceEl.textContent = '1 ОК';
           el.classList.add('__thanks');
         }, 3000);
       }

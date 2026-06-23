@@ -1844,6 +1844,7 @@
                 <div class="ds-body-m text-feed__reshare-card-author-name">Наталья Атаманюк | Рецепты</div>
               </div>
               <p class="ds-body-m text-feed__body">ГОРБУШУ с кабачками готовлю так ВКУСНО, что дорогую рыбу не надо! Рецепт, который поменяет Ваше мнение о горбуше! Вкусно очень!</p>
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9"><img style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" src="https://www.russianfood.com/dycontent/images_upl/616/big_615030.jpg" alt=""></div>
             </div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>32</span></button></span>
@@ -2403,12 +2404,12 @@
           + captionHTML
           + '<div class="text-feed__media __single"><img style="width:100%;height:100%;object-fit:cover;display:block" src="' + esc(p.photo) + '" alt=""></div>'
           + '<div class="actions-bar">'
-          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
-          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">0</span></button></div>'
-          +   '<label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
+          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt=""></span></button></div>'
+          +   '<div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt=""></span></button></div>'
+          +   '<label class="button-wrapper __size-36 button-klass __no-count" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>'
           +   '<div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>'
           + '</div>'
-          + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-s marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
+          + '<div class="text-feed__marathon"><div class="marathon-promo"><p class="ds-title-m marathon-promo__text">Вы уже участвуете, посмотрите другие фото марафона <span class="marathon-promo__tag">' + esc(hashtag) + '</span></p><p class="ds-body-m marathon-promo__count">11К участников</p></div>'
           +   '<div class="button-wrapper __size-36 __full-width" style="display:block"><button class="button-container __style-secondary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button></div></div>';
         // каждый новый пост — сразу после якоря, поэтому самый свежий оказывается сверху
         if (anchor && anchor.nextSibling) feed.insertBefore(art, anchor.nextSibling);
@@ -2555,6 +2556,22 @@
       });
     });
   })();
+  </script>
+
+  <!-- Заголовок «Новая лента» перед первым comment-as-feed -->
+  <script>
+    (function () {
+      var feed = document.querySelector('.ll-feed');
+      if (!feed) return;
+      var firstCaf = feed.querySelector('.caf');
+      if (!firstCaf) return;
+      var header = document.createElement('div');
+      header.className = 'ds-title-l';
+      header.style.padding = '16px';
+      header.style.textAlign = 'center';
+      header.textContent = 'Новая лента';
+      firstCaf.parentNode.insertBefore(header, firstCaf);
+    })();
   </script>
 </body>
 </html>
