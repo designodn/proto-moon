@@ -60,3 +60,9 @@
 .button-klass__count::before {
   content: counter(klass-count);
 }
+
+/* Нет лайков в данных (__no-count): показываем только иконку, пока пост не
+   лайкнули. После тапа counter-increment делает 1 → счётчик снова виден. */
+.button-klass.__no-count:not(:has(> input:checked)) .button-klass__count {
+  display: none;
+}

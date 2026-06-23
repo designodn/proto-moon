@@ -408,14 +408,21 @@ ${cells}
 const llIcon = (file, cls = 'll-icon', w = 20) =>
   `<img class="${cls}" src="assets/icons/${file}" width="${w}" height="${w}" alt="">`;
 
-/** Кнопка-счётчик (comment / reshare). Пустой счётчик → 0. */
+/** Кнопка-счётчик (comment / reshare). Нет значения или 0 → только иконка
+ *  (число не выводим). */
 function countBtn(file, n, { style = 'secondary' } = {}) {
-  return `            <div class="button-wrapper __size-36"><button class="button-container __style-${style}"><span class="button-content">${llIcon(file)}${esc(n || 0)}</span></button></div>`;
+  const num = parseInt(n, 10);
+  const label = (Number.isFinite(num) && num > 0) ? esc(String(num)) : '';
+  return `            <div class="button-wrapper __size-36"><button class="button-container __style-${style}"><span class="button-content">${llIcon(file)}${label}</span></button></div>`;
 }
 
-/** Кнопка «класс» с --button-klass-count. Пустой счётчик → 0. */
+/** Кнопка «класс» с --button-klass-count. Нет значения или 0 → только иконка
+ *  (класс __no-count прячет нулевой счётчик через CSS; после тапа counter-increment
+ *  делает 1 и счётчик снова виден — см. components/actions-bar.css). */
 function klassBtn(likes, { style = 'secondary' } = {}) {
-  return `            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: ${esc(likes || 0)};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}${llIcon('klass_filled_16_20.svg', 'll-icon button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>`;
+  const num = parseInt(likes, 10);
+  const has = Number.isFinite(num) && num > 0;
+  return `            <label class="button-wrapper __size-36 button-klass${has ? '' : ' __no-count'}" style="--button-klass-count: ${has ? num : 0};"><input type="checkbox" hidden><span class="button-container __style-${style}"><span class="button-content">${llIcon('klass_16_20.svg', 'll-icon button-klass__icon-outline')}${llIcon('klass_filled_16_20.svg', 'll-icon button-klass__icon-filled')}<span class="button-klass__count"></span></span></span></label>`;
 }
 
 /** «Троеточие» (__pinned-end). */
@@ -763,7 +770,7 @@ ${likesBlock}
               ${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}
             </div>` : '';
       return `        <article class="text-feed island">
-${authorHeaderFn(aid, time)}
+${activityLine(p.header)}${authorHeaderFn(aid, time)}
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -774,7 +781,7 @@ ${authorHeaderFn(aid, time)}
 ${feedText(text)}${mediaBlock}
           </div>
 ${actionsBar(likes, comments, reshares)}
-        </article>`;
+        </article>`.replace(/\n\n+/g, '\n\n');
     }
 
     /* ── Added Friend — добавил в друзья (встроенная friend-row) ── */
