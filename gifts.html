@@ -479,6 +479,9 @@
     var ROW_CARD_H = 486, ROW_HALF = 175, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
+    // Когда все подарки разобраны и снизу появилась кнопка «Закрыть» — ряд
+    // масштабируем так, чтобы от низа карточек до кнопки был зазор ровно 32.
+    var finishActive = false;
     function recenterRow() {
       if (!BASE) {
         BASE = {};
@@ -494,7 +497,17 @@
       var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
       var avail = pageH - titleBottom;
       var s = 1;
-      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+      if (finishActive) {
+        // Прижимаем ряд к кнопке «Закрыть»: ровно 32px от низа карточек до неё.
+        var pageW = window.innerWidth || document.documentElement.clientWidth;
+        var BTN_RESERVE = 24 + 56;        // gp__finish: отступ снизу + высота кнопки
+        var FINISH_GAP = 32;              // зазор карточка → кнопка
+        var desiredBottom = pageH - BTN_RESERVE - FINISH_GAP;
+        var cardTop = titleBottom + TITLE_GAP;
+        s = (desiredBottom - cardTop) / ROW_CARD_H;
+        var widthCap = (pageW - 32) / 300;  // карточка не шире экрана (16px по краям)
+        s = Math.max(0.4, Math.min(s, widthCap));
+      } else if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
       // Верх карточки = titleBottom + TITLE_GAP (фикс. зазор от заголовка).
@@ -958,6 +971,16 @@
         }
         setTimeout(function () {
           if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+          // Перескейливаем ряд под кнопку (зазор 32) — плавно.
+          finishActive = true;
+          recenterRow();
+          IDX.forEach(function (j) { els[j].style.transition = 'transform 320ms ease'; });
+          requestAnimationFrame(function () {
+            IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
+          });
+          setTimeout(function () {
+            IDX.forEach(function (j) { els[j].style.transition = ''; });
+          }, 360);
         }, 500);
       }
 
