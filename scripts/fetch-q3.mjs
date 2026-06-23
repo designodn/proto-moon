@@ -358,11 +358,20 @@ function clampMore(text, { textClass = 'ds-body-m text-feed__body', clamp = CLAM
   }
   let cut = s.lastIndexOf(' ', clamp);
   if (cut < clamp * 0.5) cut = clamp;
-  const head = s.slice(0, cut);
+  let head = s.slice(0, cut);
   const tail = s.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  // Если видимая «голова» кончается знаком препинания — прячем его в превью
+  // (переносим в скрытый хвост): «…» должно приклеиваться к слову, а не к запятой.
+  // В развёрнутом виде знак возвращается (full = punct + tail = исходный текст).
+  let full = tail;
+  const punct = head.match(/[.,;:!?…·–—]+$/);
+  if (punct && head.length > punct[0].length) {
+    head = head.slice(0, -punct[0].length);
+    full = punct[0] + tail;
+  }
   return `          <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="${textClass} feed-more__text">${esc(head)}<span class="feed-more__full">${esc(tail)}</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="${textClass} feed-more__text">${esc(head)}<span class="feed-more__full">${esc(full)}</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>`;
 }
 

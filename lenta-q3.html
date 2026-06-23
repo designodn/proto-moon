@@ -162,6 +162,12 @@
     filter: brightness(0) invert(1);
   }
 
+  /* Кнопка ИИ-подарка (__style-ai-gift): текст белый (--button-color inverse),
+     иконку <img> красим в цвет текста — форсим белый тем же фильтром. */
+  .button-container.__style-ai-gift .ll-icon {
+    filter: brightness(0) invert(1);
+  }
+
   /* Несколько фото в ряду — растягиваем галерею на всю ширину карточки:
      ячейки делят 100% поровну (flex:1) вместо натуральной ширины по
      aspect-ratio, поэтому ряд всегда заполняет ширину без пустот/скролла. */
@@ -648,7 +654,7 @@
             <h2 class="text-feed__title ds-title-l">Из истории моего родного Уварова</h2>
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="ds-body-m text-feed__body feed-more__text">УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины,<span class="feed-more__full"> на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="ds-body-m text-feed__body feed-more__text">УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины<span class="feed-more__full">, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg" alt=""></div>
@@ -1244,7 +1250,7 @@
 
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="caf-text feed-more__text">Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете!!!<span class="feed-more__full"> ❤️</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="caf-text feed-more__text">Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете<span class="feed-more__full">!!! ❤️</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -1822,8 +1828,8 @@
           <div class="ll-otd__likes">
             <div class="avatars-view __size-36">
               <div class="avatars-view__stack">
-                <div class="avatar __size-36 __type-image"><img data-person-avatar="vvz-1" alt=""></div>
-                <div class="avatar __size-36 __type-image"><img data-person-avatar="vvz-3" alt=""></div>
+                <div class="avatar __size-36 __type-image"><img data-person-avatar="3" alt=""></div>
+                <div class="avatar __size-36 __type-image"><img data-person-avatar="5" alt=""></div>
                 <div class="avatar __size-36 __type-image"><img data-person-avatar="7" alt=""></div>
               </div>
             </div>
