@@ -146,18 +146,22 @@
   display: flex;
   flex-direction: column;
 }
-/* 8 между самим комментом, списком ответов (.fc-list) и полем ввода (.fc-input). */
-.caf.__twitter-like {
+
+/* Единый контейнер: ряд-коммент + список ответов (.fc-list) + поле (.fc-input).
+   Без паддингов, вертикальный ритм — gap 8. */
+.caf.__twitter-like .caf__stack {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);              /* 8 */
+  padding: 0;
 }
 
-/* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам,
-   8 снизу. */
+/* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
 .caf.__twitter-like .caf__row {
   display: flex;
   gap: var(--space-3);              /* 12 между авой и контентом */
   align-items: stretch;            /* палка-aside тянется на всю высоту ряда */
-  padding: 0 var(--space-4) var(--space-2);   /* 16 по бокам, 8 снизу */
+  padding: 0 var(--space-4);        /* 16 по бокам */
 }
 
 /* Левая колонка: ава 44 сверху, под ней «палка» до низа ряда. */
@@ -220,15 +224,16 @@
   border-radius: 12px;
 }
 
-/* Ряд из 3 счётчиков-кнопок (button-inline __size-16) — 8 от превью,
+/* Ряд из 3 счётчиков-кнопок (button-inline __size-20) — 8 от превью,
    gap 12 между кнопками, отступ иконка↔счётчик 4 (как в макете). */
 .caf__actions {
   display: flex;
   align-items: center;
   gap: var(--space-3);              /* 12 между кнопками */
   margin-top: var(--space-2);       /* 8 */
+  padding-bottom: var(--space-1);   /* 4 — нижний отступ ряда-коммента */
 }
-.caf__actions .button-inline.__size-16 {
+.caf__actions .button-inline.__size-20 {
   --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
 }
 

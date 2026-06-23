@@ -197,7 +197,7 @@
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;
-  gap: var(--space-3);              /* 12 между авой и именем */
+  gap: var(--space-2);              /* 8 между авой и именем */
 }
 .text-feed__reshare-card-author-name {
   flex: 1 1 0;
@@ -206,6 +206,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Имя автора всегда title-s (а не body-m из разметки): единственное отличие
+     от body-m — вес 600. Централизованно перебиваем здесь, чтобы не править
+     класс в каждом месте, где рендерится reshare-card. text-feed.css
+     импортируется позже tokens.css → при равной специфичности (0,1,0) бьёт
+     .ds-body-m. */
+  font-weight: 600;
 }
 
 /* media в reshare-card: edge-to-edge — отрицательные margin'ы
