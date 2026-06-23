@@ -30,17 +30,6 @@
     display: flex; flex-direction: column; gap: var(--space-4);
     padding: 0 var(--space-4) 32px;
   }
-  /* инфо-баннер (кликабельный → штора с правилами) */
-  .rf-banner {
-    display: flex; align-items: center; gap: var(--space-3);
-    width: 100%; box-sizing: border-box; text-align: left;
-    border: 0; font: inherit; cursor: pointer;
-    background: var(--dynamic-surface-contrast-low);
-    border-radius: 16px;
-    padding: var(--space-4);
-    color: var(--dynamic-text-and-icons-base-primary);
-  }
-  .rf-banner__text { flex: 1 1 0; min-width: 0; }
   .rf-list { display: flex; flex-direction: column; gap: var(--space-4); }
 
   /* ── Штора (правила / как получить билет) ─────────────────────── */
@@ -144,10 +133,6 @@
 
       <!-- КОНТЕНТ -->
       <div class="rf">
-        <button class="rf-banner ds-body-m" id="banner" type="button">
-          <span class="rf-banner__text ds-body-m">Отправим вашему другу приглашение в&nbsp;чат, можно отправить не&nbsp;больше 10&nbsp;приглашений в&nbsp;день</span>
-        </button>
-
         <div class="rf-list" id="list">
           <!-- «Друга нет в ОК?» — поделиться ссылкой -->
           <div class="user-cell">
