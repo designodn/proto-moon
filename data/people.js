@@ -116,7 +116,7 @@ window.DS_PEOPLE_DATA = [
     "subtitle": "",
     "photo": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&dpr=2",
     "media": "image",
-    "gender": "",
+    "gender": "ж",
     "age": 92,
     "city": "",
     "bio": ""
