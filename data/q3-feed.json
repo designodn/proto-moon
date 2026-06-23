@@ -25,37 +25,28 @@
       "threadComments": []
     },
     {
-      "id": "post-7",
-      "type": "comment-as-feed",
-      "author": "4, group-9",
-      "tema": "Еда",
-      "rubrika": "Выпечка",
-      "header": "",
-      "title": "Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправляю в масличко аккуратненько чтобы не забрызгало)))",
-      "text": "Домашние беляши с мясом. Всегда готовлю сразу двойную порцию",
+      "id": "row-2",
+      "type": "photo",
+      "author": "8",
+      "tema": "",
+      "rubrika": "",
+      "header": "id_2 поставил класс",
+      "title": "Из истории моего родного Уварова",
+      "text": "УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.",
       "photos": [
-        "https://zira.uz/wp-content/uploads/2018/01/belyashi-7.jpg"
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
       ],
       "photosRaw": [
-        "https://zira.uz/wp-content/uploads/2018/01/belyashi-7.jpg"
+        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
       ],
-      "likes": "12",
-      "comments": "6",
+      "likes": "25",
+      "comments": "0",
       "reshares": "1",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
-      "desc": "Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовала, домашние всё равно нравятся больше.",
-      "threadComments": [
-        {
-          "authorId": "9",
-          "text": "И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой"
-        },
-        {
-          "authorId": "11",
-          "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
-        }
-      ]
+      "desc": "",
+      "threadComments": []
     },
     {
       "id": "post-4",
@@ -82,28 +73,33 @@
       "threadComments": []
     },
     {
-      "id": "row-4",
-      "type": "photo",
-      "author": "8",
+      "id": "post-3",
+      "type": "text",
+      "author": "1",
       "tema": "",
       "rubrika": "",
-      "header": "id_2 поставил класс",
-      "title": "Из истории моего родного Уварова",
-      "text": "УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.",
-      "photos": [
-        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
-      ],
-      "photosRaw": [
-        "https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg"
-      ],
-      "likes": "25",
-      "comments": "0",
-      "reshares": "1",
+      "header": "",
+      "title": "",
+      "text": "Поставили новый счётчик, а расход стал больше обычного.",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "5",
+      "comments": "20",
+      "reshares": "2",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": []
+      "threadComments": [
+        {
+          "authorId": "3",
+          "text": "Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!"
+        },
+        {
+          "authorId": "6",
+          "text": "руки потому что не из тго места"
+        }
+      ]
     },
     {
       "id": "post-18",
@@ -177,19 +173,23 @@
       "threadComments": []
     },
     {
-      "id": "post-3",
-      "type": "text",
-      "author": "1",
-      "tema": "",
-      "rubrika": "",
+      "id": "row-8",
+      "type": "photo",
+      "author": "group-7",
+      "tema": "Спорт",
+      "rubrika": "Новости спорта",
       "header": "",
-      "title": "",
-      "text": "Поставили новый счётчик, а расход стал больше обычного.",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "5",
-      "comments": "20",
-      "reshares": "2",
+      "title": "Первый финал Мирры на «Ролан Гаррос» и ТБШ!",
+      "text": "Юная россиянка разгромила украинку Костюк и добыла путёвку в решающий матч грунтового мэйджора.",
+      "photos": [
+        "https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg"
+      ],
+      "photosRaw": [
+        "https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg"
+      ],
+      "likes": "152",
+      "comments": "34",
+      "reshares": "52",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
@@ -197,11 +197,7 @@
       "threadComments": [
         {
           "authorId": "3",
-          "text": "Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!"
-        },
-        {
-          "authorId": "6",
-          "text": "руки потому что не из тго места"
+          "text": "Я тоже уверен....что сейчас это произойдет.....она готова, если конечно наша Миррочка только не перегорит....психология, она такая штука....удачи Миррочка в финале....да и в будущих тоже )"
         }
       ]
     },
@@ -235,35 +231,6 @@
     },
     {
       "id": "row-10",
-      "type": "photo",
-      "author": "group-7",
-      "tema": "Спорт",
-      "rubrika": "Новости спорта",
-      "header": "",
-      "title": "Первый финал Мирры на «Ролан Гаррос» и ТБШ!",
-      "text": "Юная россиянка разгромила украинку Костюк и добыла путёвку в решающий матч грунтового мэйджора.",
-      "photos": [
-        "https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg"
-      ],
-      "photosRaw": [
-        "https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg"
-      ],
-      "likes": "152",
-      "comments": "34",
-      "reshares": "52",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "3",
-          "text": "Я тоже уверен....что сейчас это произойдет.....она готова, если конечно наша Миррочка только не перегорит....психология, она такая штука....удачи Миррочка в финале....да и в будущих тоже )"
-        }
-      ]
-    },
-    {
-      "id": "row-11",
       "type": "gift-received",
       "author": "7, 4",
       "tema": "",
@@ -292,7 +259,7 @@
       ]
     },
     {
-      "id": "row-12",
+      "id": "row-11",
       "type": "photo",
       "author": "5",
       "tema": "",
@@ -316,32 +283,31 @@
       "threadComments": []
     },
     {
-      "id": "post-2",
-      "type": "text",
-      "author": "3",
+      "id": "row-12",
+      "type": "photo",
+      "author": "8",
       "tema": "",
       "rubrika": "",
       "header": "",
       "title": "",
-      "text": "Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "2",
-      "comments": "1",
+      "text": "Ох помню разбили окно соседке тете Люде, столько люлей отхватили ))) хорошее раньше было детство.",
+      "photos": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
+      ],
+      "photosRaw": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
+      ],
+      "likes": "4",
+      "comments": "2",
       "reshares": "1",
       "link": "",
-      "marathon": "",
+      "marathon": "РадостьДетства",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [
-        {
-          "authorId": "4",
-          "text": "я люблю груши"
-        }
-      ]
+      "threadComments": []
     },
     {
-      "id": "row-14",
+      "id": "row-13",
       "type": "photo",
       "author": "group-10",
       "tema": "Сделай сам",
@@ -374,6 +340,31 @@
       ]
     },
     {
+      "id": "post-2",
+      "type": "text",
+      "author": "3",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Я люблю фрукты, это же витамины, для стройности полезно, ем их каждый день – яблоки, груши, виноград, иногда бананы. Но в последнее время заметила, что после них живот начинает пучить, урчать, иногда даже болит. Особенно если съем много за раз или на голодный желудок.",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "2",
+      "comments": "1",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "4",
+          "text": "я люблю груши"
+        }
+      ]
+    },
+    {
       "id": "row-15",
       "type": "ad",
       "author": "ad-2",
@@ -399,30 +390,6 @@
     },
     {
       "id": "row-16",
-      "type": "photo",
-      "author": "8",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Ох помню разбили окно соседке тете Люде, столько люлей отхватили ))) хорошее раньше было детство.",
-      "photos": [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
-      ],
-      "photosRaw": [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&s=10"
-      ],
-      "likes": "4",
-      "comments": "2",
-      "reshares": "1",
-      "link": "",
-      "marathon": "РадостьДетства",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
-      "id": "row-17",
       "type": "photo",
       "author": "8",
       "tema": "",
@@ -480,36 +447,7 @@
       ]
     },
     {
-      "id": "post-8",
-      "type": "comment-as-feed",
-      "author": "1, 10",
-      "tema": "Еда",
-      "rubrika": "Вторые блюда",
-      "header": "",
-      "title": "Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете!!! ❤️",
-      "text": "Тушеная капуста: простой и вкусный рецепт на каждый день",
-      "photos": [
-        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
-      ],
-      "photosRaw": [
-        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
-      ],
-      "likes": "25",
-      "comments": "20",
-      "reshares": "1",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Всем привет, мои дорогие! Сегодня радовала своих мальчишек тушеной капустой с мясом. Классическое блюдо, которое в соей семье всегда разлетается на ура.",
-      "threadComments": [
-        {
-          "authorId": "3",
-          "text": "Мне очень нравится, что все расписано по шагова, иногда забываешь, если давно не готовишь"
-        }
-      ]
-    },
-    {
-      "id": "row-20",
+      "id": "row-18",
       "type": "ad",
       "author": "ad-4",
       "tema": "",
@@ -574,220 +512,6 @@
       ]
     },
     {
-      "id": "row-22",
-      "type": "comment-as-feed",
-      "author": "8, group-9",
-      "tema": "Еда",
-      "rubrika": "Закуски",
-      "header": "",
-      "title": "Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса",
-      "text": "🥔 Драники — тот самый рецепт, который никогда не надоедает 🤍",
-      "photos": [
-        "https://s1.eda.ru/StaticContent/Photos/Upscaled/i/130327083418/p_O.jpg"
-      ],
-      "photosRaw": [
-        "https://s1.eda.ru/StaticContent/Photos/Upscaled/i/130327083418/p_O.jpg"
-      ],
-      "likes": "4",
-      "comments": "18",
-      "reshares": "2",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Хрустящая золотистая корочка снаружи, нежная картофельная серединка внутри — кажется, устоять просто невозможно 😍",
-      "threadComments": [
-        {
-          "authorId": "4",
-          "text": "... 😄мы сими с усами."
-        },
-        {
-          "authorId": "9",
-          "text": "Настоящие, по- белорусски!"
-        }
-      ]
-    },
-    {
-      "id": "row-23",
-      "type": "ai-gift-received",
-      "author": "7, 2",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "Получила подарок от",
-      "text": "",
-      "photos": [
-        "https://www.justmedia.ru/upload/analitika/68/94/689445adbfbf2888931166_1400_1200.png"
-      ],
-      "photosRaw": [
-        "https://www.justmedia.ru/upload/analitika/68/94/689445adbfbf2888931166_1400_1200.png"
-      ],
-      "likes": "7",
-      "comments": "2",
-      "reshares": "1",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "10",
-          "text": "вауууу"
-        }
-      ]
-    },
-    {
-      "id": "row-24",
-      "type": "comment-as-feed",
-      "author": "2, group-1",
-      "tema": "Еда",
-      "rubrika": "Блюда из рыбы",
-      "header": "",
-      "title": "Подготовьте необходимые ингредиенты. Репчатый лук нарежьте произвольно, морковь натрите на крупной терке. Обжарьте овощи на растительном масле до готовности. Горбушу профилируйте, оставьте на коже. Удалите всевозможные мелкие косточки. Разрежьте на порционные кусочки. Разложите на блюдо. Посолите, приправьте перцем. Отставьте в сторону. Кабачок очистите от кожуры. Нарежьте на шайбочки толщиной 0,3-0,5 см. Возьмите форму для запекания. Выложите 1/2 часть нарезанных кабачков. На слой кабачков выложите подготовленные кусочки горбуши. Сверху разложите вторую отложенную часть нарезанных кабачков. На слой из кабачков выложите обжаренные лук с морковью. В отдельную чашу натрите на средней терке сыр. Добавьте к нему сметану и перемешайте. При желании посолите. Сырно-сметанной массой покройте содержимое в форме. Разровняйте. Поставьте в разогретую до 200 градусов духовку на 20-25 минут. По истечении времени достаньте форму из духовки. Блюдо сервируйте и подавайте к столу. Приятного аппетита!",
-      "text": "ГОРБУШУ с кабачками готовлю так ВКУСНО, что дорогую рыбу не надо! Рецепт, который поменяет Ваше мнение о горбуше! Вкусно очень!",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "45",
-      "comments": "32",
-      "reshares": "3",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Сегодня готовим одно из самых простых и вкусных блюд — карамелизированные кабачки с горбушей в медово-соевом соусе. Хрустящая корочка, тягучий соус, аромат на всю кухню!",
-      "threadComments": [
-        {
-          "authorId": "vvz-1",
-          "text": "Люди!!!!!!!! Не пишите , пожалуйста, всевозможную хе-ю. Лучше напишите свои комментарии после приготовления блюда."
-        },
-        {
-          "authorId": "vvz-3",
-          "text": "Спасибо за рецепт полезного и вкусного ужина! Это ещё один рецепт для тех кто не равнодушен к кабачку и рыбе! Записала и обязательно приготовлю. Жду новых Ваших рецептов! 🥰"
-        }
-      ]
-    },
-    {
-      "id": "row-25",
-      "type": "comment-as-feed",
-      "author": "5, group-1",
-      "tema": "Еда",
-      "rubrika": "Идеи",
-      "header": "",
-      "title": "Смотрится круто и с юмором. Но только для фотосессий или для кадра. Спать в такой кровати я бы не хотела. Это неудобно.",
-      "text": "Кровати из еды",
-      "photos": [
-        "https://masterpiecer-images.s3.yandex.net/685552fb7b3e11ee95122aa0df1cd6e5:upscaled"
-      ],
-      "photosRaw": [
-        "https://masterpiecer-images.s3.yandex.net/685552fb7b3e11ee95122aa0df1cd6e5:upscaled"
-      ],
-      "likes": "12",
-      "comments": "3",
-      "reshares": "2",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Какую кровать выбрали бы вы? Пишите в комментариях",
-      "threadComments": [
-        {
-          "authorId": "vvz-1",
-          "text": "Мне такая идея не нравится."
-        },
-        {
-          "authorId": "6",
-          "text": "Клубничная клёвая😊"
-        }
-      ]
-    },
-    {
-      "id": "row-26",
-      "type": "ad",
-      "author": "ad-3",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Оптом и в розницу. Порадуйте близких букетом",
-      "photos": [
-        "https://flowers-1.ru/uploads/page/4/4/uploads/78aefc237a1a3d15743608ce6b3cbe66.jpg"
-      ],
-      "photosRaw": [
-        "https://flowers-1.ru/uploads/page/4/4/uploads/78aefc237a1a3d15743608ce6b3cbe66.jpg"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
-      "id": "row-27",
-      "type": "photo",
-      "author": "group-8",
-      "tema": "Политика",
-      "rubrika": "Общество",
-      "header": "",
-      "title": "Шринкфляция отобрала у россиян сосиску",
-      "text": "В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.",
-      "photos": [
-        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
-      ],
-      "photosRaw": [
-        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
-      ],
-      "likes": "213",
-      "comments": "35",
-      "reshares": "4",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "11",
-          "text": "А что туалетная бумага была много разовая, я такого не помню! Видимо собирали сушили и еще несколько раз пользовались таким макаром!"
-        },
-        {
-          "authorId": "9",
-          "text": "Просто у вас ум короток и с юмором туговато. Вспомните, что раньше выпускали в рулоне бумаги, было определенное количество метража и он был постоянный. А теперь упаковка туалетной бумаги стоит дороже, но бумаги в ней меньше, можно сказать на один раз."
-        }
-      ]
-    },
-    {
-      "id": "row-28",
-      "type": "video",
-      "author": "group-9",
-      "tema": "Еда",
-      "rubrika": "Рецепты",
-      "header": "",
-      "title": "Рыба под маринадом с пюре",
-      "text": "1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить лук пару минут, далее добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре",
-      "photos": [
-        "https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG"
-      ],
-      "photosRaw": [
-        "https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG"
-      ],
-      "likes": "67",
-      "comments": "44",
-      "reshares": "2",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "vvz-1",
-          "text": "Очень вкусно и просто. Спасибо за рецепт."
-        },
-        {
-          "authorId": "2",
-          "text": "Замечательное блюдо! И полезное."
-        }
-      ]
-    },
-    {
       "id": "post-14",
       "type": "memories-clip",
       "author": "my_profile",
@@ -820,7 +544,126 @@
       "threadComments": []
     },
     {
-      "id": "row-30",
+      "id": "row-21",
+      "type": "photo",
+      "author": "group-8",
+      "tema": "Политика",
+      "rubrika": "Общество",
+      "header": "",
+      "title": "Шринкфляция отобрала у россиян сосиску",
+      "text": "В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.",
+      "photos": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
+      ],
+      "photosRaw": [
+        "https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200"
+      ],
+      "likes": "213",
+      "comments": "35",
+      "reshares": "4",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "11",
+          "text": "А что туалетная бумага была много разовая, я такого не помню! Видимо собирали сушили и еще несколько раз пользовались таким макаром!"
+        },
+        {
+          "authorId": "9",
+          "text": "Просто у вас ум короток и с юмором туговато. Вспомните, что раньше выпускали в рулоне бумаги, было определенное количество метража и он был постоянный. А теперь упаковка туалетной бумаги стоит дороже, но бумаги в ней меньше, можно сказать на один раз."
+        }
+      ]
+    },
+    {
+      "id": "row-22",
+      "type": "ad",
+      "author": "ad-3",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Оптом и в розницу. Порадуйте близких букетом",
+      "photos": [
+        "https://flowers-1.ru/uploads/page/4/4/uploads/78aefc237a1a3d15743608ce6b3cbe66.jpg"
+      ],
+      "photosRaw": [
+        "https://flowers-1.ru/uploads/page/4/4/uploads/78aefc237a1a3d15743608ce6b3cbe66.jpg"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": []
+    },
+    {
+      "id": "row-23",
+      "type": "video",
+      "author": "group-9",
+      "tema": "Еда",
+      "rubrika": "Рецепты",
+      "header": "",
+      "title": "Рыба под маринадом с пюре",
+      "text": "1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить лук пару минут, далее добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре",
+      "photos": [
+        "https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG"
+      ],
+      "photosRaw": [
+        "https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG"
+      ],
+      "likes": "67",
+      "comments": "44",
+      "reshares": "2",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "vvz-1",
+          "text": "Очень вкусно и просто. Спасибо за рецепт."
+        },
+        {
+          "authorId": "2",
+          "text": "Замечательное блюдо! И полезное."
+        }
+      ]
+    },
+    {
+      "id": "row-24",
+      "type": "ai-gift-received",
+      "author": "7, 2",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "Получила подарок от",
+      "text": "",
+      "photos": [
+        "https://www.justmedia.ru/upload/analitika/68/94/689445adbfbf2888931166_1400_1200.png"
+      ],
+      "photosRaw": [
+        "https://www.justmedia.ru/upload/analitika/68/94/689445adbfbf2888931166_1400_1200.png"
+      ],
+      "likes": "7",
+      "comments": "2",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "10",
+          "text": "вауууу"
+        }
+      ]
+    },
+    {
+      "id": "row-25",
       "type": "photo",
       "author": "group-11",
       "tema": "Политика",
@@ -849,74 +692,6 @@
       ]
     },
     {
-      "id": "post-9",
-      "type": "photo-gallery",
-      "author": "6",
-      "tema": "",
-      "rubrika": "",
-      "header": "id_5 поставил класс",
-      "title": "",
-      "text": "Дача, конец июля. Розы наконец зацвели после пересадки. Делюсь фотками: ракурсы разные, чтобы было видно, как они стоят",
-      "photos": [
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&dpr=2&fn=h_768",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1KjGJibpF8JvkFhGRAGzPKVvIO9ftaS4tGupM5hj0-npbGv6Nx3qwZeg8F2cixS7zUpHgr8X4ceJjyJ1TFMEROlXIwt3Wv0AAAAKQ&dpr=2&fn=h_768",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1JkzihRyIbKbjHYBU5KWQPZUrcN2MUgC2ca7chl--rFFCnazVUTaFPHiRZ5OnT9Eyd2YofuzREBA2syV164q87o3l2a3NgMAAAAKQ&dpr=2&fn=h_768"
-      ],
-      "photosRaw": [
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J9ETTobTlga7zkwH59p_epNx4IRT8OXpmbNViFJLp-Sd4uConiI3gx0-dYYxWQvDOqJIO3rZ2mtKvnIsMH9ao9D_abwXZkAAAAKQ&dpr=2&fn=w_790",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1IC8FAr5SfOMU0zyFCmc7Q41x6Wz3GCPDC2rR8ykh8yNHxgokQcdBab_ZT0fWl_h8FfyPW11FmuCsZ9-c8xKTzAs5RTvfkcAAAAKQ&dpr=2&fn=h_768",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1KjGJibpF8JvkFhGRAGzPKVvIO9ftaS4tGupM5hj0-npbGv6Nx3qwZeg8F2cixS7zUpHgr8X4ceJjyJ1TFMEROlXIwt3Wv0AAAAKQ&dpr=2&fn=h_768",
-        "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1JkzihRyIbKbjHYBU5KWQPZUrcN2MUgC2ca7chl--rFFCnazVUTaFPHiRZ5OnT9Eyd2YofuzREBA2syV164q87o3l2a3NgMAAAAKQ&dpr=2&fn=h_768"
-      ],
-      "likes": "23",
-      "comments": "6",
-      "reshares": "3",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "5",
-          "text": "Чайно-гибридные розы садила раньше и каждый год приходилось много из них удалять-либо вырастал шиповник (толи выпрела.толи подмерзла).Чем только и как только не укрывала.максимум два года держались. Сейчас у меня в саду только спрейки,канадки (очень выносливые Джон Дэвис и Александр Маккензи) и английский кустовые.Не нарадуюсь! К зиме при гнула,пришпилила.Окучила под корень по ведру сухого перегноя с переработанным конским овсом и накидала на них кусты бархоток да и другие цветы,которые на выброс.Вот и все укрытие. От болезней и вредителей обрабатывают все розы,по другому никак.В прошлом гожу между роз садила бархотки,так даже три не было и кусты были здоровыми..."
-        },
-        {
-          "authorId": "7",
-          "text": "ну какая красота 🧡🧡🧡🧡 какой сорт?"
-        }
-      ]
-    },
-    {
-      "id": "post-16",
-      "type": "shared-link",
-      "author": "10",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "ну не факт",
-      "photos": [
-        "https://s0.rbk.ru/v6_top_pics/resized/1200xH/media/img/4/48/346843257307484.webp"
-      ],
-      "photosRaw": [
-        "https://s0.rbk.ru/v6_top_pics/resized/1200xH/media/img/4/48/346843257307484.webp"
-      ],
-      "likes": "2",
-      "comments": "21",
-      "reshares": "1",
-      "link": "https://www.rbc.ru/life/news/6464c4ea9a794779d9f6e39d",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Как сажать розы на даче, чтобы они зацвели в первый год. Правила пересадки роз в открытый грунт: чего нельзя делать / «Семена роз нужно хранить в холодильнике»: ландшафтный дизайнер Полина Евсеева — о правильной высадке цветов",
-      "threadComments": [
-        {
-          "authorId": "5",
-          "text": "и я также считаю... понапишут потом думают...а интернет все помнит!"
-        }
-      ]
-    },
-    {
       "id": "post-17",
       "type": "gift-received",
       "author": "8, 1",
@@ -941,31 +716,159 @@
       "threadComments": []
     },
     {
-      "id": "post-20",
-      "type": "clip",
-      "author": "5",
-      "tema": "",
-      "rubrika": "",
+      "id": "post-7",
+      "type": "comment-as-feed",
+      "author": "4, group-9",
+      "tema": "Еда",
+      "rubrika": "Выпечка",
       "header": "",
-      "title": "",
-      "text": "",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "56",
-      "comments": "23",
-      "reshares": "23",
+      "title": "Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправляю в масличко аккуратненько чтобы не забрызгало)))",
+      "text": "Домашние беляши с мясом. Всегда готовлю сразу двойную порцию",
+      "photos": [
+        "https://zira.uz/wp-content/uploads/2018/01/belyashi-7.jpg"
+      ],
+      "photosRaw": [
+        "https://zira.uz/wp-content/uploads/2018/01/belyashi-7.jpg"
+      ],
+      "likes": "12",
+      "comments": "6",
+      "reshares": "1",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
-      "desc": "",
+      "desc": "Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовала, домашние всё равно нравятся больше.",
       "threadComments": [
         {
-          "authorId": "10",
-          "text": "на меня похож после стопарика 🤣🤣🤣🤣🤣😂😂😂😂"
+          "authorId": "9",
+          "text": "И я в дырдочку всегда маслица наливаю и жарю так, чтобы в сковороде масла много было и чтоб белая полосочка была тоненькой"
         },
         {
-          "authorId": "2",
-          "text": "накормили небось ненатуральными продуктами, вот он и скачет бедненький...от несворения мучается"
+          "authorId": "11",
+          "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
+        }
+      ]
+    },
+    {
+      "id": "post-8",
+      "type": "comment-as-feed",
+      "author": "1, 10",
+      "tema": "Еда",
+      "rubrika": "Вторые блюда",
+      "header": "",
+      "title": "Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете!!! ❤️",
+      "text": "Тушеная капуста: простой и вкусный рецепт на каждый день",
+      "photos": [
+        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
+      ],
+      "photosRaw": [
+        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
+      ],
+      "likes": "25",
+      "comments": "20",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Всем привет, мои дорогие! Сегодня радовала своих мальчишек тушеной капустой с мясом. Классическое блюдо, которое в соей семье всегда разлетается на ура.",
+      "threadComments": [
+        {
+          "authorId": "3",
+          "text": "Мне очень нравится, что все расписано по шагова, иногда забываешь, если давно не готовишь"
+        }
+      ]
+    },
+    {
+      "id": "row-29",
+      "type": "comment-as-feed",
+      "author": "8, group-9",
+      "tema": "Еда",
+      "rubrika": "Закуски",
+      "header": "",
+      "title": "Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите у настоящего белоруса",
+      "text": "🥔 Драники — тот самый рецепт, который никогда не надоедает 🤍",
+      "photos": [
+        "https://s1.eda.ru/StaticContent/Photos/Upscaled/i/130327083418/p_O.jpg"
+      ],
+      "photosRaw": [
+        "https://s1.eda.ru/StaticContent/Photos/Upscaled/i/130327083418/p_O.jpg"
+      ],
+      "likes": "4",
+      "comments": "18",
+      "reshares": "2",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Хрустящая золотистая корочка снаружи, нежная картофельная серединка внутри — кажется, устоять просто невозможно 😍",
+      "threadComments": [
+        {
+          "authorId": "4",
+          "text": "... 😄мы сими с усами."
+        },
+        {
+          "authorId": "9",
+          "text": "Настоящие, по- белорусски!"
+        }
+      ]
+    },
+    {
+      "id": "row-30",
+      "type": "comment-as-feed",
+      "author": "2, group-1",
+      "tema": "Еда",
+      "rubrika": "Блюда из рыбы",
+      "header": "",
+      "title": "Подготовьте необходимые ингредиенты. Репчатый лук нарежьте произвольно, морковь натрите на крупной терке. Обжарьте овощи на растительном масле до готовности. Горбушу профилируйте, оставьте на коже. Удалите всевозможные мелкие косточки. Разрежьте на порционные кусочки. Разложите на блюдо. Посолите, приправьте перцем. Отставьте в сторону. Кабачок очистите от кожуры. Нарежьте на шайбочки толщиной 0,3-0,5 см. Возьмите форму для запекания. Выложите 1/2 часть нарезанных кабачков. На слой кабачков выложите подготовленные кусочки горбуши. Сверху разложите вторую отложенную часть нарезанных кабачков. На слой из кабачков выложите обжаренные лук с морковью. В отдельную чашу натрите на средней терке сыр. Добавьте к нему сметану и перемешайте. При желании посолите. Сырно-сметанной массой покройте содержимое в форме. Разровняйте. Поставьте в разогретую до 200 градусов духовку на 20-25 минут. По истечении времени достаньте форму из духовки. Блюдо сервируйте и подавайте к столу. Приятного аппетита!",
+      "text": "ГОРБУШУ с кабачками готовлю так ВКУСНО, что дорогую рыбу не надо! Рецепт, который поменяет Ваше мнение о горбуше! Вкусно очень!",
+      "photos": [],
+      "photosRaw": [],
+      "likes": "45",
+      "comments": "32",
+      "reshares": "3",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Сегодня готовим одно из самых простых и вкусных блюд — карамелизированные кабачки с горбушей в медово-соевом соусе. Хрустящая корочка, тягучий соус, аромат на всю кухню!",
+      "threadComments": [
+        {
+          "authorId": "vvz-1",
+          "text": "Люди!!!!!!!! Не пишите , пожалуйста, всевозможную хе-ю. Лучше напишите свои комментарии после приготовления блюда."
+        },
+        {
+          "authorId": "vvz-3",
+          "text": "Спасибо за рецепт полезного и вкусного ужина! Это ещё один рецепт для тех кто не равнодушен к кабачку и рыбе! Записала и обязательно приготовлю. Жду новых Ваших рецептов! 🥰"
+        }
+      ]
+    },
+    {
+      "id": "row-31",
+      "type": "comment-as-feed",
+      "author": "5, group-1",
+      "tema": "Еда",
+      "rubrika": "Идеи",
+      "header": "",
+      "title": "Смотрится круто и с юмором. Но только для фотосессий или для кадра. Спать в такой кровати я бы не хотела. Это неудобно.",
+      "text": "Кровати из еды",
+      "photos": [
+        "https://masterpiecer-images.s3.yandex.net/685552fb7b3e11ee95122aa0df1cd6e5:upscaled"
+      ],
+      "photosRaw": [
+        "https://masterpiecer-images.s3.yandex.net/685552fb7b3e11ee95122aa0df1cd6e5:upscaled"
+      ],
+      "likes": "12",
+      "comments": "3",
+      "reshares": "2",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "Какую кровать выбрали бы вы? Пишите в комментариях",
+      "threadComments": [
+        {
+          "authorId": "vvz-1",
+          "text": "Мне такая идея не нравится."
+        },
+        {
+          "authorId": "6",
+          "text": "Клубничная клёвая😊"
         }
       ]
     }
