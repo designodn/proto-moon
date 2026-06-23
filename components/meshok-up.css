@@ -117,7 +117,7 @@
   background-color: transparent !important;
 }
 .nav-bar.__type-publish .nav-bar__trailing {
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 /* Отступ между элементами слева (кнопка «Опубликовать» + иконка-календарь) = 20 */
 .nav-bar.__type-publish .nav-bar__leading {

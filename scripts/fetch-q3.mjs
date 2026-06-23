@@ -214,7 +214,7 @@ function marathonPromo(hashtag, joined) {
     ? 'Вы уже участвуете, посмотрите другие фото марафона '
     : 'Загружайте фото и участвуйте в марафоне ';
   return `            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-title-m marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
               <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
             </div>`;
 }
@@ -240,17 +240,19 @@ const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
 function authorHeader(id, time, { subscribe = false } = {}) {
-  const sub = subscribe ? `
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>` : '';
+  // Кнопка «Подписаться» — на ОДНОЙ строке с именем (feed-header__line) внутри
+  // текстовой колонки, время — строкой ниже (эталон Figma 4833-29163). Имя тянется
+  // (эллипсис, feed-header__name), кнопка прижата вправо и центрируется по строке.
+  const btn = `<label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>`;
+  const nameLine = subscribe
+    ? `<div class="feed-header__line"><div class="ds-title-s feed-header__name">${esc(personName(id))}</div>${btn}</div>`
+    : `<div class="ds-title-s">${esc(personName(id))}</div>`;
   return `          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(id))}</div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">${esc(personName(id))}</div>
+              ${nameLine}
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
-            </div>${sub}
+            </div>
           </div></div></div>`;
 }
 
@@ -381,9 +383,11 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
   return clampMore(text, { textClass: bodyClass, clamp: CLAMP });
 }
 
-/** caf-text (comment-as-feed): крупный текст коммента — тот же inline-механизм. */
+/** caf-text (comment-as-feed): крупный текст коммента — тот же inline-механизм.
+ *  Типографика ds-title-l (размер из токена), но вес форсированно регулярный
+ *  (см. .caf-text.ds-title-l в comment-as-feed.css). */
 function cafText(title) {
-  return clampMore(title, { textClass: 'caf-text', clamp: CAF_CLAMP });
+  return clampMore(title, { textClass: 'caf-text ds-title-l', clamp: CAF_CLAMP });
 }
 
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */
@@ -735,7 +739,7 @@ ${avatarsStack(likesView.avatars)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -747,7 +751,7 @@ ${avatarsStack(likesView.avatars)}
           </div>
 ${likesBlock}
 
-          <div class="actions-bar">
+          <div class="actions-bar __otd">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
@@ -906,7 +910,7 @@ ${authorHeaderFn(aid, time)}
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
             </div>
           </div>
@@ -943,9 +947,9 @@ ${actionsBar(likes, comments, reshares)}
           <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
           <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __friendversary">
             <div class="button-wrapper __size-36 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -960,7 +964,7 @@ ${actionsBar(likes, comments, reshares)}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title)}</div>
+          <div class="ds-title-l">${esc(title)}</div>
 
           <div class="text-feed__media ll-tagged__media">
             ${img(photos[0] || '')}
@@ -971,7 +975,7 @@ ${actionsBar(likes, comments, reshares)}
             </div>
           </div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __tagged">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
@@ -1013,19 +1017,20 @@ ${actionsBar(likes, comments, reshares)}
       });
       const openUrl = `klipy.html?${q}`;
 
+      // Шапка клипа (оверлей на видео): кнопка «Подписаться» (для сообществ) — на
+      // ОДНОЙ строке с именем (feed-header__line), время — строкой ниже. Имя тянется
+      // (feed-header__name), кнопка центрируется по строке имени (эталон Figma 4833-29163).
+      const clipBtn = `<label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe"><input type="checkbox" hidden><span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label>`;
+      const clipName = isGroupId(aid)
+        ? `<div class="feed-header__line"><div class="ds-title-s feed-header__name">${esc(personName(aid))}</div>${clipBtn}</div>`
+        : `<div class="ds-title-s">${esc(personName(aid))}</div>`;
+
       // Клип С комментами: ТОТ ЖЕ full-bleed клип (видео 9:16 + оверлей автора +
       // mute), но actions-bar и ветка комментов крепятся НИЖЕ на белом (эталон
       // «Комменты Клип»). Плеер заворачиваем в island-карточку; comment-thread
       // добавит attachComments перед </article>. Actions-overlay на видео НЕТ —
       // счётчики уходят в белый actions-bar под клипом.
       if ((p.threadComments || []).length) {
-        const subBtn = isGroupId(aid)
-          ? `
-              <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
-                <input type="checkbox" hidden>
-                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-              </label>`
-          : '';
         const hint = p.header
           ? `          <div class="ds-title-s ll-clipc__hint">${esc(p.header)}</div>\n`
           : '';
@@ -1036,9 +1041,9 @@ ${hint}          <div class="clip-feed ll-clipc__player">
             <div class="clip-feed__header">
               <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
               <div class="clip-feed__txt">
-                <div class="ds-title-s">${esc(personName(aid))}</div>
+                ${clipName}
                 <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
-              </div>${subBtn}
+              </div>
             </div>
             <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>
@@ -1058,7 +1063,7 @@ ${actionsBar(likes, comments, reshares)}
           <div class="clip-feed__header">
             <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
             <div class="clip-feed__txt">
-              <div class="ds-title-s">${esc(personName(aid))}</div>
+              ${clipName}
               <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
             </div>
           </div>
@@ -1097,7 +1102,7 @@ ${moreBtn({ style: 'on-image' })}
             ${EYE_SVG}
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">${esc(title || 'Ваш клип из воспоминаний')}</div>
+          <div class="ds-title-l">${esc(title || 'Ваш клип из воспоминаний')}</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="${esc(label)}">
 ${mediaInner}
@@ -1109,7 +1114,7 @@ ${mediaInner}
                 </span></button>
               </div>
               <div class="button-wrapper __size-36 __pinned-end ll-memclip__more">
-                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
               </div>

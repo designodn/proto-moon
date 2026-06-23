@@ -176,14 +176,17 @@
 
   /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css) */
 
-  /* Баннер под сторис — PNG на фоне контейнера, паддинги 16, текст внутри. */
+  /* Баннер под сторис — градиент-PNG на фоне контейнера, текст слева,
+     картинка-бейдж справа впритык к краю по центру. */
   .ll-banner {
+    position: relative;
     display: block;
     box-sizing: border-box;
     padding: 16px;
+    padding-right: 120px;        /* место под картинку справа */
     border-radius: 0;
     overflow: hidden;
-    background-image: url('assets/icons/bannerBack1.png');
+    background-image: url('assets/feed-banner/banner-feed-back.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -192,6 +195,17 @@
   .ll-banner__text {
     display: block;
     color: var(--dynamic-text-and-icons-base-primary);
+  }
+  /* Картинка справа: впритык к правому краю, по центру по вертикали. */
+  .ll-banner__pic {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    width: auto;
+    display: block;
+    pointer-events: none;
   }
 
   /* Карусель сториз — вынесена в DS как .stories-row.
@@ -240,7 +254,7 @@
   .ll-otd__caption > svg { flex-shrink: 0; }
   /* Между caption «Видите только вы» и крупным заголовком — 4px вместо
      дефолтных 12px gap от .text-feed (margin-top компенсирует gap). */
-  .ll-otd__caption + .ds-title-xl {
+  .ll-otd__caption + .ds-title-l {
     margin-top: calc(var(--space-1) - var(--space-3));
   }
   .ll-otd__likes {
@@ -453,6 +467,7 @@
         <!-- BANNER под сторис — картинка во всю ширину контейнера ленты -->
         <div class="ll-banner">
           <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
+          <img class="ll-banner__pic" src="assets/feed-banner/banner-feed-pic.png" alt="">
         </div>
 
 <!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->
@@ -565,7 +580,7 @@
 
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="caf-text feed-more__text">Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправляю<span class="feed-more__full"> в масличко аккуратненько чтобы не забрызгало)))</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="caf-text ds-title-l feed-more__text">Непременно с дырдочкой! Беляшнаш как грица Жарю в глубокой сковороде... Масла чтобы много... И каждый беляш отправляю<span class="feed-more__full"> в масличко аккуратненько чтобы не забрызгало)))</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -677,9 +692,9 @@
           <div class="ds-title-l feed-birthday__title">Анфиса, поздравляем с годовщиной дружбы</div>
           <div class="ds-body-m feed-birthday__text">Ровно 3 года назад вы добавили<br>Александра в друзья OK</div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __friendversary">
             <div class="button-wrapper __size-36 __full-width">
-              <button class="button-container __style-primary" data-href="gifts-catalog.html?to=1&anniv=3"><span class="button-content">Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="gifts-catalog.html?to=1&anniv=3"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -693,13 +708,9 @@
             <div class="clip-feed__header">
               <div class="avatar __size-44 __type-image"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTliKRHnepvOtZ7CNiUGpgdRLczyEsZ-jI42g&amp;s" alt=""></div>
               <div class="clip-feed__txt">
-                <div class="ds-title-s">Эрмитаж</div>
+                <div class="feed-header__line"><div class="ds-title-s feed-header__name">Эрмитаж</div><label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe"><input type="checkbox" hidden><span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
                 <div class="ds-caption-s clip-feed__time">8:42</div>
               </div>
-              <label class="button-wrapper __size-28 button-subscribe clip-feed__subscribe">
-                <input type="checkbox" hidden>
-                <span class="button-container __style-primary-on-color"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-              </label>
             </div>
             <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>
@@ -820,7 +831,7 @@
           </div>
           <div class="marathon__special">
             <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#РадостьДетства</span></p>
+              <p class="ds-title-m marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#РадостьДетства</span></p>
               <p class="ds-body-m marathon-promo__count">11К участников</p>
             </div>
             <div class="marathon__cta">
@@ -842,13 +853,9 @@
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxPTM6RCmnE2NPvI7fBSgjMOcUM4WZAOnbvef25Bye2bhDCBlh5P09Tu4f&amp;s=10" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Чемпионат: новости спорта, футбол, хоккей</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">Чемпионат: новости спорта, футбол, хоккей</div><label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
               <div class="ds-caption-s text-feed__time">7:30</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
           </div></div></div>
           </header>
 
@@ -917,7 +924,7 @@
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">Сделать подарок</span></button>
             </div>
           </div>
@@ -1026,13 +1033,9 @@
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqNd1ho-na1UmY5ejrbKClE-8MTkaRChbgCRQ1B78wrWRTEGIQdMTpZ-lcK93Y9KwjeAYbG1eQM768Ye5_zeXOh_SUT7P2BmlKHtQvyKEtlR_L8jJYSizMcb41y6VZLVMvtFa0OXJ4kjeyjJkuakvmTTV0e1KCLAiX2lxql03uWYzNp4FF26xWrt4LNeWWwAAACk&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Живой дачный уголок</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">Живой дачный уголок</div><label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
               <div class="ds-caption-s text-feed__time">12:48</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
           </div></div></div>
           </header>
 
@@ -1132,7 +1135,7 @@
           </div>
           <div class="text-feed__marathon">
             <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#РадостьДетства</span></p>
+              <p class="ds-title-m marathon-promo__text">Загружайте фото и участвуйте в марафоне <span class="marathon-promo__tag">#РадостьДетства</span></p>
               <p class="ds-body-m marathon-promo__count">11К участников</p>
             </div>
             <div class="button-wrapper __size-44 __full-width" style="display:block">
@@ -1250,7 +1253,7 @@
 
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="caf-text feed-more__text">Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете<span class="feed-more__full">!!! ❤️</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="caf-text ds-title-l feed-more__text">Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете<span class="feed-more__full">!!! ❤️</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -1404,7 +1407,7 @@
 
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="caf-text feed-more__text">Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите<span class="feed-more__full"> у настоящего белоруса</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="caf-text ds-title-l feed-more__text">Настоящие драники это тертый картофель и соль. А то что вы туда добавляете всего это оладьи картофельные .спросите<span class="feed-more__full"> у настоящего белоруса</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -1484,7 +1487,7 @@
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-ai-gift"><span class="button-content"><img class="ll-icon" src="assets/icons/sparkles_16_20.svg" width="20" height="20" alt="">Создать подарок из фото</span></button>
             </div>
           </div>
@@ -1543,7 +1546,7 @@
 
           <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="caf-text feed-more__text">Подготовьте необходимые ингредиенты. Репчатый лук нарежьте произвольно, морковь натрите на крупной терке. Обжарьте овощи<span class="feed-more__full"> на растительном масле до готовности. Горбушу профилируйте, оставьте на коже. Удалите всевозможные мелкие косточки. Разрежьте на порционные кусочки. Разложите на блюдо. Посолите, приправьте перцем. Отставьте в сторону. Кабачок очистите от кожуры. Нарежьте на шайбочки толщиной 0,3-0,5 см. Возьмите форму для запекания. Выложите 1/2 часть нарезанных кабачков. На слой кабачков выложите подготовленные кусочки горбуши. Сверху разложите вторую отложенную часть нарезанных кабачков. На слой из кабачков выложите обжаренные лук с морковью. В отдельную чашу натрите на средней терке сыр. Добавьте к нему сметану и перемешайте. При желании посолите. Сырно-сметанной массой покройте содержимое в форме. Разровняйте. Поставьте в разогретую до 200 градусов духовку на 20-25 минут. По истечении времени достаньте форму из духовки. Блюдо сервируйте и подавайте к столу. Приятного аппетита!</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+            <p class="caf-text ds-title-l feed-more__text">Подготовьте необходимые ингредиенты. Репчатый лук нарежьте произвольно, морковь натрите на крупной терке. Обжарьте овощи<span class="feed-more__full"> на растительном масле до готовности. Горбушу профилируйте, оставьте на коже. Удалите всевозможные мелкие косточки. Разрежьте на порционные кусочки. Разложите на блюдо. Посолите, приправьте перцем. Отставьте в сторону. Кабачок очистите от кожуры. Нарежьте на шайбочки толщиной 0,3-0,5 см. Возьмите форму для запекания. Выложите 1/2 часть нарезанных кабачков. На слой кабачков выложите подготовленные кусочки горбуши. Сверху разложите вторую отложенную часть нарезанных кабачков. На слой из кабачков выложите обжаренные лук с морковью. В отдельную чашу натрите на средней терке сыр. Добавьте к нему сметану и перемешайте. При желании посолите. Сырно-сметанной массой покройте содержимое в форме. Разровняйте. Поставьте в разогретую до 200 градусов духовку на 20-25 минут. По истечении времени достаньте форму из духовки. Блюдо сервируйте и подавайте к столу. Приятного аппетита!</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
@@ -1610,7 +1613,7 @@
             </svg>
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">Вас отметили на фото 2 года назад</div>
+          <div class="ds-title-l">Вас отметили на фото 2 года назад</div>
 
           <div class="text-feed__media ll-tagged__media">
             <img src="https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1InIxFefIVSNHpT6TAgeAoFjZ_5cuNZ9futnu3Ypzre8oh3FeC6LnRAJvWVshYQxe3oJ3fvR8aRBGhPNAaktCluYODEBvmAAAAAKQ&amp;dpr=2" alt="">
@@ -1621,7 +1624,7 @@
             </div>
           </div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __tagged">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
@@ -1652,7 +1655,7 @@
             </div></div></div>
           </header>
 
-          <p class="caf-text feed-more__text">Смотрится круто и с юмором. Но только для фотосессий или для кадра. Спать в такой кровати я бы не хотела. Это неудобно.</p>
+          <p class="caf-text ds-title-l feed-more__text">Смотрится круто и с юмором. Но только для фотосессий или для кадра. Спать в такой кровати я бы не хотела. Это неудобно.</p>
           <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">
@@ -1736,13 +1739,9 @@
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LOq1mV1VM0SsGoA_Sd70rdjZFHO2-kwmN51_d9qI2JSXs5H4k_qE2b2HChbBydn2WY5ufrQZkC2l7TevUF6nv1VuuJLMn0CRh0MEExyJcAAAAp&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">ПОЛИТИЧЕСКОЕ АССОРТИ</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">ПОЛИТИЧЕСКОЕ АССОРТИ</div><label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
               <div class="ds-caption-s text-feed__time">вт, 9:33</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
           </div></div></div>
           </header>
 
@@ -1812,7 +1811,7 @@
             </svg>
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">7 лет назад в этот день</div>
+          <div class="ds-title-l">7 лет назад в этот день</div>
 
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
@@ -1837,7 +1836,7 @@
             <span class="ds-body-m ll-otd__likes-text">Понравилось 4 людям</span>
           </div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __otd">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 Поделиться
@@ -1861,13 +1860,9 @@
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqksNqxeidegiHmxBjQtV4bUb-aw_txmEHzs22FQ6ouBgHVGw96IoHZ5aGTokbAiwvr5daqxmOpgZ05OBiC4aIne6k38_V9Ttm7LyzZq0snYrGf5DR6DR7gwlSILk-RdBwMvfJnYimQns9UqKYQHjxlyowoDRNHc5203RNTtTXbxw-jyPcjrPmujD-xmD-gAAACk&amp;dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Папа на кухне</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">Папа на кухне</div><label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
               <div class="ds-caption-s text-feed__time">12:48</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
           </div></div></div>
           </header>
 
@@ -1934,7 +1929,7 @@
             </svg>
             <span>Видите только вы</span>
           </div>
-          <div class="ds-title-xl">Ваш клип из воспоминаний</div>
+          <div class="ds-title-l">Ваш клип из воспоминаний</div>
 
           <div class="text-feed__media ll-memclip__media" data-clip-edit data-clip-label="Лето 2026">
             <img class="ll-memclip__slide __fx-zoom-in __active" src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IERVMpVnsjMQ_YRs5qVqRlxI3BzPLXYhj-M5KyROXaNyOnnbvHIirSHxKznJFWsyGUPokEmXpmDP8XQhNKJH7QXSSL4sBHF0F1P4ww024AAAAp&amp;dpr=2" alt="">
@@ -1950,7 +1945,7 @@
                 </span></button>
               </div>
               <div class="button-wrapper __size-36 __pinned-end ll-memclip__more">
-                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
                   <img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt="">
                 </span></button>
               </div>
@@ -1968,13 +1963,9 @@
           <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image"><img src="https://735606.selcdn.ru/thumbnails/photos/2018/09/03/54q7nziswegetpr0_1024.jpg" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Забытые моряки</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">Забытые моряки</div><label class="button-wrapper __size-28 button-subscribe"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span></label></div>
               <div class="ds-caption-s text-feed__time">12:48</div>
             </div>
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>
           </div></div></div>
           </header>
 
@@ -2167,7 +2158,7 @@
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">Сделать подарок</span></button>
             </div>
           </div>
