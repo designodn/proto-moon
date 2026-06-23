@@ -52,13 +52,10 @@
     padding: var(--space-4) var(--space-4) 0;
   }
 
-  /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), а в конце
-     доскролла встаёт в поток. Перебиваем fixed из app-shell.css. */
-  .ll-tabbar {
-    position: sticky;
-    bottom: 0;
-    margin-top: var(--space-3);
-  }
+  /* Таб-бар фиксирован к низу экрана (fixed из app-shell.css) — прилипает
+     к низу вьюпорта и не уезжает при листании. Нижний воздух фида даёт
+     спейсер высотой с таб-бар в конце .phone-frame__feed. */
+  /* .ll-tabbar → components/app-shell.css (fixed, bottom:0) */
 
   .gift-trigger { cursor: pointer; }
   .gift-trigger:active .notification-cell__title { opacity: 0.6; }
@@ -196,17 +193,20 @@
         </div>
       </div>
 
-      <!-- TABBAR — внутри скролла, sticky снизу (встраивается в лейаут в конце) -->
-      <div class="ll-tabbar">
-        <div class="tabbar __platform-android">
-          <div class="tabbar__row">
-            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
-          </div>
+      <!-- спейсер под фиксированный таб-бар, чтобы последняя ячейка не пряталась -->
+      <div style="height: calc(var(--tabbar-height) + 12px)"></div>
+    </div>
+
+    <!-- TABBAR — фиксирован к низу экрана (вне скролл-фида) -->
+    <div class="ll-tabbar">
+      <div class="tabbar __platform-android">
+        <div class="tabbar__row">
+          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
         </div>
       </div>
     </div>
