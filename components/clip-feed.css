@@ -178,6 +178,9 @@
 }
 .clip-feed__subscribe {
   flex-shrink: 0;
+  /* Прижата к верху строки автора (как в фиде), а не центрируется по
+     двухстрочному блоку имя+время — .clip-feed__header has align-items:center. */
+  align-self: flex-start;
 }
 /* Лейбл «Может быть интересно» над клипом — title-s, основной цвет. */
 .ll-clipc__hint {
