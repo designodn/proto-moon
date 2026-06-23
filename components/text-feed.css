@@ -518,7 +518,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .marathon__tile:not(:first-child) {
-  margin-left: -40px;
+  margin-left: -52px;
+}
+/* правую плитку подтягиваем к центру чуть сильнее — она упиралась в край экрана */
+.marathon__tile:nth-child(3) {
+  margin-left: -64px;
 }
 /* средняя плитка — поверх соседних */
 .marathon__tile:nth-child(2) {
