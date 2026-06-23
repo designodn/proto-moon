@@ -236,6 +236,10 @@
 .caf__actions .button-inline.__size-20 {
   --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
 }
+/* Иконки счётчиков — на единой сетке 16/20, чтобы вес штриха совпадал
+   с klass-outline (а не тоньше, как у comment_24/reshare_24). */
+.caf__actions .icon.__slot-comment { --icon-src: url('../assets/icons/comment_16_20.svg'); }
+.caf__actions .icon.__slot-reshare { --icon-src: url('../assets/icons/reshare_16_20.svg'); }
 
 /* Поле ответа (.fc-input) в comment-as-feed — верхний отступ 4, gap 12
    (ава ↔ поле, как в твиттер-ряду). */
