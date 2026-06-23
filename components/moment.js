@@ -733,7 +733,9 @@
           '<span class="button-inline-wrapper __view-primary-on-color __size-24">',
             '<button class="button-inline __size-24" aria-label="Закрыть">',
               '<span class="button-inline__content">',
-                '<img class="button-inline__icon" src="assets/icons/close_16_20.svg" width="24" height="24" alt="" style="filter: brightness(0) invert(1);">',
+                // Крестик — static secondary inverse (rgba(255,255,255,0.88)):
+                // белый через filter + opacity 0.88.
+                '<img class="button-inline__icon" src="assets/icons/close_16_20.svg" width="24" height="24" alt="" style="filter: brightness(0) invert(1); opacity: 0.88;">',
               '</span>',
             '</button>',
           '</span>',
