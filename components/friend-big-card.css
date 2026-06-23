@@ -98,9 +98,10 @@
 }
 .friend-big-card__name {
   color: var(--dynamic-text-and-icons-base-primary);
-  font-size: 22px;
+  /* Типографика DS title-L (21/28/600). */
+  font-size: 21px;
   line-height: 28px;
-  font-weight: 700;
+  font-weight: 600;
   max-width: 100%;
   /* До 2 строк (длинные имена переносятся), затем многоточие. Город (caption)
      идёт сразу под именем — без резерва высоты у имени. */
@@ -123,8 +124,10 @@
 /* «.friend-big-card__mutual» — модификатор-спейсер на .avatars-view,
    отступ сверху + центрирование строки (стек аватарок + текст). */
 .friend-big-card__mutual {
-  /* Общие друзья — на фиксированном отступе 16 от блока «имя + город». */
-  margin-top: 16px;
+  /* Общие друзья ПРИБИТЫ К КНОПКЕ: margin-top:auto толкает блок к низу инфо,
+     поэтому он всегда стоит вплотную над кнопкой «Дружить» (зазор 20 задаёт
+     padding-top у accept), независимо от длины имени/города. */
+  margin-top: auto;
   justify-content: center;
 }
 /* Текст «N общих друзей» — primary (как имя/город). */
