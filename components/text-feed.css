@@ -134,9 +134,11 @@
   text-overflow: ellipsis;
 }
 
-/* Время в шапке — secondary text (ds-caption-s даёт только размер) */
+/* Время в шапке — secondary text (ds-caption-s даёт только размер).
+   margin-top -6 подтягивает время вплотную под имя. */
 .text-feed__time {
   color: var(--dynamic-text-and-icons-base-secondary);
+  margin-top: -6px;
 }
 
 /* Шапка поста-сообщества: кнопка «Подписаться» (size-28) раздувает строку имени
