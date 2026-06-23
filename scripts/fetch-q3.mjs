@@ -1205,10 +1205,11 @@ ${mediaInner}
               </div>` : '';
       const previewBody = orig ? `
               <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
-      // Фото оригинала (если есть) — медиа reshare-card, отступ до него 12 даёт
-      // сам компонент (.text-feed__reshare-card-media:not(:first-child)).
+      // Фото оригинала (если есть ссылка) — медиа reshare-card, отступ до него 12
+      // даёт сам компонент (.text-feed__reshare-card-media:not(:first-child)).
+      // img заполняет бокс 16/9 (cover), иначе height:auto схлопывает картинку.
       const previewMedia = photos.length ? `
-              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0])}</div>` : '';
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
       return `        <article class="caf __twitter-like island">
