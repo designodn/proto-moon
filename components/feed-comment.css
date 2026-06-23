@@ -245,6 +245,7 @@
 .fc-comment.__twitter-like {
   gap: var(--space-3);              /* 12 между авой и телом (как в .caf__row) */
   padding: 0 var(--space-4);        /* 16 по бокам */
+  align-items: stretch;             /* aside тянется на высоту ряда → палка flex:1 не схлопывается */
   /* Вертикальный ритм даёт padding-bottom тела (8) — не padding-top, чтобы
      трунк-«палка» тянулся до авы следующего ряда без разрыва. */
 }
