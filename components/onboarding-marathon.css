@@ -238,7 +238,7 @@
    ============================================================ */
 .omar-slide--combo {
   box-sizing: border-box;
-  padding: calc(env(safe-area-inset-top, 0px) + 64px) var(--space-4) 0;   /* верх 64 */
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) var(--space-4) 0;   /* верх 56 */
 }
 /* Заголовки обоих блоков слайда 2 — DS Title L (21/28/600). */
 .omar-slide--combo .omar-slide__title {
