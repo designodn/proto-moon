@@ -32,6 +32,9 @@ import { dirname, resolve } from 'node:path';
 import {
   renderPost, attachComments, esc, img, COMPANION, EXTRAS, SPREADSHEET_ID, parseCsv,
 } from './fetch-q3.mjs';
+import { createMediaCache } from './lib/media-cache.mjs';
+
+const CHECK_ONLY = process.argv.includes('--check');
 
 const SHEET_NAME = 'профиль';            // человекочитаемое имя листа (для логов)
 const SHEET_GID = '877262163';           // стабильный gid листа профильных постов
@@ -184,6 +187,21 @@ async function main() {
         ].filter(x => x.text),
       });
     }
+
+    // Кэшируем фото постов локально (запекаются в profile.html, корень) — чтобы
+    // не зависеть от чужих CDN. Аватары авторов/комментаторов уже локальные.
+    const cache = createMediaCache({
+      root: ROOT, dirRel: 'assets/profile',
+      manifestPath: resolve(ROOT, 'data/profile-media.json'), dryRun: CHECK_ONLY,
+    });
+    for (const p of posts) {
+      if (Array.isArray(p.photos) && p.photos.length)
+        p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
+    }
+    cache.save();
+    console.log('  ' + cache.report());
+
+    if (CHECK_ONLY) { console.log('(--check) Ссылки проверены, ничего не записано.'); return; }
 
     writeFileSync(resolve(ROOT, 'data/profile-posts.json'),
       JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}» (gid ${SHEET_GID})`, 'как_обновить': 'node scripts/fetch-profile.mjs  (офлайн-реген: node scripts/fetch-profile.mjs --offline)' }, posts }, null, 2) + '\n');

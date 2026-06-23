@@ -9,13 +9,13 @@ window.DS_STORIES = [
     "id": "story-2",
     "type": "regular",
     "author": "2",
-    "image": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kzv7fGU5Aeu7DPIae_lV0ixI4cr5qa67aQBtCNR3LNLIcCRVcCnRKIZD3yldUTYhEaJmDAl9LpgLc-oCDxPTJu-jdeO32B37eojWvxCGUAAAAp&dpr=2"
+    "image": "assets/stories/9315188395c3a045.jpg"
   },
   {
     "id": "story-3",
     "type": "regular",
     "author": "3",
-    "image": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1K-mWVsZ_TfG-oJYl--VAVvCl0dM3-jXnmxgnH70yJz6m9pLzGDdMayJpMqyGyFoMgqaetyJHWfiZjMGJWPkXKlGTiaVk9aV_zWr_Sinu0AAAAp&dpr=2?"
+    "image": "assets/stories/661b3065e4952587.jpg"
   },
   {
     "id": "story-4",
@@ -31,6 +31,6 @@ window.DS_STORIES = [
     "id": "story-5",
     "type": "regular",
     "author": "11",
-    "image": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IV_hIUM_WpjoBLgH1G6JjEqXyIqxV8BcZl7H49KUxLAbW_KssHqU7HkL-_e8wgmhSy61s1Uc78eEbuzj0HaWEOYXUHudAwUDLHUs1VOmcAAAAp&dpr=2"
+    "image": "assets/stories/bb710bffc570f6fc.jpg"
   }
 ];

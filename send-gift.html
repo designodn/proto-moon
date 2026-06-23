@@ -192,7 +192,7 @@
 
         <!-- Preview открытки. Картинку и цену подставляет JS по ?gift=… -->
         <div class="ll-sg-preview">
-          <div class="ll-sg-preview__poster"><img id="sgPreviewImg" src="https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg" alt=""></div>
+          <div class="ll-sg-preview__poster"><img id="sgPreviewImg" src="assets/embedded/5f1bedc3de1adade.jpg" alt=""></div>
           <span class="price-tag" id="sgPrice">2 ОК</span>
         </div>
 
@@ -325,12 +325,12 @@
     // Подставляем картинку + цену preview по ?gift= из gifts-catalog.
     (function () {
       var GIFTS = {
-        cake:     { src: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassniku-s-nadpisyu-239.jpg', price: '0 ОК' },
-        bouquet:  { src: 'https://cool.klev.club/uploads/posts/2025-05/2630/na_den_rozhdeniya_odnoklassniku_15_9e514099.jpg', price: '0 ОК' },
-        classic:  { src: 'https://cdn.fkimages.ru/posts/big/kartinka-s-dnem-rozhdeniya-odnoklassnik-1841.jpg', price: '0 ОК' },
+        cake:     { src: 'assets/embedded/5f1bedc3de1adade.jpg', price: '0 ОК' },
+        bouquet:  { src: 'assets/embedded/1ab3319a55dc79a9.jpg', price: '0 ОК' },
+        classic:  { src: 'assets/embedded/377afe105b896323.jpg', price: '0 ОК' },
         heart:    { src: 'https://play-lh.googleusercontent.com/DIUjj_0djlD0xfteoleEnmD6CkmpIqMoHMwuH3AvhL85duDITmjEr9w_ib_VAC3ejQc=w240-h480-rw', price: '0 ОК' },
-        social:   { src: 'https://123ot.ru/img/00003/skachaty-besplatno-whatsapp-odnoklassniki-instagram-774945.jpg', price: '2 ОК' },
-        flowers:  { src: 'https://kartinki-life.ru/articles/2020/02/07/kartinki-i-otkrytki-s-dnjom-rozhdeniya-22-7.jpg', price: '5 ОК' }
+        social:   { src: 'assets/embedded/86afcd61af30cbf0.jpg', price: '2 ОК' },
+        flowers:  { src: 'assets/embedded/11376c071b7ee1c5.jpg', price: '5 ОК' }
       };
       var id = new URLSearchParams(location.search).get('gift');
       var g = GIFTS[id];
