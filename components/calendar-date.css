@@ -75,8 +75,9 @@
   position: absolute;
   left: -2px;
   right: -2px;
-  top: 4px;
-  bottom: 2px;
+  /* число на 2px ниже (центр бокса смещён вниз: top 4→6, bottom 2→0) */
+  top: 6px;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,6 +100,6 @@
   height: 12px;
   border-radius: 50%;
   background: var(--static-surface-status-positive, #4bb34b);
-  border: 2px solid var(--dynamic-surface-base-secondary);
+  border: 2px solid var(--dynamic-surface-base-primary);
   z-index: 3;
 }
