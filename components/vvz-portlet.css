@@ -44,6 +44,10 @@
   padding-top: var(--space-3);
   padding-bottom: var(--space-3);
 }
+/* Портлет не клипает карточки: ряд сам скроллит по X и держит вертикальный
+   запас. Перебиваем overflow:hidden у .island, когда портлет — остров (лента). */
+.vvz-portlet,
+.vvz-portlet.island { overflow: visible; }
 
 .vvz-portlet__header {
   display: flex;
