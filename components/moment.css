@@ -107,13 +107,13 @@
 }
 
 /* Линейный градиент сверху — для читаемости header'а.
-   160h, opacity 0.4, black → transparent (как в Figma). */
+   120h, линейный от верха (самое тёмное) к низу (прозрачный). */
 .moment__scrim {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 160px;
+  height: 120px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
   pointer-events: none;
   z-index: 1;
@@ -453,15 +453,23 @@
   align-items: center;
   gap: var(--space-2);
   width: 100%;
+  /* эмодзи-ряд может быть длиннее ширины — скроллим по горизонтали без полосы. */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-/* «Написать» — primary-кнопка, забирает всё свободное место слева. */
+.moment__quick::-webkit-scrollbar { display: none; }
+/* «Написать» — primary-кнопка авто-ширины (по контенту: иконка send + текст),
+   закреплена слева при скролле эмодзи. */
 .moment__quick-write {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   display: flex;
-  min-width: 0;
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 .moment__quick-write .button-container {
-  width: 100%;
+  width: auto;
 }
 /* Иконка отправки внутри кнопки — белая (DS-svg несёт свой чёрный fill). */
 .moment__quick-write .button-content img {
@@ -610,21 +618,23 @@
 }
 .moment__bday-heading {
   margin: 0 0 var(--space-1-5);
-  /* OK Sans Display не подключён глобально — даём фолбэк на общий
-     системный шрифт. Размер/жирность точно как в Figma. */
+  /* Параметры заголовка как у «Вам подарили 3 подарка» (gp__title в шторке
+     подарков): 32 / 1.2 / 700, OK Sans Display, letter-spacing 0. */
   font-family: 'OK Sans Display', var(--font-family);
-  font-size: 48px;
-  line-height: 1.1;
+  font-size: 32px;
+  line-height: 1.2;
   font-weight: 700;
+  letter-spacing: 0;
 }
+/* Имя: контейнер на всю ширину, текст стилем ds-title-l (21/28/600). */
 .moment__bday-name {
   margin: 0;
   width: 100%;
   font-family: var(--font-family);
-  font-size: 22px;
+  font-size: 21px;
   line-height: 28px;
   font-weight: 600;
-  letter-spacing: 0.24px;
+  letter-spacing: 0;
 }
 
 /* ============================================================
