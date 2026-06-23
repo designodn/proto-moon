@@ -77,8 +77,10 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
-  /* Навбар (__type-search): гэп между иконками — 16 и слева, и справа.
+  /* Навбар (__type-search): гэп между блоками (+, поиск, иконки) — 16,
+     и внутри групп иконок слева/справа — тоже 16.
      Перебиваем дефолт meshok-up.css селектором с той же спецификой. */
+  .nav-bar.__type-search { gap: var(--space-4); }
   .nav-bar.__type-search .nav-bar__leading,
   .nav-bar.__type-search .nav-bar__trailing { gap: var(--space-4); }
 
