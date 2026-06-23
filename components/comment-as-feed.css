@@ -237,7 +237,15 @@
   --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
 }
 
-/* Поле ответа (.fc-input) в comment-as-feed — верхний отступ 4. */
+/* Поле ответа (.fc-input) в comment-as-feed — верхний отступ 4, gap 12
+   (ава ↔ поле, как в твиттер-ряду). */
 .caf.__twitter-like .fc-input {
   padding-top: var(--space-1);      /* 4 */
+  gap: var(--space-3);              /* 12 */
+}
+
+/* Хлебные крошки (тема/рубрика) над комментом — отступ 4 (по бокам 16
+   для выравнивания с контентом карточки). */
+.caf.__twitter-like .caf__crumbs {
+  padding: var(--space-1) var(--space-4);   /* 4 верт., 16 по бокам */
 }

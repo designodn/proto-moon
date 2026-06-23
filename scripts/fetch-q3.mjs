@@ -1216,10 +1216,13 @@ ${mediaInner}
               <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
       const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
+      // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs.
+      const crumbsRaw = breadcrumbs(p.tema, p.rubrika);
+      const crumbs = crumbsRaw ? '\n' + crumbsRaw.replace('class="breadcrumbs"', 'class="breadcrumbs caf__crumbs"') : '';
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
       // comment-as-feed ничего не добавляет — см. его guard).
-      return `        <article class="caf __twitter-like island">
+      return `        <article class="caf __twitter-like island">${crumbs}
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
