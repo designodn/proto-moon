@@ -635,10 +635,10 @@ ${tiles}
           <div class="marathon__special">
 ${marathonPromo(hashtag, isJoined(p.marathonJoined))}
             <div class="marathon__cta">
-              <div class="button-wrapper __size-44 __full-width" style="display:block">
+              <div class="button-wrapper __size-36 __full-width" style="display:block">
                 <button class="button-container __style-primary" style="width:100%" data-href="marathon.html"><span class="button-content">Перейти к фотомарафону</span></button>
               </div>
-              <div class="button-wrapper __size-44"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
+              <div class="button-wrapper __size-36"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">${llIcon('more_16_20.svg')}</span></button></div>
             </div>
           </div>
         </article>`;
@@ -659,7 +659,7 @@ ${marathonPromo(hashtag, isJoined(p.marathonJoined))}
 ${feedText(text)}
 ${media(photos)}
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width" style="display:block">
+            <div class="button-wrapper __size-36 __full-width" style="display:block">
               <button class="button-container __style-primary" style="width:100%"><span class="button-content">Перейти</span></button>
             </div>
           </div>
@@ -748,12 +748,12 @@ ${avatarsStack(likesView.avatars)}
 ${likesBlock}
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 ${SHARE_SVG}Поделиться
               </span></button>
             </div>
-            <div class="button-wrapper __size-44 __pinned-end">
+            <div class="button-wrapper __size-36 __pinned-end">
               <button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content">
                 ${llIcon('more_16_20.svg')}
               </span></button>
@@ -945,10 +945,10 @@ ${actionsBar(likes, comments, reshares)}
           <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
-            <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
         </article>`;
     }
@@ -973,7 +973,7 @@ ${actionsBar(likes, comments, reshares)}
           </div>
 
           <div class="actions-bar">
-            <div class="button-wrapper __size-44 __full-width">
+            <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 ${SHARE_SVG}Поделиться
               </span></button>
@@ -1104,12 +1104,12 @@ ${moreBtn({ style: 'on-image' })}
 ${mediaInner}
             <div class="ll-memclip__label ll-memclip__label--ok ds-title-l">${esc(label)}</div>
             <div class="actions-bar ll-memclip__actions">
-              <div class="button-wrapper __size-44 __full-width">
+              <div class="button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">
                   ${SHARE_SVG}Поделиться
                 </span></button>
               </div>
-              <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
+              <div class="button-wrapper __size-36 __pinned-end ll-memclip__more">
                 <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
