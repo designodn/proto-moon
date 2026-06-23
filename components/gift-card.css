@@ -17,8 +17,8 @@
  *           <span class="gift-card__name ds-title-s">Виктория Петрова</span>
  *           <span class="gift-card__date ds-caption-m">12 мая</span>
  *         </div>
- *         <!-- trash справа в ячейке: button-inline primary -->
- *         <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+ *         <!-- trash справа в ячейке: button-inline secondary -->
+ *         <span class="button-inline-wrapper __size-20 __view-secondary gift-card__trash">
  *           <button class="button-inline __size-20" aria-label="Отклонить">
  *             <span class="button-inline__content">
  *               <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
