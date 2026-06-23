@@ -214,7 +214,7 @@ function marathonPromo(hashtag, joined) {
     ? 'Вы уже участвуете, посмотрите другие фото марафона '
     : 'Загружайте фото и участвуйте в марафоне ';
   return `            <div class="marathon-promo">
-              <p class="ds-title-s marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
+              <p class="ds-title-m marathon-promo__text">${esc(text)}<span class="marathon-promo__tag">${esc(hashtag)}</span></p>
               <p class="ds-body-m marathon-promo__count">${MARATHON_PARTICIPANTS}</p>
             </div>`;
 }
@@ -739,7 +739,7 @@ ${likesBlock}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end">
@@ -934,7 +934,7 @@ ${authorHeaderFn(aid, time)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-44 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -963,7 +963,7 @@ ${authorHeaderFn(aid, time)}
           <div class="actions-bar">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
           </div>
@@ -1094,11 +1094,11 @@ ${mediaInner}
             <div class="actions-bar ll-memclip__actions">
               <div class="button-wrapper __size-44 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">
-                  ${SHARE_SVG}Поделиться
+                  Поделиться
                 </span></button>
               </div>
               <div class="button-wrapper __size-44 __pinned-end ll-memclip__more">
-                <button class="button-container __style-on-image" aria-label="Ещё"><span class="button-content">
+                <button class="button-container __style-primary-on-color" aria-label="Ещё"><span class="button-content">
                   ${llIcon('more_16_20.svg')}
                 </span></button>
               </div>
