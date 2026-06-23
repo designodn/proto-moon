@@ -489,6 +489,14 @@
   <script src="components/nv-bonsai.js"></script>
   <!-- Профиль текущего пользователя из строки my_profile (data-pr-*) -->
   <script src="../data/people.js"></script>
+  <script>
+    // Фото людей в people.js хранятся путём от корня репо (assets/people/…).
+    // Эта страница лежит в /new-vision/, поэтому ЛОКАЛЬНЫЕ пути резолвим с «../»
+    // (внешние http/protocol-relative/absolute — оставляем как есть).
+    window.NV_PHOTO = function (u) {
+      return (u && !/^(https?:)?\/\/|^data:|^\//.test(u)) ? '../' + u : u;
+    };
+  </script>
   <script src="../components/user-data.js"></script>
   <!-- Прячет «Раскрыть/Свернуть», если текст виден целиком -->
   <script src="../components/feed-text.js"></script>
@@ -672,7 +680,7 @@
             '<div class="avatar __size-44 __type-image"><img alt=""></div>' +
             '<div class="uni-cell-additional-content"><div class="ds-body-m"></div></div></div></div>';
           var img = w.querySelector('img');
-          if (p.photo) img.src = p.photo;
+          if (p.photo) img.src = window.NV_PHOTO(p.photo);
           img.alt = p.name;
           w.querySelector('.ds-body-m').textContent = p.name;
           list.appendChild(w);
@@ -863,7 +871,7 @@
           el.textContent = p.name;
         });
         document.querySelectorAll('[data-pr-avatar]').forEach(function (el) {
-          if (p.photo) el.src = p.photo;
+          if (p.photo) el.src = window.NV_PHOTO(p.photo);
           el.alt = p.name;
         });
 
@@ -931,7 +939,7 @@
         var p = (window.DS_PEOPLE_DATA || []).filter(function (x) {
           return String(x.id) === id.trim();
         })[0];
-        if (p && imgs[i]) { if (p.photo) imgs[i].src = p.photo; imgs[i].alt = p.name || ''; }
+        if (p && imgs[i]) { if (p.photo) imgs[i].src = window.NV_PHOTO(p.photo); imgs[i].alt = p.name || ''; }
       });
     });
 
@@ -952,7 +960,7 @@
         if (!p) return;
         var img  = cell.querySelector('.avatar img');
         var name = cell.querySelector('[data-watered-name]');
-        if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+        if (img && p.photo) { img.src = window.NV_PHOTO(p.photo); img.alt = p.name; }
         if (name) name.textContent = p.name;
       });
     })();
