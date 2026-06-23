@@ -510,10 +510,9 @@ function renderCommentThread(p) {
   const asReplies = p.type === 'comment-as-feed';
   const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
   const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
-  // «Посмотреть …» — когда счётчик комментов поста больше показанных (в обычной
-  // ленте), либо всегда для comment-as-feed (ответы есть → ветка длиннее).
-  const total = parseInt(p.comments, 10);
-  const showMore = asReplies || (Number.isFinite(total) && total > list.length);
+  // «Посмотреть …» — в обычной ленте показываем, только если в fc-list больше
+  // 2 комментов; для comment-as-feed (ответы) — всегда (ветка длиннее).
+  const showMore = asReplies || list.length > 2;
   const more = showMore
     ? `\n            <div class="fc-more">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
