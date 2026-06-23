@@ -190,7 +190,7 @@
   </div>
 
   <!-- Тост: превышен дневной лимит приглашений -->
-  <div class="rf-toast" id="toast" role="status" aria-live="polite">Вы использовали все приглашения на сегодня, ждём вас завтра</div>
+  <div class="rf-toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- Реальные люди из реестра (data/people.js → window.DS_PEOPLE_DATA) -->
   <script src="../data/people.js"></script>
@@ -237,30 +237,6 @@
       list.appendChild(cell);
     });
 
-    // ── Дневной лимит приглашений ─────────────────────────────────
-    // Счётчик живёт в sessionStorage, поэтому не сбрасывается при
-    // переходах/перезагрузках прототипа (так лимит реально достижим).
-    var DAILY_LIMIT = 10;
-    var STORE_KEY = 'kf_invited_today';
-
-    function getInvited() {
-      var v = parseInt(sessionStorage.getItem(STORE_KEY), 10);
-      if (isNaN(v)) {
-        v = FRIENDS.filter(function (f) { return f.sent; }).length;
-        sessionStorage.setItem(STORE_KEY, v);
-      }
-      return v;
-    }
-    function setInvited(v) { sessionStorage.setItem(STORE_KEY, v); }
-
-    // одно приглашение: true — засчитано, false — лимит исчерпан
-    function inviteOne() {
-      var n = getInvited();
-      if (n >= DAILY_LIMIT) return false;
-      setInvited(n + 1);
-      return true;
-    }
-
     // ── Таймер ожидания после приглашения ────────────────────────
     // Используем штатный стейт кнопки __state-timered (радиальная заливка),
     // текст «Пригласить» сохраняем; по окончании — меняем на «Перейти».
@@ -286,23 +262,20 @@
                       '&photo=' + encodeURIComponent(cell.dataset.photo || '');
     }
 
-    // ── Тост ──────────────────────────────────────────────────────
+    // ── Тост (используется для «Ссылка скопирована» при шеринге) ──
     var toastEl = document.getElementById('toast');
-    var LIMIT_MSG = toastEl.textContent;
     var toastTimer;
     function showToast(msg) {
-      toastEl.textContent = msg || LIMIT_MSG;
+      toastEl.textContent = msg || '';
       toastEl.classList.add('__show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { toastEl.classList.remove('__show'); }, 2800);
     }
 
-    // тап «Пригласить» → таймер (или тост, если лимит исчерпан);
-    // тап «Перейти» → диалог с другом
+    // тап «Пригласить» → таймер; тап «Перейти» → диалог с другом
     list.addEventListener('click', function (e) {
       var invite = e.target.closest('.rf-invite');
       if (invite) {
-        if (!inviteOne()) { showToast(); return; }
         startTimer(invite);
         return;
       }
