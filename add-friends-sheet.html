@@ -765,16 +765,28 @@
     applyState(0);
     root.classList.add('__state-1');
 
-    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера —
-    // тогда высота карточки в ряду меняется на глазах при входе. Перемеряем по
-    // fonts.ready и переприменяем текущий стейт, чтобы высота не «доезжала».
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () {
-        if (measureRowCardH()) {   // переприменяем только если высота реально изменилась
-          recenterRow();
-          applyState(current);
-        }
+    // Высота карточки в ряду зависит от АСИНХРОННОГО контента: веб-шрифт
+    // (OK Sans Display) и аватарки «общих друзей» догружаются после первого
+    // замера и меняют высоту инфо-блока (напр. 556→550, когда сядут картинки).
+    // Если замерить рано, морф приезда «приземлит» карточку на устаревшую высоту,
+    // а поздний замер её поправит — высота скакнёт уже в покое. Поэтому стартуем
+    // интро только КОГДА шрифт и картинки готовы: тогда замер финальный и его не
+    // придётся править на лету. Кап по таймауту — не залипать на медленной сети.
+    function whenContentReady(cb) {
+      var fired = false;
+      function go() { if (!fired) { fired = true; cb(); } }
+      var waits = [];
+      if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+      var imgs = root.querySelectorAll('.friend-big-card img');
+      Array.prototype.forEach.call(imgs, function (img) {
+        if (img.complete) return;
+        waits.push(new Promise(function (res) {
+          img.addEventListener('load',  res, { once: true });
+          img.addEventListener('error', res, { once: true });
+        }));
       });
+      if (waits.length) Promise.all(waits).then(go); else go();
+      setTimeout(go, 1200);  // кап
     }
 
     // Пересчёт центрирования при ресайзе/смене ориентации.
@@ -1263,21 +1275,26 @@
       applyState(3);
       attachSwipe();
     } else {
-      setTimeout(function () {
-        transitionTo(1, {
-          mode: 'spring',
-          onDone: function () {
-            setTimeout(function () {
-              transitionTo(2, {
-                mode: 'css', duration: EASE_DUR, easing: 'ease-out',
-                onDone: function () {
-                  transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
-                }
-              });
-            }, PAUSE_BETWEEN);
-          }
-        });
-      }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
+      whenContentReady(function () {
+        // Финальный замер высоты ряда ДО показа (кучка ещё невидима, o:0) —
+        // дальше высоту не трогаем, поздней ступеньки не будет.
+        if (measureRowCardH()) { recenterRow(); applyState(current); }
+        setTimeout(function () {
+          transitionTo(1, {
+            mode: 'spring',
+            onDone: function () {
+              setTimeout(function () {
+                transitionTo(2, {
+                  mode: 'css', duration: EASE_DUR, easing: 'ease-out',
+                  onDone: function () {
+                    transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
+                  }
+                });
+              }, PAUSE_BETWEEN);
+            }
+          });
+        }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
+      });
     }
   })();
 </script>
