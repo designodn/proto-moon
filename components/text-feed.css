@@ -189,13 +189,22 @@
   gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
   padding: var(--space-3);          /* 12 */
-  /* Обводка — инсет-аутлайн (offset -2) ПОВЕРХ края, а не бордер: бордер съедал
-     бы ширину, из-за чего картинка не дотягивалась до края. С аутлайном
-     full-bleed медиа = 100% ширины карточки, а штрих лежит поверх. */
-  outline: 2px solid var(--dynamic-stroke-contrast-low);
-  outline-offset: -2px;
+  position: relative;               /* база для оверлей-рамки ::after */
   border-radius: 20px;
   overflow: hidden;
+}
+/* Обводка — отдельный слой ::after поверх содержимого, а не outline/border:
+   бордер съедал бы ширину (медиа не дотянулась бы до края), а outline родителя
+   по paint-order рисуется ПОД позиционированной (position:relative) full-bleed
+   медиа — и снизу/по бокам её перекрывала картинка. ::after лежит позже медиа
+   в дереве → гарантированно поверх неё, по всему периметру. */
+.text-feed__reshare-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 20px;
+  pointer-events: none;
 }
 
 /* Подарки/открытки (__gift) и ИИ-подарок (__ai-gift) — тёплая подложка
