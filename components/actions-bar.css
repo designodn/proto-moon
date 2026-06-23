@@ -74,12 +74,15 @@
 /* Цветной бейдж не перекрашиваем инверсией в on-image-контексте (клип/медиа). */
 .button-container.__style-on-image .button-klass__icon-filled.ll-icon { filter: none; }
 
-/* Лайк: убираем press/hover-оверлей (::after) — на тач-устройствах :hover
-   «залипает» и тинт оставался лежать после тапа. Фидбэк лайка даёт золотой
-   фон + иконка. Полный :not-чейн — чтобы перебить базовое правило из button.css. */
+/* Лайк: НИКАКОГО press/hover-оверлея (::after) ни в одном состоянии — на тач
+   :hover «залипал» и тинт оставался лежать после тапа. Фидбэк даёт золотой
+   фон + иконка. :not-чейн повторяет базовый селектор button.css (перебивает
+   его по специфичности), плюс безусловный вариант и --overlay-opacity:0. */
+.button-klass .button-container::after,
 .button-klass .button-container:not(:disabled):not(.__state-loading):not(.__state-disabled)::after {
   content: none;
 }
+.button-klass .button-container { --overlay-opacity: 0; }
 
 /* Счётчик рендерится из CSS-counter — автоматически +1 при :checked */
 .button-klass__count::before {
