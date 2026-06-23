@@ -190,7 +190,11 @@
   gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
   padding: var(--space-3);          /* 12 */
-  border: 2px solid var(--dynamic-stroke-contrast-low);
+  /* Обводка — инсет-аутлайн (offset -1) ПОВЕРХ края, а не бордер: бордер съедал
+     бы ширину, из-за чего картинка не дотягивалась до края. С аутлайном
+     full-bleed медиа = 100% ширины карточки, а штрих лежит поверх. */
+  outline: 1px solid var(--dynamic-stroke-contrast-low);
+  outline-offset: -1px;
   border-radius: 20px;
   overflow: hidden;
 }
