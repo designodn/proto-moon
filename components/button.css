@@ -117,6 +117,11 @@
   --button-color: var(--static-text-and-icons-base-inverse-primary);
   --button-background-color: var(--static-surface-status-accent);
 }
+/* В праймари-кнопке ведущая иконка не показывается — только текст. Кнопки
+   actions-bar (коммент / репост / класс / троеточие) на это не влияют: они
+   __style-secondary / __style-on-image, а не primary. */
+.button-container.__style-primary .icon,
+.button-container.__style-primary .ll-icon { display: none; }
 
 /* Secondary — translucent bg, theme text */
 .button-container.__style-secondary {
