@@ -41,6 +41,10 @@
     /* Заголовок-хэштег теперь по центру навбара (низ текста на 42px при высоте 56);
        подтягиваем шапку вверх, чтобы между хэштегом и счётчиком было 4px. */
     margin-top: -10px;
+    /* навбар позиционирован (.ll-mar-nav position:relative) и рисуется поверх;
+       поднимаем шапку в стэке, чтобы счётчик не уходил под фон навбара. */
+    position: relative;
+    z-index: 1;
   }
   .ll-mar-head__count { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }          /* 0 от хэштега (навбар) */
   .ll-mar-head__desc  { margin: var(--space-2) 0 0; color: var(--dynamic-text-and-icons-base-primary); }  /* 8 от счётчика */

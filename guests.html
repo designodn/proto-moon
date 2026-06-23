@@ -66,6 +66,11 @@
   /* Ячейка гостя — DS-компонент .user-cell (components/user-cell.css). */
 
   /* «Возможно, вы знакомы» — компонент .vvz-portlet (карточки 220px по дефолту) */
+
+  /* Таббар — sticky в потоке ленты: стоит под контентом, не перекрывает
+     последнюю ячейку (переопределяем fixed из app-shell). Лежит последним
+     элементом внутри .phone-frame__feed; отступ 32 даёт padding-bottom .ll-guests. */
+  .ll-tabbar { position: sticky; }
 </style>
 </head>
 <body>
@@ -250,20 +255,22 @@
         </div>
 
       </div>
-    </div>
 
-    <!-- TABBAR -->
-    <div class="ll-tabbar">
-      <div class="tabbar __platform-android">
-        <div class="tabbar__row">
-          <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
-          <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
-          <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
-          <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
-          <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
-          <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+      <!-- TABBAR — sticky внизу ленты: стоит в потоке под контентом, не висит
+           поверх. Отступ 32 от последней ячейки даёт padding-bottom у .ll-guests. -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed" aria-label="Лента"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
