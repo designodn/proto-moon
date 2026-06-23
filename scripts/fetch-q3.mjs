@@ -964,7 +964,7 @@ ${authorHeaderFn(aid, time)}
               <div class="ds-body-m">${esc(caption)}</div>
               <div class="text-feed__reshare-card-author">
                 <div class="avatar __size-24 __type-image">${img(personPhoto(giverId))}</div>
-                <div class="ds-body-m text-feed__reshare-card-author-name"><b style="font-weight:500">${esc(personName(giverId))}</b></div>
+                <div class="ds-body-m text-feed__reshare-card-author-name"><b class="ds-title-s">${esc(personName(giverId))}</b></div>
               </div>
             </div>${mediaBlock}
           </div>

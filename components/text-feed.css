@@ -197,7 +197,7 @@
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;
-  gap: var(--space-3);              /* 12 между авой и именем */
+  gap: var(--space-2);              /* 8 между авой и именем */
 }
 .text-feed__reshare-card-author-name {
   flex: 1 1 0;
