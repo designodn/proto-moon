@@ -182,13 +182,13 @@
   --overlay-color: var(--button-custom-overlay-color, var(--button-color));
 }
 
-/* AI gift — тёплый градиент из ИИ-подарков NV-ленты (.feed-congrats.__ai:
-   коралл/малиновый → оранжевый → золотой), белый текст и иконка. Фон — gradient,
-   поэтому через background-image (а не --button-background-color). Press-оверлей
-   (::after) работает поверх. */
+/* AI gift — градиент кнопки ИИ-подарка из Figma (node 4833:57273):
+   оранжевый → светло-оранжевый → оранжевый → малиновый. Белый текст и иконка.
+   Фон — gradient, поэтому через background-image (а не --button-background-color).
+   Press-оверлей (::after) работает поверх. */
 .button-container.__style-ai-gift {
   --button-color: var(--static-text-and-icons-base-inverse-primary);
-  background-image: linear-gradient(95deg, #d83f6f 0%, #f0813c 50%, #f8c659 100%);
+  background-image: linear-gradient(90deg, #ff7700 0%, #ff9c40 38%, #ff7700 47.5%, #ff0099 100%);
 }
 
 /* ============================================================
