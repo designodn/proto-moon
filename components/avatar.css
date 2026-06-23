@@ -84,7 +84,7 @@
   --avatar-bg: var(--dynamic-surface-contrast-low);
 }
 .avatar.__type-placeholder {
-  --avatar-bg: var(--dynamic-surface-contrast-mid);
+  --avatar-bg: var(--dynamic-surface-base-primary);
 }
 /* Плейсхолдер — пустой круг: если внутри осталась картинка (напр. аватар
    переключён в placeholder после ошибки загрузки, см. avatar.js) — прячем её. */
