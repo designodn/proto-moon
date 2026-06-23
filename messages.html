@@ -33,7 +33,7 @@
 
   /* FAB — написать сообщение (DS button-circle, фикс. позиция) */
   .ll-fab {
-    position: fixed; right: 16px; bottom: 84px; z-index: 60;
+    position: fixed; right: 16px; bottom: calc(var(--tabbar-height) + 16px); z-index: 60;
     border-radius: 50%;
     box-shadow: 0 8px 20px -6px rgba(0,0,0,0.32);
   }
@@ -87,7 +87,7 @@
       <section class="vvz-portlet __messages" id="vvzBlock" data-dismiss-row aria-label="Возможно, вы знакомы">
         <header class="vvz-portlet__header">
           <header class="header __size-m"><div class="header__title">Возможно, вы знакомы</div></header>
-          <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" data-dismiss="row"><span class="button-inline__content">Скрыть</span></button></span>
+          <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20" data-dismiss="row"><span class="button-inline__content">Скрыть</span></button></span>
         </header>
         <div class="vvz-portlet__row">
 
@@ -210,9 +210,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Хочу заказать тапочки красные в горошек</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">11:45</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">11:45</span>                </div>
               </div>
             </div>
           </div>
@@ -227,9 +225,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Мне рассада не подошла, можно вернуть?</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">11:30</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">11:30</span>                </div>
               </div>
             </div>
           </div>
@@ -244,9 +240,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Надо купить свеклу для борща и морковь</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">11:20</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">11:20</span>                </div>
               </div>
             </div>
           </div>
@@ -261,9 +255,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Когда согласуем фасад дома?</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">11:01</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">11:01</span>                </div>
               </div>
             </div>
           </div>
@@ -278,9 +270,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Самое вкусное жаркое из баранины</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">10:52</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">10:52</span>                </div>
               </div>
             </div>
           </div>
@@ -295,9 +285,7 @@
                 <div class="message-cell__row">
                   <span class="message-cell__preview ds-body-m"><span class="message-cell__text">Спасибо большое! Договорились на завтра</span></span>
                   <span class="content-dot ds-caption-m">·</span>
-                  <span class="message-cell__time ds-caption-m">Вчера</span>
-                  <span class="message-cell__read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l4 4 8-9"/><path d="M10 17l1 1 8-9"/></svg></span>
-                </div>
+                  <span class="message-cell__time ds-caption-m">Вчера</span>                </div>
               </div>
             </div>
           </div>

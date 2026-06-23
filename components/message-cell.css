@@ -4,12 +4,10 @@
  * Строка диалога в списке сообщений. Построена на DS uni-cell + content.
  *   wrapper → container(__state-enabled) → cell.message-cell.__read|__unread
  *
- * Вторая строка: превью · время [иконка «прочитано»] — в одну строку.
+ * Вторая строка: превью · время — в одну строку.
  * Точка-разделитель — .content-dot (компонент content).
- * Модификатор .__read показывает галочки ✓✓, .__unread — прячет (место
- * под иконку резервируется в обоих случаях, чтобы строка не прыгала).
  *
- *   <div class="uni-cell message-cell __read">
+ *   <div class="uni-cell message-cell">
  *     <div class="avatar __size-56 __type-image"><img …></div>
  *     <div class="uni-cell-additional-content">
  *       <div class="message-cell__name ds-title-s">Имя</div>
@@ -17,7 +15,6 @@
  *         <span class="message-cell__preview ds-body-m">Текст…</span>
  *         <span class="content-dot ds-caption-m">·</span>
  *         <span class="message-cell__time ds-caption-m">11:45</span>
- *         <span class="message-cell__read"><svg…✓✓…></span>
  *       </div>
  *     </div>
  *   </div>
@@ -67,18 +64,3 @@
   flex-shrink: 0;
   color: var(--dynamic-text-and-icons-base-tertiary);
 }
-
-/* Слот «прочитано» — всегда резервирует место (16px), галочки по модификатору */
-.message-cell__read {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--dynamic-text-and-icons-base-secondary);
-}
-.message-cell__read svg { display: block; width: 16px; height: 16px; }
-
-.message-cell.__unread .message-cell__read { visibility: hidden; }
-.message-cell.__read   .message-cell__read { visibility: visible; }
