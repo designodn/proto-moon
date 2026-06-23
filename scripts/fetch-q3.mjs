@@ -1205,7 +1205,11 @@ ${mediaInner}
               </div>` : '';
       const previewBody = orig ? `
               <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
-      const preview = (to || orig) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}
+      // Фото оригинала (если есть) — медиа reshare-card, отступ до него 12 даёт
+      // сам компонент (.text-feed__reshare-card-media:not(:first-child)).
+      const previewMedia = photos.length ? `
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0])}</div>` : '';
+      const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
             </div>` : '';
       return `        <article class="caf __twitter-like island">
           <div class="caf__row">
