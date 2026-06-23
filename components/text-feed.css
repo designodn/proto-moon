@@ -495,11 +495,6 @@
 .marathon-promo__tag {
   color: var(--dynamic-text-and-icons-status-accent);
 }
-/* Центрированный вариант промо — текст и счётчик по центру (после публикации). */
-.marathon-promo.__center {
-  align-items: center;
-  text-align: center;
-}
 
 /* — 1. модификатор под постом: divider сверху + промо + CTA — */
 .text-feed__marathon {
