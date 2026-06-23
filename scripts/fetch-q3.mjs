@@ -381,9 +381,11 @@ function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
   return clampMore(text, { textClass: bodyClass, clamp: CLAMP });
 }
 
-/** caf-text (comment-as-feed): крупный текст коммента — тот же inline-механизм. */
+/** caf-text (comment-as-feed): крупный текст коммента — тот же inline-механизм.
+ *  Типографика ds-title-l (размер из токена), но вес форсированно регулярный
+ *  (см. .caf-text.ds-title-l в comment-as-feed.css). */
 function cafText(title) {
-  return clampMore(title, { textClass: 'caf-text', clamp: CAF_CLAMP });
+  return clampMore(title, { textClass: 'caf-text ds-title-l', clamp: CAF_CLAMP });
 }
 
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */

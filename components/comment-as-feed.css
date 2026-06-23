@@ -22,11 +22,8 @@
 }
 .caf-text {
   margin: 0;
-  font-family: var(--font-family);
-  /* Как крупный текст поста в ленте (.text-feed__body.__news/__poem, 24/28). */
-  font-size: 24px;
-  line-height: 28px;
-  font-weight: 400;
+  /* Размер/семейство — из ds-title-l (класс в разметке). Вес ниже форсируем
+     регулярным (.caf-text.ds-title-l перебивает 600 из токена). */
   color: var(--dynamic-text-and-icons-base-primary);
   /* Обрезка как у комментариев (fc-comment): line-clamp до 4 строк, «ещё» —
      отдельной строкой снизу, по чекбоксу разворачиваем. */
@@ -36,6 +33,8 @@
   -webkit-line-clamp: 4;
   overflow: hidden;
 }
+/* Тайтл-L, но регуляр форсированно (поверх font-weight:600 из ds-title-l). */
+.caf-text.ds-title-l { font-weight: 400; }
 .caf-text-wrap > input:checked ~ .caf-text {
   -webkit-line-clamp: unset;
   overflow: visible;
