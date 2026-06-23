@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../index.css">
+<link rel="stylesheet" href="../components/chat.css">
 <!-- В head синхронно: pagereveal — направление перехода. -->
 <script src="../components/screen-transition.js"></script>
 <style>
@@ -18,41 +19,8 @@
                  display:flex; flex-direction:column; }
   .ll-icon { display:inline-block; flex-shrink:0; vertical-align:middle; }
 
-  /* ── Навбар с именем/статусом и аватаркой ─────────────────────── */
-  /* Белая подложка шапки (.meshok-up = display:contents и фон не рисует,
-     поэтому красим сам навбар). */
-  .ch-nav { display:flex; align-items:center; gap: var(--space-3);
-            height:52px; padding: 0 var(--space-2) 0 var(--space-4);
-            background: var(--dynamic-surface-base-secondary);
-            border-bottom: 0.5px solid var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
-  .ch-nav__head { flex:1 1 0; min-width:0; text-align:center; }
-  .ch-nav__name { color: var(--dynamic-text-and-icons-base-primary);
-                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .ch-nav__status { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 1px; }
-
-  /* ── Лента сообщений ──────────────────────────────────────────── */
-  /* justify-content:flex-end — сообщения прижаты к низу (как только что пришли) */
-  .ch-feed { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-             display:flex; flex-direction:column; justify-content:flex-end; gap: var(--space-2);
-             padding: var(--space-3) var(--space-3) var(--space-4); }
-  .ch-feed::-webkit-scrollbar { display:none; }
-
-  /* дата-разделитель */
-  .ch-day { align-self:center; margin: var(--space-2) 0;
-            background: var(--dynamic-surface-base-inverse-tertiary, rgba(46,47,51,0.48));
-            color:#fff; border-radius: 12px; padding: 4px 12px; }
-
-  /* пузырь сообщения (исходящее — прижато вправо) */
-  .ch-msg { align-self:flex-end; max-width: 76%;
-            background: var(--dynamic-surface-base-secondary);
-            border-radius: 12px; padding: 8px 16px 22px 12px; position:relative; }
-  /* входящее — прижато влево, другой фон */
-  .ch-msg.__in { align-self:flex-start;
-                 background: var(--dynamic-surface-contrast-low, rgba(131,102,86,0.12)); }
-  .ch-msg__text { color: var(--dynamic-text-and-icons-base-primary); }
-  .ch-msg__time { position:absolute; right:8px; bottom:4px;
-                  font-size:11px; line-height:14px;
-                  color: var(--dynamic-text-and-icons-base-tertiary, rgba(46,47,51,0.48)); }
+  /* Общий вид диалога (.ch-nav / .ch-feed / .ch-day / .ch-msg / .ch-input)
+     — в components/chat.css. Ниже только специфика этого экрана. */
 
   /* карточка-ссылка внутри сообщения */
   .ch-card { margin-top: 12px; border-radius: 16px; overflow:hidden;
@@ -63,15 +31,6 @@
   .ch-card__body { padding: 0 12px 12px; }
   .ch-card__title { color: var(--dynamic-text-and-icons-base-primary); margin: 8px 0 0; }
   .ch-card__source { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 4px; }
-
-  /* ── Поле ввода ───────────────────────────────────────────────── */
-  .ch-input { flex-shrink:0; background: var(--dynamic-surface-base-secondary);
-              border-top: 0.5px solid var(--dynamic-surface-contrast-mid, rgba(131,102,86,0.24));
-              display:flex; align-items:center; gap: var(--space-3);
-              height:48px; padding: 0 12px; padding-bottom: env(safe-area-inset-bottom); }
-  .ch-input__ph { flex:1 1 0; min-width:0; color: var(--dynamic-text-and-icons-base-secondary); }
-  .ch-input__icons { display:flex; align-items:center; gap: var(--space-4); }
-  .ch-input img { width:24px; height:24px; display:block; }
 </style>
 </head>
 <body>
@@ -147,7 +106,7 @@
       <span class="ds-body-l ch-input__ph">Текст сообщения</span>
       <span class="ch-input__icons">
         <img src="../assets/icons/attach_24.svg" alt="">
-        <img src="../assets/icons/microphone_24.svg" alt="">
+        <img src="../assets/icons/glyph_microphone_on_24.svg" alt="Записать аудио">
       </span>
     </div>
   </div>
