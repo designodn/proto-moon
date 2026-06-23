@@ -339,42 +339,42 @@ function activityLine(header) {
   return `          <div class="text-feed__activity ds-body-m">${html}</div>\n`;
 }
 
-/** Текстовый блок поста: длинный (> CLAMP симв.) → сворачиваемый toggle, иначе
- *  простой <p>. bodyClass — класс параграфа (text-feed__body по умолчанию). */
-const CLAMP = 160;
-function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
-  if (!text) return '';
-  if (text.length <= CLAMP) {
-    return `          <p class="${bodyClass}">${esc(text)}</p>`;
+/** Centralized «…ещё / Скрыть» — единый inline-механизм для тела поста, caf-text
+ *  и комментариев. Длинный (> clamp симв.) текст режем по границе слова: видимая
+ *  «голова» + скрытый «хвост» (feed-more__full). «…ещё» приклеено к концу головы
+ *  (последним словом на строке — между головой/хвостом/кнопкой НЕТ пробелов и
+ *  переносов). Развёрнуто — полный текст + «Скрыть» с новой строки. Короткий →
+ *  простой <p>. Размер «…ещё»/«Скрыть» = размеру текста (кнопка лежит ВНУТРИ
+ *  абзаца, наследует font). Стили — components/feed-more.css. */
+const CLAMP = 160;      // тело поста (ds-body-m, полная ширина карточки)
+const CAF_CLAMP = 120;  // крупный текст коммента-как-поста (.caf-text, 24px)
+const FC_CLAMP = 130;   // комментарии под постом (.fc-comment__text, узкая колонка)
+function clampMore(text, { textClass = 'ds-body-m text-feed__body', clamp = CLAMP } = {}) {
+  const s = String(text ?? '');
+  if (!s) return '';
+  // feed-more__text снимает line-clamp у caf/комментов и в коротком варианте тоже.
+  if (s.length <= clamp) {
+    return `          <p class="${textClass} feed-more__text">${esc(s)}</p>`;
   }
-  // Делим по границе слова возле CLAMP: голова — видна, хвост — под «ещё».
-  let cut = text.lastIndexOf(' ', CLAMP);
-  if (cut < CLAMP * 0.5) cut = CLAMP;
-  const head = text.slice(0, cut);
-  const tail = text.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
-  return `          <label class="text-feed__body-toggle">
+  let cut = s.lastIndexOf(' ', clamp);
+  if (cut < clamp * 0.5) cut = clamp;
+  const head = s.slice(0, cut);
+  const tail = s.slice(cut); // начинается с пробела — отступ перед хвостом сохраняется
+  return `          <label class="feed-more">
             <input type="checkbox" hidden>
-            <p class="${bodyClass}">
-              ${esc(head)}<span class="text-feed__body-full">${esc(tail)}</span><span class="text-feed__more"><span class="text-feed__more-show"> ещё</span><span class="text-feed__more-hide"> скрыть</span></span>
-            </p>
+            <p class="${textClass} feed-more__text">${esc(head)}<span class="feed-more__full">${esc(tail)}</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>`;
 }
 
-/** caf-text (comment-as-feed): крупный текст коммента. Длинный (> CAF_CLAMP) →
- *  режем по слову, хвост прячем, «ещё» — ИНЛАЙН в конце видимого текста и
- *  приклеено неразрывным (U+00A0) к последнему слову, чтобы не висело одно.
- *  Короткий → простой <p> с no-widow на последнем слове. */
-const CAF_CLAMP = 120;
+/** Текстовый блок поста: длинный → сворачиваемый, иначе простой <p>.
+ *  bodyClass — класс параграфа (text-feed__body по умолчанию). */
+function feedText(text, { bodyClass = 'ds-body-m text-feed__body' } = {}) {
+  return clampMore(text, { textClass: bodyClass, clamp: CLAMP });
+}
+
+/** caf-text (comment-as-feed): крупный текст коммента — тот же inline-механизм. */
 function cafText(title) {
-  // Текст коммента целиком в <p>, обрезку делает CSS (line-clamp:4). «ещё/скрыть» —
-  // отдельный сосед, показывается только при переполнении (is-clampable из JS).
-  // Тот же механизм, что у обычных комментариев (fc-comment).
-  const t = esc(String(title ?? ''));
-  return `          <label class="caf-text-wrap">
-            <input type="checkbox" hidden>
-            <p class="caf-text">${t}</p>
-            <span class="caf-text__more"><span class="caf-text__more-show">ещё</span><span class="caf-text__more-hide">скрыть</span></span>
-          </label>`;
+  return clampMore(title, { textClass: 'caf-text', clamp: CAF_CLAMP });
 }
 
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */
@@ -505,11 +505,7 @@ function commentItem(authorId, text) {
               </div>
               <div class="fc-comment__body">
                 <div class="fc-comment__author ds-title-s">${esc(personName(authorId))}</div>
-                <label class="fc-comment__text-wrap">
-                  <input type="checkbox" hidden>
-                  <p class="fc-comment__text ds-body-m">${esc(nbsp(resolveNames(text)))}</p>
-                  <span class="fc-comment__more"><span class="fc-comment__more-show">ещё</span><span class="fc-comment__more-hide">скрыть</span></span>
-                </label>
+${clampMore(nbsp(resolveNames(text)), { textClass: 'fc-comment__text ds-body-m', clamp: FC_CLAMP })}
                 <div class="fc-comment__actions">
                   <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
                   <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
