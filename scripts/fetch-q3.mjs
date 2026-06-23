@@ -282,9 +282,9 @@ function authorHeaderTribune(id) {
 
 /** Хлебные крошки из колонок «тема»/«рубрика» (последняя — активная). Если обе
  *  пусты → ''. Разметка как в комментах-как-фид и в NV-ленте. */
-function breadcrumbs(tema, rubrika) {
+function breadcrumbs(tema, rubrika, extraClass = '') {
   if (!tema && !rubrika) return '';
-  return `            <nav class="breadcrumbs">${tema ? `
+  return `            <nav class="breadcrumbs${extraClass ? ' ' + extraClass : ''}">${tema ? `
               <a class="breadcrumbs__item" href="#">${esc(tema)}</a>` : ''}${(tema && rubrika) ? `
               <span class="breadcrumbs__separator" aria-hidden="true"></span>` : ''}${rubrika ? `
               <span class="breadcrumbs__item __state-on">${esc(rubrika)}</span>` : ''}
@@ -330,7 +330,8 @@ function activityLine(header) {
     if (i % 2 === 1) {
       // id-токен → имя жирным; запоминаем пол для спряжения глагола следом.
       feminize = personGender(parts[i]) === 'ж';
-      html += `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
+      // Полное имя (ФИ), не только имя — целиком в title S.
+      html += `<span class="ds-title-s">${esc(personName(parts[i]) || parts[i])}</span>`;
     } else {
       let seg = parts[i];
       // Первое слово после женского имени — глагол: муж. «-л» → жен. «-ла».
@@ -1219,8 +1220,12 @@ ${mediaInner}
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
       // comment-as-feed ничего не добавляет — см. его guard).
+      // Крошки «тема / рубрика» из листа — над рядом-комментом, внутри стека
+      // (gap 8 даёт сам .caf__stack). caf__crumbs добавляет гор. паддинг 16.
+      const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
       return `        <article class="caf __twitter-like island">
-          <div class="caf__stack">
+          <div class="caf__stack">${cafCrumbs ? `
+${cafCrumbs}` : ''}
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image">${img(personPhoto(commenter))}</div>${line}
