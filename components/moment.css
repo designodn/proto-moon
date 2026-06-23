@@ -618,21 +618,23 @@
 }
 .moment__bday-heading {
   margin: 0 0 var(--space-1-5);
-  /* OK Sans Display не подключён глобально — даём фолбэк на общий
-     системный шрифт. Размер/жирность точно как в Figma. */
+  /* Параметры заголовка как у «Вам подарили 3 подарка» (gp__title в шторке
+     подарков): 32 / 1.2 / 700, OK Sans Display, letter-spacing 0. */
   font-family: 'OK Sans Display', var(--font-family);
-  font-size: 48px;
-  line-height: 1.1;
+  font-size: 32px;
+  line-height: 1.2;
   font-weight: 700;
+  letter-spacing: 0;
 }
+/* Имя: контейнер на всю ширину, текст стилем ds-title-l (21/28/600). */
 .moment__bday-name {
   margin: 0;
   width: 100%;
   font-family: var(--font-family);
-  font-size: 22px;
+  font-size: 21px;
   line-height: 28px;
   font-weight: 600;
-  letter-spacing: 0.24px;
+  letter-spacing: 0;
 }
 
 /* ============================================================
