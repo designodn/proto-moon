@@ -86,6 +86,11 @@
 .avatar.__type-placeholder {
   --avatar-bg: var(--dynamic-surface-contrast-mid);
 }
+/* Плейсхолдер — пустой круг: если внутри осталась картинка (напр. аватар
+   переключён в placeholder после ошибки загрузки, см. avatar.js) — прячем её. */
+.avatar.__type-placeholder > img {
+  display: none;
+}
 .avatar.__type-icon {
   --avatar-bg: var(--dynamic-surface-contrast-low);
   --avatar-color: var(--dynamic-text-and-icons-base-primary);
@@ -104,15 +109,6 @@
 }
 .avatar.__type-emoji {
   --avatar-bg: var(--dynamic-surface-contrast-low);
-}
-
-/* Фолбэк: <img> не загрузился (см. components/avatar.js) — прячем битую
-   картинку и заливаем круг чистым surface/base/primary. */
-.avatar.__img-error {
-  --avatar-bg: var(--dynamic-surface-base-primary);
-}
-.avatar.__img-error > img {
-  display: none;
 }
 
 /* Loading state — shimmer */
