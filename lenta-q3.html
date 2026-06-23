@@ -176,14 +176,17 @@
 
   /* «Возможно, вы знакомы» — компонент .vvz-portlet (components/vvz-portlet.css) */
 
-  /* Баннер под сторис — PNG на фоне контейнера, паддинги 16, текст внутри. */
+  /* Баннер под сторис — градиент-PNG на фоне контейнера, текст слева,
+     картинка-бейдж справа впритык к краю по центру. */
   .ll-banner {
+    position: relative;
     display: block;
     box-sizing: border-box;
     padding: 16px;
+    padding-right: 120px;        /* место под картинку справа */
     border-radius: 0;
     overflow: hidden;
-    background-image: url('assets/icons/bannerBack1.png');
+    background-image: url('assets/feed-banner/banner-feed-back.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -192,6 +195,17 @@
   .ll-banner__text {
     display: block;
     color: var(--dynamic-text-and-icons-base-primary);
+  }
+  /* Картинка справа: впритык к правому краю, по центру по вертикали. */
+  .ll-banner__pic {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    width: auto;
+    display: block;
+    pointer-events: none;
   }
 
   /* Карусель сториз — вынесена в DS как .stories-row.
@@ -453,6 +467,7 @@
         <!-- BANNER под сторис — картинка во всю ширину контейнера ленты -->
         <div class="ll-banner">
           <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
+          <img class="ll-banner__pic" src="assets/feed-banner/banner-feed-pic.png" alt="">
         </div>
 
 <!-- FEED:START (генерится scripts/fetch-q3.mjs — не редактировать вручную) -->
