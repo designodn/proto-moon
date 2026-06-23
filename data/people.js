@@ -276,6 +276,28 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": "group-10",
+    "name": "Живой дачный уголок",
+    "subtitle": "",
+    "photo": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqNd1ho-na1UmY5ejrbKClE-8MTkaRChbgCRQ1B78wrWRTEGIQdMTpZ-lcK93Y9KwjeAYbG1eQM768Ye5_zeXOh_SUT7P2BmlKHtQvyKEtlR_L8jJYSizMcb41y6VZLVMvtFa0OXJ4kjeyjJkuakvmTTV0e1KCLAiX2lxql03uWYzNp4FF26xWrt4LNeWWwAAACk&dpr=2",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-11",
+    "name": "Забытые моряки",
+    "subtitle": "",
+    "photo": "https://735606.selcdn.ru/thumbnails/photos/2018/09/03/54q7nziswegetpr0_1024.jpg",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
     "id": "ad-1",
     "name": "Квартал бизнес-класса «Б15»",
     "subtitle": "Реклама 0+",

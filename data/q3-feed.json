@@ -339,7 +339,7 @@
     {
       "id": "row-14",
       "type": "photo",
-      "author": "group-4",
+      "author": "group-10",
       "tema": "Сделай сам",
       "rubrika": "Цветы и сад",
       "header": "",
@@ -854,7 +854,7 @@
     {
       "id": "row-32",
       "type": "photo",
-      "author": "group-8",
+      "author": "group-11",
       "tema": "Политика",
       "rubrika": "Общество",
       "header": "",
@@ -866,9 +866,9 @@
       "photosRaw": [
         "https://static.mk.ru/upload/entities/2015/12/28/articles/detailPicture/fd/6a/2d/980042405_8194598.jpg"
       ],
-      "likes": "2",
-      "comments": "2",
-      "reshares": "2",
+      "likes": "123",
+      "comments": "76",
+      "reshares": "45",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
@@ -877,10 +877,6 @@
         {
           "authorId": "3",
           "text": "Посмотрите во что превратилась столица автомобиле строения Дейтрот в Америке, то же самое ждёт и Москву если не прекратится бессистемное наполнение толпами"
-        },
-        {
-          "authorId": "1",
-          "text": "Никогда не хотела жить в Москве. Сейчас внук купил двушку в Москве, работает в Роснефти, в офисе. Радуется, ещё пацанчик, детей нет. Зовём его к нам, по 2часа в пробках стоит!"
         }
       ]
     },
@@ -920,39 +916,6 @@
         {
           "authorId": "7",
           "text": "ну какая красота 🧡🧡🧡🧡 какой сорт?"
-        }
-      ]
-    },
-    {
-      "id": "post-11",
-      "type": "group-post",
-      "author": "group-4",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Даже хилые томаты, огурцы дадут солидный урожай. Всего 1 ложка на литр воды Если рассада кажется слабенькой, не спешите ставить на ней крест. Её ещё можно спасти с помощью одной простой подкормки! Скорее всего, она уже есть у вас на кухне. Удобрение прекрасно усваивается растением и аккумулирует его рост и дальнейшее плодоношение! Разницу вы заметите уже через пару недель.",
-      "photos": [
-        "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&dpr=2"
-      ],
-      "photosRaw": [
-        "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1Ka4FTj9St6lhNUiCJFbhet46gNy4K67jgWnPP_u049SglzqmHqoU7dX88P36XuEYvl53yGdUnmCQtgvlQAmnzkhLvhYtO7AAAAKQ&dpr=2"
-      ],
-      "likes": "112",
-      "comments": "43",
-      "reshares": "12",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "2",
-          "text": "вранье собачье"
-        },
-        {
-          "authorId": "vvz-2",
-          "text": "Сторонников натурального земледелия уже нет.. проще же купить химикаты, о чём и пишут в каждой статье блогеры ежедневно по несколько раз.."
         }
       ]
     },
