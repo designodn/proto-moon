@@ -109,3 +109,120 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ============================================================
+   TWITTER-LIKE — альтернативная раскладка comment-as-feed.
+   Вместо «шапка сверху → крупный текст» комментарий показан
+   твиттер-рядом: аватар 44 слева + вертикальная «палка»-трунк,
+   контент справа (имя · дата → текст → превью оригинала →
+   3 счётчика-кнопки). Снизу к нему присоединяется
+   .fc-list.__twitter-like (ответы) и поле .fc-input.
+
+   Геометрия ряда (ава 44 + gap 12) совпадает с
+   .fc-comment.__twitter-like — это один и тот же «твиттер-ряд»,
+   поэтому трунк-«палка» проходит сквозь весь стек непрерывно.
+
+     <article class="caf __twitter-like island">
+       <div class="caf__row">
+         <div class="caf__aside">
+           <div class="avatar __size-44 __type-image">…</div>
+           <span class="caf__line"></span>          ← палка вниз
+         </div>
+         <div class="caf__content">
+           <div class="caf__head">
+             <span class="ds-title-s caf__name">Имя</span>
+             <span class="ds-body-m caf__date">· дата</span>
+           </div>
+           <p class="ds-body-m text-feed__body feed-more__text caf__text">…</p>
+           <div class="text-feed__reshare-card">…автор оригинала…</div>
+           <div class="caf__actions">…3× button-inline (счётчики)…</div>
+         </div>
+       </div>
+       <div class="fc-list __twitter-like">…ответы…</div>
+       <div class="fc-input">…поле ответа…</div>
+     </article>
+   ============================================================ */
+.caf {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Один твиттер-ряд: колонка-ава + контент, gap 12, паддинги 16 по бокам. */
+.caf.__twitter-like .caf__row {
+  display: flex;
+  gap: var(--space-3);              /* 12 между авой и контентом */
+  align-items: stretch;            /* палка-aside тянется на всю высоту ряда */
+  padding: 0 var(--space-4);        /* 16 по бокам */
+}
+
+/* Левая колонка: ава 44 сверху, под ней «палка» до низа ряда. */
+.caf__aside {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);              /* 8: ава ↔ палка */
+}
+/* «Палка» — вертикаль 2px цвета stroke-contrast-low, тянется от под-авы до
+   низа ряда (а дальше — авы первого ответа), центрируется под 44-авой. */
+.caf__line {
+  flex: 1 0 auto;
+  width: 2px;
+  background: var(--dynamic-stroke-contrast-low);
+}
+
+/* Правая колонка — контент. Снизу 8 (как в макете), чтобы трунк дотягивался
+   до авы следующего ряда непрерывно. */
+.caf__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-2);   /* 8 */
+}
+
+/* Строка 1: имя + «· дата» в одну строку, дата вторичным цветом. */
+.caf__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);              /* 4 между именем и датой */
+  min-width: 0;
+}
+.caf__name {
+  color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.caf__date {
+  flex-shrink: 0;
+  color: var(--dynamic-text-and-icons-base-secondary);
+  white-space: nowrap;
+}
+
+/* Текст коммента (body-m, тот же inline-«ещё» через feed-more) — 4 от шапки. */
+.caf__text {
+  margin: var(--space-1) 0 0;       /* 4 сверху */
+  color: var(--dynamic-text-and-icons-base-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Превью оригинала (reshare-card с автором, который шёл вторым в авторах) —
+   8 от текста. Карточка внутри колонки, поэтому гасим её боковые margin'ы
+   и подгоняем радиус под эталон (12). */
+.caf__content > .text-feed__reshare-card {
+  margin: var(--space-2) 0 0;       /* 8 сверху, без боковых отступов */
+  border-radius: 12px;
+}
+
+/* Ряд из 3 счётчиков-кнопок (button-inline __size-16) — 8 от превью,
+   gap 12 между кнопками, отступ иконка↔счётчик 4 (как в макете). */
+.caf__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);              /* 12 между кнопками */
+  margin-top: var(--space-2);       /* 8 */
+}
+.caf__actions .button-inline.__size-16 {
+  --button-inline-content-gap: var(--space-1);   /* 4 иконка↔счётчик */
+}
