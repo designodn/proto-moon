@@ -94,6 +94,9 @@
     overflow: hidden;
     background: url('assets/start/wallpaper.jpg') center / cover no-repeat;
   }
+  /* Отдельные обои: локскрин и меню (homescreen) — из ассетов. */
+  .lockscreen .wallpaper { background-image: url('assets/start/lockscreen.jpg'); }
+  .homescreen .wallpaper { background-image: url('assets/start/q3-wallpaper.jpg'); }
   .wallpaper::before {
     content: none;
   }
@@ -474,8 +477,8 @@
     device.classList.remove('unlocked');
     device.classList.remove('headsup-notifs');
     if (window.OkNotifs) window.OkNotifs.clearShown();
-    // Вернулись на локскрин → возобновляем стрим пушей (в меню он на паузе).
-    startNotifications();
+    // Вернулись на локскрин → перезапускаем стрим пушей с нуля (в меню пауза).
+    restartNotifications();
     resetLaunch();
     try { sessionStorage.removeItem(HOME_KEY); } catch (e) {}
   }
@@ -506,6 +509,13 @@
      стрим пушей продолжается, когда пользователь зашёл в приложение. */
   function startNotifications() { if (window.OkNotifs) window.OkNotifs.start(); }
   function stopNotifications(clear) { if (window.OkNotifs) window.OkNotifs.stop(clear); }
+  /* Пуши на локскрине выводим СРАЗУ и статично — без анимации появления и
+     без тайминга (никакого стрима по одной). При каждом заходе на локскрин
+     (холодный старт / релоад / возврат из меню) показываем все карточки. */
+  function restartNotifications() {
+    if (!window.OkNotifs) return;
+    window.OkNotifs.showAll();
+  }
 
   /* ---- Lock screen: swipe/тап обрабатывает components/lockscreen.js;
      он стреляет 'lockscreen:unlock' на document — мы ловим и зовём
@@ -547,9 +557,9 @@
     if (atHome) {
       showHomeInstant();    // вернулись в меню
     } else {
-      // Холодный старт телефона: пуши должны приходить и на локскрин
-      // (продолжатся после свайпа вверх и дальше в приложении).
-      startNotifications();
+      // Холодный старт телефона: пуши прилетают на локскрин по одной,
+      // заново при каждом заходе (а не уже отыгранными).
+      restartNotifications();
     }
   });
 

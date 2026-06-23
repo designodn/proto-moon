@@ -159,7 +159,10 @@
     max-width: 90px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* Аватар и имя прижаты к левому краю плитки, чтобы первый аватар вставал
+       на одну вертикаль с заголовком секции (центрирование вдавливало его
+       внутрь на (90-56)/2 = 17px). Расстояние между аватарами не меняется. */
+    align-items: flex-start;
     gap: 8px;
     cursor: pointer;
   }
@@ -175,7 +178,7 @@
   }
   .tg-friend__name {
     width: 100%;
-    text-align: center;
+    text-align: left;
     color: var(--dynamic-text-and-icons-base-primary);
   }
   /* Имя и фамилия — каждая в одну строку; длинная фамилия обрезается в «…». */
@@ -458,9 +461,7 @@
           <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
-        <!-- padding-left = 16 (как у заголовка) минус инсет аватара в ячейке
-             ((90-56)/2 = 17), чтобы ПЕРВАЯ голова встала вровень с текстом «Друзья на сайте». -->
-        <div class="tg-carousel" id="friendsRow" style="padding-left: calc(var(--space-4) - 17px);"></div>
+        <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4); scroll-padding-left: var(--space-4);"></div>
       </div>
 
       <!-- ===== TABBAR — внутри скролла, sticky снизу ===== -->
