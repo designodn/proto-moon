@@ -194,14 +194,16 @@
         </div>
       </div>
       <div class="gift-card__accept">
-        <div class="button-wrapper __size-56">
+        <div class="button-wrapper __size-56 gift-card__btn-accept">
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
+        <div class="button-wrapper __size-56 gift-card__btn-write">
+          <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
+        </div>
       </div>
-      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
-      <div class="gift-card__accept-check" aria-hidden="true">
-        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
-      </div>
+      <button class="gift-card__trash" aria-label="Отклонить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
     </article>
 
     <article class="gift-card" data-i="2">
@@ -215,14 +217,16 @@
         </div>
       </div>
       <div class="gift-card__accept">
-        <div class="button-wrapper __size-56">
+        <div class="button-wrapper __size-56 gift-card__btn-accept">
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
+        <div class="button-wrapper __size-56 gift-card__btn-write">
+          <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
+        </div>
       </div>
-      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
-      <div class="gift-card__accept-check" aria-hidden="true">
-        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
-      </div>
+      <button class="gift-card__trash" aria-label="Отклонить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
     </article>
 
     <article class="gift-card" data-i="1">
@@ -236,14 +240,16 @@
         </div>
       </div>
       <div class="gift-card__accept">
-        <div class="button-wrapper __size-56">
+        <div class="button-wrapper __size-56 gift-card__btn-accept">
           <button class="button-container __style-primary"><span class="button-content">Принять</span></button>
         </div>
+        <div class="button-wrapper __size-56 gift-card__btn-write">
+          <button class="button-container __style-secondary"><span class="button-content">Написать</span></button>
+        </div>
       </div>
-      <div class="gift-card__accept-overlay" aria-hidden="true"></div>
-      <div class="gift-card__accept-check" aria-hidden="true">
-        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
-      </div>
+      <button class="gift-card__trash" aria-label="Отклонить">
+        <img src="assets/icons/trash_16_20.svg" alt="">
+      </button>
     </article>
 
     <!-- Последняя карточка «Принять все» — точка входа в массовое принятие.
@@ -430,7 +436,7 @@
     // экрана + ужимание на низких вьюпортах. Если при масштабе 1 зазор
     // сверху/снизу < 48px — масштабируем карточку (по всем сторонам) так, чтобы
     // зазор стал ровно 48. Высота карточки подарка в ряду — 422 (__active).
-    var ROW_CARD_H = 422, ROW_HALF = 175, MIN_GAP = 48;
+    var ROW_CARD_H = 486, ROW_HALF = 175, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
     function recenterRow() {
@@ -558,7 +564,7 @@
       });
     }
     // Финальный экран: меняем заголовок + конфетти. Вызывается и из exit-
-    // цепочки «Принять все», и из processCard, когда liveCards опустел.
+    // цепочки «Принять все» (ACCEPT_ALL), когда liveCards опустел.
     function showAllAccepted() {
       titleEl.innerHTML = 'Вы приняли<br>все подарки';
       // Финальный текст плавно съезжает в центр экрана по вертикали.
@@ -880,79 +886,101 @@
         snapRaf = requestAnimationFrame(frame);
       }
 
-      // ── ACCEPT ──────────────────────────────────────────────
-      // Тап «Принять» → залить оранжевым + галочка → улёт вверх → ряд сдвигается.
-      function processCard(i) {
+      // ── ACCEPT / DISMISS ────────────────────────────────────
+      // Пул случайных гифок-подарков для благодарности в ответ.
+      var GIFTS = [
+        'assets/gifts/0b5f1dfc84df8270.gif',
+        'assets/gifts/2c88625b66d012f5.gif',
+        'assets/gifts/5aa90cf1d5001c51.gif',
+        'assets/gifts/b4001253d8302881.gif',
+        'assets/gifts/bb5a45d04c2ef81d.gif',
+        'assets/gifts/d7d90bc43c674792.gif'
+      ];
+
+      // Тап «Принять»: «Написать» гаснет, «Принять» съезжает на её место и
+      // становится positive «Принято». Через 3с → secondary «Отправить
+      // «Спасибо»» + подарок меняется на случайный другой (благодарность в
+      // ответ). Карточка остаётся в ряду.
+      function acceptCard(i) {
         if (processing[i]) return;
         processing[i] = true;
         var el = els[i];
-        var FILL_DUR = 700;      // accept: длительность заливки + чекмарк
-        var FLY_DUR  = 600;      // длительность улёта за viewport
-        var SHIFT_DUR = 350;     // длительность сдвига оставшихся карт
-
-        function flyOut() {
-          el.classList.add('__flying-up');
-          var cs = rowState[i];
-          var tx = (cs.cx - 330) + panOffset;
-          var ty = (cs.cy - 175) - 800;
-          var rot = 22;
-          var sc = cs.s || 1;
-          requestAnimationFrame(function () {
-            el.style.transform =
-              'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
-              'scale(' + sc + ') rotate(' + rot + 'deg)';
-          });
-          setTimeout(removeFromRow, FLY_DUR);
-        }
-        function removeFromRow() {
-          el.style.display = 'none';
-          var idx = liveCards.indexOf(i);
-          if (idx >= 0) liveCards.splice(idx, 1);
-          // Сжимаем ряд: новые cx по индексу в liveCards.
-          for (var k = 0; k < liveCards.length; k++) {
-            rowState[liveCards[k]].cx = firstCx + k * STEP;
+        el.classList.add('__accepted');
+        var btn   = el.querySelector('.gift-card__btn-accept .button-container');
+        var label = btn && btn.querySelector('.button-content');
+        if (btn) { btn.classList.remove('__style-primary'); btn.classList.add('__style-positive'); }
+        if (label) label.textContent = 'Принято';
+        setTimeout(function () {
+          if (btn) { btn.classList.remove('__style-positive'); btn.classList.add('__style-secondary'); }
+          if (label) label.textContent = 'Отправить «Спасибо»';
+          var img = el.querySelector('.gift-card__photo');
+          if (img) {
+            var cur = img.getAttribute('src');
+            var pool = GIFTS.filter(function (g) { return g !== cur; });
+            img.src = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
           }
-          minSnap = -(liveCards.length - 1);
-          if (snapped < minSnap) snapped = minSnap;
-          // Анимируем оставшиеся к новым позициям + догоняем snap при необходимости.
-          liveCards.forEach(function (j) {
-            els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
-          });
-          var newPan = panForSnap(snapped);
-          requestAnimationFrame(function () {
-            panOffset = newPan;
-            liveCards.forEach(function (j) {
-              applyCard(els[j], rowState[j], newPan);
-            });
-            setActiveAll(activated);
-          });
-          setTimeout(function () {
-            liveCards.forEach(function (j) {
-              els[j].style.transition = '';
-            });
-          }, SHIFT_DUR + 30);
-          // Приняли все по одному → финал (конфетти + «Подарки приняты»).
-          // С accept-all: остаётся её карточка, она сама улетает вниз (autoFinish).
-          // Без accept-all: ряд опустел на последней карточке → финал сразу.
-          if (ACCEPT_ALL) {
-            if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
-              setTimeout(autoFinish, SHIFT_DUR);
-            }
-          } else if (liveCards.length === 0) {
-            setTimeout(showAllAccepted, SHIFT_DUR);
-          }
-        }
+        }, 3000);
+      }
 
-        el.classList.add('__accepting');
-        setTimeout(flyOut, FILL_DUR);
+      // Сжать ряд после ухода карточки i (улетела за viewport).
+      var SHIFT_DUR = 350;
+      function removeFromRow(i) {
+        els[i].style.display = 'none';
+        var idx = liveCards.indexOf(i);
+        if (idx >= 0) liveCards.splice(idx, 1);
+        for (var k = 0; k < liveCards.length; k++) {
+          rowState[liveCards[k]].cx = firstCx + k * STEP;
+        }
+        minSnap = -(liveCards.length - 1);
+        if (snapped < minSnap) snapped = minSnap;
+        liveCards.forEach(function (j) {
+          els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
+        });
+        var newPan = panForSnap(snapped);
+        requestAnimationFrame(function () {
+          panOffset = newPan;
+          liveCards.forEach(function (j) { applyCard(els[j], rowState[j], newPan); });
+          setActiveAll(activated);
+        });
+        setTimeout(function () {
+          liveCards.forEach(function (j) { els[j].style.transition = ''; });
+        }, SHIFT_DUR + 30);
+      }
+
+      // Тап по корзине: карточка улетает ВНИЗ и ряд сдвигается (отклонить).
+      function dismissCard(i) {
+        if (processing[i]) return;
+        processing[i] = true;
+        var el = els[i];
+        var FLY_DUR = 600;
+        el.classList.add('__flying-down');
+        var cs = rowState[i];
+        var tx = (cs.cx - 330) + panOffset;
+        var ty = (cs.cy - 175) + 800;
+        var sc = cs.s || 1;
+        requestAnimationFrame(function () {
+          el.style.transform =
+            'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
+            'scale(' + sc + ') rotate(-22deg)';
+        });
+        setTimeout(function () { removeFromRow(i); }, FLY_DUR);
       }
 
       IDX.forEach(function (i) {
         var el = els[i];
-        var accBtn = el.querySelector('.gift-card__accept .button-container');
+        var accBtn = el.querySelector('.gift-card__btn-accept .button-container');
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
-          processCard(i);
+          acceptCard(i);
+        });
+        var trashBtn = el.querySelector('.gift-card__trash');
+        if (trashBtn) trashBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          dismissCard(i);
+        });
+        var writeBtn = el.querySelector('.gift-card__btn-write .button-container');
+        if (writeBtn) writeBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
         });
       });
 
