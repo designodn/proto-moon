@@ -76,7 +76,8 @@
   }
   .ll-fr-group > .ll-fr-section { padding: 0; }
   /* «Возможно, вы знакомы» — full-bleed как в гостях: гасим 16 паддинга группы
-     отрицательным margin, header/row держат свой центральный паддинг 16. */
+     отрицательным margin, header/row держат свой центральный паддинг 16.
+     (Margin зависит от паддинга родителя, поэтому живёт здесь, а не в компоненте.) */
   .ll-fr-group > .vvz-portlet {
     margin-left: calc(var(--space-4) * -1);
     margin-right: calc(var(--space-4) * -1);
