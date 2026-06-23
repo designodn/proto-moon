@@ -179,9 +179,9 @@
 .text-feed__reshare-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1-5);            /* 6 между блоками карточки */
   margin-inline: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-3);          /* 12 */
   border: 2px solid var(--dynamic-stroke-contrast-low);
   border-radius: 20px;
   overflow: hidden;
@@ -197,7 +197,7 @@
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;
-  gap: var(--space-1-5);
+  gap: var(--space-3);              /* 12 между авой и именем */
 }
 .text-feed__reshare-card-author-name {
   flex: 1 1 0;
@@ -213,14 +213,18 @@
    также гасится верхний/нижний паддинг (углы клипуются overflow:hidden). */
 .text-feed__reshare-card-media {
   position: relative;
-  margin-inline: calc(-1 * var(--space-4));
+  margin-inline: calc(-1 * var(--space-3));   /* bleed под паддинг 12 */
   background-color: var(--dynamic-surface-contrast-low);
 }
+/* Картинка после контента — отступ до неё 12 (gap карточки 6 + ещё 6). */
+.text-feed__reshare-card-media:not(:first-child) {
+  margin-top: var(--space-1-5);
+}
 .text-feed__reshare-card-media:first-child {
-  margin-top: calc(-1 * var(--space-4));
+  margin-top: calc(-1 * var(--space-3));
 }
 .text-feed__reshare-card-media:last-child {
-  margin-bottom: calc(-1 * var(--space-4));
+  margin-bottom: calc(-1 * var(--space-3));
 }
 /* ============================================================
    LINK — мета-блок превью ссылки внутри reshare-card:
