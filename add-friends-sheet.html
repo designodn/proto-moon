@@ -139,8 +139,16 @@
   /* Тех. класс для предварительного замера высоты карточки в ряду (на старте,
      пока карточки невидимы): ряд-лейаут — фото без верхнего отступа, кнопка
      «Дружить» развёрнута. JS снимает offsetHeight и фиксирует --fp-row-card-h
-     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах. */
-  .fp.__measuring .friend-big-card { height: auto; min-height: 0; }
+     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах.
+     Мерим ИСТИННЫЙ дизайн-бокс детерминированно, иначе замер разойдётся с
+     живой высотой и attachSwipe потом дёрнет recenter со ступенькой scale:
+       • transition:none — кнопка/фото встают в финал мгновенно (иначе offsetHeight
+         ловит max-height-переход 360ms в полёте → недомер);
+       • --friend-big-card-scale:1 — рамка ровно 1px (border-width: calc(1px/scale)
+         при мелком scale даёт 2px/сторону и +2px к боксу). */
+  .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1; }
+  .fp.__measuring .friend-big-card,
+  .fp.__measuring .friend-big-card * { transition: none !important; }
   .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; }
 
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
@@ -739,11 +747,16 @@
       IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
       root.classList.remove('__measuring');
       stateCls.forEach(function (c) { root.classList.add(c); });
-      if (maxH) {
+      // Замер детерминированный (см. CSS .__measuring) → значение стабильно от
+      // вызова к вызову. Применяем и сообщаем, поменялось ли (>0.5px) — чтобы
+      // повторный замер (fonts.ready / attachSwipe) не дёргал recenter впустую.
+      if (maxH && Math.abs(maxH - ROW_CARD_H) > 0.5) {
         root.style.setProperty('--fp-row-card-h', maxH + 'px');
         ROW_CARD_H = maxH;
         if (els[8]) els[8].style.height = maxH + 'px';
+        return true;
       }
+      return false;
     }
     measureRowCardH();
 
@@ -757,9 +770,10 @@
     // fonts.ready и переприменяем текущий стейт, чтобы высота не «доезжала».
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () {
-        measureRowCardH();
-        recenterRow();
-        applyState(current);
+        if (measureRowCardH()) {   // переприменяем только если высота реально изменилась
+          recenterRow();
+          applyState(current);
+        }
       });
     }
 
@@ -969,20 +983,11 @@
       if (scene.dataset.swipeAttached) return;
       scene.dataset.swipeAttached = '1';
 
-      // Высота карточки «принять всех» вровень с самой высокой + точный пересчёт
-      // центра/масштаба по фактической высоте карточки. Делаем ДО вычисления STEP —
-      // шаг ряда зависит от масштабированных cx.
-      var maxH = 0;
-      [1, 2, 3, 4, 5].forEach(function (i) {
-        if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight);
-      });
-      // Высота уже зафиксирована на старте (measureRowCardH). Пересчитываем только
-      // если фактическая заметно разошлась (напр. перенос строки после загрузки) —
-      // иначе лишний applyState дал бы микро-сдвиг ряда.
-      if (maxH && Math.abs(maxH - ROW_CARD_H) > 1) {
-        if (els[8]) els[8].style.height = maxH + 'px';
-        root.style.setProperty('--fp-row-card-h', maxH + 'px');
-        ROW_CARD_H = maxH;
+      // Высота уже зафиксирована на старте (measureRowCardH, детерминированный
+      // дизайн-бокс). Перемеряем ТЕМ ЖЕ методом (не живым offsetHeight, который
+      // зависит от текущего scale через border-width) — recenter сработает только
+      // если высота реально изменилась (напр. перенос строки), без ложной ступеньки.
+      if (measureRowCardH()) {
         recenterRow();
         applyState(current);
       }
