@@ -25,9 +25,9 @@
   /* Заголовок-хэштег в навбаре по центру страницы. */
   .ll-mar-nav { position: relative; }
   .ll-mar-nav__title {
-    /* Прижат к низу навбара: счётчик «11K участников» идёт сразу под навбаром
-       (margin:0), поэтому bottom:4px даёт 4px между хэштегом и счётчиком. */
-    position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
+    /* Оверлей над навбаром: по горизонтали — центр страницы, по вертикали —
+       центр кнопки «назад» (как обычный заголовок навбара). */
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
     color: var(--dynamic-text-and-icons-base-primary); pointer-events: none;
   }
 
@@ -38,6 +38,9 @@
     align-items: center;
     text-align: center;
     padding: 0 var(--space-4) var(--space-6);   /* низ 24 = от кнопки до 1 места */
+    /* Заголовок-хэштег теперь по центру навбара (низ текста на 42px при высоте 56);
+       подтягиваем шапку вверх, чтобы между хэштегом и счётчиком было 4px. */
+    margin-top: -10px;
   }
   .ll-mar-head__count { margin: 0; color: var(--dynamic-text-and-icons-base-secondary); }          /* 0 от хэштега (навбар) */
   .ll-mar-head__desc  { margin: var(--space-2) 0 0; color: var(--dynamic-text-and-icons-base-primary); }  /* 8 от счётчика */
@@ -86,11 +89,10 @@
     box-shadow: inset 0 0 0 1px var(--dynamic-stroke-contrast-low);
   }
   .ll-mar-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  /* все фото в карточках квадратные 1:1 (классы пропорций оставлены для совместимости) */
-  .ll-mar-card__media,
-  .ll-mar-card__media.__ar-16-9,
-  .ll-mar-card__media.__ar-1-1,
-  .ll-mar-card__media.__ar-9-16 { aspect-ratio: 1 / 1; }
+  /* Пропорции: лента — 1:1 (дефолт) и 3:4; hero (1 место) — 16:9. */
+  .ll-mar-card__media { aspect-ratio: 1 / 1; }
+  .ll-mar-card__media.__ar-3-4 { aspect-ratio: 3 / 4; }
+  .ll-mar-card.__hero .ll-mar-card__media { aspect-ratio: 16 / 9; }
 
   /* Бейдж-ранг: оранжевая «закладка» с уголком снизу, в правом верхнем углу. */
   .ll-mar-card__rank {
@@ -183,7 +185,7 @@
           <div class="ll-mar-masonry">
             <div class="ll-mar-col">
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-9-16">
+            <span class="ll-mar-card__media __ar-1-1">
               <img src="https://mf.b37mrtl.ru/rbthmedia/images/2019.10/original/5d972d9185600a718c57f389.jpg" alt="" loading="lazy">
               <span class="ll-mar-card__rank __rank-2">2</span>
             </span>
@@ -194,7 +196,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-16-9">
+            <span class="ll-mar-card__media __ar-3-4">
               <img src="https://st5.depositphotos.com/1005147/80457/i/450/depositphotos_804574760-stock-photo-happy-kids-sofa-odessa-ussr.jpg" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">
@@ -204,7 +206,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-9-16">
+            <span class="ll-mar-card__media __ar-1-1">
               <img src="https://resizer.mail.ru/p/f45663f8-e95f-5925-b0a0-ca45b4933cc1/AQAJVhW4IOjy8pRjHbed-pUV7-6NnpVUm9fxCVhKiq69R_ZsQSgwccdnxBgO50ym0Cc8FvjSl-H3NFi-xjaTAwYa1T8.jpg" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">
@@ -214,7 +216,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-9-16">
+            <span class="ll-mar-card__media __ar-3-4">
               <img src="https://www.maam.ru/upload/blogs/detsad-84550-1433753225.jpg" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">
@@ -224,7 +226,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-16-9">
+            <span class="ll-mar-card__media __ar-1-1">
               <img src="https://img-fotki.yandex.ru/get/4010/15397073.20a/0_11963a_9aea84ca_XL" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">
@@ -247,7 +249,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-1-1">
+            <span class="ll-mar-card__media __ar-3-4">
               <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_cTRjI40KLh3z22UcQ_fzJv0_4fwg005DXeiDtYjICBGBR9CFMWrCGBTj&amp;s=10" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">
@@ -267,7 +269,7 @@
             </span>
           </a>
           <a class="ll-mar-card" href="#">
-            <span class="ll-mar-card__media __ar-1-1">
+            <span class="ll-mar-card__media __ar-3-4">
               <img src="https://img-fotki.yandex.ru/get/29815/15397073.4da/0_14f342_b84e705_XL" alt="" loading="lazy">
             </span>
             <span class="ll-mar-card__footer">

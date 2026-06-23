@@ -35,6 +35,8 @@
   }
   /* …и самой пилюлей таба (база ставит overflow: hidden — клипает счётчик). */
   .ll-notifs-tabs .tab { overflow: visible; }
+  /* …и ряда-скролла (overflow-x:auto клипает счётчик по вертикали). */
+  .ll-notifs-tabs .tabs-row.__scroll { overflow: visible; }
 
   /* Список оповещений — плоские ряды; гэп между ячейками 16,
      паддинги: верх 16, бока 16, низ 0 (нижний воздух даёт margin-top таб-бара). */

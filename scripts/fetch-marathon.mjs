@@ -64,10 +64,11 @@ function parseCsv(text) {
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** Пропорция фото → класс (16:9 | 1:1 | 9:16; дефолт 1:1). */
+/** Пропорция фото → класс (16:9 | 1:1 | 3:4 | 9:16; дефолт 1:1). */
 function arClass(r) {
   const s = String(r || '').trim();
   if (s === '16:9') return '__ar-16-9';
+  if (s === '3:4')  return '__ar-3-4';
   if (s === '9:16') return '__ar-9-16';
   return '__ar-1-1';
 }
@@ -89,33 +90,50 @@ function card(e, rank, hero) {
           </a>`;
 }
 
-// Фолбэк-пропорции, если в данных нет ratio — даём визуальное разнообразие masonry.
-const RATIO_CYCLE = ['9:16', '1:1', '16:9', '1:1', '9:16', '1:1'];
+// Относительная высота карточки по пропорции (ширина колонки = 1):
+// высота фото + примерно постоянный футер. Нужна для балансировки колонок.
+const TILE_H = { '1:1': 1, '3:4': 4 / 3 };
+const FOOTER_H = 0.24;   // ≈ (футер 28 + гэп 16) / ширина колонки ~183
 
 function renderEntries(entries) {
   if (!entries.length) return '';
   const [first, ...rest] = entries;
   const hero = card({ ...first, ratio: first.ratio || '16:9' }, 1, true);
-  // Раскладываем работы по двум колонкам ПОСТРОЧНО (через одну), чтобы порядок
-  // мест шёл слева-направо сверху-вниз: верхний ряд — места 2 и 3, ниже 4 и 5 и т.д.
-  // Поле «col» в записи жёстко прибивает работу к колонке: left/a/1 → левая,
-  // right/b/2 → правая (иначе — авточередование).
-  const colA = [], colB = [];
+
+  // Лента (места 2+) — masonry в 2 колонки, только пропорции 1:1 и 3:4 (без «больших»).
+  // Для каждой работы:
+  //   • колонка — принудительная (поле col) либо текущая более короткая (баланс высот);
+  //   • пропорция — из данных (если 1:1/3:4) либо чередование с предыдущей в колонке,
+  //     чтобы 1:1 и 3:4 не шли подряд.
+  const cols = [
+    { html: [], h: 0, last: null },   // A — левая
+    { html: [], h: 0, last: null },   // B — правая
+  ];
   rest.forEach((e, i) => {
-    const withRatio = { ...e, ratio: e.ratio || RATIO_CYCLE[i % RATIO_CYCLE.length] };
-    const html = card(withRatio, i + 2, false);
     const forced = String(e.col || '').trim().toLowerCase();
-    if (forced === 'left' || forced === 'a' || forced === '1') colA.push(html);
-    else if (forced === 'right' || forced === 'b' || forced === '2') colB.push(html);
-    else (i % 2 === 0 ? colA : colB).push(html);
+    let ci;
+    if (forced === 'left'  || forced === 'a' || forced === '1') ci = 0;
+    else if (forced === 'right' || forced === 'b' || forced === '2') ci = 1;
+    else ci = cols[0].h <= cols[1].h ? 0 : 1;   // в более короткую
+
+    const c = cols[ci];
+    const given = String(e.ratio || '').trim();
+    const ratio = (given === '1:1' || given === '3:4') ? given
+      : c.last === '3:4' ? '1:1'
+      : c.last === '1:1' ? '3:4'
+      : '1:1';                                   // первая в колонке — квадрат
+
+    c.html.push(card({ ...e, ratio }, i + 2, false));
+    c.h += TILE_H[ratio] + FOOTER_H;
+    c.last = ratio;
   });
   return `${hero}
           <div class="ll-mar-masonry">
             <div class="ll-mar-col">
-${colA.join('\n')}
+${cols[0].html.join('\n')}
             </div>
             <div class="ll-mar-col">
-${colB.join('\n')}
+${cols[1].html.join('\n')}
             </div>
           </div>`;
 }

@@ -64,14 +64,11 @@
   transform: translateX(var(--tabs-view-container-offset-x, 0));
 }
 .tabs-row.__movement-animating { transition: transform 0.5s ease-in-out; }
-/* опц.: нативный горизонтальный скролл вместо JS-ScrollContainer.
-   padding-bottom — место под линию-индикатор base (overflow-x:auto клипает по Y) */
+/* padding-bottom — место под линию-индикатор base.
+   Без overflow (централизованно убран): контент не клипается по вертикали. */
 .tabs-row.__scroll {
-  overflow-x: auto;
-  scrollbar-width: none;
   padding-bottom: var(--space-2);
 }
-.tabs-row.__scroll::-webkit-scrollbar { display: none; }
 
 /* скелетон-таб (loading) — 64×36, contrast-low */
 .tabs-view .skeleton-tab {

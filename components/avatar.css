@@ -84,15 +84,28 @@
   --avatar-bg: var(--dynamic-surface-contrast-low);
 }
 .avatar.__type-placeholder {
-  --avatar-bg: var(--dynamic-surface-contrast-mid);
+  --avatar-bg: var(--dynamic-surface-base-primary);
+}
+/* Плейсхолдер — пустой круг: если внутри осталась картинка (напр. аватар
+   переключён в placeholder после ошибки загрузки, см. avatar.js) — прячем её. */
+.avatar.__type-placeholder > img {
+  display: none;
 }
 .avatar.__type-icon {
   --avatar-bg: var(--dynamic-surface-contrast-low);
   --avatar-color: var(--dynamic-text-and-icons-base-primary);
+  /* Внутри — иконка, а не фото: не клипуем её кругом аватара. */
+  overflow: visible;
 }
 .avatar.__type-icon > .icon {
   width: 50%;
   height: 50%;
+}
+/* Иконку (в т.ч. <img>-глиф) не округляем и не обводим, как фото. */
+.avatar.__type-icon > img,
+.avatar.__type-icon > .icon {
+  border-radius: 0;
+  outline: none;
 }
 .avatar.__type-initials {
   --avatar-bg: var(--static-surface-status-accent);
