@@ -340,7 +340,7 @@ ${actionsBar(likes, comments, reshares, { style: 'on-image', barClass: 'clip-fee
       const inRoster = !!PEOPLE[String(author)];
       const subtitle = (inRoster && PEOPLE[String(author)].subtitle) || 'Реклама 0+';
       const header = authorHeader(inRoster ? author : null, {
-        size: 44, subtitle, subscribe: false,
+        size: 44, subtitle, subscribe: false, staticTime: true,
         literalName: inRoster ? null : author,
       });
       const parts = [
