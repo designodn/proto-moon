@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
-<link rel="stylesheet" href="components/system-notifications.css">
 <link rel="stylesheet" href="components/app-launch.css">
 <link rel="stylesheet" href="components/lockscreen.css">
 <style>
@@ -94,9 +93,9 @@
     overflow: hidden;
     background: url('assets/start/wallpaper.jpg') center / cover no-repeat;
   }
-  /* Отдельные обои: локскрин и меню (homescreen) — из ассетов. */
-  .lockscreen .wallpaper { background-image: url('assets/start/lockscreen.jpg'); }
-  .homescreen .wallpaper { background-image: url('assets/start/q3-wallpaper.jpg'); }
+  /* Локскрин и меню (homescreen) — одна картинка (как на локскрине). */
+  .lockscreen .wallpaper,
+  .homescreen .wallpaper { background-image: url('assets/start/lockscreen.jpg'); }
   .wallpaper::before {
     content: none;
   }
@@ -279,18 +278,41 @@
   .search-bar__spacer { flex: 1; }
   .search-bar__icon { width: 22px; height: 22px; }
 
-  /* System notifications styles живут в components/system-notifications.css,
-     чтобы пуши «ОК» одинаково отображались и в этом стартовом экране,
-     и внутри приложения (например, на /lenta-q3.html). */
-
-  /* На локскрине стек прикреплён к нижней половине под блоком время/дата/
-     погода (top 254 = 218 конец блока + 36 gap из Figma). При свайпе вверх
-     уезжает ВМЕСТЕ с локскрином (transform/opacity inline-driven в JS) —
-     не переезжает сам по себе. После анлока + клинапа .device получает
-     класс headsup-notifs → notifs.top переключается на 36px, как heads-up,
-     для следующих пушей. */
-  .device .notifs { top: 254px; }
-  .device.headsup-notifs .notifs { top: 36px; }
+  /* Статичные пуши на локскрине (Figma 4836-315607): текст слева + avapicture
+     справа + шеврон. Прикреплены под блоком время/дата/погода; уезжают вверх
+     ВМЕСТЕ с локскрином (они его потомки). */
+  .lockscreen__pushes {
+    position: absolute;
+    top: 254px; left: 10px; right: 10px;
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 45;
+    pointer-events: none;
+  }
+  .ls-push {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+    border-radius: 20px;
+    padding: 14px 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+    color: #222;
+  }
+  .ls-push__app { flex-shrink: 0; width: 28px; height: 28px; }
+  .ls-push__app img { width: 100%; height: 100%; display: block; border-radius: 8px; }
+  .ls-push__content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ls-push__head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .ls-push__title {
+    color: #222; font-size: 13px; font-weight: 500; line-height: 20px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ls-push__time { color: #595959; font-size: 12px; font-weight: 400; line-height: 16px; flex-shrink: 0; }
+  .ls-push__body {
+    color: #595959; font-size: 13px; line-height: 20px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .ls-push__thumb { flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px; overflow: hidden; }
+  .ls-push__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ls-push__chev { flex-shrink: 0; width: 16px; height: 16px; color: #595959; display: flex; align-items: center; justify-content: center; }
 
   /* App-launch overlay (.launch / .splash) — каркас и анимация в
      components/app-launch.{css,js}. На странице ничего brand-specific
@@ -349,6 +371,48 @@
       <div class="lockscreen__weather">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffd166"><circle cx="12" cy="12" r="5"/><g stroke="#ffd166" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></g></svg>
         <span>22°&nbsp;·&nbsp;Ясно</span>
+      </div>
+    </div>
+
+    <!-- Статичные пуши (Figma 4836-315607). Фотки в squircle — реальные люди
+         из data/people.js (первый — мужчина), проставляются скриптом ниже. -->
+    <div class="lockscreen__pushes">
+      <div class="ls-push">
+        <span class="ls-push__app"><img src="assets/icons/appLogoDefault.png" alt="ОК"></span>
+        <div class="ls-push__content">
+          <div class="ls-push__head">
+            <span class="ls-push__title">Илья Петров</span>
+            <span class="ls-push__time">15 мин назад</span>
+          </div>
+          <div class="ls-push__body">Опубликовал фото после долгого перерыва</div>
+        </div>
+        <span class="ls-push__thumb"><img alt="" data-ls-person="m"></span>
+        <span class="ls-push__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+      </div>
+
+      <div class="ls-push">
+        <span class="ls-push__app"><img src="assets/icons/appLogoDefault.png" alt="ОК"></span>
+        <div class="ls-push__content">
+          <div class="ls-push__head">
+            <span class="ls-push__title">Это было легендарно!</span>
+            <span class="ls-push__time">2 ч назад</span>
+          </div>
+          <div class="ls-push__body">Вы поделились этой заметкой в ОК 1 год назад и получили 7 комментариев и 48 классов.</div>
+        </div>
+        <span class="ls-push__thumb"><img alt="" data-ls-person="f"></span>
+        <span class="ls-push__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+      </div>
+
+      <div class="ls-push">
+        <span class="ls-push__app"><img src="assets/icons/appLogoDefault.png" alt="ОК"></span>
+        <div class="ls-push__content">
+          <div class="ls-push__head">
+            <span class="ls-push__title"><span data-ls-myname>Анфиса</span>, у вас новые гости</span>
+            <span class="ls-push__time">2 ч назад</span>
+          </div>
+          <div class="ls-push__body">Давайте проверим, кто это</div>
+        </div>
+        <span class="ls-push__chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
       </div>
     </div>
 
@@ -416,9 +480,6 @@
     </div>
   </div>
 
-  <!-- System notifications stack (filled from JS while on the menu) -->
-  <div class="notifs" id="notifs" data-autostart data-mode="lock"></div>
-
   <!-- Gesture navigation pill (always on top) -->
   <div class="nav-pill"></div>
 
@@ -427,9 +488,36 @@
 
 </div>
 
-<script src="components/system-notifications.js"></script>
 <script src="components/lockscreen.js"></script>
 <script src="components/app-launch.js"></script>
+<script src="data/people.js"></script>
+<script>
+(function () {
+  // Фотки в статичных пушах: первая (data-ls-person="m") — мужчина, вторая
+  // ("f") — женщина. Берём первого подходящего человека с фото из data/people.js.
+  var people = window.DS_PEOPLE_DATA || [];
+  function firstWithPhoto(g) {
+    for (var i = 0; i < people.length; i++) {
+      if (people[i] && people[i].gender === g && people[i].photo) return people[i];
+    }
+    return null;
+  }
+  [['m', 'м'], ['f', 'ж']].forEach(function (pair) {
+    var el = document.querySelector('[data-ls-person="' + pair[0] + '"]');
+    var person = firstWithPhoto(pair[1]);
+    if (el && person) { el.src = person.photo; el.alt = person.name || ''; }
+  });
+  // Обращение в пуше — имя из профиля пользователя (id "my_profile"), только первое слово.
+  var me = null;
+  for (var j = 0; j < people.length; j++) {
+    if (people[j] && people[j].id === 'my_profile') { me = people[j]; break; }
+  }
+  if (me && me.name) {
+    var firstName = me.name.trim().split(/\s+/)[0];
+    document.querySelectorAll('[data-ls-myname]').forEach(function (el) { el.textContent = firstName; });
+  }
+})();
+</script>
 <script>
 (function () {
   var device = document.getElementById('device');
@@ -453,32 +541,12 @@
     device.classList.add('unlocked');
     try { sessionStorage.setItem(HOME_KEY, '1'); } catch (e) {}
     history.pushState({ scr: 'menu' }, '');
-    // Стек пушей, прилетевших на локскрин, уезжает вверх ВМЕСТЕ с локскрином:
-    // тот же translateY(-100%) + fade, что и у .lockscreen. После анимации
-    // чистим DOM, переключаем .notifs в heads-up (deck) и поднимаем top:36.
-    var nb = document.getElementById('notifs');
-    if (nb) {
-      nb.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.0, 0, 1), opacity 0.4s ease';
-      nb.style.transform  = 'translateY(-100%)';
-      nb.style.opacity    = '0';
-      setTimeout(function () {
-        if (window.OkNotifs) window.OkNotifs.clearShown();
-        nb.style.transition = 'none';
-        nb.style.transform = '';
-        nb.style.opacity   = '';
-      }, 520);
-    }
-    // Пуши показываем ТОЛЬКО на локскрине — в меню стрим ставим на паузу.
-    stopNotifications();
+    // Статичные пуши — потомки .lockscreen, уезжают вверх вместе с ним.
   }
 
   // Slide back down to the lock screen (Back pressed from the menu).
   function lockDevice() {
     device.classList.remove('unlocked');
-    device.classList.remove('headsup-notifs');
-    if (window.OkNotifs) window.OkNotifs.clearShown();
-    // Вернулись на локскрин → перезапускаем стрим пушей с нуля (в меню пауза).
-    restartNotifications();
     resetLaunch();
     try { sessionStorage.removeItem(HOME_KEY); } catch (e) {}
   }
@@ -489,8 +557,6 @@
     device.classList.add('unlocked');
     void device.offsetWidth;          // commit before re-enabling transitions
     device.classList.remove('no-anim');
-    stopNotifications();              // в меню пуши не показываем (только локскрин)
-    if (window.OkNotifs) window.OkNotifs.clearShown();  // снять залипшие с локскрина
     // Гарантируем запись истории «меню» (если в меню попали не через unlock),
     // чтобы Back с меню опускал локскрин, а не уводил со страницы.
     if (!history.state || history.state.scr !== 'menu') {
@@ -505,22 +571,9 @@
     if (window.AppLaunch) window.AppLaunch.reset();
   }
 
-  /* System notifications реализованы в components/system-notifications.js —
-     стрим пушей продолжается, когда пользователь зашёл в приложение. */
-  function startNotifications() { if (window.OkNotifs) window.OkNotifs.start(); }
-  function stopNotifications(clear) { if (window.OkNotifs) window.OkNotifs.stop(clear); }
-  /* Пуши на локскрине выводим СРАЗУ и статично — без анимации появления и
-     без тайминга (никакого стрима по одной). При каждом заходе на локскрин
-     (холодный старт / релоад / возврат из меню) показываем все карточки. */
-  function restartNotifications() {
-    if (!window.OkNotifs) return;
-    window.OkNotifs.showAll();
-  }
-
   /* ---- Lock screen: swipe/тап обрабатывает components/lockscreen.js;
      он стреляет 'lockscreen:unlock' на document — мы ловим и зовём
-     наш unlock() (а он уже выставляет history-state, sessionStorage,
-     слайд heads-up notifs, и т.п.). */
+     наш unlock() (а он уже выставляет history-state, sessionStorage и т.п.). */
   document.addEventListener('lockscreen:unlock', unlock);
 
   /* ---- Тап по гугл-серч-бару на главном экране → блокируем телефон
@@ -556,11 +609,8 @@
     try { atHome = sessionStorage.getItem(HOME_KEY) === '1'; } catch (e) {}
     if (atHome) {
       showHomeInstant();    // вернулись в меню
-    } else {
-      // Холодный старт телефона: пуши прилетают на локскрин по одной,
-      // заново при каждом заходе (а не уже отыгранными).
-      restartNotifications();
     }
+    // Иначе — холодный старт на локскрине: статичные пуши уже в разметке.
   });
 
   /* ---- History-driven screen switching ----
