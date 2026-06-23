@@ -259,8 +259,8 @@
 /* Голосование — стикер (одна картинка ~160px, наклон −15° из Figma) */
 .omar-stickers {
   align-self: center;
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
   margin-top: 0;
   object-fit: contain;
 }
