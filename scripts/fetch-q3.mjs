@@ -888,7 +888,7 @@ ${actionsBar(likes, comments, reshares)}
         icon = llIcon('sparkles_16_20.svg');
       } else if (/подар/i.test(caption)) {
         cta = 'Сделать подарок';
-        icon = llIcon('gift_16_20.svg');
+        icon = '';   // обычный подарок — кнопка без иконки слева
       } else {
         cta = 'Сделать открытку';
         icon = llIcon('gift_16_20.svg');
