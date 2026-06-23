@@ -747,23 +747,33 @@
         c.cy = cloudCenterY + (b.cy - cloudC) * s;
         c.s = b.s * s;
       });
-      // Антинаезд на заголовок: верхняя кромка кружка = cy − 150·scale (центр
-      // круга по cy, радиус фото 150·scale — см. геометрию applyCard). Если самый
-      // высокий кружок залезает выше низа заголовка + зазор 16 — опускаем ВСЁ
-      // облако на дельту (композиция сохраняется, адаптивно к высоте экрана).
+      // Зазор «заголовок → ближайший кружок» ровно 16px (до ВИДИМОГО текста, не
+      // до бокса заголовка: у него снизу запас от line-height). Верхняя кромка
+      // кружка = cy − 150·scale (центр круга по cy в координатах ty=cy−230,
+      // радиус фото 150·scale — см. геометрию applyCard). Пиним самый высокий
+      // кружок ровно на 16px под низ текста (сдвиг всего облака — вниз, если
+      // наезжает, или вверх, если зазор великоват). Адаптивно к высоте экрана.
       var CLOUD_GAP = 16;
+      // Низ видимого текста заголовка в системе координат top (raisedTop): берём
+      // bbox содержимого через Range и вычитаем top бокса — получаем inset от
+      // верха элемента до низа последней глифовой строки (без line-height-запаса).
+      var titleTextInset = titleH;
+      try {
+        var _r = document.createRange();
+        _r.selectNodeContents(titleEl);
+        var _tb = _r.getBoundingClientRect().bottom - titleEl.getBoundingClientRect().top;
+        if (_tb > 0) titleTextInset = _tb;
+      } catch (_) {}
+      var cloudNeedTop = raisedTop + titleTextInset + CLOUD_GAP;
       var cloudMinTop = Infinity;
       Object.keys(STATES[1].cards).forEach(function (k) {
         var c = STATES[1].cards[k];
         cloudMinTop = Math.min(cloudMinTop, c.cy - 150 * c.s);
       });
-      var cloudNeedTop = titleBottom + CLOUD_GAP;
-      if (cloudMinTop < cloudNeedTop) {
-        var cloudDy = cloudNeedTop - cloudMinTop;
-        Object.keys(STATES[1].cards).forEach(function (k) {
-          STATES[1].cards[k].cy += cloudDy;
-        });
-      }
+      var cloudDy = cloudNeedTop - cloudMinTop;
+      Object.keys(STATES[1].cards).forEach(function (k) {
+        STATES[1].cards[k].cy += cloudDy;
+      });
     }
     // Заранее (пока карточки невидимы, opacity:0) меряем высоту карточки в
     // ряд-лейауте и фиксируем --fp-row-card-h / ROW_CARD_H — чтобы при входе в
