@@ -191,7 +191,7 @@
             <span class="gift-card__name ds-title-s">Екатерина )))))</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
-          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+          <span class="button-inline-wrapper __size-20 __view-secondary gift-card__trash">
             <button class="button-inline __size-20" aria-label="Отклонить">
               <span class="button-inline__content">
                 <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
@@ -224,7 +224,7 @@
             <span class="gift-card__name ds-title-s">Александр Попов</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
-          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+          <span class="button-inline-wrapper __size-20 __view-secondary gift-card__trash">
             <button class="button-inline __size-20" aria-label="Отклонить">
               <span class="button-inline__content">
                 <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
@@ -257,7 +257,7 @@
             <span class="gift-card__name ds-title-s">Карасев Дмитрий</span>
             <span class="gift-card__date ds-caption-m">12 мая</span>
           </div>
-          <span class="button-inline-wrapper __size-20 __view-primary gift-card__trash">
+          <span class="button-inline-wrapper __size-20 __view-secondary gift-card__trash">
             <button class="button-inline __size-20" aria-label="Отклонить">
               <span class="button-inline__content">
                 <span class="button-inline__icon icon __size-20 __src" style="--icon-src:url('../assets/icons/trash_16_20.svg')"></span>
@@ -937,6 +937,25 @@
         'assets/gifts/d7d90bc43c674792.gif'
       ];
 
+      // Когда все подарки разобраны (приняты/отклонены) — снизу появляется
+      // secondary-кнопка «Закрыть» (выход не только по кресту), через 500мс.
+      var resolved = 0, totalCards = IDX.length;
+      function markResolved() {
+        if (++resolved < totalCards) return;
+        var finish = document.getElementById('gpFinish');
+        var finishBtn = document.getElementById('gpFinishClose');
+        if (finishBtn && !finishBtn.dataset.wired) {
+          finishBtn.dataset.wired = '1';
+          finishBtn.addEventListener('click', function () {
+            var closeBtn = document.querySelector('.gp__close');
+            if (closeBtn) closeBtn.click();
+          });
+        }
+        setTimeout(function () {
+          if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+        }, 500);
+      }
+
       // Тап «Принять»: «Написать» гаснет, «Принять» съезжает на её место и
       // становится positive «Принято». Через 3с → secondary «Отправить
       // «Спасибо»» + подарок меняется на случайный другой (благодарность в
@@ -944,6 +963,7 @@
       function acceptCard(i) {
         if (processing[i]) return;
         processing[i] = true;
+        markResolved();
         var el = els[i];
         el.classList.add('__accepted');
         var btn   = el.querySelector('.gift-card__btn-accept .button-container');
@@ -1010,6 +1030,7 @@
       function dismissCard(i) {
         if (processing[i]) return;
         processing[i] = true;
+        markResolved();
         var el = els[i];
         var FLY_DUR = 600;
         el.classList.add('__flying-down');
