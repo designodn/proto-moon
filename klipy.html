@@ -671,6 +671,13 @@
       if (e.target.closest('[data-reshare]')) { if (sheet) sheet.hidden = false; return; }
       if (e.target.closest('[data-sheet-close]')) { if (sheet) sheet.hidden = true; }
     });
+
+    // 7) ВВЗ «Показать всех» → страница тиндера vvz.html (как CTA в моментах).
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.klip__vvz-cta')) {
+        location.href = 'vvz.html';
+      }
+    });
   </script>
 
   <script src="components/smart-crop.js" defer></script>
