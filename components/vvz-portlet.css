@@ -68,12 +68,12 @@
   display: flex;
   gap: var(--space-2);
   /* Вертикальный воздух (8px) + равный отрицательный margin: позиция ряда не
-     меняется, но скроллбокс (overflow-x:auto клипает по Y) не срезает карточки
-     сверху/снизу при press-анимации (scale-овершут). Горизонтальный скролл цел. */
+     меняется. overflow:visible — ряд ничего не клипает (ни по Y при press-scale,
+     ни по X), карточки видны целиком. */
   padding: var(--space-2) var(--space-4);
   margin-top: calc(var(--space-2) * -1);
   margin-bottom: calc(var(--space-2) * -1);
-  overflow-x: auto;
+  overflow: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
