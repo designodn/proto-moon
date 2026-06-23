@@ -24,7 +24,7 @@ window.DS_PEOPLE_DATA = [
   },
   {
     "id": 3,
-    "name": "Зинаида Халина(Стребкова)",
+    "name": "Зинаида Халина (Стребкова)",
     "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&dpr=2",
     "media": "image",
@@ -123,7 +123,7 @@ window.DS_PEOPLE_DATA = [
   },
   {
     "id": "my_profile",
-    "name": "Анфиса Тимирбаева(Абдуллина)",
+    "name": "Анфиса Тимирбаева (Абдуллина)",
     "subtitle": "",
     "photo": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2",
     "media": "image",

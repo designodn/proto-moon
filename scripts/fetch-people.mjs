@@ -55,6 +55,11 @@ function parseAge(raw) {
   return m ? Number(m[0]) : null;
 }
 
+/** Имя: если перед «(» (девичья фамилия) нет пробела — добавляем его. */
+function normName(raw) {
+  return String(raw || '').trim().replace(/\s*\(/g, ' (');
+}
+
 /** Город: "нет"/пусто → "", иначе с заглавной буквы */
 function normCity(raw) {
   const s = String(raw || '').trim();
@@ -102,7 +107,7 @@ async function main() {
   const people = [];
   for (const cols of body) {
     let idRaw = at(cols, iId);
-    const name = at(cols, iName);
+    const name = normName(at(cols, iName));
     if (!idRaw || !name) continue; // пропускаем пустые болванки
     idRaw = idRaw.replace(/^vv+z-(\d+)$/i, 'vvz-$1'); // чиним опечатки vvvz-N → vvz-N
     const id = /^\d+$/.test(idRaw) ? Number(idRaw) : idRaw; // числовой или строковый (my_profile, vvz-N)

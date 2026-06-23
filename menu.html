@@ -24,17 +24,18 @@
      Базируется на uni-cell, лишь меняем отступы и порядок слотов. */
   .ll-profile { display: block; text-decoration: none; color: inherit; }
   .ll-profile .uni-cell { align-items: center; gap: var(--space-3); }
-  .ll-profile-title    { color: var(--dynamic-text-and-icons-base-primary); }
+  .ll-profile-title    { width: 100%; color: var(--dynamic-text-and-icons-base-primary); }
   .ll-profile-subtitle { color: var(--dynamic-text-and-icons-base-secondary); margin-top: 2px; }
 
   /* Сетка быстрых действий — 4 колонки, иконка в скруглённой плашке + подпись. */
   .ll-quick {
     padding: var(--space-2) var(--space-4) var(--space-4);
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-3) var(--space-2);
   }
   .ll-quick__item {
+    min-width: 0;
     display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
     background: none; border: 0; padding: 0; cursor: pointer;
     color: var(--dynamic-text-and-icons-base-primary);
@@ -49,7 +50,7 @@
     border-radius: 16px;
   }
   .ll-quick__tile .ll-icon { width: 28px; height: 28px; }
-  .ll-quick__label { font-size: 13px; line-height: 16px; }
+  .ll-quick__label { max-width: 100%; font-size: 13px; line-height: 16px; text-align: center; }
 
   /* Бейдж в правом-верхнем углу плашки. Зелёный кружок с белой цифрой. */
   .ll-badge {
@@ -76,8 +77,10 @@
     color: var(--dynamic-text-and-icons-base-primary);
   }
 
-  /* Навбар: между иконками инфо и настроек — 20 */
-  .nav-bar.__type-search .nav-bar__trailing { gap: var(--space-5); }
+  /* Навбар (__type-search): гэп между иконками — 16 и слева, и справа.
+     Перебиваем дефолт meshok-up.css селектором с той же спецификой. */
+  .nav-bar.__type-search .nav-bar__leading,
+  .nav-bar.__type-search .nav-bar__trailing { gap: var(--space-4); }
 
   /* Разделитель между группами разделов меню. */
   .ll-menu-divider {
