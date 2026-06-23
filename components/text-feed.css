@@ -505,6 +505,9 @@
   align-items: center;
   justify-content: center;
   padding-block: var(--space-2);
+  /* левая плитка повёрнута сильнее и вылезает левее — сдвигаем веер вправо,
+     чтобы боковые зазоры были симметричны и левая плитка не липла к краю */
+  transform: translateX(4px);
 }
 .marathon__tile {
   position: relative;
