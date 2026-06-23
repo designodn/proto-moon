@@ -156,6 +156,7 @@ peopleRaw.forEach(p => { PEOPLE[String(p.id)] = p; });
 const isGroupId = id => /^group-/.test(String(id));
 const personName = id => PEOPLE[String(id)]?.name || '';
 const personPhoto = id => PEOPLE[String(id)]?.photo || '';
+const personGender = id => PEOPLE[String(id)]?.gender || '';   // 'м' | 'ж' | ''
 const splitIds = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
 
 /* Подстановка имени: токен «<id>_name» в заголовках/текстах → имя человека из
@@ -307,14 +308,32 @@ function cafHeader(commenter, to) {
 
 /** Строка-активность над автором («почему пост в ленте»), слот text-feed__activity.
  *  Колонка «шапка». Токен id_<id> → имя человека из people.json (жирным):
- *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет. */
+ *  «id_2 поставил класс» → «<b>Имя</b> поставил класс». '' — если шапки нет.
+ *  Глагол сразу после имени спрягаем по полу человека (people.json → gender):
+ *  для «ж» муж. прошедшее на «-л» → жен. «-ла» («поставил» → «поставила»);
+ *  «м» и неизвестный пол оставляем как написано (муж. род по умолчанию). */
 function activityLine(header) {
   if (!header) return '';
   // noWidow — чтобы последнее слово шапки не «улетало» одиночкой на новую строку.
   const parts = String(noWidow(header)).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
   let html = '';
+  let feminize = false;   // следующий текст идёт сразу после женского имени → спрягаем глагол
   for (let i = 0; i < parts.length; i++) {
-    html += (i % 2 === 0) ? esc(parts[i]) : `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
+    if (i % 2 === 1) {
+      // id-токен → имя жирным; запоминаем пол для спряжения глагола следом.
+      feminize = personGender(parts[i]) === 'ж';
+      html += `<span class="ds-title-s">${esc(firstName(parts[i]) || parts[i])}</span>`;
+    } else {
+      let seg = parts[i];
+      // Первое слово после женского имени — глагол: муж. «-л» → жен. «-ла».
+      // Границу слова через lookahead (\b в JS не видит кириллицу), учитываем
+      // и неразрывный пробел U+00A0 от noWidow.
+      if (feminize) {
+        seg = seg.replace(/^(\s*)([А-Яа-яЁё]+л)(?=\s| |$)/, '$1$2а');
+        feminize = false;   // спрягаем только глагол, идущий сразу за именем
+      }
+      html += esc(seg);
+    }
   }
   // ds-body-m — как текст обычного поста в ленте, рядом с которым стоит шапка.
   return `          <div class="text-feed__activity ds-body-m">${html}</div>\n`;
