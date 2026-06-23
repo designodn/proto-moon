@@ -6,24 +6,6 @@
  * data-user-avatar / data-pr-avatar — src аватара (data-pr-* — в NV-профиле).
  */
 (function () {
-  // База для локальных фото: каталог, из которого подключён этот скрипт
-  // (на корневых страницах — "", в подпапках вроде new-vision/ — "../"), чтобы
-  // путь из people.js ("assets/people/…") работал на любой глубине.
-  var BASE = (function () {
-    var s = document.currentScript;
-    if (!s) {
-      var ss = document.getElementsByTagName('script');
-      for (var i = ss.length - 1; i >= 0; i--) {
-        if (/user-data\.js(\?|$)/.test(ss[i].src)) { s = ss[i]; break; }
-      }
-    }
-    var src = s ? (s.getAttribute('src') || '') : '';
-    return src.replace(/components\/user-data\.js.*$/, '');
-  })();
-  function resolveSrc(u) {
-    return (u && !/^(https?:)?\/\/|^data:|^\//.test(u)) ? BASE + u : u; // внешние — как есть
-  }
-
   var USER = {
     name:      'Эмиль Дружинин',
     avatarSrc: 'https://i.pravatar.cc/144?img=68'
@@ -33,7 +15,7 @@
   var me = (window.DS_PEOPLE_DATA || []).filter(function (p) { return p.id === 'my_profile'; })[0];
   if (me) {
     USER.name = me.name;
-    if (me.photo) USER.avatarSrc = resolveSrc(me.photo);
+    if (me.photo) USER.avatarSrc = me.photo;
   }
 
   function apply() {
