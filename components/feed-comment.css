@@ -295,8 +295,12 @@
   white-space: nowrap;
 }
 
-/* «Посмотреть все ответы» — выравниваем под контент (ава 44 + gap 12). */
+/* «Посмотреть все ответы» — выравниваем под контент (ава 44 + gap 12).
+   padding-top гасим (база .fc-more даёт 12): отступ до ссылки должен быть
+   как между комментами — 8px, их уже даёт padding-bottom тела последнего
+   ответа (.fc-comment__body), сверху добавлять не нужно. */
 .fc-list.__twitter-like .fc-more {
+  padding-top: 0;
   padding-left: calc(var(--space-4) + 44px + var(--space-3));
   padding-right: var(--space-4);
 }
