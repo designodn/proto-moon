@@ -155,3 +155,9 @@
   font-weight: 500;
   color: var(--dynamic-text-and-icons-base-primary);
 }
+
+/* В шапке comment-as-feed кнопку «Подписаться» не показываем — скрываем
+   принудительно (разметка её всё равно содержит для единообразия). */
+.feed-header.__caf .button-subscribe {
+  display: none;
+}
