@@ -77,28 +77,29 @@
   transform: scale(0.95);
 }
 
-/* «+»-бейдж добавления своей истории — оранжевый кружок в белой обводке */
+/* «+»-бейдж добавления своей истории — оранжевый кружок в обводке под цвет
+   фона ленты (base-primary), 24px. */
 .stories-row__add {
   box-sizing: border-box;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--static-surface-status-accent);
-  border: 3px solid var(--dynamic-surface-base-secondary);
+  border: 2px solid var(--dynamic-surface-base-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.stories-row__add img { filter: brightness(0) invert(1); }
+.stories-row__add img { width: 15px; height: 15px; filter: brightness(0) invert(1); }
 
 /* Аватар-бейдж: мини-аватарка друга в той же позиции и геометрии, что «+».
    Круг 32px в белой обводке 3px, фото заполняет по object-fit:cover. */
 .stories-row__friend {
   box-sizing: border-box;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  border: 3px solid var(--dynamic-surface-base-secondary);
+  border: 2px solid var(--dynamic-surface-base-primary);
   overflow: hidden;
   background: var(--dynamic-surface-contrast-low);
 }
@@ -175,15 +176,15 @@
    Геометрия — как у stories-row__add, но без иконки-картинки. */
 .stories-row__bday-badge {
   box-sizing: border-box;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--static-surface-status-accent);
-  border: 3px solid var(--dynamic-surface-base-secondary);
+  border: 2px solid var(--dynamic-surface-base-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
+  font-size: 13px;
   line-height: 1;
 }
 .stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__bday-badge {
