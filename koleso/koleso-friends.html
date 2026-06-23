@@ -21,17 +21,9 @@
 
   .rf {
     display: flex; flex-direction: column; gap: var(--space-4);
-    padding: var(--space-2) var(--space-4) 96px;
+    padding: 0 var(--space-4) var(--space-4);
   }
   /* .mp-sheet__list — из компонента components/invite-list.css (через ../index.css) */
-
-  /* sticky-кнопка снизу */
-  .rf-bottom {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
-    padding: var(--space-3) var(--space-4) calc(var(--space-4) + 8px);
-    background: linear-gradient(180deg, rgba(247,244,242,0) 0%, var(--dynamic-surface-base-secondary) 28%);
-  }
-  .rf-bottom .button-wrapper, .rf-bottom .button-container { width: 100%; }
 </style>
 </head>
 <body>
@@ -61,16 +53,9 @@
 
       <!-- КОНТЕНТ — список приглашений (компонент invite-list) -->
       <div class="rf">
-        <div class="mp-sheet__list" data-invite-list data-chat-url="../marathon-chat.html" data-photo-base="../" data-theme="#РадостьДетства">
+        <div class="mp-sheet__list" data-invite-list data-chat-url="koleso-chat.html" data-photo-base="../">
           <!-- ячейки друзей рендерит components/invite-list.js -->
         </div>
-      </div>
-    </div>
-
-    <!-- Sticky CTA -->
-    <div class="rf-bottom">
-      <div class="button-wrapper __size-56 __full-width">
-        <button class="button-container __style-primary" id="invite-all"><span class="button-content">Пригласить всех сразу</span></button>
       </div>
     </div>
   </div>
@@ -78,11 +63,5 @@
   <!-- Список друзей — компонент invite-list (люди из people.js, кнопки/диалог в invite-list.js) -->
   <script src="../data/people.js"></script>
   <script src="../components/invite-list.js"></script>
-  <script>
-    // «Пригласить всех сразу» → назад на колесо с заработанным билетом
-    document.getElementById('invite-all').addEventListener('click', function () {
-      location.href = 'koleso.html?tickets=1';
-    });
-  </script>
 </body>
 </html>
