@@ -474,8 +474,8 @@
     device.classList.remove('unlocked');
     device.classList.remove('headsup-notifs');
     if (window.OkNotifs) window.OkNotifs.clearShown();
-    // Вернулись на локскрин → возобновляем стрим пушей (в меню он на паузе).
-    startNotifications();
+    // Вернулись на локскрин → перезапускаем стрим пушей с нуля (в меню пауза).
+    restartNotifications();
     resetLaunch();
     try { sessionStorage.removeItem(HOME_KEY); } catch (e) {}
   }
@@ -506,6 +506,15 @@
      стрим пушей продолжается, когда пользователь зашёл в приложение. */
   function startNotifications() { if (window.OkNotifs) window.OkNotifs.start(); }
   function stopNotifications(clear) { if (window.OkNotifs) window.OkNotifs.stop(clear); }
+  /* Перезапуск стрима с нуля: пуши должны прилетать по одной ПРИ КАЖДОМ
+     заходе на локскрин (холодный старт / релоад / возврат из меню), а не
+     висеть статично уже отыгранными. stop(true) сбрасывает индекс и чистит
+     карточки, start() планирует заново с первого пуша. */
+  function restartNotifications() {
+    if (!window.OkNotifs) return;
+    window.OkNotifs.stop(true);
+    window.OkNotifs.start();
+  }
 
   /* ---- Lock screen: swipe/тап обрабатывает components/lockscreen.js;
      он стреляет 'lockscreen:unlock' на document — мы ловим и зовём
@@ -547,9 +556,9 @@
     if (atHome) {
       showHomeInstant();    // вернулись в меню
     } else {
-      // Холодный старт телефона: пуши должны приходить и на локскрин
-      // (продолжатся после свайпа вверх и дальше в приложении).
-      startNotifications();
+      // Холодный старт телефона: пуши прилетают на локскрин по одной,
+      // заново при каждом заходе (а не уже отыгранными).
+      restartNotifications();
     }
   });
 

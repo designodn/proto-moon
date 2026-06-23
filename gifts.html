@@ -39,6 +39,9 @@
     right: 12px;
     width: 44px; height: 44px;
     border: 0; padding: 0; background: transparent;
+    /* Явный цвет: иконка красится currentColor (CSS-mask), а Safari у
+       <button> по умолчанию ставит системный синий — крестик синел. */
+    color: var(--dynamic-text-and-icons-base-primary);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     z-index: 10;
