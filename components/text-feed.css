@@ -134,19 +134,17 @@
   text-overflow: ellipsis;
 }
 
-/* Время в шапке — secondary text (ds-caption-s даёт только размер).
-   margin-top -6 подтягивает время вплотную под имя. */
+/* Время в шапке — secondary text (ds-caption-s даёт только размер). */
 .text-feed__time {
   color: var(--dynamic-text-and-icons-base-secondary);
-  margin-top: -6px;
 }
 
 /* Шапка поста-сообщества: кнопка «Подписаться» (size-28) раздувает строку имени
    (feed-header__line) до 28px, имя (ds-title-s, lh20) центрируется → под текстом
-   свес (28-20)/2 = 4px, из-за чего время уезжает от текста имени. Подтягиваем
-   время вверх отрицательным margin. Гейт по самой кнопке: посты-людей (без
-   button-subscribe) не трогаем, иначе имя слиплось бы с временем. */
-.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: -4px; }
+   свес, из-за чего время уезжает от текста имени. Подтягиваем время вверх
+   отрицательным margin — ТОЛЬКО для постов с группой + кнопкой «Подписаться»
+   (гейт по самой кнопке; посты-людей не трогаем). */
+.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: -6px; }
 
 /* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
 .text-feed .actions-bar {
