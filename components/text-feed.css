@@ -203,7 +203,8 @@
   position: absolute;
   inset: 0;
   border: 2px solid var(--dynamic-stroke-contrast-low);
-  border-radius: 20px;
+  border-radius: inherit;           /* радиус карточки (в .caf-контексте 12, иначе 20):
+                                       хардкод 20 вылезал за overflow-клип 12 → углы срезались */
   pointer-events: none;
 }
 
