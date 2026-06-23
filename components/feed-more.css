@@ -1,0 +1,50 @@
+/**
+ * OK Design System — Feed «…ещё / Скрыть» (centralized)
+ *
+ * Единый inline-механизм сворачивания текста для трёх мест Q3-ленты:
+ *   • тело поста        (.text-feed__body)
+ *   • крупный коммент   (.caf-text, comment-as-feed)
+ *   • комментарии       (.fc-comment__text, feed-comment)
+ *
+ * Текст режется в генераторе по границе слова (scripts/fetch-q3.mjs → clampMore):
+ * видимая «голова» + скрытый «хвост» (.feed-more__full). «…ещё» приклеено к концу
+ * головы (никогда не на отдельной строке — в разметке между ними нет пробелов).
+ * Развёрнуто — полный текст + «Скрыть» с новой строки. Размер «…ещё»/«Скрыть»
+ * наследуется от текста, рядом с которым стоит (кнопка лежит ВНУТРИ абзаца).
+ *
+ * Старые ленты (New Vision) используют свою разметку (text-feed__body-toggle /
+ * fc-comment__text-wrap + line-clamp + is-clampable) — этот файл их не трогает,
+ * селекторы бьют только по классу .feed-more*.
+ */
+
+/* Обёртка-label: тап по всему блоку тогглит скрытый чекбокс. */
+.feed-more {
+  display: block;
+  cursor: pointer;
+}
+
+/* Текст: снимаем line-clamp у комментариев/caf — обрезку делает сам сплит. */
+.feed-more__text {
+  display: block;
+  -webkit-line-clamp: none;
+  overflow: visible;
+}
+
+/* «Хвост» текста — виден только в развёрнутом состоянии. */
+.feed-more__full { display: none; }
+.feed-more:has(> input:checked) .feed-more__full { display: inline; }
+
+/* «…ещё / Скрыть» — размер и начертание как у текста (наследуем), цвет — вторичный. */
+.feed-more__btn {
+  font: inherit;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+/* «Скрыть» прячем в свёрнутом; «…ещё» — в развёрнутом. */
+.feed-more__hide { display: none; }
+.feed-more:has(> input:checked) .feed-more__show { display: none; }
+/* Развёрнуто: «Скрыть» с большой буквы и ВСЕГДА с новой строки. */
+.feed-more:has(> input:checked) .feed-more__hide {
+  display: block;
+  margin-top: var(--space-1);
+}
