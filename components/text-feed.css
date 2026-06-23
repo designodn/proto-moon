@@ -144,7 +144,7 @@
    свес, из-за чего время уезжает от текста имени. Подтягиваем время вверх
    отрицательным margin — ТОЛЬКО для постов с группой + кнопкой «Подписаться»
    (гейт по самой кнопке; посты-людей не трогаем). */
-.text-feed .uni-cell-additional-content:has(.button-subscribe) .text-feed__time { margin-top: -8px; }
+.text-feed .uni-cell:has(.button-subscribe) .uni-cell-additional-content .text-feed__time { margin-top: -8px; }
 
 /* actions-bar внутри text-feed: gap 8 (в figma), не 4 как по умолчанию */
 .text-feed .actions-bar {
