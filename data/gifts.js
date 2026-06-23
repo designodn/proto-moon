@@ -24,7 +24,7 @@ window.DS_GIFTS_DATA = {
     },
     {
       "id": "friendversary-4",
-      "image": "assets/gifts/2ae0737717d8c24e.gif",
+      "image": "assets/gifts/2ae0737717d8c24e.jpg",
       "price": "0 ОК"
     },
     {

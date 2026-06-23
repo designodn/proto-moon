@@ -40,13 +40,29 @@ function extFor(contentType, url) {
   return 'jpg';
 }
 
-function mediaKind(contentType, url) {
-  const ct = (contentType || '').toLowerCase();
-  if (ct.startsWith('image/')) return 'image';
-  if (ct.startsWith('video/')) return 'video';
-  const path = (url || '').split(/[?#]/)[0].toLowerCase();
-  if (/\.(jpe?g|png|webp|gif|avif|bmp|svg)$/.test(path)) return 'image';
-  if (/\.(mp4|webm|mov|m4v)$/.test(path)) return 'video';
+/** Определяет реальный тип по сигнатуре файла (magic bytes) — надёжнее, чем
+ *  Content-Type/расширение: хосты часто отдают gif-имя для JPEG-байтов и наоборот.
+ *  → { ext, kind } или null, если сигнатура не распознана. */
+function sniff(buf) {
+  if (!buf || buf.length < 4) return null;
+  const b = buf;
+  const ascii = (i, s) => b.toString('latin1', i, i + s.length) === s;
+  if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) return { ext: 'jpg', kind: 'image' };
+  if (b[0] === 0x89 && ascii(1, 'PNG')) return { ext: 'png', kind: 'image' };
+  if (ascii(0, 'GIF8')) return { ext: 'gif', kind: 'image' };
+  if (ascii(0, 'RIFF') && ascii(8, 'WEBP')) return { ext: 'webp', kind: 'image' };
+  if (b[0] === 0x42 && b[1] === 0x4D) return { ext: 'bmp', kind: 'image' };
+  if (b[0] === 0x1A && b[1] === 0x45 && b[2] === 0xDF && b[3] === 0xA3) return { ext: 'webm', kind: 'video' };
+  // ISO-BMFF (ftyp): mp4/mov/avif различаем по brand'у в байтах 8..12.
+  if (ascii(4, 'ftyp')) {
+    const brand = b.toString('latin1', 8, 12);
+    if (brand.startsWith('qt')) return { ext: 'mov', kind: 'video' };
+    if (brand.startsWith('avif') || brand.startsWith('avis')) return { ext: 'avif', kind: 'image' };
+    return { ext: 'mp4', kind: 'video' };
+  }
+  // SVG — текстовый: ищем <svg в начале (с возможным BOM/пробелами/XML-прологом).
+  const headTxt = b.toString('latin1', 0, Math.min(b.length, 256)).toLowerCase();
+  if (/^\s*(?:<\?xml[^>]*>\s*)?(?:<!--.*?-->\s*)?<svg[\s>]/s.test(headTxt)) return { ext: 'svg', kind: 'image' };
   return null;
 }
 
@@ -77,10 +93,16 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
       });
       if (res.ok) {
         const ct = res.headers.get('content-type') || '';
-        const kind = mediaKind(ct, url);
-        if (kind) {
-          const bytes = Buffer.from(await res.arrayBuffer());
-          if (bytes.length) dl = { kind, ext: extFor(ct, url), hash: sha(bytes), bytes };
+        const bytes = Buffer.from(await res.arrayBuffer());
+        // Реальный тип — по содержимому (magic bytes). Принимаем только если байты
+        // ОПОЗНАНЫ как медиа, либо Content-Type явно image/video И это не HTML
+        // (анти-хотлинк часто отдаёт html-«заглушку» по image-подобному URL).
+        const sig = sniff(bytes);
+        const ctMedia = ct.startsWith('image/') || ct.startsWith('video/');
+        const looksHtml = /^\s*</.test(bytes.toString('latin1', 0, 64));
+        if (bytes.length && (sig || (ctMedia && !looksHtml))) {
+          const kind = sig?.kind || (ct.startsWith('video/') ? 'video' : 'image');
+          dl = { kind, ext: sig?.ext || extFor(ct, url), hash: sha(bytes), bytes };
         }
       }
     } catch { /* падаем в ветку «источник недоступен» */ }
