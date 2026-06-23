@@ -481,9 +481,21 @@
       }
 
       // ВВЗ-слайд — через компонент ClipVvz; люди из «Люди» (vvz-1..vvz-4).
+      // Заполнение карточек идентично сториз-ВВЗ (см. lenta-q3): у первых трёх
+      // карточек общие друзья (2 / 4 / 3) — реальные фото людей из листа «Люди».
       var vvzPeople = ['vvz-1', 'vvz-2', 'vvz-3', 'vvz-4'].map(function (id) {
         var p = person(id);
         return { name: p.name || '', img: p.photo || '' };
+      });
+      var _vvzPool = (window.DS_PEOPLE_DATA || [])
+        .filter(function (pp) { return pp && typeof pp.id === 'number' && pp.photo; })
+        .map(function (pp) { return pp.photo; });
+      [2, 4, 3].forEach(function (n, i) {
+        if (!vvzPeople[i] || !_vvzPool.length) return;
+        var k = Math.min(n, 3);
+        vvzPeople[i].mutuals = n;
+        vvzPeople[i].m = [];
+        for (var j = 0; j < k; j++) vvzPeople[i].m.push(_vvzPool[(i * 3 + j) % _vvzPool.length]);
       });
       function vvzHTML() {
         return window.ClipVvz ? window.ClipVvz.render({ people: vvzPeople }) : '';

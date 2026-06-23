@@ -33,9 +33,10 @@
   display: flex;
   flex-direction: column;
   row-gap: var(--space-4);
-  /* Низ: CTA «Показать всех» прижат на 12px над таб-баром.
+  /* Верх: высота навбара (кнопки back/add: top safe+12 + 40px = 52) + 12.
+     Низ: CTA «Показать всех» прижат на 12px над таб-баром.
      Таб-бар (.klipy-tabbar) глух к bottom:0, высота 49px (48px ряд + 1px бордер). */
-  padding: calc(96px + env(safe-area-inset-top, 0px)) var(--space-4)
+  padding: calc(env(safe-area-inset-top, 0px) + 52px + 12px) var(--space-4)
            calc(49px + 12px);
 }
 /* Заголовок + сетка — общий компонент .vvz-section (vvz-card.css): он сам
