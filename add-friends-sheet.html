@@ -151,7 +151,12 @@
   .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1 !important; }
   .fp.__measuring .friend-big-card,
   .fp.__measuring .friend-big-card * { transition: none !important; }
-  .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; }
+  /* opacity:1 обязателен: measureRowCardH на миг снимает __state-4 и форсит
+     reflow (offsetHeight). Без этого правила кнопка в замере падает в базовый
+     opacity:0, и при возврате __state-4 проигрывается transition opacity 0→1 —
+     кнопка мигает ровно когда ряд доезжает в центр. Пин держит значение
+     одинаковым до и после замера → transition не запускается. */
+  .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; opacity: 1; }
 
   /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
      кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
@@ -704,7 +709,14 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      // Поднятый fp__title (ряд-стейты 2–4): top = 25%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 25% высоты экрана.
+      var titleH = titleEl.offsetHeight || 80;
+      var raisedTop = Math.max(0, Math.round(pageH * 0.25 - titleH));
+      STATES[1].title = raisedTop;
+      STATES[2].title = raisedTop;
+      STATES[3].title = raisedTop;
+      var titleBottom = STATES[3].title + titleH;
       var avail = pageH - titleBottom;
       var s = 1;
       if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
@@ -854,12 +866,22 @@
     // нижней кнопкой (top = SUCCESS_TOP) + конфетти. Через пару секунд шторка
     // автоматически закрывается (клик по крестику → переход на ленту).
     function showAllAccepted() {
-      titleEl.innerHTML = 'Вы подружились<br>со всеми';
-      // Финальный текст плавно съезжает в центр экрана по вертикали.
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      var th = titleEl.offsetHeight || 80;
-      titleEl.style.transition = 'top 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 280ms ease-out';
-      titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
+      // Кроссфейд вместо «съезда»: гасим текущий заголовок, ПОКА он невидим —
+      // меняем текст и ставим финальную позицию (центр) без анимации top, затем
+      // плавно проявляем уже на месте. Так нет дёрганого слайда нового текста.
+      titleEl.style.transition = 'opacity 220ms ease-out';
+      titleEl.style.opacity = '0';
+      setTimeout(function () {
+        titleEl.innerHTML = 'Вы подружились<br>со всеми';
+        var th = titleEl.offsetHeight || 80;
+        titleEl.style.transition = 'none';
+        titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
+        // форс-reflow, чтобы новый top применился мгновенно (без перехода)
+        void titleEl.offsetHeight;
+        titleEl.style.transition = 'opacity 280ms ease-out';
+        titleEl.style.opacity = '1';
+      }, 220);
       fireConfetti();
       // Через 2с после запуска конфетти показываем secondary-кнопку «Закрыть».
       var finish = document.getElementById('fpFinish');
