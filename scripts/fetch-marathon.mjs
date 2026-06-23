@@ -121,7 +121,9 @@ function renderEntries(entries) {
     const ratio = (given === '1:1' || given === '3:4') ? given
       : c.last === '3:4' ? '1:1'
       : c.last === '1:1' ? '3:4'
-      : '1:1';                                   // первая в колонке — квадрат
+      : (ci === 0 ? '1:1' : '3:4');               // колонки стартуют с разных
+                                                   // пропорций — чтобы рядом не
+                                                   // стояли одинаковые
 
     c.html.push(card({ ...e, ratio }, i + 2, false));
     c.h += TILE_H[ratio] + FOOTER_H;
