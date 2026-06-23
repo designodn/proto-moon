@@ -71,6 +71,13 @@
   width: auto;
   background-color: var(--static-surface-base-tertiary);
 }
+/* Тёмная карточка на тёмной подложке: текст инверсный, обводка аватарок
+   общих друзей — под цвет подложки карточки, крестик — инверсный вторичный. */
+.vvz-card.__stories .vvz-card__title    { color: var(--static-text-and-icons-base-inverse-primary); }
+.vvz-card.__stories .vvz-card__subtitle { color: var(--static-text-and-icons-base-inverse-secondary); }
+.vvz-card.__stories .avatars-view__stack > * { border-color: var(--static-surface-base-tertiary); }
+.vvz-card.__stories .vvz-card__close,
+.vvz-card.__stories .vvz-card__close .button-inline { color: var(--static-text-and-icons-base-inverse-secondary); }
 
 /* Вариант СООБЩЕНИЯ — фикс. ширина 160 (как дефолт). Кнопка «Дружить»
    остаётся обычной primary (оранжевой) — как в ленте/профиле; отдельного
@@ -469,13 +476,15 @@
 }
 .vvz-section__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Одна колонка — карточка на 100% ширины контейнера. */
+  grid-template-columns: minmax(0, 1fr);
   grid-auto-rows: min-content;
   gap: var(--space-2);
+  width: 100%;
   min-width: 0;
-  /* Без горизонтальных отступов: грид full-bleed — гасим боковой паддинг
-     контейнера (space-4 у .moment__body / .klip__vvz-inner), карточки занимают
-     всю ширину. Заголовок и CTA остаются с отступами контейнера. */
-  margin-inline: calc(-1 * var(--space-4));
+  /* Восстановленное правило макс. ширины: на широком экране грид не растягивается
+     бесконечно, а центрируется. */
+  max-width: calc(220px * 2 + var(--space-2));
+  margin-inline: auto;
 }
 .vvz-section__grid > .vvz-card { min-width: 0; }
