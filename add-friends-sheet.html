@@ -704,7 +704,14 @@
         });
       }
       var pageH = window.innerHeight || document.documentElement.clientHeight;
-      var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
+      // Поднятый fp__title (ряд-стейты 2–4): top = 25%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 25% высоты экрана.
+      var titleH = titleEl.offsetHeight || 80;
+      var raisedTop = Math.max(0, Math.round(pageH * 0.25 - titleH));
+      STATES[1].title = raisedTop;
+      STATES[2].title = raisedTop;
+      STATES[3].title = raisedTop;
+      var titleBottom = STATES[3].title + titleH;
       var avail = pageH - titleBottom;
       var s = 1;
       if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
