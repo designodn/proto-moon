@@ -117,7 +117,8 @@
      ============================================================ */
   .klip__rail {
     position: absolute; right: var(--space-3); z-index: 20;
-    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    /* нижняя кромка выровнена с блоком звука слева (.klip__bottom: 61px) */
+    bottom: 61px;
     display: flex; flex-direction: column; align-items: center;
     gap: var(--space-5);
     color: var(--static-text-and-icons-base-inverse-primary);
@@ -168,13 +169,13 @@
   .klip__audio { display: flex; align-items: center; gap: var(--space-3); }
   .klip__mute {
     flex-shrink: 0;
-    width: 44px; height: 44px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    border: 0; cursor: pointer;
-    background: var(--static-surface-special-layer-tertiary, rgba(0,0,0,.56));
+    border: 0; padding: 0; cursor: pointer;
+    background: transparent;
     color: var(--static-text-and-icons-base-inverse-primary);
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,.5));
   }
-  .klip__mute .klipy-icon { filter: brightness(0) invert(1); }
+  .klip__mute .klipy-icon { width: 16px; height: 16px; filter: brightness(0) invert(1); }
   .klip__mute .__icon-on  { display: none; }
   .klip__mute.__state-muted .__icon-off { display: none; }
   .klip__mute.__state-muted .__icon-on  { display: block; }
@@ -440,7 +441,6 @@
         var p = person(c.author);
         var author = c.authorName || p.name || '';
         var avatar = c.avatar || p.photo || '';
-        var audioTitle = c.audio ? esc(c.audio) : 'Original audio';
         return '' +
         '<section class="klip" data-klip>' +
           '<div class="klip__media"><video src="' + esc(videoSrc(c)) + '" autoplay muted loop playsinline></video></div>' +
@@ -468,12 +468,11 @@
             '</div>' +
             '<div class="klip__audio">' +
               '<button class="klip__mute __state-muted" data-mute aria-label="Звук">' +
-                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">' +
-                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">' +
+                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="16" height="16" alt="">' +
+                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="16" height="16" alt="">' +
               '</button>' +
               '<div class="klip__audio-text">' +
-                '<div class="klip__audio-title">' + audioTitle + '</div>' +
-                '<div class="klip__audio-sub">' + esc(author) + '</div>' +
+                '<div class="klip__audio-title">Original audio</div>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -539,12 +538,11 @@
             '</div>' +
             '<div class="klip__audio">' +
               '<button class="klip__mute __state-muted" data-mute aria-label="Звук">' +
-                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="24" height="24" alt="">' +
-                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="24" height="24" alt="">' +
+                '<img class="klipy-icon __icon-off" src="assets/icons/sound_off_24.svg" width="16" height="16" alt="">' +
+                '<img class="klipy-icon __icon-on"  src="assets/icons/sound_24.svg" width="16" height="16" alt="">' +
               '</button>' +
               '<div class="klip__audio-text">' +
                 '<div class="klip__audio-title">Original audio</div>' +
-                '<div class="klip__audio-sub">' + esc(author) + '</div>' +
               '</div>' +
             '</div>' +
           '</div>' +
