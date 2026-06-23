@@ -747,7 +747,7 @@ ${avatarsStack(likesView.avatars)}
           </div>
 ${likesBlock}
 
-          <div class="actions-bar">
+          <div class="actions-bar __otd">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 ${SHARE_SVG}Поделиться
@@ -944,7 +944,7 @@ ${actionsBar(likes, comments, reshares)}
           <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
           <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __friendversary">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
             </div>
@@ -972,7 +972,7 @@ ${actionsBar(likes, comments, reshares)}
             </div>
           </div>
 
-          <div class="actions-bar">
+          <div class="actions-bar __tagged">
             <div class="button-wrapper __size-44 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
                 ${SHARE_SVG}Поделиться
