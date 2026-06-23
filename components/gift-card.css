@@ -251,6 +251,18 @@
   margin-top: 8px;
 }
 
+/* В финале «Спасибо» убираем пустой слот «Написать»: блок кнопок сжимается
+   до одной кнопки (56) → картинка получает освободившееся место, прайс встаёт
+   ПОД ней, а зазор «прайс → кнопка» = 16 (margin-top accept). Кнопка остаётся
+   на месте: transform-transition синхронен с height-transition блока (240ms),
+   их прогрессы взаимно гасятся. */
+.gift-card.__thanks .gift-card__btn-write { display: none; }
+.gift-card.__thanks .gift-card__accept { height: 56px; }
+.gift-card.__thanks .gift-card__btn-accept {
+  transform: none;
+  transition: transform 240ms ease-out;
+}
+
 /* ============================================================
    .__accepting — нажали «Принять»: радиальный градиент заливает
    карточку снизу-вверх, поверх появляется галочка.
