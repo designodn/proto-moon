@@ -240,17 +240,24 @@ const isJoined = v => /^(да|yes|1|true)$/i.test(String(v || '').trim());
  *  Имя и URL аватара запекаются inline из people.json. Для group-* добавляем
  *  кнопку «Подписаться» (button-subscribe), как в эталонной карточке 4. */
 function authorHeader(id, time, { subscribe = false } = {}) {
+  // «Подписаться» (для групп) — в ОДНОЙ строке с именем, центр по вертикали
+  // (эталон Figma 4833-29163): имя + кнопка = .feed-header__line, время ниже.
   const sub = subscribe ? `
-            <label class="button-wrapper __size-28 button-subscribe">
-              <input type="checkbox" hidden>
-              <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
-            </label>` : '';
+                <label class="button-wrapper __size-28 button-subscribe">
+                  <input type="checkbox" hidden>
+                  <span class="button-container __style-secondary"><span class="button-content"><span class="button-subscribe__label-default">Подписаться</span><span class="button-subscribe__label-subscribed">Подписан</span></span></span>
+                </label>` : '';
+  const name = `<div class="ds-title-s feed-header__name">${esc(personName(id))}</div>`;
+  const nameLine = subscribe
+    ? `<div class="feed-header__line">${name}${sub}
+              </div>`
+    : name;
   return `          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
             <div class="avatar __size-44 __type-image">${img(personPhoto(id))}</div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">${esc(personName(id))}</div>
+              ${nameLine}
               <div class="ds-caption-s text-feed__time">${esc(time)}</div>
-            </div>${sub}
+            </div>
           </div></div></div>`;
 }
 
@@ -1024,9 +1031,11 @@ ${hint}          <div class="clip-feed ll-clipc__player">
             <div class="clip-feed__header">
               <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
               <div class="clip-feed__txt">
-                <div class="ds-title-s">${esc(personName(aid))}</div>
+                <div class="clip-feed__line">
+                  <div class="ds-title-s">${esc(personName(aid))}</div>${subBtn}
+                </div>
                 <div class="ds-caption-s clip-feed__time">${esc(time)}</div>
-              </div>${subBtn}
+              </div>
             </div>
             <button class="clip-feed__mute" aria-label="Включить звук"><img class="clip-feed__mute-icon" src="assets/icons/sound_off_24.svg" width="24" height="24" alt=""></button>
           </div>

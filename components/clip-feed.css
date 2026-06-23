@@ -160,9 +160,24 @@
 .ll-clipc__player .clip-feed__mute {
   bottom: var(--space-4);
 }
-/* «Подписаться» в шапке клипа — к правому краю. */
+/* Имя + «Подписаться» (для групп) в одной строке, центр по вертикали;
+   время — строкой ниже (эталон Figma 4833-29163). Имя тянется, кнопка
+   прижата вправо и не сжимается. */
+.clip-feed__line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+.clip-feed__line > .ds-title-s {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .clip-feed__subscribe {
-  margin-left: auto;
+  flex-shrink: 0;
 }
 /* Лейбл «Может быть интересно» над клипом — title-s, основной цвет. */
 .ll-clipc__hint {
