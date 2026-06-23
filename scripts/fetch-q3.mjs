@@ -729,7 +729,7 @@ ${avatarsStack(likesView.avatars)}
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
               <div class="avatar __size-24 __type-image">${img(personPhoto(aid))}</div>
-              <div class="ds-body-m text-feed__reshare-card-author-name">Вы</div>
+              <div class="ds-title-s text-feed__reshare-card-author-name">Вы</div>
             </div>
 
             <p class="ds-body-m text-feed__body">${esc(text)}</p>${mediaBlock}
