@@ -1124,10 +1124,10 @@ ${mediaInner}
 ${crumbs}` : ''}
 ${cafHeader(commenter, to)}
           </header>`;
-      const preview = `          <div class="text-feed__reshare-card caf-preview">
+      const preview = `          <div class="text-feed__reshare-card __caf caf-preview">
             <span class="icon __size-20 __slot-repost caf-preview__icon"></span>
             <div class="text-feed__link caf-preview__body">${text ? `
-              <div class="ds-title-s">${esc(text)}</div>` : ''}${p.desc ? `
+              <div class="ds-title-s caf-preview__title">${esc(text)}</div>` : ''}${p.desc ? `
               <p class="ds-body-m caf-preview__snippet">${esc(nbsp(resolveNames(p.desc)))}</p>` : ''}
             </div>
           </div>`;
