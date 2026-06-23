@@ -750,7 +750,7 @@ ${likesBlock}
           <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end">
@@ -946,7 +946,7 @@ ${actionsBar(likes, comments, reshares)}
 
           <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-gift"></span>Поздравить друга</span></button>
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
           </div>
@@ -975,7 +975,7 @@ ${actionsBar(likes, comments, reshares)}
           <div class="actions-bar">
             <div class="button-wrapper __size-36 __full-width">
               <button class="button-container __style-primary"><span class="button-content">
-                ${SHARE_SVG}Поделиться
+                Поделиться
               </span></button>
             </div>
           </div>
@@ -1106,7 +1106,7 @@ ${mediaInner}
             <div class="actions-bar ll-memclip__actions">
               <div class="button-wrapper __size-36 __full-width">
                 <button class="button-container __style-primary"><span class="button-content">
-                  ${SHARE_SVG}Поделиться
+                  Поделиться
                 </span></button>
               </div>
               <div class="button-wrapper __size-36 __pinned-end ll-memclip__more">
