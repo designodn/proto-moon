@@ -479,6 +479,9 @@
     var ROW_CARD_H = 486, ROW_HALF = 175, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
+    // Когда все подарки разобраны и снизу появилась кнопка «Закрыть» — ряд
+    // масштабируем так, чтобы от низа карточек до кнопки был зазор ровно 32.
+    var finishActive = false;
     function recenterRow() {
       if (!BASE) {
         BASE = {};
@@ -494,7 +497,17 @@
       var titleBottom = STATES[3].title + (titleEl.offsetHeight || 80);
       var avail = pageH - titleBottom;
       var s = 1;
-      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+      if (finishActive) {
+        // Прижимаем ряд к кнопке «Закрыть»: ровно 32px от низа карточек до неё.
+        var pageW = window.innerWidth || document.documentElement.clientWidth;
+        var BTN_RESERVE = 24 + 56;        // gp__finish: отступ снизу + высота кнопки
+        var FINISH_GAP = 32;              // зазор карточка → кнопка
+        var desiredBottom = pageH - BTN_RESERVE - FINISH_GAP;
+        var cardTop = titleBottom + TITLE_GAP;
+        s = (desiredBottom - cardTop) / ROW_CARD_H;
+        var widthCap = (pageW - 32) / 300;  // карточка не шире экрана (16px по краям)
+        s = Math.max(0.4, Math.min(s, widthCap));
+      } else if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
       // Верх карточки = titleBottom + TITLE_GAP (фикс. зазор от заголовка).
@@ -927,15 +940,49 @@
       }
 
       // ── ACCEPT / DISMISS ────────────────────────────────────
-      // Пул случайных гифок-подарков для благодарности в ответ.
+      // Пул подарков для стейта «Спасибо» (благодарность в ответ).
       var GIFTS = [
-        'assets/gifts/0b5f1dfc84df8270.gif',
-        'assets/gifts/2c88625b66d012f5.gif',
-        'assets/gifts/5aa90cf1d5001c51.gif',
-        'assets/gifts/b4001253d8302881.gif',
-        'assets/gifts/bb5a45d04c2ef81d.gif',
-        'assets/gifts/d7d90bc43c674792.gif'
+        'assets/gifts/thanks-1.gif',
+        'assets/gifts/thanks-2.jpg',
+        'assets/gifts/thanks-3.jpg'
       ];
+      // Сразу раздаём по одному уникальному подарку на карточку (без повторов).
+      var giftPool = GIFTS.slice();
+      for (var gi = giftPool.length - 1; gi > 0; gi--) {   // Fisher–Yates
+        var gj = Math.floor(Math.random() * (gi + 1));
+        var gt = giftPool[gi]; giftPool[gi] = giftPool[gj]; giftPool[gj] = gt;
+      }
+      var giftFor = {};
+      IDX.forEach(function (i, k) { giftFor[i] = giftPool[k % giftPool.length]; });
+
+      // Когда все подарки разобраны (приняты/отклонены) — снизу появляется
+      // secondary-кнопка «Закрыть» (выход не только по кресту), через 500мс.
+      var resolved = 0, totalCards = IDX.length;
+      function markResolved() {
+        if (++resolved < totalCards) return;
+        var finish = document.getElementById('gpFinish');
+        var finishBtn = document.getElementById('gpFinishClose');
+        if (finishBtn && !finishBtn.dataset.wired) {
+          finishBtn.dataset.wired = '1';
+          finishBtn.addEventListener('click', function () {
+            var closeBtn = document.querySelector('.gp__close');
+            if (closeBtn) closeBtn.click();
+          });
+        }
+        setTimeout(function () {
+          if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+          // Перескейливаем ряд под кнопку (зазор 32) — плавно.
+          finishActive = true;
+          recenterRow();
+          IDX.forEach(function (j) { els[j].style.transition = 'transform 320ms ease'; });
+          requestAnimationFrame(function () {
+            IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
+          });
+          setTimeout(function () {
+            IDX.forEach(function (j) { els[j].style.transition = ''; });
+          }, 360);
+        }, 500);
+      }
 
       // Когда все подарки разобраны (приняты/отклонены) — снизу появляется
       // secondary-кнопка «Закрыть» (выход не только по кресту), через 500мс.
@@ -981,9 +1028,7 @@
           // Плавная смена подарка (crossfade): гасим, меняем src, проявляем.
           var img = el.querySelector('.gift-card__photo');
           if (img) {
-            var cur = img.getAttribute('src');
-            var pool = GIFTS.filter(function (g) { return g !== cur; });
-            var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+            var next = giftFor[i] || GIFTS[0];   // заранее назначенный, без повторов
             img.style.transition = 'opacity 280ms ease';
             img.style.opacity = '0';
             setTimeout(function () {
