@@ -498,15 +498,17 @@
       var avail = pageH - titleBottom;
       var s = 1;
       if (finishActive) {
-        // Прижимаем ряд к кнопке «Закрыть»: ровно 32px от низа карточек до неё.
+        // Появилась кнопка «Закрыть» — следим, чтобы она НЕ налезала на карточки:
+        // минимум 16px от низа карточки до кнопки. Карточки НЕ увеличиваем сверх
+        // натурального размера (s ≤ 1) — только ужимаем, если иначе налезает.
         var pageW = window.innerWidth || document.documentElement.clientWidth;
         var BTN_RESERVE = 24 + 56;        // gp__finish: отступ снизу + высота кнопки
-        var FINISH_GAP = 32;              // зазор карточка → кнопка
+        var FINISH_GAP = 16;              // зазор карточка → кнопка
         var desiredBottom = pageH - BTN_RESERVE - FINISH_GAP;
         var cardTop = titleBottom + TITLE_GAP;
         s = (desiredBottom - cardTop) / ROW_CARD_H;
         var widthCap = (pageW - 32) / 300;  // карточка не шире экрана (16px по краям)
-        s = Math.max(0.4, Math.min(s, widthCap));
+        s = Math.max(0.4, Math.min(s, 1, widthCap));
       } else if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
