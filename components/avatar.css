@@ -106,6 +106,15 @@
   --avatar-bg: var(--dynamic-surface-contrast-low);
 }
 
+/* Фолбэк: <img> не загрузился (см. components/avatar.js) — прячем битую
+   картинку и заливаем круг чистым surface/base/primary. */
+.avatar.__img-error {
+  --avatar-bg: var(--dynamic-surface-base-primary);
+}
+.avatar.__img-error > img {
+  display: none;
+}
+
 /* Loading state — shimmer */
 .avatar.__state-loading::before {
   content: '';
