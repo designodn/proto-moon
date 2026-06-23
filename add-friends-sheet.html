@@ -747,33 +747,41 @@
         c.cy = cloudCenterY + (b.cy - cloudC) * s;
         c.s = b.s * s;
       });
-      // Зазор «заголовок → ближайший кружок» ровно 16px (до ВИДИМОГО текста, не
-      // до бокса заголовка: у него снизу запас от line-height). Верхняя кромка
-      // кружка = cy − 150·scale (центр круга по cy в координатах ty=cy−230,
-      // радиус фото 150·scale — см. геометрию applyCard). Пиним самый высокий
-      // кружок ровно на 16px под низ текста (сдвиг всего облака — вниз, если
-      // наезжает, или вверх, если зазор великоват). Адаптивно к высоте экрана.
-      var CLOUD_GAP = 16;
-      // Низ видимого текста заголовка в системе координат top (raisedTop): берём
-      // bbox содержимого через Range и вычитаем top бокса — получаем inset от
-      // верха элемента до низа последней глифовой строки (без line-height-запаса).
-      var titleTextInset = titleH;
+      // Зазор «заголовок → ближайший кружок» (ровно CLOUD_GAP) пиним отдельно по
+      // ЖИВОЙ геометрии — см. pinCloudUnderTitle(). Аналитический cy−150·s давал
+      // промах из-за margin-top фото + масштаба, поэтому здесь облако НЕ пиним.
+    }
+    // Пин облака разлёта: верхняя кромка САМОГО БЛИЗКОГО кружка ровно CLOUD_GAP
+    // под низом ВИДИМОГО текста заголовка. Меряем по факту (getBoundingClientRect
+    // фото-кружков и Range текста) — аналитика cy−150·s расходится с рендером.
+    // Сдвиг cy ↔ сдвиг верха кружка в пикселях 1:1, поэтому хватает одного прохода.
+    // Вызывать, когда активен кружковый стейт (margin-top:80 у фото) и transition
+    // не в полёте — на старте (__state-1 уже в разметке) и в кучке (current 0).
+    var CLOUD_GAP = 16;
+    function pinCloudUnderTitle() {
+      if (!titleEl || !STATES[1]) return;
+      var prevState = current;
+      // Синхронно ставим заголовок и кружки в позиции разлёта, меряем, возвращаем.
+      // Кружки на старте невидимы (opacity:0), всё в одном кадре — без перерисовки.
+      titleEl.style.top = STATES[1].title + 'px';
+      IDX.forEach(function (i) { applyCard(els[i], STATES[1].cards[i], 0); });
+      void root.offsetHeight;  // форс reflow
+      var textBottom;
       try {
-        var _r = document.createRange();
-        _r.selectNodeContents(titleEl);
-        var _tb = _r.getBoundingClientRect().bottom - titleEl.getBoundingClientRect().top;
-        if (_tb > 0) titleTextInset = _tb;
-      } catch (_) {}
-      var cloudNeedTop = raisedTop + titleTextInset + CLOUD_GAP;
-      var cloudMinTop = Infinity;
-      Object.keys(STATES[1].cards).forEach(function (k) {
-        var c = STATES[1].cards[k];
-        cloudMinTop = Math.min(cloudMinTop, c.cy - 150 * c.s);
+        var rng = document.createRange();
+        rng.selectNodeContents(titleEl);
+        textBottom = rng.getBoundingClientRect().bottom;
+      } catch (_) { textBottom = titleEl.getBoundingClientRect().bottom; }
+      var minTop = Infinity;
+      IDX.forEach(function (i) {
+        var img = els[i].querySelector('.friend-big-card__photo img');
+        if (img) { var t = img.getBoundingClientRect().top; if (t < minTop) minTop = t; }
       });
-      var cloudDy = cloudNeedTop - cloudMinTop;
-      Object.keys(STATES[1].cards).forEach(function (k) {
-        STATES[1].cards[k].cy += cloudDy;
-      });
+      if (isFinite(minTop)) {
+        var delta = (textBottom + CLOUD_GAP) - minTop;
+        Object.keys(STATES[1].cards).forEach(function (k) { STATES[1].cards[k].cy += delta; });
+      }
+      applyState(prevState);  // вернуть заголовок и кружки в текущий стейт
     }
     // Заранее (пока карточки невидимы, opacity:0) меряем высоту карточки в
     // ряд-лейауте и фиксируем --fp-row-card-h / ROW_CARD_H — чтобы при входе в
@@ -808,6 +816,9 @@
 
     applyState(0);
     root.classList.add('__state-1');
+    // Пиним облако под заголовок на старте (кружки невидимы, __state-1 активен,
+    // transition не в полёте → замер чистый).
+    pinCloudUnderTitle();
 
     // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера и
     // изменить метрики строк. Перемеряем по fonts.ready тем же детерминированным
@@ -816,12 +827,16 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () {
         if (measureRowCardH()) { recenterRow(); applyState(current); }
+        // Шрифт мог сдвинуть метрики заголовка → перепиним, пока ещё в кучке/разлёте
+        // (кружковый стейт активен, margin-top:80 стабилен).
+        if (current <= 1) pinCloudUnderTitle();
       });
     }
 
     // Пересчёт центрирования при ресайзе/смене ориентации.
     window.addEventListener('resize', function () {
       recenterRow();
+      if (current <= 1) pinCloudUnderTitle();
       if (current === 2 || current === 3) applyState(current);
     });
 
