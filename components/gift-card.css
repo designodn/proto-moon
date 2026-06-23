@@ -91,10 +91,26 @@
   width: 100%;
 }
 
-.gift-card__name {
+/* Текстовая колонка ячейки: имя + дата (gap 4). */
+.gift-card__cell-text {
   flex: 1 1 0;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gift-card__name {
+  min-width: 0;
   color: var(--dynamic-text-and-icons-base-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gift-card__date {
+  min-width: 0;
+  color: var(--dynamic-text-and-icons-base-tertiary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -217,6 +233,29 @@
 }
 .gift-card.__accepted .gift-card__btn-accept {
   transform: translateY(64px);
+}
+/* Корзину показываем только до «Принять». */
+.gift-card.__accepted .gift-card__trash {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Прайс под подарком — появляется в финале «Отправить Спасибо» (отступ 4px),
+   плавно (высота + opacity). До этого свёрнут. */
+.gift-card__price {
+  flex: 0 0 auto;
+  height: 0;
+  opacity: 0;
+  margin-top: 0;
+  overflow: hidden;
+  transition: height 320ms ease-out,
+              opacity 320ms ease-out,
+              margin-top 320ms ease-out;
+}
+.gift-card.__thanks .gift-card__price {
+  height: 24px;
+  opacity: 1;
+  margin-top: 4px;
 }
 
 /* ============================================================
