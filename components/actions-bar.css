@@ -49,12 +49,30 @@
 }
 
 /* Иконка: outline по умолчанию, filled при :checked.
-   Префикс `.button-klass` поднимает специфичность до 0,2,0 — это нужно, чтобы
-   локальные стили страниц вида `.ll-icon { display: inline-block }` (0,1,0) не
-   перебивали `display:none` у скрытой иконки. */
-.button-klass .button-klass__icon-filled { display: none; }
-.button-klass:has(> input:checked) .button-klass__icon-outline { display: none; }
-.button-klass:has(> input:checked) .button-klass__icon-filled  { display: inline-flex; }
+   Переход «класс ↔ не класс» плавный в ОБЕ стороны: вместо мгновенного
+   display:none/flex кросс-фейдим иконки — у скрытой схлопываем ширину и гасим
+   opacity. Сумма ширин всегда 20px (одна растёт, другая ужимается с тем же
+   таймингом), поэтому счётчик не дёргается. Префикс `.button-klass` держит
+   специфичность 0,2,0 над локальными `.ll-icon`/`.icon.__size-*`. */
+.button-klass .button-klass__icon-outline,
+.button-klass .button-klass__icon-filled {
+  overflow: hidden;
+  transition: width 0.24s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.18s ease;
+}
+.button-klass .button-klass__icon-filled { width: 0; opacity: 0; }
+.button-klass:has(> input:checked) .button-klass__icon-outline { width: 0; opacity: 0; }
+.button-klass:has(> input:checked) .button-klass__icon-filled  { width: 20px; opacity: 1; }
+
+/* Нажатое состояние «Класс» (как в Figma): золотой полупрозрачный фон
+   (DS-токен base-yellow-saturated-translucent-20 = rgba(219,153,12,.2)).
+   Иконка filled — цветной бейдж assets/badges/ico_klass_colored_16_20.svg.
+   Фон плавно появляется/исчезает вместе с иконкой. */
+.button-klass .button-container { transition: background-color 0.24s ease; }
+.button-klass:has(> input:checked) .button-container {
+  --button-background-color: var(--base-yellow-saturated-translucent-20);
+}
+/* Цветной бейдж не перекрашиваем инверсией в on-image-контексте (клип/медиа). */
+.button-container.__style-on-image .button-klass__icon-filled.ll-icon { filter: none; }
 
 /* Счётчик рендерится из CSS-counter — автоматически +1 при :checked */
 .button-klass__count::before {
