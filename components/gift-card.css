@@ -46,27 +46,25 @@
  *
  * МОДИФИКАТОР:
  *   .__active   — показывает trash (справа в ячейке) и две кнопки внизу.
- *   .__accepted — нажали «Принять»: «Написать» гаснет, «Принять» съезжает на её
- *                 место; стиль/текст кнопки меняет JS (positive «Принято» →
- *                 secondary «Отправить Спасибо»), подарок — на случайный другой,
- *                 под ним появляется прайс (.__thanks). Trash скрывается.
+ *   .__accepted — нажали «Принять». ОБЕ кнопки остаются на местах; JS меняет
+ *                 только текст/стиль: верхняя Принять(primary)→Принято(positive,
+ *                 timered)→«Отправить Спасибо»(secondary), нижняя «Написать»→
+ *                 «Выбрать другой подарок». Trash скрывается.
+ *   .__thanks   — финал: под подарком появляется прайс, подарок сменён.
  */
 
 .gift-card {
   --gift-card-scale: 1;
 
   /* Высоты карточки вычисляем из частей, а не хардкодим:
-       base    — карточка без блока кнопок (cell + img + паддинги);
-       active  = base + отступ + ДВЕ кнопки (Принять/Написать);
-       settled = base + отступ + ОДНА кнопка (после приёма всех). */
+       base   — карточка без блока кнопок (cell + img + паддинги);
+       active = base + отступ + ДВЕ кнопки (обе остаются весь флоу). */
   --gc-base-h: 350px;
   --gc-btn-h: 56px;
   --gc-accept-gap: 8px;
   --gc-accept-margin: 16px;
   --gc-accept-h: calc(var(--gc-btn-h) * 2 + var(--gc-accept-gap));          /* 120 — две кнопки */
-  --gc-accept-shift: calc(var(--gc-btn-h) + var(--gc-accept-gap));          /* 64 — сдвиг «Принять» вниз на место «Написать» */
   --gc-active-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-accept-h));  /* 486 */
-  --gc-settled-h: calc(var(--gc-base-h) + var(--gc-accept-margin) + var(--gc-btn-h));    /* 422 */
 
   position: relative;
   width: 300px;
@@ -228,24 +226,10 @@
   pointer-events: auto;
 }
 
-/* .__accepted — «Написать» гаснет, «Принять» уезжает вниз на её место
-   (translateY 64 = высота кнопки 56 + gap 8), прибиваясь к низу карточки.
-   Высоту карточки не меняем. Пустой верхний слот схлопывается в __settled. */
-.gift-card.__accepted .gift-card__btn-write {
-  opacity: 0;
-  pointer-events: none;
-}
-.gift-card.__accepted .gift-card__btn-accept {
-  transform: translateY(var(--gc-accept-shift));
-}
-/* На тапе DS-press ставит scale(0.95) на тот же wrapper и перетирает сдвиг —
-   кнопка прыгает вверх. Сохраняем и сдвиг, и press-scale (кроме __settled,
-   где сдвига уже нет). Спецификация выше DS-правила .button-wrapper:active. */
-.gift-card.__accepted:not(.__settled) .gift-card__btn-accept:active,
-.gift-card.__accepted:not(.__settled) .gift-card__btn-accept.__clicked {
-  transform: translateY(var(--gc-accept-shift)) scale(0.95);
-}
-/* Корзину показываем только до «Принять». */
+/* .__accepted — нажали «Принять». ОБЕ кнопки остаются на местах (не двигаются
+   и не гаснут) — меняются только текст/стиль (JS): верхняя Принять→Принято→
+   «Отправить Спасибо», нижняя «Написать»→«Выбрать другой подарок». Скрываем
+   только корзину. */
 .gift-card.__accepted .gift-card__trash {
   opacity: 0;
   pointer-events: none;
@@ -270,17 +254,6 @@
   height: 24px;
   opacity: 1;
   margin-top: 8px;
-}
-
-/* После приёма ВСЕХ подарков карточки «оседают» (JS добавляет __settled с
-   пролагом 300мс): блок кнопок схлопывается до одной кнопки, высота карточки
-   уменьшается так, что прайс встаёт в 16px над кнопкой. Анимация медленная. */
-.gift-card.__settled { height: var(--gc-settled-h); transition: height 500ms ease; }
-.gift-card.__settled .gift-card__accept { height: var(--gc-btn-h); transition: height 500ms ease; }
-.gift-card.__settled .gift-card__btn-write { display: none; }
-.gift-card.__settled .gift-card__btn-accept {
-  transform: none;
-  transition: transform 500ms ease;
 }
 
 /* ============================================================
