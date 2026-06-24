@@ -782,36 +782,7 @@
       ]
     },
     {
-      "id": "post-8",
-      "type": "comment-as-feed",
-      "author": "1, 10",
-      "tema": "Еда",
-      "rubrika": "Вторые блюда",
-      "header": "",
-      "title": "Больше спасибо за ваши рецепты! Очень приятно смотреть как вы с душой и добротой рассказываете и Пошагово показываете!!! ❤️",
-      "text": "",
-      "photos": [
-        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
-      ],
-      "photosRaw": [
-        "https://img.povar.ru/mobile/a2/e1/38/2f/tushenaya_kapusta_bez_masla-251079.jpg"
-      ],
-      "likes": "25",
-      "comments": "20",
-      "reshares": "1",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "Всем привет, мои дорогие! Сегодня радовала своих мальчишек тушеной капустой с мясом. Классическое блюдо, которое в соей семье всегда разлетается на ура.",
-      "threadComments": [
-        {
-          "authorId": "3",
-          "text": "Мне очень нравится, что все расписано по шагова, иногда забываешь, если давно не готовишь"
-        }
-      ]
-    },
-    {
-      "id": "row-30",
+      "id": "row-29",
       "type": "comment-as-feed",
       "author": "8, group-9",
       "tema": "Еда",
@@ -840,6 +811,39 @@
         {
           "authorId": "9",
           "text": "Настоящие, по- белорусски!"
+        }
+      ]
+    },
+    {
+      "id": "post-8",
+      "type": "comment-as-feed",
+      "author": "4, group-12",
+      "tema": "Политика",
+      "rubrika": "Лидеры и заявления",
+      "header": "",
+      "title": "Сколько и с кем разговаривать? Пока мы миндальничаем они наглеют до беспредела. В ад их и дело с концом. Хватит болтовни",
+      "text": "\"Россия готова к переговорам с Украиной ...1) на базе стамбульских договоренностей 2022 года, ...2) модальностей, которые обсуждались в Анкоридже, ... 3) и реалий на земле\", - Путин.",
+      "photos": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYUJz8O0xDm1krMTnrpUkQT702cuHWk9FZ8j0at1dw_IxXD5d6wKD3OSw&s=10"
+      ],
+      "photosRaw": [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYUJz8O0xDm1krMTnrpUkQT702cuHWk9FZ8j0at1dw_IxXD5d6wKD3OSw&s=10"
+      ],
+      "likes": "25",
+      "comments": "20",
+      "reshares": "1",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "1",
+          "text": "Но ведь нас очередной раз надуют."
+        },
+        {
+          "authorId": "8",
+          "text": "Конечно Путин готов к переговорам. Пускай найдут хоть кого то в своей власти, кто легитимен и приезжают в Москву. Обсудим условия их капитуляции и подпишем."
         }
       ]
     },
