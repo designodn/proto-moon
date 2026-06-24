@@ -180,7 +180,7 @@ transition: [property] 500ms cubic-bezier(0, -0.3, 0.5, 1.3)
 
 | Класс | Size / LH / Weight |
 |---|---|
-| `.ds-display-xl` | 56 / 72 / 500 |
+| `.ds-display-xl` | 56 / 64 / 600 |
 | `.ds-title-xl`   | 24 / 28 / 600 |
 | `.ds-title-l`    | 21 / 28 / 600 |
 | `.ds-title-m`    | 17 / 24 / 600 |

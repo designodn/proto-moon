@@ -298,6 +298,17 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": "group-12",
+    "name": "Мир сегодня с Юрием Подолякой",
+    "subtitle": "",
+    "photo": "assets/people/group-12.jpg",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
     "id": "ad-1",
     "name": "Квартал бизнес-класса «Б15»",
     "subtitle": "Реклама 0+",
