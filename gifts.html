@@ -479,7 +479,6 @@
     // Высоты карточки считаем из частей (синхронно с gift-card.css), не хардкодим.
     var GC_BASE_H = 350, GC_BTN_H = 56, GC_ACCEPT_GAP = 8, GC_ACCEPT_MARGIN = 16;
     var ACTIVE_CARD_H  = GC_BASE_H + GC_ACCEPT_MARGIN + (GC_BTN_H * 2 + GC_ACCEPT_GAP); // 486 (две кнопки)
-    var SETTLED_CARD_H = GC_BASE_H + GC_ACCEPT_MARGIN + GC_BTN_H;                        // 422 (одна кнопка)
     var ROW_CARD_H = ACTIVE_CARD_H, ROW_HALF = GC_BASE_H / 2, MIN_GAP = 48;
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(веер),2(вход),3(ряд) — снимаем один раз
@@ -982,16 +981,12 @@
             if (closeBtn) closeBtn.click();
           });
         }
-        // Через 300мс карточки «оседают»: высота уменьшается так, что прайс
-        // встаёт в 16px над кнопкой; ряд перецентрируется под кнопку «Закрыть».
-        // Анимация медленная (500мс).
+        // Через 300мс ряд перецентрируется под появляющуюся кнопку «Закрыть»
+        // (карточки не увеличиваем — finishActive с capом s≤1). Высоту карточек
+        // НЕ меняем (обе кнопки остаются).
         setTimeout(function () {
-          ROW_CARD_H = SETTLED_CARD_H; // компактная высота осевшей карточки (вычислена)
           finishActive = true;
-          IDX.forEach(function (j) {
-            els[j].classList.add('__settled');
-            els[j].style.transition = 'transform 500ms ease';
-          });
+          IDX.forEach(function (j) { els[j].style.transition = 'transform 500ms ease'; });
           recenterRow();
           requestAnimationFrame(function () {
             IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
@@ -1028,6 +1023,9 @@
         setTimeout(function () {
           if (btn) { btn.classList.remove('__style-positive', '__state-timered'); btn.classList.add('__style-secondary'); }
           if (label) label.textContent = 'Отправить «Спасибо»';
+          // Нижняя кнопка «Написать» → «Выбрать другой подарок» (обе остаются).
+          var writeLabel = el.querySelector('.gift-card__btn-write .button-content');
+          if (writeLabel) writeLabel.textContent = 'Выбрать другой подарок';
           // Плавная смена подарка (crossfade): гасим, меняем src, проявляем.
           var img = el.querySelector('.gift-card__photo');
           if (img) {
@@ -1106,6 +1104,20 @@
         var writeBtn = el.querySelector('.gift-card__btn-write .button-container');
         if (writeBtn) writeBtn.addEventListener('click', function (e) {
           e.stopPropagation();
+          // До финала — это «Написать» (no-op). В финале — «Выбрать другой
+          // подарок»: меняем подарок на другой из пула (кроссфейд).
+          if (!el.classList.contains('__thanks')) return;
+          var img = el.querySelector('.gift-card__photo');
+          if (!img) return;
+          var cur = img.getAttribute('src');
+          var pool = GIFTS.filter(function (g) { return g !== cur; });
+          var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
+          img.style.transition = 'opacity 280ms ease';
+          img.style.opacity = '0';
+          setTimeout(function () {
+            img.src = next;
+            requestAnimationFrame(function () { img.style.opacity = '1'; });
+          }, 280);
         });
       });
 
