@@ -1103,21 +1103,7 @@
         });
         var writeBtn = el.querySelector('.gift-card__btn-write .button-container');
         if (writeBtn) writeBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          // До финала — это «Написать» (no-op). В финале — «Выбрать другой
-          // подарок»: меняем подарок на другой из пула (кроссфейд).
-          if (!el.classList.contains('__thanks')) return;
-          var img = el.querySelector('.gift-card__photo');
-          if (!img) return;
-          var cur = img.getAttribute('src');
-          var pool = GIFTS.filter(function (g) { return g !== cur; });
-          var next = pool[Math.floor(Math.random() * pool.length)] || GIFTS[0];
-          img.style.transition = 'opacity 280ms ease';
-          img.style.opacity = '0';
-          setTimeout(function () {
-            img.src = next;
-            requestAnimationFrame(function () { img.style.opacity = '1'; });
-          }, 280);
+          e.stopPropagation();   // «Написать» / «Выбрать другой подарок» — без действия
         });
       });
 
