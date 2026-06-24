@@ -43,15 +43,18 @@
     justify-content: space-between;
     padding: 0 var(--space-4);
   }
-  /* Градиент-подложка под шапкой — как в сторизах: тёмный сверху, плавно в ноль. */
-  .ce-top::before {
+  /* Градиент-подложка под шапкой — как в сторизах: тёмный сверху, плавно в ноль.
+     Живёт внутри превью под заголовком (z-index 1 < .ce-title z-index 2), чтобы
+     подпись была НАД градиентом. Кнопки шапки (.ce-top, z-index 3) всё равно
+     рисуются поверх затемнения — читаемость сохраняется. */
+  .ce-preview::before {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     height: 160px;
-    z-index: -1;
+    z-index: 1;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
     pointer-events: none;
   }
@@ -100,7 +103,7 @@
   /* Подпись-период сверху по центру. */
   .ce-title {
     position: absolute;
-    top: 160px;
+    top: 64px;
     left: 0; right: 0;
     z-index: 2;
     text-align: center;

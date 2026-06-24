@@ -1052,6 +1052,8 @@
       var snapRaf = null;
       var GUTTER = 5;
       var snapped = 0;
+      // Скорость пальца (px/мс) для флик-снапа — сглаженная по последним сэмплам.
+      var velocity = 0, lastMoveX = 0, lastMoveT = 0;
       var downAcceptAll = false;  // тап начат на карточке «принять всех»?
       var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять всех» (8)
       var finishing = false;      // идёт авто-финиш (приняли всё по одной)
@@ -1095,6 +1097,9 @@
         startY = e.clientY;
         dragging = true;
         locked = false;
+        velocity = 0;
+        lastMoveX = e.clientX;
+        lastMoveT = e.timeStamp;
         pointerId = e.pointerId;
         try { scene.setPointerCapture(pointerId); } catch (_) {}
       }
@@ -1128,6 +1133,14 @@
         } else if (e.cancelable) {
           e.preventDefault();
         }
+        // Сэмплим скорость пальца (px/мс) со сглаживанием — для флик-снапа в onUp.
+        var dt = e.timeStamp - lastMoveT;
+        if (dt > 0) {
+          var vInst = (e.clientX - lastMoveX) / dt;
+          velocity = velocity * 0.6 + vInst * 0.4;
+        }
+        lastMoveX = e.clientX;
+        lastMoveT = e.timeStamp;
         var pan = panForSnap(snapped) + dx;
         if (pan > 0 && snapped === 0) pan = pan * 0.3;
         var minPan = panForSnap(minSnap);
@@ -1145,7 +1158,19 @@
           return;
         }
         var raw = panOffset / STEP;
-        var target = symmetricRound(raw);
+        // Снап с учётом скорости: быстрый «мах» (флик) листает на одну карточку,
+        // даже если палец не дотащил до середины шага — иначе symmetricRound
+        // округлял короткий бросок ОБРАТНО и карточка дёргалась. Медленное
+        // ведение/отпускание без скорости — снап по позиции, как раньше.
+        var FLICK_VELO = 0.4;  // px/мс — порог броска
+        var target;
+        if (Math.abs(velocity) > FLICK_VELO) {
+          // velocity<0 — палец влево (листаем вперёд, pan уменьшается) → floor;
+          // velocity>0 — вправо (назад) → ceil. Гарантирует шаг в сторону маха.
+          target = velocity < 0 ? Math.floor(raw) : Math.ceil(raw);
+        } else {
+          target = symmetricRound(raw);
+        }
         if (target > 0) target = 0;
         if (target < minSnap) target = minSnap;
         snapped = target;
@@ -1297,10 +1322,14 @@
 
     // ── СЦЕНАРИЙ ────────────────────────────────────────────────
     //   1 → 2 (спринг 2000мс, k=96 c=6 m=1) — после старта SPRING.delay
-    //   2 → 3 (ease-out 300мс)              — пауза PAUSE_BETWEEN после 1→2
+    //   2 → 3 (ease-out 600мс)              — пауза PAUSE_BETWEEN после 1→2
     //   3 → 4 (overdamped спринг 600мс)     — Figma: delay 1мс после 2→3
     var PAUSE_BETWEEN = 800;
-    var EASE_DUR = 300;
+    // Морф кружок→карточка (разлёт → ряд). 600мс синхронизированы с CSS-хромом
+    // карточки (фон/обводка/тень/скругление фото — все 600ms в friend-big-card.css):
+    // геометрия и оформление приезжают вместе. Было 300мс — морф «обгонял» хром,
+    // оформление догружалось ещё 300мс → читалось как рывок/мелькание.
+    var EASE_DUR = 600;
 
     if (reducedMotion()) {
       current = 3;
