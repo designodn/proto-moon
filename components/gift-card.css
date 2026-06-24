@@ -234,6 +234,12 @@
   opacity: 0;
   pointer-events: none;
 }
+/* После принятия верхняя кнопка терминальная. Гасим hover/press-оверлей DS
+   (::after с --overlay-opacity), иначе на тач-устройствах :hover «залипает»
+   после тапа и кнопка «Отправить Спасибо» остаётся затемнённой. */
+.gift-card.__accepted .gift-card__btn-accept .button-container::after {
+  opacity: 0 !important;
+}
 
 /* Прайс под подарком — появляется в финале «Отправить Спасибо» (отступ 4px),
    плавно (высота + opacity). До этого свёрнут. */
