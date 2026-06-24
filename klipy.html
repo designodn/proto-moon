@@ -84,8 +84,9 @@
     position: absolute; top: calc(env(safe-area-inset-top, 0px) + 64px);
     left: 0; right: 0; z-index: 2; text-align: center;
     color: var(--static-text-and-icons-base-inverse-primary);
+    /* Типографика — DS-класс .ds-title-xl на самом элементе (24/28/600);
+       форсим брендовый OK Sans Display (страница на Roboto). */
     font-family: "OK Sans Display", sans-serif;
-    font-size: 22px; line-height: 28px; font-weight: 600;
     text-shadow: 0 1px 4px rgba(0, 0, 0, .4); pointer-events: none;
   }
 
@@ -528,7 +529,7 @@
         return '' +
         '<section class="klip" data-klip data-memclip>' +
           '<div class="klip__media">' + frames + '</div>' +
-          (d.label ? '<div class="klip__memlabel">' + esc(d.label) + '</div>' : '') +
+          (d.label ? '<div class="klip__memlabel ds-title-xl">' + esc(d.label) + '</div>' : '') +
           '<div class="klip__scrim" aria-hidden="true"></div>' +
           '<div class="klip__rail">' +
             '<button class="klip__rail-btn __like" data-like aria-label="Класс">' +
