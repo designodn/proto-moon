@@ -538,6 +538,11 @@
   top: 0;
   bottom: 76px;
   border-radius: 0 0 24px 24px;
+  /* Safari/WebKit не применяет border-radius+overflow родителя к composited-
+     детям (filter: blur у блюр-слоёв, transform-анимация шаров, lottie-
+     конфетти) — нижние углы «залипают» квадратными. Форсируем карту на
+     собственный GPU-слой, тогда WebKit клипует скруглением и эти слои. */
+  transform: translateZ(0);
 }
 /* Блюр+текст заполняют карту целиком (фото под ними — тоже). */
 .moment.__view-bday .moment__bday {
