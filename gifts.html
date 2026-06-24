@@ -15,6 +15,9 @@
   html, body {
     margin: 0; padding: 0; height: 100%;
     background: var(--dynamic-surface-base-primary);
+    /* Гасим нативный pull-to-refresh/overscroll: при гориз. свайпе палец чуть
+       уходит вниз — иначе вверху страницы дёргается лоудер обновления. */
+    overscroll-behavior: none;
   }
 
   .gp-scene {
@@ -775,6 +778,7 @@
       var downAcceptAll = false;      // тап начат на карточке «принять все»?
       var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять все» (4)
       var finishing = false;          // идёт авто-финиш (приняли всё по одной)
+      var velocity = 0, lastMoveX = 0, lastMoveT = 0;  // сэмпл скорости пальца → флик-снап
 
       // Авто-финиш: приняли все подарки по одному → карточка «принять все» сама
       // улетает вниз, затем конфетти + финальный заголовок.
@@ -849,6 +853,7 @@
         // (или вертикальный жест) не должен прерывать снап.
         startX = e.clientX;
         startY = e.clientY;
+        velocity = 0; lastMoveX = e.clientX; lastMoveT = e.timeStamp;
         dragging = true;
         locked = false;
         pointerId = e.pointerId;
@@ -896,6 +901,11 @@
         } else if (e.cancelable) {
           e.preventDefault();
         }
+        // Сэмплим скорость пальца (px/мс) со сглаживанием — для флик-снапа в onUp.
+        var dt = e.timeStamp - lastMoveT;
+        if (dt > 0) { velocity = velocity * 0.6 + ((e.clientX - lastMoveX) / dt) * 0.4; }
+        lastMoveX = e.clientX;
+        lastMoveT = e.timeStamp;
         var pan = panForSnap(snapped) + dx;
         // Резинка: позитивная сторона — только при snapped===0.
         if (pan > 0 && snapped === 0) pan = pan * 0.3;
@@ -918,7 +928,16 @@
           return;
         }
         var raw = panOffset / STEP;
-        var target = symmetricRound(raw);
+        // Короткий быстрый мах (флик) листает на одну карточку даже без дотягивания
+        // до середины шага; медленное ведение/отпускание — снап по позиции.
+        var FLICK_VELO = 0.4;  // px/мс — порог броска
+        var target;
+        if (Math.abs(velocity) > FLICK_VELO) {
+          // velocity<0 — палец влево (вперёд, pan уменьшается) → floor; >0 → ceil.
+          target = velocity < 0 ? Math.floor(raw) : Math.ceil(raw);
+        } else {
+          target = symmetricRound(raw);
+        }
         if (target > 0) target = 0;
         if (target < minSnap) target = minSnap;
         snapped = target;
