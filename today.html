@@ -289,6 +289,96 @@
   }
 
   /* ============================================================
+     ВИДЖЕТЫ ПОГОДА / ЛУНА / ГОРОСКОП — грид: 2 в ряд (1fr 1fr, gap 8)
+     + третья на всю ширину (gap 8 сверху). Высота всех карточек фикс 220.
+     ============================================================ */
+  .tg-cards { display: flex; flex-direction: column; gap: var(--space-2); }
+  .tg-cards__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .tg-card {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 16px;
+    color: var(--static-text-and-icons-base-inverse-primary);
+  }
+  /* Фон-картинка/видео карточки — под контентом. */
+  .tg-card__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .tg-card > :not(.tg-card__bg) { position: relative; z-index: 1; }
+
+  /* Погода — radius 16, контент распределён: блок «Дождь+°» сверху, ветер снизу. */
+  .tg-card--weather {
+    border-radius: 16px;
+    background: var(--dynamic-surface-contrast-low);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .tg-card__wx-top { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Луна — radius 20, заголовок сверху, список советов снизу. */
+  .tg-card--moon {
+    border-radius: 20px;
+    background: var(--dynamic-surface-contrast-low);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  /* Заголовки луны/гороскопа — Scaled/Title XL из Figma (27/36/500). */
+  .tg-card__heading {
+    font-family: var(--font-family);
+    font-size: 27px;
+    line-height: 36px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .tg-card__moon-list { display: flex; flex-direction: column; gap: 10px; }
+  .tg-card__moon-row { display: flex; align-items: center; gap: 8px; }
+  .tg-card__moon-ic {
+    flex-shrink: 0;
+    width: 44px; height: 44px;
+    border-radius: 14px;          /* squircle */
+    display: flex; align-items: center; justify-content: center;
+    color: var(--static-text-and-icons-base-inverse-primary);
+  }
+  .tg-card__moon-ic.__indigo { background: var(--static-surface-indigo); }
+  .tg-card__moon-ic.__jungle { background: var(--static-surface-jungle); }
+  /* Глиф из SVG-файла, покрашенный в currentColor (белый, унаследован от
+     карточки). Внешний <img src> не наследует currentColor, поэтому SVG
+     подаётся как CSS-маска, а бокс заливается currentColor. */
+  .tg-card__moon-glyph {
+    width: 24px; height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--glyph) center / 24px 24px no-repeat;
+            mask: var(--glyph) center / 24px 24px no-repeat;
+  }
+
+  /* Гороскоп — radius 16, нижний паддинг 48, заголовок + текст (макс 4 строки). */
+  .tg-card--horo {
+    border-radius: 16px;
+    background: var(--dynamic-surface-contrast-low);
+    padding-bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tg-card__horo-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tg-card__horo-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============================================================
      ТЕЛЕПРОГРАММА — ряд лого-каналов.
      ============================================================ */
   .tg-chan-row { display: flex; gap: var(--space-2); overflow-x: auto; padding: 0 var(--space-2) 12px; scrollbar-width: none; }
@@ -467,6 +557,48 @@
           <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
         </div>
         <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4); scroll-padding-left: var(--space-4);"></div>
+
+        <!-- 5. Виджеты: погода + луна (в ряд) и гороскоп (на всю ширину) -->
+        <section class="tg-island">
+          <div class="tg-cards">
+            <div class="tg-cards__row">
+
+              <!-- Погода -->
+              <article class="tg-card tg-card--weather">
+                <video class="tg-card__bg" src="assets/today/weather-back.mp4" autoplay muted loop playsinline></video>
+                <div class="tg-card__wx-top">
+                  <div class="ds-title-m">Дождь</div>
+                  <div class="ds-display-xl">+14°</div>
+                </div>
+                <div class="ds-title-m">Слабый ветер 4 м/с</div>
+              </article>
+
+              <!-- Луна -->
+              <article class="tg-card tg-card--moon">
+                <img class="tg-card__bg" src="assets/today/new-moon-back.png" alt="">
+                <div class="tg-card__heading">Новая луна</div>
+                <div class="tg-card__moon-list">
+                  <div class="tg-card__moon-row">
+                    <span class="tg-card__moon-ic __indigo"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/cut_24.svg)"></span></span>
+                    <span class="ds-body-l">Можно стричься</span>
+                  </div>
+                  <div class="tg-card__moon-row">
+                    <span class="tg-card__moon-ic __jungle"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/flower_24.svg)"></span></span>
+                    <span class="ds-body-l">Сажайте помидоры</span>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+            <!-- Гороскоп -->
+            <article class="tg-card tg-card--horo">
+              <img class="tg-card__bg" src="assets/today/horo-back.png" alt="">
+              <div class="tg-card__heading tg-card__horo-title">Козерог</div>
+              <div class="ds-body-l tg-card__horo-text">Козероги, в этом месяце вам стоит быть готовыми к неожиданным поворотам судьбы. Возможно, вам придется пересмотреть свои старые планы и адаптироваться к новым обстоятельствам. Не бойтесь изменений — они могут привести к интересным возможностям!</div>
+            </article>
+          </div>
+        </section>
       </div>
 
       <!-- ===== TABBAR — внутри скролла, sticky снизу ===== -->

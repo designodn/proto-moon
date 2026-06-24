@@ -72,7 +72,7 @@
 
 /* Typography helper classes — навешиваются на любой текст напрямую.
    Также подключены к header __size-N через группировку (одна декларация). */
-.ds-display-xl  { font-family: var(--font-family); font-size: 56px; line-height: 72px; font-weight: 500; letter-spacing: 0; }
+.ds-display-xl  { font-family: var(--font-family); font-size: 56px; line-height: 64px; font-weight: 600; letter-spacing: 0.24px; }
 .ds-display-m   { font-family: var(--font-family); font-size: 24px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
 
 .ds-title-xl,
