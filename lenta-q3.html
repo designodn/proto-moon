@@ -2343,6 +2343,21 @@
 
   <!-- Реальные люди из Google-таблицы (data-person-*) -->
   <script src="data/people.js"></script>
+  <!-- Feed-scoped: фото людей/групп → лёгкие webp-копии (assets/embedded/av-*),
+       чтобы stories-row / vvz-card грузили их, а не оригиналы assets/people.
+       Патчим реестр ДО people-data.js — резолвер сразу ставит webp (без двойной
+       загрузки). Видео-аватары (.mp4) regex не трогает. Только в ленте — общий
+       people.js и другие прототипы не затронуты. -->
+  <script>
+    (function () {
+      var d = window.DS_PEOPLE_DATA;
+      if (!Array.isArray(d)) return;
+      d.forEach(function (p) {
+        if (p && typeof p.photo === 'string')
+          p.photo = p.photo.replace(/^assets\/people\/(.+)\.(?:jpe?g|png)$/i, 'assets/embedded/av-$1.webp');
+      });
+    })();
+  </script>
   <script src="components/people-data.js"></script>
   <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
   <script src="data/stories.js"></script>
