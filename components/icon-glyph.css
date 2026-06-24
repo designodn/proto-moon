@@ -14,7 +14,10 @@
  */
 
 :root {
-  --icon-glyph-base-path: assets/icons/;
+  /* Относительно ЭТОГО файла (components/) — url() в маске резолвится
+     относительно стайлшита, не страницы. Так путь верен и в корне, и на
+     subpath-деплое (/proto-moon/…). */
+  --icon-glyph-base-path: ../assets/icons/;
 }
 
 icon-glyph {
