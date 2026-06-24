@@ -351,6 +351,15 @@
   }
   .tg-card__moon-ic.__indigo { background: var(--static-surface-indigo); }
   .tg-card__moon-ic.__jungle { background: var(--static-surface-jungle); }
+  /* Глиф из SVG-файла, покрашенный в currentColor (белый, унаследован от
+     карточки). Внешний <img src> не наследует currentColor, поэтому SVG
+     подаётся как CSS-маска, а бокс заливается currentColor. */
+  .tg-card__moon-glyph {
+    width: 24px; height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--glyph) center / 24px 24px no-repeat;
+            mask: var(--glyph) center / 24px 24px no-repeat;
+  }
 
   /* Гороскоп — radius 16, нижний паддинг 48, заголовок + текст (макс 4 строки). */
   .tg-card--horo {
@@ -570,11 +579,11 @@
                 <div class="tg-card__heading">Новая луна</div>
                 <div class="tg-card__moon-list">
                   <div class="tg-card__moon-row">
-                    <span class="tg-card__moon-ic __indigo"><icon-glyph name="cut" class="__size-24"></icon-glyph></span>
+                    <span class="tg-card__moon-ic __indigo"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/cut_24.svg)"></span></span>
                     <span class="ds-body-l">Можно стричься</span>
                   </div>
                   <div class="tg-card__moon-row">
-                    <span class="tg-card__moon-ic __jungle"><icon-glyph name="flower" class="__size-24"></icon-glyph></span>
+                    <span class="tg-card__moon-ic __jungle"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/flower_24.svg)"></span></span>
                     <span class="ds-body-l">Сажайте помидоры</span>
                   </div>
                 </div>
@@ -610,7 +619,6 @@
 
   <script src="components/dismissible.js"></script>
   <script src="components/tab-bar.js"></script>
-  <script src="components/icon-glyph.js"></script>
   <script src="data/people.js"></script>
 
   <script>
