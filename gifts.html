@@ -15,6 +15,9 @@
   html, body {
     margin: 0; padding: 0; height: 100%;
     background: var(--dynamic-surface-base-primary);
+    /* Гасим нативный pull-to-refresh/overscroll: при гориз. свайпе палец чуть
+       уходит вниз — иначе вверху страницы дёргается лоудер обновления. */
+    overscroll-behavior: none;
   }
 
   .gp-scene {
