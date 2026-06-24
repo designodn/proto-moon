@@ -62,8 +62,9 @@
 </head>
 <body>
   <div class="sp" data-screen>
-    <!-- Фон: PNG подкладывается отдельно; при отсутствии остаётся градиент -->
-    <img class="sp__bg" src="../assets/koleso/new/splash-bg.png" alt=""
+    <!-- Фон: сжатый WebP (q88, ~195КБ вместо 2.7МБ PNG) — успевает догрузиться
+         до смены экрана; при отсутствии остаётся градиент. Исходный PNG в репе. -->
+    <img class="sp__bg" src="../assets/koleso/new/splash-bg.webp" alt=""
          onerror="this.style.display='none'">
 
     <div class="sp__foot">
