@@ -47,7 +47,7 @@
 /* ============================================================
    TYPOGRAPHY — comma-группы дублируют tokens.css 1-в-1
    ============================================================ */
-.__type-scale-2xl .ds-display-xl  { font-size: 63px; line-height: 80px; }
+.__type-scale-2xl .ds-display-xl  { font-size: 63px; line-height: 72px; }
 .__type-scale-2xl .ds-display-m   { font-size: 28px; line-height: 32px; }
 
 .__type-scale-2xl .ds-title-xl,
