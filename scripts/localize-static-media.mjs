@@ -24,7 +24,7 @@ const CHECK_ONLY = process.argv.includes('--check');
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Файлы со статичными внешними картинками (все в корне → assets/embedded/ резолвится напрямую).
-const FILES = ['chat.html', 'send-gift.html', 'gifts.html', 'lenta-q3.html'];
+const FILES = ['chat.html', 'send-gift.html', 'gifts.html', 'lenta-q3.html', 'today.html'];
 
 // Внешний URL считаем «нашим медиа», если он на картинку/видео по расширению.
 // Шрифты/библиотеки/placeholder-аватары не трогаем.
