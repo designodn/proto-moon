@@ -14,7 +14,7 @@
  */
 
 :root {
-  --icon-glyph-base-path: 'assets/icons/';
+  --icon-glyph-base-path: assets/icons/;
 }
 
 icon-glyph {
