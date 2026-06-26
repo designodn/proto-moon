@@ -436,7 +436,8 @@
      (q3 не трогаем). */
   .caf.__twitter-like .caf__stack { padding-top: 0; }
   .caf.__twitter-like .caf__crumbs { padding-bottom: var(--space-3); }
-  .caf.__twitter-like .text-feed__activity { padding-bottom: var(--space-3); }
+  /* Зазор под шапкой «кто-то поставил класс» — см. правило ниже
+     (.caf.__twitter-like > .text-feed__activity), там margin-bottom 12. */
 
   /* Панель таба — та же вертикальная стопка островов с шагом 4, что и .ll-feed.
      Видна одна панель (остальные [hidden]); переключает components/feed-tabs.js. */
@@ -452,7 +453,7 @@
 
   /* Шапка 2-го круга («кто-то поставил класс») над twitter-картой: 16 по бокам
      (как .caf__crumbs), 8 до ряда; 16 сверху даёт padding-top острова. */
-  .caf.__twitter-like > .text-feed__activity { padding: 0 var(--space-4); margin-bottom: var(--space-2); }
+  .caf.__twitter-like > .text-feed__activity { padding: 0 var(--space-4); margin-bottom: var(--space-3); }
 </style>
 </head>
 <body>
