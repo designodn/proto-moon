@@ -44,6 +44,7 @@
   // автор поста (ава/имя в uni-cell → profile.html), «Перейти» в марафон-чат.
   var LEAKY =
     '#notifsBtn,' +
+    '.calendar-date,' +                                // чип-дата в топбаре → today.html (calendar-date.js)
     '.moment__cta:not(.__quick) button,' +
     '.uni-cell .avatar.__size-44,' +
     '.uni-cell .uni-cell-additional-content .ds-title-s,' +
