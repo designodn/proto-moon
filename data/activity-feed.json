@@ -5,27 +5,7 @@
   },
   "posts": [
     {
-      "id": "post-1",
-      "type": "vvz-portlet",
-      "author": "vvz-4, vvz-3, vvz-2, vvz-1",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "Возможно, вы знакомы",
-      "text": "",
-      "photos": [],
-      "photosRaw": [],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
-      "id": "row-2",
+      "id": "row-1",
       "type": "photo",
       "author": "8",
       "tema": "",
@@ -173,7 +153,7 @@
       "threadComments": []
     },
     {
-      "id": "row-8",
+      "id": "row-7",
       "type": "photo",
       "author": "group-7",
       "tema": "Спорт",
@@ -202,7 +182,7 @@
       ]
     },
     {
-      "id": "row-9",
+      "id": "row-8",
       "type": "marathon",
       "author": "group-2",
       "tema": "",
@@ -230,7 +210,7 @@
       "threadComments": []
     },
     {
-      "id": "row-10",
+      "id": "row-9",
       "type": "gift-received",
       "author": "7, 4",
       "tema": "",
@@ -259,7 +239,7 @@
       ]
     },
     {
-      "id": "row-11",
+      "id": "row-10",
       "type": "photo",
       "author": "5",
       "tema": "",
@@ -283,7 +263,7 @@
       "threadComments": []
     },
     {
-      "id": "row-12",
+      "id": "row-11",
       "type": "photo",
       "author": "8",
       "tema": "",
@@ -307,7 +287,7 @@
       "threadComments": []
     },
     {
-      "id": "row-13",
+      "id": "row-12",
       "type": "photo",
       "author": "group-10",
       "tema": "Сделай сам",
@@ -365,7 +345,7 @@
       ]
     },
     {
-      "id": "row-15",
+      "id": "row-14",
       "type": "ad",
       "author": "ad-2",
       "tema": "",
@@ -389,7 +369,7 @@
       "threadComments": []
     },
     {
-      "id": "row-16",
+      "id": "row-15",
       "type": "photo",
       "author": "8",
       "tema": "",
@@ -447,7 +427,7 @@
       ]
     },
     {
-      "id": "row-18",
+      "id": "row-17",
       "type": "ad",
       "author": "ad-4",
       "tema": "",
@@ -544,7 +524,7 @@
       "threadComments": []
     },
     {
-      "id": "row-21",
+      "id": "row-20",
       "type": "photo",
       "author": "group-8",
       "tema": "Политика",
@@ -577,7 +557,7 @@
       ]
     },
     {
-      "id": "row-22",
+      "id": "row-21",
       "type": "ad",
       "author": "ad-3",
       "tema": "",
@@ -601,7 +581,7 @@
       "threadComments": []
     },
     {
-      "id": "row-23",
+      "id": "row-22",
       "type": "video",
       "author": "group-9",
       "tema": "Еда",
@@ -634,7 +614,7 @@
       ]
     },
     {
-      "id": "row-24",
+      "id": "row-23",
       "type": "ai-gift-received",
       "author": "7, 2",
       "tema": "",
@@ -663,7 +643,7 @@
       ]
     },
     {
-      "id": "row-25",
+      "id": "row-24",
       "type": "photo",
       "author": "group-11",
       "tema": "Политика",
@@ -749,7 +729,7 @@
       ]
     },
     {
-      "id": "row-28",
+      "id": "row-27",
       "type": "comment-as-feed",
       "author": "2, group-12",
       "tema": "Политика",
@@ -782,7 +762,7 @@
       ]
     },
     {
-      "id": "row-29",
+      "id": "row-28",
       "type": "comment-as-feed",
       "author": "8, group-9",
       "tema": "Еда",
@@ -848,7 +828,7 @@
       ]
     },
     {
-      "id": "row-31",
+      "id": "row-30",
       "type": "comment-as-feed",
       "author": "2, group-1",
       "tema": "Еда",
@@ -881,7 +861,7 @@
       ]
     },
     {
-      "id": "row-32",
+      "id": "row-31",
       "type": "comment-as-feed",
       "author": "5, group-1",
       "tema": "Еда",
