@@ -64,6 +64,7 @@
   gap: var(--space-1);
 }
 .pin__title {
+  margin: 0;                       /* <p> по умолчанию имеет 1em поля — убираем */
   color: var(--dynamic-text-and-icons-base-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
