@@ -423,8 +423,15 @@
   /* Таб-стрип «Лента/Подборки/…» вращён в первый остров каждой панели
      (генерит scripts/fetch-q3.mjs --activity). Верх табов = 0 — отступ 16 сверху
      даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs.
-     Низ: 4 + 12 (flex-gap карточки) = 16 до «шапки» поста. */
-  .ll-feed-tabs { padding-bottom: var(--space-1); }
+     Низ табов — 16. */
+  .ll-feed-tabs { padding-bottom: var(--space-4); }
+
+  /* Верхний отступ стека twitter-карты (12 из comment-as-feed.css) нужен только
+     когда сверху есть ШАПКА («кто-то лайкнул») или ХЛЕБНЫЕ КРОШКИ; без них —
+     0 (иначе лишний воздух над авой). Page-scoped (q3 не трогаем). */
+  .caf.__twitter-like .caf__stack { padding-top: 0; }
+  .caf.__twitter-like .caf__crumbs + .caf__stack,
+  .caf.__twitter-like .text-feed__activity + .caf__stack { padding-top: var(--space-3); }
 
   /* Панель таба — та же вертикальная стопка островов с шагом 4, что и .ll-feed.
      Видна одна панель (остальные [hidden]); переключает components/feed-tabs.js. */
@@ -509,7 +516,7 @@
              блока задаются в ленте (позже — из листа lenta-activity). -->
         <div class="island">
           <a class="activity-header" href="activity-lenta/okruzhenie.html">
-            <span class="ds-title-l">Вокруг вас сейчас</span>
+            <header class="header __size-l"><div class="header__title">Вокруг вас сейчас</div></header>
             <span class="activity-header__chevron" aria-hidden="true"></span>
             <span class="pulse-dot"></span>
           </a>
@@ -1220,7 +1227,7 @@
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="podborki" hidden>
-        <div class="island ll-tabs-island">
+        <div class="island">
           <div class="tabs ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="podborki">Подборки</button>
@@ -1229,7 +1236,6 @@
             <button class="tabs-tab ds-title-xl" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
-        </div>
         <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
               <button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>
@@ -1239,54 +1245,103 @@
               <button class="chip-container __size-default __view-primary">Спорт</button>
           </div>
         </div>
-        <div class="collection-grid">
+          <div class="collection-grid">
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-1.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Идеи для дачного участка</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Идеи для дачного участка</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-10.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Живой дачный уголок</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-3.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Простые рецепты на каждый день</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Простые рецепты на каждый день</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-1.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Наталья Атаманюк | Рецепты</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-6.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Как утеплить дом к зиме</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Как утеплить дом к зиме</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-4.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Идеи для сада и огорода своими руками с фото</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-7.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Тренировки дома без инвентаря</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Тренировки дома без инвентаря</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-7.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Чемпионат: новости спорта, футбол, хоккей</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-2.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Выпечка: проверенные рецепты</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Выпечка: проверенные рецепты</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-9.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Папа на кухне</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-5.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Сад и огород весной</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Сад и огород весной</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-4.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Идеи для сада и огорода своими руками с фото</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-4.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Полезные привычки</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Полезные привычки</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-2.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Доктор Мясников</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-9.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Уютный интерьер своими руками</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Уютный интерьер своими руками</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-10.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Живой дачный уголок</span>
+                </div>
+              </div>
             </a>
+          </div>
           </div>
         </div>
         </div>
@@ -3041,6 +3096,7 @@
   <script src="components/people-data.js"></script>
   <script src="components/activity-widget.js"></script>
   <script src="components/feed-tabs.js"></script>
+  <script src="components/masonry.js"></script>
   <script src="components/today-widgets.js"></script>
   <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
   <script src="data/stories.js"></script>

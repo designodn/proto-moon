@@ -1,14 +1,11 @@
 /**
  * Masonry / Pinterest grid — 2-колоночная лента карточек разной высоты.
  *
- * Раскладка для «Подборок» (Figma node 840:51898 «pinterestSilverCard»):
- * 2 колонки по 160 с gap 8, вертикальный шаг карточек 16, поля по бокам 16.
- * Карточка — DS .uni-card (медиа натурального аспекта → высоты сами разные,
- * поэтому фон-блюр не нужен). Текст-описание под медиа.
- *
- * Отступы взяты из Figma: колонки gap 8 (--space-2), шаг карточек 16 (--space-4),
- * бока 16 (--space-4), медиа→текст 8 (из uni-card). Колонки — CSS multicol
- * (балансировка по высоте), порядок по колонкам.
+ * Раскладка «Подборок» (Figma 840:51898 «pinterestSilverCard»): 2 колонки по 160
+ * с gap 8, вертикальный шаг 16, поля по бокам 16. Карточка — DS .uni-card:
+ * медиа (скруглённое, аспект снапится к 16:9 / 1:1 / 9:16 скриптом
+ * components/masonry.js) + заголовок + автор-группа (ава 24 + имя) + опц. бейдж
+ * (длительность видео). Высоты разные → masonry-эффект (CSS multicol).
  */
 
 /* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, верт. 12. */
@@ -29,27 +26,52 @@
   width: 100%;
 }
 
-/* Карточка-пин на базе .uni-card: медиа на всю ширину колонки, скруглённое;
-   высота — по натуральному аспекту картинки (отсюда masonry). */
+/* Медиа: на всю ширину колонки, скруглённое; аспект задаёт класс (снап в JS),
+   дефолт — 1:1 до загрузки. cover по боксу аспекта. position:relative — для бейджа. */
 .pin .uni-card-media {
   width: 100%;
   border-radius: 16px;
-  background-color: var(--dynamic-surface-contrast-low);  /* подложка пока грузится фото */
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background-color: var(--dynamic-surface-contrast-low);
 }
-.pin .uni-card-media img {
-  width: 100%;
-  height: auto;
-  display: block;
+.pin .uni-card-media.__ar-16-9 { aspect-ratio: 16 / 9; }
+.pin .uni-card-media.__ar-1-1  { aspect-ratio: 1 / 1; }
+.pin .uni-card-media.__ar-9-16 { aspect-ratio: 9 / 16; }
+.pin .uni-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Бейдж на медиа (длительность видео «12:34») — правый нижний угол. */
+.pin__badge {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--static-text-and-icons-base-inverse-primary, #fff);
 }
+
+/* Контент под медиа: заголовок + автор-группа. Медиа→заголовок 8 (даёт uni-card),
+   заголовок→автор 4. */
 .pin .uni-card-content {
   width: 100%;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
-/* Заголовок пина — 2 строки макс, как в макете. */
 .pin__title {
   color: var(--dynamic-text-and-icons-base-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+.pin__author { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.pin__author-name {
+  color: var(--dynamic-text-and-icons-base-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
