@@ -95,7 +95,6 @@ const LANDING = `<!DOCTYPE html>
   <a class="proto" href="/nv">New Vision <span>/nv</span></a>
   <a class="proto" href="/activity">Вокруг вас <span>/activity</span></a>
   <a class="proto" href="/q3">Q3 <span>/q3</span></a>
-  <a class="proto" href="/preview">Дизайн-система <span>/preview</span></a>
   <div class="sync">
     <button id="syncBtn">Обновить ленту из таблицы</button>
     <div class="status" id="status"></div>
