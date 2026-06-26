@@ -31,9 +31,9 @@ const SYNC_ON_START = String(process.env.SYNC_ON_START ?? 'true') !== 'false';
 /* Редиректим (а не отдаём контент по чужому URL), чтобы относительные ссылки
  * на ассеты/стили внутри страницы продолжали работать от её настоящего пути. */
 const PROTOTYPES = {
-  '/nv':       '/new-vision/lenta.html',     // New Vision — основная лента
-  '/activity': '/new-vision/okruzhenie.html', // «Вокруг вас»
-  '/q3':       '/lenta-q3.html',             // Q3
+  '/nv':       '/new-vision/lenta.html',      // New Vision — основная лента
+  '/activity': '/activity-lenta/view.html',   // Activity-лента — локскрин-старт (как q3-view)
+  '/q3':       '/lenta-q3.html',              // Q3
   '/preview':  '/preview.html',              // витрина дизайн-системы
 };
 
