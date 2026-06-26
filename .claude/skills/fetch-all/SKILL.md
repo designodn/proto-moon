@@ -25,6 +25,7 @@ node scripts/fetch-all.mjs
 | `fetch-feed.mjs`     | «Посты»      | `new-vision/lenta.html` (+ `data/feed.json`) |
 | `fetch-q3.mjs`       | «Q3-посты»   | `lenta-q3.html` (+ `data/q3-feed.json`) |
 | `fetch-q3.mjs --tribune` | «Трибуна» (gid 803749593) | `tribune.html` (+ `data/tribune-feed.json`) |
+| `fetch-q3.mjs --activity` | «lenta-activity» (Q3-схема) | `activity-lenta/lenta.html` (+ `data/activity-feed.json`) |
 | `fetch-profile.mjs`  | «Профили» (gid 877262163) | `profile.html` (+ `data/profile-posts.json`) |
 | `fetch-clips.mjs`    | «Клипы»      | `data/clips.json` + `data/clips.js` |
 | `fetch-activity.mjs` | «Активности» | виджет/страница «Вокруг вас» |

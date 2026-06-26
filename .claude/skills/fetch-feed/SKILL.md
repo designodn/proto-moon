@@ -178,3 +178,29 @@ node scripts/fetch-q3.mjs --tribune --offline  # пересобрать разм
   конфликта.
 - Ручные правки внутри `FEED:START/END` затрёт следующий прогон.
 - Опционально: `screenshot-testing` на `tribune.html`.
+
+---
+
+# Activity-лента (дубль Q3)
+
+Источник: лист **«lenta-activity»** в той же таблице. Схема колонок и типы карточек
+ПОЛНОСТЬЮ совпадают с Q3-листом — рендер общий (`scripts/fetch-q3.mjs --activity`,
+см. объект `FEEDS` в начале скрипта: меняется источник, json-выгрузка и целевой html).
+
+Целевой файл — `activity-lenta/lenta.html` (лежит в подпапке, в `<head>` стоит
+`<base href="../">`, поэтому печёные пути ассетов БЕЗ «../», как у Q3 в корне,
+резолвятся корректно — ничего в рендере менять не нужно).
+
+```sh
+node scripts/fetch-q3.mjs --activity            # лист «lenta-activity» → activity-lenta/lenta.html
+node scripts/fetch-q3.mjs --activity --offline  # пересобрать из data/activity-feed.json (без сети)
+```
+
+- Колонки и типы — см. раздел «Q3-лента» выше (контракт идентичен).
+- Карточки вставляются между `<!-- FEED:START … --activity … -->` / `<!-- FEED:END -->`.
+- **gid листа**: пока не зафиксирован — лист тянется ПО ИМЕНИ «lenta-activity»
+  (`gid: null` в `FEEDS.activity`). Узнаешь стабильный gid — впиши его туда (gid
+  переживает переименования, имя — нет).
+- Остров «Вокруг вас» (компонент `activity-widget`) стоит ОТДЕЛЬНО, перед ВВЗ, ВНЕ
+  `FEED:START/END` — его ячейки наполняет `fetch-activity.mjs` (лист «Вокруг нас»),
+  реген фида его не трогает.
