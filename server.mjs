@@ -31,9 +31,9 @@ const SYNC_ON_START = String(process.env.SYNC_ON_START ?? 'true') !== 'false';
 /* Редиректим (а не отдаём контент по чужому URL), чтобы относительные ссылки
  * на ассеты/стили внутри страницы продолжали работать от её настоящего пути. */
 const PROTOTYPES = {
-  '/nv':       '/new-vision/lenta.html',     // New Vision — основная лента
-  '/activity': '/new-vision/okruzhenie.html', // «Вокруг вас»
-  '/q3':       '/lenta-q3.html',             // Q3
+  '/nv':       '/new-vision/lenta.html',      // New Vision — основная лента
+  '/activity': '/activity-lenta/view.html',   // Activity-лента — локскрин-старт (как q3-view)
+  '/q3':       '/lenta-q3.html',              // Q3
   '/preview':  '/preview.html',              // витрина дизайн-системы
 };
 
@@ -90,9 +90,8 @@ const LANDING = `<!DOCTYPE html>
 <body><div class="card">
   <h1>Прототипы OK DS</h1>
   <p class="sub">Выберите прототип или обновите ленту из Google-таблицы.</p>
-  <a class="proto" href="/nv">New Vision <span>/nv</span></a>
-  <a class="proto" href="/activity">Вокруг вас <span>/activity</span></a>
-  <a class="proto" href="/q3">Q3 <span>/q3</span></a>
+  <a class="proto" href="/q3">Q-3</a>
+  <a class="proto" href="/activity">Активити</a>
   <div class="sync">
     <button id="syncBtn">Обновить ленту из таблицы</button>
     <div class="status" id="status"></div>

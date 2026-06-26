@@ -1,0 +1,183 @@
+/**
+ * Activity widget — «Вокруг вас сейчас» (остров-конвейер в ленте).
+ *
+ * Переиспользуемый блок: заголовок-ссылка + бегущая лента коротких
+ * activity-ячеек (.ds-activity-conveyor). Скелет конвейера (высота, ряды,
+ * enter/leave) — в общем animations.css; ячейка-ряд — общий
+ * .uni-cell-wrapper.__type-activity (components/uni-cell.css). Здесь — только
+ * то, чего нет в общей DS:
+ *   1. ЗАГОЛОВОК-ССЫЛКА острова (.activity-header).
+ *   2. ЛИД-ВИЗУАЛЫ слева (кластер аватарок, эмодзи-стикер, фото-пара, онлайн, трофей).
+ *   3. ЦВЕТНЫЕ ПОДЛОЖКИ ПОЯВЛЕНИЯ по категориям (.__conv-appear).
+ *
+ * JS-конвейер — components/activity-widget.js. Извлечено из new-vision/around-you.css
+ * (раздел «виджет в ленте»), чтобы остров можно было вставлять в любую ленту.
+ */
+
+/* ============================================================
+   ЗАГОЛОВОК-ССЫЛКА острова — тап ведёт на отдельную страницу
+   ============================================================ */
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px 6px;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.activity-header__chevron {
+  width: 9px;
+  height: 14px;
+  flex-shrink: 0;
+  background-color: var(--dynamic-text-and-icons-base-primary);
+  -webkit-mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+          mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+  transition: transform 200ms ease;
+}
+/* Индикатор (пульс-точка) — к правому краю заголовка */
+.activity-header .pulse-dot { margin-left: auto; }
+.activity-header:active .activity-header__chevron { transform: translateX(2px); }
+
+/* Отступ от заголовка острова до первой ячейки конвейера = 16 по макету.
+   Заголовок уже даёт 6px снизу → добавляем 10. */
+.activity-header + .ds-activity-conveyor { margin-top: 10px; }
+
+/* ============================================================
+   ИНЛАЙН-БИЛЕТИК в тексте ячейки («выиграла 2 [билет] билета»)
+   ============================================================ */
+.inline-ticket {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin: 0 2px;
+  vertical-align: -4px;
+  object-fit: contain;
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #1 — ОНЛАЙН-ТОЧКА (статус-индикатор)
+   ============================================================ */
+.status-dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--static-surface-status-positive);
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #2 — ЭМОДЗИ/СТИКЕР + ТРОФЕЙ поверх картинки
+   ============================================================ */
+.activity-lead {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+}
+.lead-sticker {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  font-size: 22px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  user-select: none;
+}
+/* Lottie-трофей — пустой контейнер (Lottie грузится скриптом). Лежит в
+   .activity-lead (position:relative), едет вместе с ячейкой. */
+.lead-trophy {
+  position: absolute;
+  pointer-events: none;
+}
+.lead-trophy svg { display: block; width: 100%; height: 100%; }
+/* В конвейере ленты — ЦЕНТР трофея в правом нижнем углу аватара. */
+.ds-activity-conveyor .lead-trophy {
+  width: 40px;
+  height: 40px;
+  left: 100%;                         /* правый край авы */
+  top: 100%;                          /* нижний край авы */
+  transform: translate(-50%, -50%);   /* центр бокса в этот угол */
+}
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
+   ============================================================ */
+.ava-cluster {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.ava-cluster > .avatar {
+  position: absolute;
+  border: 1.8px solid var(--dynamic-surface-base-secondary);
+  box-sizing: content-box;
+}
+.ava-cluster > .avatar:nth-child(1) { width: 22px; height: 22px; left: 0;    top: 13px;   z-index: 3; }
+.ava-cluster > .avatar:nth-child(2) { width: 22px; height: 22px; left: 22px; top: 1.5px;  z-index: 1; }
+.ava-cluster > .avatar:nth-child(3) { width: 16px; height: 16px; left: 21px; top: 27.5px; z-index: 2; }
+
+/* ============================================================
+   ЛИД-ВИЗУАЛ #4 — ПАРА НАКЛОНЁННЫХ ФОТО в боксе 44×44
+   ============================================================ */
+.photo-pair {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.photo-pair > .picture {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1.2px solid var(--dynamic-surface-base-secondary);
+  border-radius: 7px;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12); /* elevate-3 */
+  overflow: hidden;
+}
+.photo-pair > .picture:nth-child(1) { width: 30.7px; height: 28.9px; top: 3px;  left: 1px;  transform: rotate(-7.21deg);  z-index: 1; }
+.photo-pair > .picture:nth-child(2) { width: 29.4px; height: 27.7px; top: 12px; left: 12px; transform: rotate(11.57deg);  z-index: 2; }
+
+/* ============================================================
+   ПОЯВЛЕНИЕ В КОНВЕЙЕРЕ — цветная подложка по категории.
+   Триггер — класс .__conv-appear, который JS вешает на входящую ячейку
+   (components/activity-widget.js). Высоту/scale-из-точки делает .__conv-enter
+   (animations.css); здесь — только цвет подложки (вспыхивает au-fade и гаснет).
+   ============================================================ */
+@keyframes au-fade { from { opacity: 1; } to { opacity: 0; } }
+@keyframes au-neuro-text {
+  0%, 45% { color: var(--static-text-and-icons-base-inverse-primary); }
+  100%    { color: var(--dynamic-text-and-icons-base-primary); }
+}
+
+.ds-activity-conveyor__track > .__conv-appear {
+  isolation: isolate; /* свой стек-контекст: подложка ::before (z-index:-1) под текстом */
+}
+.ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before {
+  content: '';
+  position: absolute;
+  inset: -6px -8px;            /* подложка за ячейкой: +8px по бокам, +6px сверху/снизу */
+  border-radius: 16px;
+  background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
+  animation: au-fade 1.3s ease-out both;
+  pointer-events: none;
+  z-index: -1;
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-win .uni-cell-container::before {
+  background-color: rgba(255, 196, 61, 0.30); /* «1 место» — золото */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-holiday .uni-cell-container::before {
+  background-color: rgba(150, 120, 255, 0.20); /* «Праздник» — лаванда */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-container::before {
+  background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%); /* «Нейро» */
+}
+.ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content {
+  /* backwards: после анимации цвет возвращается в каскад (dynamic-токен) */
+  animation: au-neuro-text 1.3s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before { display: none; }
+  .ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content { animation: none; }
+}

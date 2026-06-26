@@ -221,6 +221,10 @@ async function main() {
     JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-activity.mjs (или скилл fetch-activity)' }, activities: acts }, null, 2) + '\n');
 
   const cells = acts.map(renderCell).join('\n');
+  // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
+  // от корня, поэтому БЕЗ «../» (иначе ушли бы выше корня). В new-vision/* base
+  // нет → там нужен «../» (cells как есть).
+  const cellsBase = cells.replace(/\.\.\/assets\//g, 'assets/');
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
   spliceFile(
@@ -242,7 +246,19 @@ async function main() {
     '\n          </div>\n        </div>\n      </div>',
   );
 
-  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie.html + lenta.html (виджет)`);
+  // Виджет в ленте activity-lenta (q3-стиль, <base href="../">) — конвейер
+  // #activityConveyor. Те же ячейки, но пути без «../» (см. cellsBase). Маркеры
+  // уже стоят в файле; вставка строго между ними.
+  spliceFile(
+    resolve(ROOT, 'activity-lenta/lenta.html'),
+    '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY-WIDGET:END -->',
+    cellsBase,
+    '          <div class="uni-cell-wrapper __type-activity __cat-win">',
+    '\n          </div>\n        </div>\n      </div>',
+  );
+
+  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie.html + nv/lenta.html + activity-lenta/lenta.html (виджеты)`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
 }
 
