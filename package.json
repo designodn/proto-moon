@@ -1,0 +1,14 @@
+{
+  "name": "proto-moon",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Статический прототип OK DS + сервер с автообновлением ленты из Google-таблицы",
+  "scripts": {
+    "start": "node server.mjs",
+    "sync": "node scripts/fetch-all.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
