@@ -181,3 +181,288 @@
   .ds-activity-conveyor__track > .__conv-appear .uni-cell-container::before { display: none; }
   .ds-activity-conveyor__track > .__conv-appear.__cat-neuro .uni-cell-additional-content { animation: none; }
 }
+
+/* ============================================================
+   СПИСОК-СТРАНИЦА «Вокруг вас» (okruzhenie) — добавлено для дубля в
+   activity-lenta. Перенесено из new-vision/around-you.css, чтобы компонент
+   покрывал и виджет-конвейер, и полноэкранный список.
+   ============================================================ */
+/* Промо-баннер «Копите народные билеты» — вариация DS-компонента
+   .promo-banner.__view-kr (см. components/promo-banner.css).
+   В списке: отступ сверху 8, бока 16, до первой ячейки 12. */
+.activity-list > .promo-banner { margin: 8px 16px 12px; }
+
+/* ============================================================
+   СПИСОК-СТРАНИЦА — вертикальный список ячеек (без разделителей).
+   Паддинги ячейки: вертикальные 12, горизонтальные 16.
+   ============================================================ */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+.activity-list > .uni-cell-wrapper {
+  --uni-cell-padding-top:    12px;
+  --uni-cell-padding-bottom: 12px;
+  --uni-cell-padding-left:   16px;
+  --uni-cell-padding-right:  16px;
+}
+
+/* ============================================================
+   АНИМАЦИИ ПОЯВЛЕНИЯ ячеек (по макету «Появление → Default»).
+   При входе ячейка вспыхивает подложкой цвета своей категории и
+   оседает в обычную белую. Запускается, когда на списке есть .play
+   (ставится JS на загрузке и по кнопке «↻ Проиграть»).
+
+   Категории (класс на .uni-cell-wrapper):
+     базовая (без класса) — «Обычные»: тёплая персиковая подложка
+     .__cat-win    — «1 место»: золотая подложка
+     .__cat-neuro  — «Нейро»: яркий градиент + белый текст на входе
+     .__cat-holiday— «Праздник»: лавандовая подложка + конфетти
+   Стаггер: --enter-delay (custom property наследуется в контейнер/::before).
+   ============================================================ */
+
+/* Сам «въезд» ряда — лёгкий подъём + проявление */
+@keyframes au-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Затухание категорийной подложки */
+@keyframes au-fade { from { opacity: 1; } to { opacity: 0; } }
+/* Нейро: текст белый на входе → обычный (дефолтный dynamic-токен) */
+@keyframes au-neuro-text {
+  0%, 45% { color: var(--static-text-and-icons-base-inverse-primary); }
+  100%    { color: var(--dynamic-text-and-icons-base-primary); }
+}
+/* Конфетти-частица: вылет из центра наружу с затуханием */
+@keyframes au-confetti {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx, 0), var(--ty, 0)) scale(1); }
+}
+
+/* Въезд каждого ряда */
+.activity-list.play > .uni-cell-wrapper {
+  isolation: isolate; /* свой стек-контекст: подложка ::before (z-index:-1) ляжет под текст */
+  animation: au-enter 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Категорийная подложка — слой ::before на кликабельной поверхности */
+.activity-list.play .uni-cell-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-color: rgba(255, 138, 76, 0.18); /* «Обычные» — персик */
+  animation: au-fade 1.3s ease-out both;
+  animation-delay: var(--enter-delay, 0s);
+  pointer-events: none;
+  z-index: -1; /* за контентом ряда, но над прозрачным фоном контейнера */
+}
+/* «1 место» — золото */
+.activity-list.play .__cat-win .uni-cell-container::before {
+  background-color: rgba(255, 196, 61, 0.30);
+}
+/* «Праздник» — лаванда */
+.activity-list.play .__cat-holiday .uni-cell-container::before {
+  background-color: rgba(150, 120, 255, 0.20);
+}
+/* «Нейро» — яркий градиент + белый текст на входе */
+.activity-list.play .__cat-neuro .uni-cell-container::before {
+  background: linear-gradient(90deg, #ff7a18 0%, #ff4d8d 50%, #9b5cff 100%);
+}
+.activity-list.play .__cat-neuro .uni-cell-additional-content {
+  /* backwards (не both): после анимации цвет возвращается в каскад
+     (dynamic-токен), а не пиннится навсегда — корректно для тёмной темы. */
+  animation: au-neuro-text 1.3s ease-out backwards;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Конфетти (только «Праздник») — отдельный слой в .uni-cell-wrapper,
+   вне overflow:hidden контейнера, чтобы частицы летели за пределы ряда. */
+.confetti {
+  position: absolute;
+  left: calc(var(--uni-cell-padding-left) + 22px); /* центр лид-визуала 44px */
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.confetti > i {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 1.5px;
+  opacity: 0;
+}
+.activity-list.play .__cat-holiday .confetti > i {
+  animation: au-confetti 1s ease-out both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+/* Доступность: уважаем системную просьбу убрать анимации */
+@media (prefers-reduced-motion: reduce) {
+  .activity-list.play > .uni-cell-wrapper,
+  .activity-list.play .uni-cell-container::before,
+  .activity-list.play .__cat-neuro .uni-cell-additional-content,
+  .activity-list.play .__cat-holiday .confetti > i {
+    animation: none !important;
+  }
+  .activity-list.play .uni-cell-container::before { display: none; }
+}
+
+/* ============================================================
+   ИНДИКАТОР «НОВЫХ» в навбаре «Вокруг вас сейчас»
+   Цифровой вариант (только на этой странице). Жизненный цикл —
+   фиксированный сценарий из инлайн-скрипта okruzhenie.html:
+     pulse    — пульсирующая точка (idle, «ищем новые»);
+     count    — красный кружок-счётчик с цифрой (1…9, потолок «9+»);
+     expanded — после паузы кружок раскрывается в пилюлю «N новых».
+   Цвета из макета «Логика каунтера»: красный #f55 + белый жирный текст.
+   ============================================================ */
+.activity-indicator {
+  --activity-indicator-color: #f55;
+  /* красим и пульс-точку этого индикатора в тот же красный */
+  --pulse-dot-custom-color: var(--activity-indicator-color);
+  margin-left: auto;          /* прижать к правому краю навбара */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* резервируем круг каунтера — дот и бейдж делят одну центральную точку,
+     поэтому каунтер «вырастает» из центра пульса, а не уезжает влево */
+  min-width: 26px;
+  min-height: 26px;
+}
+/* Пульс центрируется абсолютно — не влияет на ширину/центр контейнера. */
+.activity-indicator .pulse-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+/* В состоянии pulse виден только пульс, бейдж скрыт; и наоборот. */
+.activity-indicator[data-state="pulse"] .activity-indicator__badge { display: none; }
+.activity-indicator:not([data-state="pulse"]) .pulse-dot { display: none; }
+
+.activity-indicator__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 26px;                 /* кружок одной цифры — 26×26 по макету */
+  min-width: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background-color: var(--activity-indicator-color);
+  color: var(--static-text-and-icons-base-inverse-primary, #fff);
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* «Пых» — увеличение к 26×26 из центра. Класс перезапускается JS на каждой
+   смене значения (см. инлайн-скрипт), поэтому анимация на отдельном классе. */
+/* «Пых» — рост из центра при первом появлении из пульса. */
+.activity-indicator__badge.__pop {
+  animation: ai-pop 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+/* Мини-бамп — лёгкое увеличение всего каунтера при смене цифры. */
+.activity-indicator__badge.__bump {
+  animation: ai-bump 550ms cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+@keyframes ai-bump {
+  0%   { transform: scale(1);   }
+  35%  { transform: scale(1.1); }
+  100% { transform: scale(1);   }
+}
+
+/* Окно переката цифры: клипает по высоте строки, цифра въезжает/уезжает по Y.
+   Grid-стопка (обе цифры в одной ячейке) держит окно по ширине максимальной
+   цифры и центрирует её — без смещения влево при перекате. */
+.activity-indicator__count {
+  display: inline-grid;
+  justify-items: center;
+  align-items: center;
+  height: 16px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.activity-indicator__digit {
+  grid-area: 1 / 1;     /* обе цифры в одной ячейке — стопкой */
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+}
+/* Новая цифра въезжает сверху */
+.activity-indicator__digit.__enter {
+  animation: ai-digit-in 550ms cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+/* Старая цифра уезжает вниз (без затухания — каунтер не «пропадает») */
+.activity-indicator__digit.__leave {
+  animation: ai-digit-out 550ms cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+@keyframes ai-digit-in {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0);     }
+}
+@keyframes ai-digit-out {
+  from { transform: translateY(0);    }
+  to   { transform: translateY(100%); }
+}
+/* Слово «новых» — только в раскрытом состоянии (плавно проявляется) */
+.activity-indicator__word {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  /* зазор между цифрой и словом — отступом, а не пробелом в тексте
+     (ведущий пробел схлопывается при обрезке по max-width).
+     В свёрнутом состоянии отступ 0, иначе он смещает цифру из центра круга. */
+  padding-left: 0;
+  transition: max-width 240ms ease, opacity 200ms ease, padding-left 240ms ease;
+}
+.activity-indicator[data-state="expanded"] .activity-indicator__word {
+  max-width: 120px;
+  opacity: 1;
+  padding-left: 0.28em;
+}
+
+@keyframes ai-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-indicator__badge.__pop,
+  .activity-indicator__badge.__bump { animation: none; }
+  .activity-indicator__digit.__enter,
+  .activity-indicator__digit.__leave { animation: none; }
+  .activity-indicator__word  { transition: none; }
+}
+
+/* ============================================================
+   КНОПКА «↻ Проиграть» — пере-запуск появления без перезагрузки
+   ============================================================ */
+.activity-replay {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  align-self: flex-end;
+  margin: 8px 16px -8px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--dynamic-surface-contrast-mid);
+  color: var(--dynamic-text-and-icons-base-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-100);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.activity-replay:active { transform: scale(0.96); }

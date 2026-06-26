@@ -258,7 +258,18 @@ async function main() {
     '\n          </div>\n        </div>\n      </div>',
   );
 
-  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie.html + nv/lenta.html + activity-lenta/lenta.html (виджеты)`);
+  // Страница «Вокруг вас» в activity-lenta (q3-стиль, <base href="../">) — список
+  // #activityList. Те же ячейки, пути без «../» (cellsBase). Маркеры уже в файле.
+  spliceFile(
+    resolve(ROOT, 'activity-lenta/okruzhenie.html'),
+    '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY:END -->',
+    cellsBase,
+    '<!-- ACTIVITY:START',
+    '<!-- ACTIVITY:END -->',
+  );
+
+  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta (виджеты)`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
 }
 
