@@ -1428,7 +1428,12 @@ const SAMPLE_PINS = [
 ];
 
 function renderPin(p) {
-  const src = (Array.isArray(p.photos) && p.photos[0]) || p.img || '';
+  // photos — отфильтрованные http(s); photosRaw — как в листе (в т.ч. локальные
+  // пути assets/…); img — только у SAMPLE_PINS. Берём первый доступный, чтобы пин
+  // из листа с локальной картинкой не пропадал.
+  const src = (Array.isArray(p.photos) && p.photos[0])
+    || (Array.isArray(p.photosRaw) && p.photosRaw[0])
+    || p.img || '';
   if (!src) return '';
   const title = nbsp(resolveNames(p.title || ''));
   return `          <div class="uni-card-wrapper __size-160 pin">
