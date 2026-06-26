@@ -1326,9 +1326,13 @@ const ACTIVITY_TABS = [
   { id: 'podborki', label: 'Подборки',  collection: true },
   { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
-  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
+  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'friendversary'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
 ];
+
+/* Типы, которые даже в «твиттер-табе» рендерятся полной q3-карточкой, а не
+   компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). */
+const FULL_CARD_TYPES = new Set(['friendversary']);
 
 function tabStrip(activeId) {
   const btns = ACTIVITY_TABS.map(t =>
@@ -1525,7 +1529,10 @@ ${items}
       cards = [tabStub(tab.stub)];
     } else {
       const sel = posts.filter(p => tab.types.includes(p.type));
-      cards = sel.map((p, i) => (tab.tw ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
+      // Часть типов — самостоятельные карточки (не «твиттер-ряд»): даже в tw-табе
+      // рендерим их полноценным q3-рендером (renderPost). Напр. friendversary —
+      // карточка годовщины дружбы (2 авы + «Поздравить друга»).
+      cards = sel.map((p, i) => ((tab.tw && !FULL_CARD_TYPES.has(p.type)) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
       if (!cards.length) cards = [tabStub('Пока пусто')];
     }
     // Вставляем таб-стрип первым ребёнком первого острова панели.
