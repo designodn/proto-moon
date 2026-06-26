@@ -1316,14 +1316,14 @@ function splice(cardsHtml) {
 
    Контент панелей:
      Лента      — comment-as-feed из шита;
-     Подборки   — заглушка (наполним позже);
+     Подборки   — пинтерест-masonry (чипсы + грид .uni-card, тип «pin» из листа);
      Сегодня    — виджеты today.html (components/today-widgets.{css,js,partial.html});
      Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
      Друзья     — photo / text / video, модификатор twitter-like;
      Локальное  — comment-as-feed (как Лента, пока). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
-  { id: 'podborki', label: 'Подборки',  stub: 'Здесь скоро появятся подборки' },
+  { id: 'podborki', label: 'Подборки',  collection: true },
   { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
   { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
@@ -1412,6 +1412,47 @@ function tabStub(text) {
         </article>`;
 }
 
+/* Подборки (пинтерест-masonry). Пин = DS .uni-card (медиа натурального аспекта →
+   разные высоты + текст). Раскладка/отступы — components/masonry.css. Данные из
+   листа (тип «pin»: фото = картинка, заголовок = подпись, тема = категория-чип);
+   пока лист не заполнен — примерные пины (SAMPLE_PINS), заменятся данными листа. */
+const SAMPLE_PINS = [
+  { img: 'assets/embedded/av-1.webp', title: 'Идеи для дачного участка', cat: 'Дача' },
+  { img: 'assets/embedded/av-3.webp', title: 'Простые рецепты на каждый день', cat: 'Еда' },
+  { img: 'assets/embedded/av-6.webp', title: 'Как утеплить дом к зиме', cat: 'Сделай сам' },
+  { img: 'assets/embedded/av-7.webp', title: 'Тренировки дома без инвентаря', cat: 'Спорт' },
+  { img: 'assets/embedded/av-2.webp', title: 'Выпечка: проверенные рецепты', cat: 'Еда' },
+  { img: 'assets/embedded/av-5.webp', title: 'Сад и огород весной', cat: 'Дача' },
+  { img: 'assets/embedded/av-4.webp', title: 'Полезные привычки', cat: 'Спорт' },
+  { img: 'assets/embedded/av-9.webp', title: 'Уютный интерьер своими руками', cat: 'Сделай сам' },
+];
+
+function renderPin(p) {
+  const src = (Array.isArray(p.photos) && p.photos[0]) || p.img || '';
+  if (!src) return '';
+  const title = nbsp(resolveNames(p.title || ''));
+  return `          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media">${img(src)}</div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">${esc(title)}</p></div>
+            </a>
+          </div>`;
+}
+
+/* Чипсы-категории (паттерн Трибуны): «Все» (выбран) + уникальные категории пинов. */
+function collectionChips(list) {
+  const cats = [];
+  for (const p of list) { const c = (p.tema || p.cat || '').trim(); if (c && !cats.includes(c)) cats.push(c); }
+  const all = `<button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>`;
+  const rest = cats.map(c => `              <button class="chip-container __size-default __view-primary">${esc(c)}</button>`).join('\n');
+  return `        <div class="collection-chips chips-view">
+          <div class="chips-view__row __nowrap">
+              ${all}
+${rest}
+          </div>
+        </div>`;
+}
+
 /* Разметка виджетов «Сегодня» — централизованный partial (стили/поведение —
    components/today-widgets.{css,js}). Читаем лениво (нужно только activity-фиду). */
 function todayWidgets() {
@@ -1440,6 +1481,22 @@ ${tabStrip(tab.id)}
         </div>
 
 ${w}
+        </div>
+        </div>`;
+    }
+
+    // Подборки (пинтерест-masonry): таб-стрип островом + чипсы + грид .uni-card.
+    if (tab.collection) {
+      const pins = posts.filter(p => p.type === 'pin');
+      const list = pins.length ? pins : SAMPLE_PINS;
+      const items = list.map(renderPin).filter(Boolean).join('\n');
+      return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
+        <div class="island ll-tabs-island">
+${tabStrip(tab.id)}
+        </div>
+${collectionChips(list)}
+        <div class="collection-grid">
+${items}
         </div>
         </div>`;
     }

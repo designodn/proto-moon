@@ -1,0 +1,55 @@
+/**
+ * Masonry / Pinterest grid — 2-колоночная лента карточек разной высоты.
+ *
+ * Раскладка для «Подборок» (Figma node 840:51898 «pinterestSilverCard»):
+ * 2 колонки по 160 с gap 8, вертикальный шаг карточек 16, поля по бокам 16.
+ * Карточка — DS .uni-card (медиа натурального аспекта → высоты сами разные,
+ * поэтому фон-блюр не нужен). Текст-описание под медиа.
+ *
+ * Отступы взяты из Figma: колонки gap 8 (--space-2), шаг карточек 16 (--space-4),
+ * бока 16 (--space-4), медиа→текст 8 (из uni-card). Колонки — CSS multicol
+ * (балансировка по высоте), порядок по колонкам.
+ */
+
+/* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, верт. 12. */
+.collection-chips { padding: var(--space-3) 0 var(--space-1); }
+.collection-chips .chips-view__row { padding: 0 var(--space-4); }
+
+.collection-grid {
+  columns: 2;
+  column-gap: var(--space-2);      /* 8 между колонками */
+  padding: 0 var(--space-4);       /* 16 по бокам */
+}
+
+/* Пин — не разрывается между колонками, шаг вниз 16. */
+.collection-grid > .pin {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin: 0 0 var(--space-4);      /* 16 вертикальный шаг */
+  width: 100%;
+}
+
+/* Карточка-пин на базе .uni-card: медиа на всю ширину колонки, скруглённое;
+   высота — по натуральному аспекту картинки (отсюда masonry). */
+.pin .uni-card-media {
+  width: 100%;
+  border-radius: 16px;
+  background-color: var(--dynamic-surface-contrast-low);  /* подложка пока грузится фото */
+}
+.pin .uni-card-media img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.pin .uni-card-content {
+  width: 100%;
+  padding: 0;
+}
+/* Заголовок пина — 2 строки макс, как в макете. */
+.pin__title {
+  color: var(--dynamic-text-and-icons-base-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
