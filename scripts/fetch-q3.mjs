@@ -600,28 +600,33 @@ ${body}
 }
 
 /** Блок комментов под карточкой (fc-list + fc-input). '' — если нет ни одного. */
-function renderCommentThread(p) {
+function renderCommentThread(p, opts = {}) {
   const list = p.threadComments || [];
   if (!list.length) return '';
   // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
   // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
   // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
   // Внутри comment-as-feed ответы рисуем в twitter-like (тот же ряд, что карточка).
-  const asReplies = p.type === 'comment-as-feed';
+  // tw      — твиттер-ряд ответов/комментов (ава 44 + «палка» слева, имя·дата);
+  // replies — лейблы «ответы» (comment-as-feed) vs «комментарии» (обычные фиды).
+  // По умолчанию оба = (это comment-as-feed). Твиттер-табы (Подарки/Друзья)
+  // зовут с {tw:true, replies:false} — твиттер-стиль, но лейблы «комментарии».
+  const tw = opts.tw ?? (p.type === 'comment-as-feed');
+  const replies = opts.replies ?? (p.type === 'comment-as-feed');
   // Времени на отдельный ответ в данных нет — в twitter-like берём из TIMES
   // (разное на каждый ответ), в том же формате, что и «· время» у caf__head.
   const items = list.map((c, j) => commentItem(c.authorId, c.text, {
-    tw: asReplies,
-    time: asReplies ? TIMES[(j + 1) % TIMES.length] : '',
+    tw,
+    time: tw ? TIMES[(j + 1) % TIMES.length] : '',
   })).join('\n');
-  const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
-  const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
+  const moreLabel = replies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
+  const placeholder = replies ? 'Написать ответ…' : 'Написать комментарий…';
   // «Посмотреть …» — в обычной ленте показываем, только если у поста всего
   // больше 2 комментов (счётчик из actions-bar, поле comments — не число
-  // отрисованных в fc-list); для comment-as-feed (ответы) — всегда.
-  const showMore = asReplies || Number(p.comments) > 2;
+  // отрисованных в fc-list); для ответов (comment-as-feed) — всегда.
+  const showMore = replies || Number(p.comments) > 2;
   const more = showMore
-    ? `\n            <div class="fc-more${asReplies ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    ? `\n            <div class="fc-more${tw ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
   // Поле ответа: ава 44 + поле size-44 (радиус = высота/4) + иконка send справа.
   const input = `          <div class="fc-input">
@@ -631,7 +636,7 @@ function renderCommentThread(p) {
               <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>`;
-  const listClass = asReplies ? 'fc-list __twitter-like' : 'fc-list';
+  const listClass = tw ? 'fc-list __twitter-like' : 'fc-list';
   return `          <div class="${listClass}">\n${items}${more}\n          </div>\n${input}`;
 }
 
@@ -1291,32 +1296,138 @@ function splice(cardsHtml) {
   writeFileSync(file, html);
 }
 
-/* ── Таб-стрип ленты (только для фидов с FEED.tabs, напр. activity-lenta) ──────
-   «Лента / Сегодня / Подарки / Обсуждение» — DS-компонент .tabs (components/tabs.css,
-   типографика ds-title-xl). Прикрепляется к ВЕРХУ ПЕРВОГО поста, который НЕ ВВЗ
-   (ВВЗ-портлет — полноширинный остров, табы на нём не сидят): вставляется первым
-   ребёнком карточки-острова, сразу после её открывающего тега. Отступы: верх 0
-   (16 сверху даёт padding-top острова), бока 16 — из .tabs; низ 16 — класс
-   .ll-feed-tabs (правило в самой странице activity-lenta).
-   Пути today/gifts — без «../» (у activity-lenta есть <base href="../">). */
-const FEED_TABS =
-`          <div class="tabs ll-feed-tabs">
-            <button class="tabs-tab ds-title-xl __state-on">Лента</button>
-            <button class="tabs-tab ds-title-xl" data-href="today.html">Сегодня</button>
-            <button class="tabs-tab ds-title-xl" data-href="gifts-catalog.html">Подарки</button>
-            <button class="tabs-tab ds-title-xl">Обсуждение</button>
-          </div>`;
+/* ── Табы ленты (только для фидов с FEED.tabs, напр. activity-lenta) ───────────
+   Переключение контента НА МЕСТЕ: один таб-стрип (DS .tabs) дублируется в первый
+   остров КАЖДОЙ панели, активна — своя; видна всегда ровно одна панель (остальные
+   [hidden]), поэтому виден ровно один стрип, «вросший» в первый остров. Клик по
+   .tabs-tab[data-tab] переключает панели — components/feed-tabs.js.
+   ВВЗ-портлет рендерится ВЫШЕ панелей (общая шапка, вне табов).
 
-function injectFeedTabs(cardsArr) {
-  for (let i = 0; i < cardsArr.length; i++) {
-    if (/vvz-portlet/.test(cardsArr[i])) continue;     // ВВЗ — пропускаем
-    const injected = cardsArr[i].replace(
-      /^(\s*<(?:article|section)\b[^>]*>\n)/,
-      (m) => m + FEED_TABS + '\n');
-    if (injected !== cardsArr[i]) { cardsArr[i] = injected; return cardsArr; }
+   Контент панелей:
+     Лента      — comment-as-feed из шита;
+     Подборки   — заглушка (наполним позже);
+     Сегодня    — заглушка (порт виджетов today.html — отдельным шагом);
+     Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
+     Друзья     — photo / text / video, модификатор twitter-like;
+     Локальное  — comment-as-feed (как Лента, пока). */
+const ACTIVITY_TABS = [
+  { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
+  { id: 'podborki', label: 'Подборки',  stub: 'Здесь скоро появятся подборки' },
+  { id: 'segodnya', label: 'Сегодня',   stub: 'Виджеты «Сегодня» — скоро' },
+  { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
+  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
+  { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
+];
+
+function tabStrip(activeId) {
+  const btns = ACTIVITY_TABS.map(t =>
+    `            <button class="tabs-tab ds-title-xl${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
+  ).join('\n');
+  return `          <div class="tabs ll-feed-tabs">\n${btns}\n          </div>`;
+}
+
+/* twitter-like ряд для НЕ-comment-as-feed типов (photo/text/video/gift): та же
+   раскладка, что у caf.__twitter-like (ава слева + имя·дата + компактные
+   счётчики), контент/медиа/подарок — в правой колонке .caf__content.
+   Унифицировано на разметке comment-as-feed (components/comment-as-feed.css). */
+function renderTwitterCard(p, idx) {
+  const { type, author, photos = [], likes, comments, reshares } = p;
+  const ids = splitIds(author);
+  const aid = ids[0];
+  const time = TIMES[idx % TIMES.length];
+  const title = nbsp(resolveNames(p.title));
+  const text = nbsp(resolveNames(p.text));
+  const crumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+  const crumbsBlock = crumbs ? '\n' + crumbs : '';
+
+  let inner = '';
+  if (type === 'gift-received' || type === 'ai-gift-received') {
+    const isAi = type === 'ai-gift-received';
+    const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
+    const giverId = ids[1] || ids[0];
+    const mediaBlock = photos[0] ? `\n                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 1">${img(photos[0])}</div>` : '';
+    inner = `
+                <div class="text-feed__reshare-card${isAi ? ' __ai-gift' : ' __gift'}">
+                  <div class="ll-gift-from">
+                    <div class="ds-body-m">${esc(caption)}</div>
+                    <div class="text-feed__reshare-card-author">
+                      <div class="avatar __size-24 __type-image">${img(personPhoto(giverId))}</div>
+                      <div class="ds-body-m text-feed__reshare-card-author-name"><b class="ds-title-s">${esc(personName(giverId))}</b></div>
+                    </div>
+                  </div>${mediaBlock}
+                </div>`;
+  } else {
+    const body = title && text ? `${title}. ${text}` : (title || text);
+    if (body) inner += '\n' + cafTextTw(body);
+    if (photos.length) {
+      if (ids.length >= 2) {
+        // 2 автора → репост/цитата: медиа в reshare-превью (reply-стиль оригинала).
+        const to = ids[1];
+        inner += `
+                <div class="text-feed__reshare-card">
+                  <div class="text-feed__reshare-card-author">
+                    <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
+                    <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
+                  </div>
+                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>
+                </div>`;
+      } else {
+        // 1 автор → нормальное медиа под текстом, как в обычном фиде (text-feed__media).
+        inner += '\n' + media(photos);
+      }
+    }
   }
-  console.warn('  ⚠️  таб-стрип не вставлен: не нашёл первого НЕ-ВВЗ поста-острова');
-  return cardsArr;
+
+  // Комменты к фиду — тем же твиттер-рядом (fc-comment __twitter-like), но с
+  // лейблами «комментарии» (не «ответы»). «Палку» вниз у авы рисуем, если есть тред.
+  const hasThread = (p.threadComments || []).length > 0;
+  const line = hasThread ? '\n                <span class="caf__line" aria-hidden="true"></span>' : '';
+  const thread = renderCommentThread(p, { tw: true, replies: false });
+  const threadBlock = thread ? '\n' + thread : '';
+
+  return `        <article class="caf __twitter-like island">${crumbsBlock}
+          <div class="caf__stack">
+            <div class="caf__row">
+              <div class="caf__aside">
+                <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>${line}
+              </div>
+              <div class="caf__content">
+                <div class="caf__head">
+                  <span class="ds-title-s caf__name">${esc(personName(aid))}</span>
+                  <span class="ds-body-m caf__date">· ${esc(time)}</span>
+                </div>${inner}
+${cafActions(comments, reshares, likes)}
+              </div>
+            </div>${threadBlock}
+          </div>
+        </article>`;
+}
+
+function tabStub(text) {
+  return `        <article class="text-feed island ll-tab-stub">
+          <div class="ds-body-m ll-tab-stub__text">${esc(text)}</div>
+        </article>`;
+}
+
+/* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип. */
+function buildActivityTabs(posts) {
+  return ACTIVITY_TABS.map(tab => {
+    let cards;
+    if (tab.stub) {
+      cards = [tabStub(tab.stub)];
+    } else {
+      const sel = posts.filter(p => tab.types.includes(p.type));
+      cards = sel.map((p, i) => (tab.tw ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
+      if (!cards.length) cards = [tabStub('Пока пусто')];
+    }
+    // Вставляем таб-стрип первым ребёнком первого острова панели.
+    cards[0] = cards[0].replace(/^(\s*<(?:article|section|div)\b[^>]*>\n)/,
+      (m) => m + tabStrip(tab.id) + '\n');
+    const hidden = tab.id === 'lenta' ? '' : ' hidden';
+    return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
+${cards.join('\n\n')}
+        </div>`;
+  }).join('\n\n');
 }
 
 /* ── main ───────────────────────────────────────────────────────────────────── */
@@ -1447,15 +1558,24 @@ async function main() {
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ карточки).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
 
-  const rendered = posts
-    .map((p, i) => { const card = renderPost(p, i); return card ? attachComments(card, p) : card; })
-    .filter(Boolean);
-  // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
-  // — не вставляем пустоту в живую ленту.
-  if (rendered.length === 0)
-    throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
-  if (FEED.tabs) injectFeedTabs(rendered);   // таб-стрип на первом НЕ-ВВЗ посте
-  const cards = rendered.join('\n\n');
+  let cards;
+  if (FEED.tabs) {
+    // Activity-лента: ВВЗ-портлет(ы) сверху (общая шапка), ниже — панели табов.
+    const vvz = posts.filter(p => p.type === 'vvz-portlet')
+      .map((p, i) => renderPost(p, i)).filter(Boolean);
+    const panels = buildActivityTabs(posts);
+    if (!panels) throw new Error('панели табов пусты — лента НЕ тронута (проверь лист/типы).');
+    cards = [...vvz, panels].join('\n\n');
+  } else {
+    const rendered = posts
+      .map((p, i) => { const card = renderPost(p, i); return card ? attachComments(card, p) : card; })
+      .filter(Boolean);
+    // Ещё один предохранитель: ни одной карточки не отрисовалось (все типы чужие)
+    // — не вставляем пустоту в живую ленту.
+    if (rendered.length === 0)
+      throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
+    cards = rendered.join('\n\n');
+  }
   splice(cards);
 
   console.log(`✓ ${posts.length} постов → ${FEED.json} + вставлено в ${FEED.html}`);
