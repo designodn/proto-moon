@@ -426,12 +426,17 @@
      Низ табов — 16. */
   .ll-feed-tabs { padding-bottom: var(--space-4); }
 
-  /* Верхний отступ стека twitter-карты (12 из comment-as-feed.css) нужен только
-     когда сверху есть ШАПКА («кто-то лайкнул») или ХЛЕБНЫЕ КРОШКИ; без них —
-     0 (иначе лишний воздух над авой). Page-scoped (q3 не трогаем). */
+  /* Шеврон у заголовка «Вокруг вас сейчас» — DS chevron-right в боксе 12×12
+     (page-scoped, new-vision не трогаем). */
+  .activity-header__chevron { width: 12px; height: 12px; }
+
+  /* Верхний отступ стека twitter-карты — всегда 0 (без воздуха над авой).
+     Зазор 12 до стека задаётся СНИЗУ у того, что стоит выше — у хлебных крошек
+     и у шапки «кто-то лайкнул», а не верхним паддингом стека. Page-scoped
+     (q3 не трогаем). */
   .caf.__twitter-like .caf__stack { padding-top: 0; }
-  .caf.__twitter-like .caf__crumbs + .caf__stack,
-  .caf.__twitter-like .text-feed__activity + .caf__stack { padding-top: var(--space-3); }
+  .caf.__twitter-like .caf__crumbs { padding-bottom: var(--space-3); }
+  .caf.__twitter-like .text-feed__activity { padding-bottom: var(--space-3); }
 
   /* Панель таба — та же вертикальная стопка островов с шагом 4, что и .ll-feed.
      Видна одна панель (остальные [hidden]); переключает components/feed-tabs.js. */
@@ -1238,11 +1243,43 @@
           </div>
         <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
-              <button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>
-              <button class="chip-container __size-default __view-primary">Дача</button>
-              <button class="chip-container __size-default __view-primary">Еда</button>
-              <button class="chip-container __size-default __view-primary">Сделай сам</button>
-              <button class="chip-container __size-default __view-primary">Спорт</button>
+              <button class="chip-container __size-default __view-primary">Все</button>
+              <button class="chip-container __size-default __view-custom __selected-custom" style="
+                --chip-background-color: var(--dynamic-surface-contrast-low);
+                --chip-color-custom: var(--dynamic-text-and-icons-base-primary);
+                --chip-background-selected-color: var(--static-surface-status-accent);
+                --chip-selected-color: #fff;">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
+                Люди
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Еда
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/med_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Здоровье
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/news_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Политика
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/tangle_16_20.svg" width="20" height="20" alt=""></span>
+                Сделай сам
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/microphone_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Знаменитости
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/gardener_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Садоводство
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/ball_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Спорт
+              </button>
           </div>
         </div>
           <div class="collection-grid">
@@ -1347,7 +1384,6 @@
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="segodnya" hidden>
-        <div class="tg-feed">
         <div class="island ll-tabs-island">
           <div class="tabs ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
@@ -1357,8 +1393,7 @@
             <button class="tabs-tab ds-title-xl" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
-        </div>
-
+        <div class="tg-feed">
 <!-- Today widgets — разметка виджетов «Сегодня» (вставляется генератором
      scripts/fetch-q3.mjs в таб «Сегодня» activity-lenta; стили/поведение —
      components/today-widgets.{css,js}). Ассеты — assets/…, путь от корня
@@ -1492,6 +1527,7 @@
             </article>
           </div>
         </section>
+        </div>
         </div>
         </div>
 
