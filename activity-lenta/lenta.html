@@ -423,8 +423,15 @@
   /* Таб-стрип «Лента/Подборки/…» вращён в первый остров каждой панели
      (генерит scripts/fetch-q3.mjs --activity). Верх табов = 0 — отступ 16 сверху
      даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs.
-     Низ: 4 + 12 (flex-gap карточки) = 16 до «шапки» поста. */
-  .ll-feed-tabs { padding-bottom: var(--space-1); }
+     Низ табов — 16. */
+  .ll-feed-tabs { padding-bottom: var(--space-4); }
+
+  /* Верхний отступ стека twitter-карты (12 из comment-as-feed.css) нужен только
+     когда сверху есть ШАПКА («кто-то лайкнул») или ХЛЕБНЫЕ КРОШКИ; без них —
+     0 (иначе лишний воздух над авой). Page-scoped (q3 не трогаем). */
+  .caf.__twitter-like .caf__stack { padding-top: 0; }
+  .caf.__twitter-like .caf__crumbs + .caf__stack,
+  .caf.__twitter-like .text-feed__activity + .caf__stack { padding-top: var(--space-3); }
 
   /* Панель таба — та же вертикальная стопка островов с шагом 4, что и .ll-feed.
      Видна одна панель (остальные [hidden]); переключает components/feed-tabs.js. */
@@ -509,7 +516,7 @@
              блока задаются в ленте (позже — из листа lenta-activity). -->
         <div class="island">
           <a class="activity-header" href="activity-lenta/okruzhenie.html">
-            <span class="ds-title-l">Вокруг вас сейчас</span>
+            <header class="header __size-l"><div class="header__title">Вокруг вас сейчас</div></header>
             <span class="activity-header__chevron" aria-hidden="true"></span>
             <span class="pulse-dot"></span>
           </a>
@@ -1220,7 +1227,7 @@
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="podborki" hidden>
-        <div class="island ll-tabs-island">
+        <div class="island">
           <div class="tabs ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="podborki">Подборки</button>
@@ -1229,7 +1236,6 @@
             <button class="tabs-tab ds-title-xl" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
-        </div>
         <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
               <button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>
@@ -1239,54 +1245,103 @@
               <button class="chip-container __size-default __view-primary">Спорт</button>
           </div>
         </div>
-        <div class="collection-grid">
+          <div class="collection-grid">
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-1.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Идеи для дачного участка</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Идеи для дачного участка</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-10.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Живой дачный уголок</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-3.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Простые рецепты на каждый день</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Простые рецепты на каждый день</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-1.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Наталья Атаманюк | Рецепты</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-6.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Как утеплить дом к зиме</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Как утеплить дом к зиме</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-4.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Идеи для сада и огорода своими руками с фото</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-7.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Тренировки дома без инвентаря</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Тренировки дома без инвентаря</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-7.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Чемпионат: новости спорта, футбол, хоккей</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-2.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Выпечка: проверенные рецепты</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Выпечка: проверенные рецепты</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-9.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Папа на кухне</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-5.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Сад и огород весной</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Сад и огород весной</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-4.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Идеи для сада и огорода своими руками с фото</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-4.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Полезные привычки</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Полезные привычки</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-2.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Доктор Мясников</span>
+                </div>
+              </div>
             </a>
           </div>
           <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
               <div class="uni-card-media"><img src="assets/embedded/av-9.webp" alt=""></div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">Уютный интерьер своими руками</p></div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">Уютный интерьер своими руками</p>
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image"><img src="assets/people/group-10.jpg" alt=""></div>
+                  <span class="pin__author-name ds-body-m">Живой дачный уголок</span>
+                </div>
+              </div>
             </a>
+          </div>
           </div>
         </div>
         </div>
@@ -1308,6 +1363,22 @@
      scripts/fetch-q3.mjs в таб «Сегодня» activity-lenta; стили/поведение —
      components/today-widgets.{css,js}). Ассеты — assets/…, путь от корня
      (на activity-lenta есть <base href="../">). -->
+
+        <!-- 0. День рождения друга — приветственный блок на всю ширину сверху.
+             Фон — шары (assets/today/dr-segodnya-fon.png), тёмный текст слева,
+             круглая ава + кнопка «Поздравить!». Данные позже из листа. -->
+        <section class="tg-island">
+          <article class="tg-card tg-card--bday">
+            <img class="tg-card__bg" src="assets/today/dr-segodnya-fon.png" alt="">
+            <div class="tg-bday__body">
+              <div class="avatar __size-56 __type-image tg-bday__ava"><img src="assets/people/2.jpg" alt=""></div>
+              <div class="tg-bday__title ds-title-m">Сергей&nbsp;Чернышов сегодня празднует День&nbsp;Рождения</div>
+              <span class="button-wrapper __size-36 __style-primary tg-bday__cta">
+                <button class="button-container __style-primary"><span class="button-content">Поздравить!</span></button>
+              </span>
+            </div>
+          </article>
+        </section>
 
         <!-- 1. Сейчас в СМИ — Дзен-портлет новостей -->
         <section class="tg-island">
@@ -1686,6 +1757,25 @@
           </div>
         </article>
 
+        <article class="feed-birthday island">
+          <div class="feed-birthday__deco"></div>
+
+          <div class="feed-birthday__avatars">
+            <div class="avatar __size-120 __type-image __border"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="avatar __size-120 __type-image __border"><img src="assets/people/1.jpg" alt=""></div>
+          </div>
+
+          <div class="ds-title-l feed-birthday__title">Анфиса, поздравляем с годовщиной дружбы</div>
+          <div class="ds-body-m feed-birthday__text">Ровно 3 года назад вы добавили<br>Александра в друзья OK</div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36 __full-width">
+              <button class="button-container __style-primary" data-href="gifts-catalog.html?to=1&anniv=3"><span class="button-content">Поздравить друга</span></button>
+            </div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
+          </div>
+        </article>
+
         <article class="caf __twitter-like island">
             <nav class="breadcrumbs caf__crumbs">
               <a class="breadcrumbs__item" href="#">Спорт</a>
@@ -1701,7 +1791,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Чемпионат: новости спорта, футбол, хоккей</span>
-                  <span class="ds-body-m caf__date">· 18:02</span>
+                  <span class="ds-body-m caf__date">· 12:03</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Первый финал Мирры на «Ролан Гаррос» и ТБШ!. Юная россиянка разгромила украинку Костюк и добыла путёвку в решающий матч грунтового мэйджора.</p>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg" alt=""></div>
@@ -1757,7 +1847,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Антонида Чекалова (Гахова)</span>
-                  <span class="ds-body-m caf__date">· 12:03</span>
+                  <span class="ds-body-m caf__date">· 10:05</span>
                 </div>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSykFZdUS5d72azKYyGWFCN43QFZwomD7H9WzDjK4q4jNdtt350_O1jdqFoPDBGYmIaz3RHg6CdaGeeNBJGbaCvUbxFDGfsa-Rd_I2_uaLpCshlQ_BT8kNiMEnpLYc1lFlCa2yyoxyFhy6hvqXqiS0FE5AhUjznJDLnS_NYXX00v5KOs2-oeoeZAVc5xFVnQAAACk&amp;dpr=2" alt=""></div>
               <div class="caf__actions">
@@ -1779,7 +1869,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Александр Мещеряков</span>
-                  <span class="ds-body-m caf__date">· 10:05</span>
+                  <span class="ds-body-m caf__date">· 8:42</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Ох помню разбили окно соседке тете Люде, столько люлей отхватили ))) хорошее раньше было детство.</p>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&amp;s=10" alt=""></div>
@@ -1808,7 +1898,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Живой дачный уголок</span>
-                  <span class="ds-body-m caf__date">· 8:42</span>
+                  <span class="ds-body-m caf__date">· 21:10</span>
                 </div>
           <label class="feed-more">
             <input type="checkbox" hidden>
@@ -1887,7 +1977,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Зинаида Халина (Стребкова)</span>
-                  <span class="ds-body-m caf__date">· 21:10</span>
+                  <span class="ds-body-m caf__date">· 14:02</span>
                 </div>
           <label class="feed-more">
             <input type="checkbox" hidden>
@@ -1939,7 +2029,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Александр Мещеряков</span>
-                  <span class="ds-body-m caf__date">· 14:02</span>
+                  <span class="ds-body-m caf__date">· 11:18</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Мои любимые и родные!!!!Обожаю вас</p>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg" alt=""></div>
@@ -1990,7 +2080,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Екатерина )))))</span>
-                  <span class="ds-body-m caf__date">· 11:18</span>
+                  <span class="ds-body-m caf__date">· 7:30</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.</p>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
@@ -2045,7 +2135,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">ПОЛИТИЧЕСКОЕ АССОРТИ</span>
-                  <span class="ds-body-m caf__date">· 7:30</span>
+                  <span class="ds-body-m caf__date">· 20:10</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Шринкфляция отобрала у россиян сосиску. В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.</p>
           <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200" alt=""></div>
@@ -2126,7 +2216,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Папа на кухне</span>
-                  <span class="ds-body-m caf__date">· 20:10</span>
+                  <span class="ds-body-m caf__date">· 9:33</span>
                 </div>
           <label class="feed-more">
             <input type="checkbox" hidden>
@@ -2204,7 +2294,7 @@
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">Забытые моряки</span>
-                  <span class="ds-body-m caf__date">· 9:33</span>
+                  <span class="ds-body-m caf__date">· 17:46</span>
                 </div>
           <label class="feed-more">
             <input type="checkbox" hidden>
@@ -3041,6 +3131,7 @@
   <script src="components/people-data.js"></script>
   <script src="components/activity-widget.js"></script>
   <script src="components/feed-tabs.js"></script>
+  <script src="components/masonry.js"></script>
   <script src="components/today-widgets.js"></script>
   <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
   <script src="data/stories.js"></script>

@@ -299,6 +299,25 @@
   }
   .tg-card > :not(.tg-card__bg) { position: relative; z-index: 1; }
 
+  /* День рождения — карточка на всю ширину: светлый фон-шары, тёмный текст
+     слева (ава + поздравление + кнопка), радиус/паддинг как у tg-card. Высота
+     auto под контент (шары справа на фоне), без фикс. 220. */
+  .tg-card--bday {
+    height: auto;
+    border-radius: 16px;
+    background: #cfe1f7;                 /* фолбэк под фото-шарами (голубой) */
+    color: var(--static-text-and-icons-base-primary, #000);
+  }
+  .tg-card--bday .tg-card__bg { object-position: right center; }
+  .tg-bday__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);                 /* 12 между авой/текстом/кнопкой */
+    max-width: 70%;                      /* шары справа остаются видны */
+  }
+  .tg-bday__title { color: var(--static-text-and-icons-base-primary, #000); }
+
   /* Погода — radius 16, контент распределён: блок «Дождь+°» сверху, ветер снизу. */
   .tg-card--weather {
     border-radius: 16px;

@@ -1326,9 +1326,13 @@ const ACTIVITY_TABS = [
   { id: 'podborki', label: 'Подборки',  collection: true },
   { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
-  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
+  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'friendversary'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
 ];
+
+/* Типы, которые даже в «твиттер-табе» рендерятся полной q3-карточкой, а не
+   компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). */
+const FULL_CARD_TYPES = new Set(['friendversary']);
 
 function tabStrip(activeId) {
   const btns = ACTIVITY_TABS.map(t =>
@@ -1417,14 +1421,14 @@ function tabStub(text) {
    листа (тип «pin»: фото = картинка, заголовок = подпись, тема = категория-чип);
    пока лист не заполнен — примерные пины (SAMPLE_PINS), заменятся данными листа. */
 const SAMPLE_PINS = [
-  { img: 'assets/embedded/av-1.webp', title: 'Идеи для дачного участка', cat: 'Дача' },
-  { img: 'assets/embedded/av-3.webp', title: 'Простые рецепты на каждый день', cat: 'Еда' },
-  { img: 'assets/embedded/av-6.webp', title: 'Как утеплить дом к зиме', cat: 'Сделай сам' },
-  { img: 'assets/embedded/av-7.webp', title: 'Тренировки дома без инвентаря', cat: 'Спорт' },
-  { img: 'assets/embedded/av-2.webp', title: 'Выпечка: проверенные рецепты', cat: 'Еда' },
-  { img: 'assets/embedded/av-5.webp', title: 'Сад и огород весной', cat: 'Дача' },
-  { img: 'assets/embedded/av-4.webp', title: 'Полезные привычки', cat: 'Спорт' },
-  { img: 'assets/embedded/av-9.webp', title: 'Уютный интерьер своими руками', cat: 'Сделай сам' },
+  { img: 'assets/embedded/av-1.webp', title: 'Идеи для дачного участка', cat: 'Дача', author: 'group-10' },
+  { img: 'assets/embedded/av-3.webp', title: 'Простые рецепты на каждый день', cat: 'Еда', author: 'group-1' },
+  { img: 'assets/embedded/av-6.webp', title: 'Как утеплить дом к зиме', cat: 'Сделай сам', author: 'group-4' },
+  { img: 'assets/embedded/av-7.webp', title: 'Тренировки дома без инвентаря', cat: 'Спорт', author: 'group-7' },
+  { img: 'assets/embedded/av-2.webp', title: 'Выпечка: проверенные рецепты', cat: 'Еда', author: 'group-9' },
+  { img: 'assets/embedded/av-5.webp', title: 'Сад и огород весной', cat: 'Дача', author: 'group-4' },
+  { img: 'assets/embedded/av-4.webp', title: 'Полезные привычки', cat: 'Спорт', author: 'group-2' },
+  { img: 'assets/embedded/av-9.webp', title: 'Уютный интерьер своими руками', cat: 'Сделай сам', author: 'group-10' },
 ];
 
 function renderPin(p) {
@@ -1436,10 +1440,23 @@ function renderPin(p) {
     || p.img || '';
   if (!src) return '';
   const title = nbsp(resolveNames(p.title || ''));
+  // Автор: пин из листа — id из «автор» (ава+имя из «Люди»); SAMPLE — поля author/authorImg.
+  const aid = splitIds(p.author || '')[0];
+  const authorName = aid ? personName(aid) : (p.author || '');
+  const authorPhoto = aid ? personPhoto(aid) : (p.authorImg || '');
+  const author = (authorName || authorPhoto) ? `
+                <div class="pin__author">
+                  <div class="avatar __size-24 __type-image">${img(authorPhoto)}</div>
+                  <span class="pin__author-name ds-body-m">${esc(authorName)}</span>
+                </div>` : '';
+  // Бейдж на медиа (напр. длительность видео «12:34») — поле badge (опц.).
+  const badge = p.badge ? `<span class="pin__badge ds-caption-m">${esc(p.badge)}</span>` : '';
   return `          <div class="uni-card-wrapper __size-160 pin">
             <a class="uni-card __state-enabled">
-              <div class="uni-card-media">${img(src)}</div>
-              <div class="uni-card-content"><p class="ds-body-m pin__title">${esc(title)}</p></div>
+              <div class="uni-card-media">${img(src)}${badge}</div>
+              <div class="uni-card-content">
+                <p class="ds-body-l pin__title">${esc(title)}</p>${author}
+              </div>
             </a>
           </div>`;
 }
@@ -1490,18 +1507,19 @@ ${w}
         </div>`;
     }
 
-    // Подборки (пинтерест-masonry): таб-стрип островом + чипсы + грид .uni-card.
+    // Подборки (пинтерест-masonry): таб-стрип + чипсы + грид .uni-card — ВСЁ в
+    // одном острове (.island), чтобы чипсы и сетка лежали в рамках первого острова.
     if (tab.collection) {
       const pins = posts.filter(p => p.type === 'pin');
       const list = pins.length ? pins : SAMPLE_PINS;
       const items = list.map(renderPin).filter(Boolean).join('\n');
       return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
-        <div class="island ll-tabs-island">
+        <div class="island">
 ${tabStrip(tab.id)}
-        </div>
 ${collectionChips(list)}
-        <div class="collection-grid">
+          <div class="collection-grid">
 ${items}
+          </div>
         </div>
         </div>`;
     }
@@ -1511,7 +1529,10 @@ ${items}
       cards = [tabStub(tab.stub)];
     } else {
       const sel = posts.filter(p => tab.types.includes(p.type));
-      cards = sel.map((p, i) => (tab.tw ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
+      // Часть типов — самостоятельные карточки (не «твиттер-ряд»): даже в tw-табе
+      // рендерим их полноценным q3-рендером (renderPost). Напр. friendversary —
+      // карточка годовщины дружбы (2 авы + «Поздравить друга»).
+      cards = sel.map((p, i) => ((tab.tw && !FULL_CARD_TYPES.has(p.type)) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
       if (!cards.length) cards = [tabStub('Пока пусто')];
     }
     // Вставляем таб-стрип первым ребёнком первого острова панели.
