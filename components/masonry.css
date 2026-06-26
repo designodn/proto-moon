@@ -8,9 +8,9 @@
  * (длительность видео). Высоты разные → masonry-эффект (CSS multicol).
  */
 
-/* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, верх 12,
-   до грида 24. */
-.collection-chips { padding: var(--space-3) 0 var(--space-6); }
+/* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, без верхнего
+   паддинга (отступ сверху даёт остров/таб-стрип), до грида 24. */
+.collection-chips { padding: 0 0 var(--space-6); }
 .collection-chips .chips-view__row { padding: 0 var(--space-4); }
 
 .collection-grid {

@@ -1461,16 +1461,48 @@ function renderPin(p) {
           </div>`;
 }
 
-/* Чипсы-категории (паттерн Трибуны): «Все» (выбран) + уникальные категории пинов. */
-function collectionChips(list) {
-  const cats = [];
-  for (const p of list) { const c = (p.tema || p.cat || '').trim(); if (c && !cats.includes(c)) cats.push(c); }
-  const all = `<button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>`;
-  const rest = cats.map(c => `              <button class="chip-container __size-default __view-primary">${esc(c)}</button>`).join('\n');
+/* Чипсы-категории «Подборок» — наполнение скопировано из Трибуны (те же темы и
+   иконки). Список статичный (не из пинов); «Люди» выбран, как в Трибуне. */
+function collectionChips(_list) {
   return `        <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
-              ${all}
-${rest}
+              <button class="chip-container __size-default __view-primary">Все</button>
+              <button class="chip-container __size-default __view-custom __selected-custom" style="
+                --chip-background-color: var(--dynamic-surface-contrast-low);
+                --chip-color-custom: var(--dynamic-text-and-icons-base-primary);
+                --chip-background-selected-color: var(--static-surface-status-accent);
+                --chip-selected-color: #fff;">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
+                Люди
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Еда
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/med_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Здоровье
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/news_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
+                Политика
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/tangle_16_20.svg" width="20" height="20" alt=""></span>
+                Сделай сам
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/microphone_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Знаменитости
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/gardener_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Садоводство
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/ball_filled_16_20.svg" width="20" height="20" alt=""></span>
+                Спорт
+              </button>
           </div>
         </div>`;
 }
@@ -1487,22 +1519,21 @@ function buildActivityTabs(posts) {
   return ACTIVITY_TABS.map(tab => {
     const hidden = tab.id === 'lenta' ? '' : ' hidden';
 
-    // Таб-виджеты (Сегодня): таб-стрип отдельным островом, ниже — виджеты из
-    // центрального partial (поведение/стили — components/today-widgets.{js,css}).
+    // Таб-виджеты (Сегодня): таб-стрип + виджеты из центрального partial — ВСЁ в
+    // одном острове (.island.ll-tabs-island); виджеты в .tg-feed (ритм 12, как в
+    // today.html). Поведение/стили — components/today-widgets.{js,css}.
     if (tab.widgets) {
       const w = todayWidgets();
       if (!w) {
         const stub = tabStub('Виджеты «Сегодня» недоступны').replace(/^(\s*<article\b[^>]*>\n)/, (m) => m + tabStrip(tab.id) + '\n');
         return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>\n${stub}\n        </div>`;
       }
-      // Таб-стрип отдельным островом + виджеты в .tg-feed (ритм 12, как в today.html).
       return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
-        <div class="tg-feed">
         <div class="island ll-tabs-island">
 ${tabStrip(tab.id)}
-        </div>
-
+        <div class="tg-feed">
 ${w}
+        </div>
         </div>
         </div>`;
     }
