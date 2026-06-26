@@ -31,8 +31,8 @@
   height: 14px;
   flex-shrink: 0;
   background-color: var(--dynamic-text-and-icons-base-primary);
-  -webkit-mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
-          mask: url('../assets/new-vision-icons/glyph_shevron_16.svg') no-repeat center / contain;
+  -webkit-mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
+          mask: url('../assets/icons/chevron-right.svg') no-repeat center / contain;
   transition: transform 200ms ease;
 }
 /* Индикатор (пульс-точка) — к правому краю заголовка */
