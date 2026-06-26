@@ -9,6 +9,14 @@
    - ТАП по .tabs-tab[data-tab] → показываем соответствующую панель.
    - СВАЙП по ленте влево/вправо → соседняя лента (порядок = порядок панелей).
 
+   Почему свайп на touch-events, а не на pointer-events:
+   на странице touch-action: auto, поэтому при горизонтальном пальце браузер
+   сразу забирает указатель под нативный пан и шлёт pointercancel (pointerup не
+   приходит) — обработчик на pointerup не срабатывал. На touchmove мы сами
+   определяем горизонталь и делаем preventDefault → жест остаётся за нами и
+   touchend гарантированно приходит. Для мыши (десктоп) — отдельная ветка на
+   pointer-events с фолбэком на pointercancel.
+
    Тонкости:
    - #3 press-фидбэк (бамп) на мобилке: при делегировании :active часто не
      срабатывает, поэтому ставим .__clicked на pointerdown (tabs.css → scale).
@@ -88,26 +96,74 @@
   // Горизонтальные скроллеры, на которых свайп НЕ должен переключать ленту.
   var H_SCROLLERS = '.ll-feed-tabs, .tg-carousel, .chips-view__row, .tg-news__tabs,'
     + ' .collection-chips, .stories-row, .tg-chan-row, .clips-rail, [data-no-feed-swipe]';
-  var SWIPE_MIN = 60;        // мин. горизонталь, чтобы счесть жест свайпом
-  var SWIPE_RATIO = 1.4;     // горизонталь должна доминировать над вертикалью
+  var SWIPE_MIN = 50;        // мин. горизонталь, чтобы счесть жест свайпом
+  var DECIDE = 8;            // порог, на котором фиксируем направление жеста
+  var H_DOMINANCE = 1.2;     // горизонталь должна доминировать над вертикалью
 
-  var sx = 0, sy = 0, tracking = false;
+  function onHScroller(node) {
+    return !!(node && node.closest && node.closest(H_SCROLLERS));
+  }
+
+  // — TOUCH (мобилка) — определяем направление на move, горизонталь «забираем». —
+  var tx = 0, ty = 0, tActive = false, tLock = 0;  // tLock: 0 undecided, 1 horiz, -1 vert
+
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1 || onHScroller(e.target)) { tActive = false; return; }
+    var t = e.touches[0];
+    tActive = true; tLock = 0; tx = t.clientX; ty = t.clientY;
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchmove', function (e) {
+    if (!tActive) return;
+    var t = e.touches[0];
+    var dx = t.clientX - tx, dy = t.clientY - ty;
+    if (tLock === 0) {
+      if (Math.abs(dx) < DECIDE && Math.abs(dy) < DECIDE) return;
+      tLock = (Math.abs(dx) > Math.abs(dy) * H_DOMINANCE) ? 1 : -1;
+    }
+    if (tLock === 1) e.preventDefault();   // горизонталь наша → браузер не отменит жест
+    else tActive = false;                  // вертикаль → отдаём нативному скроллу
+  }, { passive: false, capture: true });
+
+  document.addEventListener('touchend', function (e) {
+    if (!tActive) return;
+    tActive = false;
+    if (tLock !== 1) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - tx;
+    if (Math.abs(dx) < SWIPE_MIN) return;
+    step(dx < 0 ? 1 : -1);                  // влево → следующая, вправо → предыдущая
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchcancel', function () { tActive = false; }, true);
+
+  // — MOUSE (десктоп / фолбэк) — pointer-events, срабатывает и на pointercancel. —
+  var mx = 0, my = 0, mLast = 0, mDown = false, mLock = 0, mSkip = false;
 
   document.addEventListener('pointerdown', function (e) {
-    // только основной указатель (тач/мышь левой кнопкой)
-    if (e.pointerType === 'mouse' && e.button !== 0) { tracking = false; return; }
-    // жест начат на горизонтальном скроллере → не перехватываем
-    if (e.target.closest && e.target.closest(H_SCROLLERS)) { tracking = false; return; }
-    tracking = true; sx = e.clientX; sy = e.clientY;
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    mDown = true; mLock = 0; mSkip = onHScroller(e.target);
+    mx = e.clientX; my = e.clientY; mLast = e.clientX;
   }, true);
 
-  function endSwipe(e) {
-    if (!tracking) return;
-    tracking = false;
-    var dx = e.clientX - sx, dy = e.clientY - sy;
+  document.addEventListener('pointermove', function (e) {
+    if (!mDown || mSkip) return;
+    mLast = e.clientX;
+    var dx = e.clientX - mx, dy = e.clientY - my;
+    if (mLock === 0 && (Math.abs(dx) >= DECIDE || Math.abs(dy) >= DECIDE)) {
+      mLock = (Math.abs(dx) > Math.abs(dy) * H_DOMINANCE) ? 1 : -1;
+    }
+  }, true);
+
+  function mEnd(e) {
+    if (!mDown) return;
+    mDown = false;
+    if (mSkip || mLock !== 1) return;
+    var x = (e && typeof e.clientX === 'number' && e.type !== 'pointercancel') ? e.clientX : mLast;
+    var dx = x - mx;
     if (Math.abs(dx) < SWIPE_MIN) return;
-    if (Math.abs(dx) < Math.abs(dy) * SWIPE_RATIO) return;  // вертикальный скролл
-    step(dx < 0 ? 1 : -1);   // влево → следующая, вправо → предыдущая
+    step(dx < 0 ? 1 : -1);
   }
-  document.addEventListener('pointerup', endSwipe, true);
+  document.addEventListener('pointerup', mEnd, true);
+  document.addEventListener('pointercancel', mEnd, true);
 })();
