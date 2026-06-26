@@ -8,8 +8,9 @@
  * (длительность видео). Высоты разные → masonry-эффект (CSS multicol).
  */
 
-/* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, верт. 12. */
-.collection-chips { padding: var(--space-3) 0 var(--space-1); }
+/* Ряд чипсов-категорий над гридом (паттерн как в Трибуне): бока 16, верх 12,
+   до грида 24. */
+.collection-chips { padding: var(--space-3) 0 var(--space-6); }
 .collection-chips .chips-view__row { padding: 0 var(--space-4); }
 
 .collection-grid {
@@ -56,7 +57,8 @@
    заголовок→автор 4. */
 .pin .uni-card-content {
   width: 100%;
-  padding: 0;
+  box-sizing: border-box;
+  padding: 0 0 0 var(--space-1);   /* 4 слева у блока заголовок+группа (как в макете) */
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
