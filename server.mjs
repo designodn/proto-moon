@@ -3,17 +3,16 @@
  * server.mjs — раздаёт статический прототип и сам обновляет ленту из гуглшита.
  *
  * Зачем: сайт — чистая статика, но данные «запекаются» в файлы скриптами
- * scripts/fetch-*.mjs. Чтобы лента обновлялась сама, этот сервер по таймеру
- * гоняет scripts/fetch-all.mjs (перезаписывает data/*.json и HTML-страницы
- * прямо в контейнере) и отдаёт уже свежие файлы.
+ * scripts/fetch-*.mjs. Чтобы лента была свежей, этот сервер гоняет
+ * scripts/fetch-all.mjs (перезаписывает data/*.json и HTML-страницы прямо в
+ * контейнере) при старте и по кнопке на лендинге, и отдаёт свежие файлы.
  *
  * Запуск (Railway делает это сам через `npm start`):
  *   node server.mjs
  *
  * Переменные окружения:
- *   PORT                   — порт (Railway задаёт сам; локально по умолчанию 3000)
- *   SYNC_INTERVAL_MINUTES  — как часто пересобирать ленту (по умолчанию 15; 0 — выкл.)
- *   SYNC_ON_START          — гонять синк при старте ("false" чтобы выключить)
+ *   PORT           — порт (Railway задаёт сам; локально по умолчанию 3000)
+ *   SYNC_ON_START  — гонять синк при старте ("false" чтобы выключить)
  *
  * Требование: Google-таблица открыта «всем, у кого есть ссылка», иначе
  * gviz-CSV не отдаст данные и синк будет падать (сайт при этом раздаётся).
@@ -26,7 +25,6 @@ import { dirname, resolve, join, normalize, extname } from 'node:path';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
-const SYNC_INTERVAL_MIN = Number(process.env.SYNC_INTERVAL_MINUTES ?? 15);
 const SYNC_ON_START = String(process.env.SYNC_ON_START ?? 'true') !== 'false';
 
 /* ── Прототипы: красивый путь → реальная стартовая страница ───────────────── */
@@ -264,11 +262,6 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Сервер слушает :${PORT}`);
   console.log(`Прототипы: /nv, /activity, /q3, /preview`);
+  console.log('Синк ленты: при старте и по кнопке на лендинге');
   if (SYNC_ON_START) runSync('startup');
-  if (SYNC_INTERVAL_MIN > 0) {
-    setInterval(() => runSync('interval'), SYNC_INTERVAL_MIN * 60_000);
-    console.log(`Автосинк ленты: каждые ${SYNC_INTERVAL_MIN} мин`);
-  } else {
-    console.log('Автосинк по таймеру выключен (SYNC_INTERVAL_MINUTES=0)');
-  }
 });
