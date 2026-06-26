@@ -1,48 +1,56 @@
 <!DOCTYPE html>
-<html lang="ru" class="__ui-theme_enabled __ui-theme_light">
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Вокруг вас сейчас — New Vision</title>
-<link rel="stylesheet" href="new-vision.css">
-<!-- синхронно в <head>: пометить направление перехода до первой отрисовки -->
-<script src="../components/screen-transition.js"></script>
-<script src="../components/ok-tabbar.js"></script>
+<!-- Дубль страницы «Вокруг вас» в q3-стиле для activity-lenta. Лежит в подпапке,
+     <base href="../"> резолвит общие ассеты от корня (см. activity-lenta/lenta.html).
+     Иконки — не-NV (status/back — img из assets/icons; шеврон промо — chevron-right). -->
+<base href="../">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Вокруг вас сейчас — activity-лента</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="components/activity-widget.css">
 <style>
+  * { -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
-  .phone-frame {
-    width: 100%;
-    max-width: none;
-    height: 100dvh;
-    min-height: 100dvh;
-    background: var(--dynamic-surface-base-secondary); /* белый, без серого под ячейками */
+  .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
+                 background: var(--dynamic-surface-base-secondary); }
+  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone-frame__feed::-webkit-scrollbar { display: none; }
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+  .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
+  /* Шеврон промо-баннера — не-NV (перебиваем NV-глиф из promo-banner.css). */
+  .promo-banner.__view-kr .promo-banner__chevron {
+    -webkit-mask: url('assets/icons/chevron-right.svg') no-repeat center / contain;
+            mask: url('assets/icons/chevron-right.svg') no-repeat center / contain;
   }
 </style>
 </head>
 <body>
 
-  <div class="phone-frame">
-
+  <div class="phone-frame __fullscreen" data-screen>
     <div class="phone-frame__feed">
 
-      <!-- MeshokUp: sticky status + nav -->
+      <!-- Шапка: status-bar (img-иконки, как в activity-lenta) + nav-bar «назад» + заголовок -->
       <div class="meshok-up">
         <div class="status-bar">
           <span class="status-bar__time">9:41</span>
           <span class="status-bar__indicators">
-            <span class="icon __slot-status-wifi" style="width:16px;height:12px"></span>
-            <span class="icon __slot-status-signal" style="width:17px;height:12px"></span>
-            <span class="icon __slot-status-battery" style="width:25px;height:12px"></span>
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
           </span>
         </div>
         <div class="nav-bar __type-feed">
           <div class="nav-bar__leading">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" data-href="lenta.html" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" id="navBack" aria-label="Назад"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/back_24.svg" width="24" height="24" alt=""></span></button></span>
             <span class="ds-title-l">Вокруг вас сейчас</span>
           </div>
           <div class="nav-bar__trailing">
-            <!-- Индикатор «новых» вокруг вас: пульс → счётчик → «N новых».
-                 Логика-сценарий ниже в инлайн-скрипте (см. activity-indicator). -->
+            <!-- Индикатор «новых»: пульс → счётчик → «N новых» (сценарий — скрипт ниже). -->
             <span class="activity-indicator" data-state="pulse" aria-live="polite" aria-label="Новые события вокруг вас">
               <span class="pulse-dot __view-custom"></span>
               <span class="activity-indicator__badge">
@@ -53,13 +61,13 @@
         </div>
       </div>
 
-      <!-- Все типы ячеек «Вокруг вас сейчас» -->
+      <!-- Все типы ячеек «Вокруг вас сейчас» (наполняет scripts/fetch-activity.mjs) -->
       <div class="activity-list" id="activityList">
 
-        <!-- Промо-баннер «Копите народные билеты» — вариация компонента promo-banner -->
-        <a class="promo-banner __view-kr" href="#">
+        <!-- Промо-баннер «Копите народные билеты» -->
+        <a class="promo-banner __view-kr" href="#" onclick="return false">
           <p class="promo-banner__title ds-title-m">Копите народные билеты</p>
-          <img class="promo-banner__art" src="../assets/new-vision/banner-vokrug.png" alt="">
+          <img class="promo-banner__art" src="assets/new-vision/banner-vokrug.png" alt="">
           <span class="promo-banner__chevron" aria-hidden="true"></span>
         </a>
 
@@ -250,56 +258,68 @@
         <!-- ACTIVITY:END -->
       </div>
 
+      <!-- Таб-бар (q3) -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента" data-href="activity-lenta/lenta.html"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <ok-tabbar data-variant="nv" data-active="feed"></ok-tabbar>
-
   </div>
 
-<!-- Трофей «1 место» — Lottie в пустом контейнере .lead-trophy.
-     Подключение как у конфетти: autoplay, без emoji и без data_ready.
-     Нет сети/CDN — контейнер просто пустой. -->
-<script>
-(function () {
-  var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
-  if (!hosts.length) return;
-  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  <!-- «Назад» → в ленту (история сохраняет таб/скролл; фолбэк — прямой переход). -->
+  <script>
+    (function () {
+      var back = document.getElementById('navBack');
+      if (!back) return;
+      back.addEventListener('click', function () {
+        if (history.length > 1) history.back();
+        else location.href = 'activity-lenta/lenta.html';
+      });
+    })();
+  </script>
 
-  var LOTTIE_CDN = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
-  var lottieLoading = null;
-  function ensureLottie() {
-    if (window.lottie) return Promise.resolve(window.lottie);
-    if (lottieLoading) return lottieLoading;
-    lottieLoading = new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = LOTTIE_CDN; s.async = true;
-      s.onload = function () { resolve(window.lottie); };
-      s.onerror = reject;
-      document.head.appendChild(s);
+  <!-- Трофей «1 место» — Lottie (CDN, graceful: нет сети → пустой контейнер). -->
+  <script>
+  (function () {
+    var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
+    if (!hosts.length) return;
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var loading = null;
+    function ensureLottie() {
+      if (window.lottie) return Promise.resolve(window.lottie);
+      if (loading) return loading;
+      loading = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+        s.async = true; s.onload = function () { resolve(window.lottie); }; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return loading;
+    }
+    hosts.forEach(function (host) {
+      ensureLottie().then(function (lottie) {
+        var anim = lottie.loadAnimation({ container: host, renderer: 'svg', loop: !still, autoplay: !still, path: host.getAttribute('data-lottie') });
+        if (still) anim.addEventListener('DOMLoaded', function () { anim.goToAndStop(anim.totalFrames - 1, true); });
+      }).catch(function () {});
     });
-    return lottieLoading;
-  }
+  })();
+  </script>
 
-  hosts.forEach(function (host) {
-    ensureLottie().then(function (lottie) {
-      var anim = lottie.loadAnimation({
-        container: host, renderer: 'svg', loop: !still, autoplay: !still,
-        path: host.getAttribute('data-lottie')
-      });
-      if (still) anim.addEventListener('DOMLoaded', function () {
-        anim.goToAndStop(anim.totalFrames - 1, true);
-      });
-    }).catch(function () { /* нет сети — контейнер пустой */ });
-  });
-})();
-</script>
+  <!-- Индикатор «новых» — общий компонент (один источник для обеих okruzhenie). -->
+  <script src="components/activity-indicator.js"></script>
 
-<!-- Индикатор «новых» — общий компонент (один источник для обеих okruzhenie). -->
-<script src="../components/activity-indicator.js"></script>
-
-<!-- Люди для activity-ячеек (data-person-*) -->
-<script src="../data/people.js"></script>
-<script src="../components/people-data.js"></script>
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
+  <script src="components/tab-bar.js"></script>
 
 </body>
 </html>

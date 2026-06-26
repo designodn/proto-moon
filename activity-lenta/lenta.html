@@ -39,6 +39,7 @@
 <link rel="stylesheet" href="components/onboarding-marathon.css">
 <link rel="stylesheet" href="components/activity-widget.css">
 <link rel="stylesheet" href="components/today-widgets.css">
+<link rel="stylesheet" href="components/masonry.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <!-- Онбординг фотомарафона: перехват на window(capture) → раньше навигации в screen-transition.js -->
@@ -436,6 +437,10 @@
   /* Медиа в twitter-ряду (Друзья, 1 автор) — обычный .text-feed__media под текстом,
      отступ сверху как у секций карточки (12). */
   .caf__content > .text-feed__media { margin-top: var(--space-3); border-radius: 12px; }
+
+  /* Шапка 2-го круга («кто-то поставил класс») над twitter-картой: 16 по бокам
+     (как .caf__crumbs), 8 до ряда; 16 сверху даёт padding-top острова. */
+  .caf.__twitter-like > .text-feed__activity { padding: 0 var(--space-4); margin-bottom: var(--space-2); }
 </style>
 </head>
 <body>
@@ -503,7 +508,7 @@
              листа «Вокруг нас» — вручную не редактировать. Заголовок и позиция
              блока задаются в ленте (позже — из листа lenta-activity). -->
         <div class="island">
-          <a class="activity-header" href="new-vision/okruzhenie.html">
+          <a class="activity-header" href="activity-lenta/okruzhenie.html">
             <span class="ds-title-l">Вокруг вас сейчас</span>
             <span class="activity-header__chevron" aria-hidden="true"></span>
             <span class="pulse-dot"></span>
@@ -694,7 +699,6 @@
           <i style="--tx:-22px;--ty:0px;background:#2ec4b6"></i>
         </span>
         </div>
-        
         <!-- ACTIVITY-WIDGET:END -->
             </div>
           </div>
@@ -1216,7 +1220,7 @@
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="podborki" hidden>
-        <article class="text-feed island ll-tab-stub">
+        <div class="island ll-tabs-island">
           <div class="tabs ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="podborki">Подборки</button>
@@ -1225,8 +1229,66 @@
             <button class="tabs-tab ds-title-xl" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
-          <div class="ds-body-m ll-tab-stub__text">Здесь скоро появятся подборки</div>
-        </article>
+        </div>
+        <div class="collection-chips chips-view">
+          <div class="chips-view__row __nowrap">
+              <button class="chip-container __size-default __view-custom __selected-custom" style="--chip-background-color: var(--dynamic-surface-contrast-low); --chip-color-custom: var(--dynamic-text-and-icons-base-primary); --chip-background-selected-color: var(--static-surface-status-accent); --chip-selected-color: #fff;">Все</button>
+              <button class="chip-container __size-default __view-primary">Дача</button>
+              <button class="chip-container __size-default __view-primary">Еда</button>
+              <button class="chip-container __size-default __view-primary">Сделай сам</button>
+              <button class="chip-container __size-default __view-primary">Спорт</button>
+          </div>
+        </div>
+        <div class="collection-grid">
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-1.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Идеи для дачного участка</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-3.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Простые рецепты на каждый день</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-6.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Как утеплить дом к зиме</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-7.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Тренировки дома без инвентаря</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-2.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Выпечка: проверенные рецепты</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-5.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Сад и огород весной</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-4.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Полезные привычки</p></div>
+            </a>
+          </div>
+          <div class="uni-card-wrapper __size-160 pin">
+            <a class="uni-card __state-enabled">
+              <div class="uni-card-media"><img src="assets/embedded/av-9.webp" alt=""></div>
+              <div class="uni-card-content"><p class="ds-body-m pin__title">Уютный интерьер своими руками</p></div>
+            </a>
+          </div>
+        </div>
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="segodnya" hidden>
@@ -1529,6 +1591,7 @@
             <button class="tabs-tab ds-title-xl __state-on" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Сергей Чернышов</span> поставил класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
@@ -1685,6 +1748,7 @@
         </article>
 
         <article class="caf __twitter-like island">
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Зинаида Халина (Стребкова)</span> поставила класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
@@ -1916,6 +1980,7 @@
         </article>
 
         <article class="caf __twitter-like island">
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Ольга Стрельникова</span> поставила класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
