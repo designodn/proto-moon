@@ -600,28 +600,33 @@ ${body}
 }
 
 /** Блок комментов под карточкой (fc-list + fc-input). '' — если нет ни одного. */
-function renderCommentThread(p) {
+function renderCommentThread(p, opts = {}) {
   const list = p.threadComments || [];
   if (!list.length) return '';
   // comment-as-feed — сама карточка ЕСТЬ коммент, поэтому вложенные — это
   // «ответы»/«ответ» (а не «комментарии»/«комментарий»), и ссылку «Посмотреть
   // все ответы» показываем всегда при наличии ответа (как в эталоне Figma).
   // Внутри comment-as-feed ответы рисуем в twitter-like (тот же ряд, что карточка).
-  const asReplies = p.type === 'comment-as-feed';
+  // tw      — твиттер-ряд ответов/комментов (ава 44 + «палка» слева, имя·дата);
+  // replies — лейблы «ответы» (comment-as-feed) vs «комментарии» (обычные фиды).
+  // По умолчанию оба = (это comment-as-feed). Твиттер-табы (Подарки/Друзья)
+  // зовут с {tw:true, replies:false} — твиттер-стиль, но лейблы «комментарии».
+  const tw = opts.tw ?? (p.type === 'comment-as-feed');
+  const replies = opts.replies ?? (p.type === 'comment-as-feed');
   // Времени на отдельный ответ в данных нет — в twitter-like берём из TIMES
   // (разное на каждый ответ), в том же формате, что и «· время» у caf__head.
   const items = list.map((c, j) => commentItem(c.authorId, c.text, {
-    tw: asReplies,
-    time: asReplies ? TIMES[(j + 1) % TIMES.length] : '',
+    tw,
+    time: tw ? TIMES[(j + 1) % TIMES.length] : '',
   })).join('\n');
-  const moreLabel = asReplies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
-  const placeholder = asReplies ? 'Написать ответ…' : 'Написать комментарий…';
+  const moreLabel = replies ? 'Посмотреть все ответы' : 'Посмотреть все комментарии';
+  const placeholder = replies ? 'Написать ответ…' : 'Написать комментарий…';
   // «Посмотреть …» — в обычной ленте показываем, только если у поста всего
   // больше 2 комментов (счётчик из actions-bar, поле comments — не число
-  // отрисованных в fc-list); для comment-as-feed (ответы) — всегда.
-  const showMore = asReplies || Number(p.comments) > 2;
+  // отрисованных в fc-list); для ответов (comment-as-feed) — всегда.
+  const showMore = replies || Number(p.comments) > 2;
   const more = showMore
-    ? `\n            <div class="fc-more${asReplies ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
+    ? `\n            <div class="fc-more${tw ? ' __twitter-like' : ''}">\n              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">${esc(moreLabel)}</span></button></span>\n            </div>`
     : '';
   // Поле ответа: ава 44 + поле size-44 (радиус = высота/4) + иконка send справа.
   const input = `          <div class="fc-input">
@@ -631,7 +636,7 @@ function renderCommentThread(p) {
               <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>`;
-  const listClass = asReplies ? 'fc-list __twitter-like' : 'fc-list';
+  const listClass = tw ? 'fc-list __twitter-like' : 'fc-list';
   return `          <div class="${listClass}">\n${items}${more}\n          </div>\n${input}`;
 }
 
@@ -1354,14 +1359,37 @@ function renderTwitterCard(p, idx) {
   } else {
     const body = title && text ? `${title}. ${text}` : (title || text);
     if (body) inner += '\n' + cafTextTw(body);
-    if (photos.length) inner += `\n                <div class="caf__media">${img(photos[0], 'style="width:100%; display:block" ')}</div>`;
+    if (photos.length) {
+      if (ids.length >= 2) {
+        // 2 автора → репост/цитата: медиа в reshare-превью (reply-стиль оригинала).
+        const to = ids[1];
+        inner += `
+                <div class="text-feed__reshare-card">
+                  <div class="text-feed__reshare-card-author">
+                    <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
+                    <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
+                  </div>
+                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>
+                </div>`;
+      } else {
+        // 1 автор → нормальное медиа под текстом, как в обычном фиде (text-feed__media).
+        inner += '\n' + media(photos);
+      }
+    }
   }
+
+  // Комменты к фиду — тем же твиттер-рядом (fc-comment __twitter-like), но с
+  // лейблами «комментарии» (не «ответы»). «Палку» вниз у авы рисуем, если есть тред.
+  const hasThread = (p.threadComments || []).length > 0;
+  const line = hasThread ? '\n                <span class="caf__line" aria-hidden="true"></span>' : '';
+  const thread = renderCommentThread(p, { tw: true, replies: false });
+  const threadBlock = thread ? '\n' + thread : '';
 
   return `        <article class="caf __twitter-like island">${crumbsBlock}
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
-                <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>
+                <div class="avatar __size-44 __type-image">${img(personPhoto(aid))}</div>${line}
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1370,7 +1398,7 @@ function renderTwitterCard(p, idx) {
                 </div>${inner}
 ${cafActions(comments, reshares, likes)}
               </div>
-            </div>
+            </div>${threadBlock}
           </div>
         </article>`;
 }

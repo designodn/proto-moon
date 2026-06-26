@@ -432,10 +432,9 @@
   /* Заглушка пустого/будущего таба (Подборки, Сегодня — пока). */
   .ll-tab-stub__text { color: var(--dynamic-text-and-icons-base-secondary); }
 
-  /* Медиа внутри twitter-ряда (Подарки/Друзья): фото в правой колонке .caf__content,
-     скруглённое, на всю ширину контента. */
-  .caf__media { margin-top: var(--space-2); border-radius: 12px; overflow: hidden; }
-  .caf__media img { width: 100%; display: block; }
+  /* Медиа в twitter-ряду (Друзья, 1 автор) — обычный .text-feed__media под текстом,
+     отступ сверху как у секций карточки (12). */
+  .caf__content > .text-feed__media { margin-top: var(--space-3); border-radius: 12px; }
 </style>
 </head>
 <body>
@@ -1257,6 +1256,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/7.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1280,6 +1280,32 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/11.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Ольга Стрельникова</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">клас</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1288,6 +1314,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/7.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1311,6 +1338,32 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/10.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Александр Попов</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">вауууу</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1370,7 +1423,7 @@
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body caf__text feed-more__text">Из истории моего родного Уварова. УВАРОВО, город в Тамбовской области, административный центр одноименного района Тамбовской области. Расположен в юго-восточной<span class="feed-more__full"> части Окско-Донской равнины, на правом берегу реки Вороны, в 117 км от Тамбова. Железнодорожная станция (Обловка) на линии Тамбов – Камышин. Узел автомобильных дорог. Население: 2018 – 24 тысяч человек (1,1 % области), 1899 – около 10 тысяч человек 1992 – 34,8 тысяч человек.</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.tildacdn.com/tild3439-3165-4363-b036-356136353063/festival-vishnevyy-s.jpg" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span></span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
@@ -1386,6 +1439,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/1.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1400,6 +1454,52 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Зинаида Халина (Стребкова)</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">Ну и у нас также, каждый год одна и та же песня, ПУТИН ОБРАТИ ВНИМАНИЕ!!!!!!</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/6.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Александр Кириевич</span>
+                  <span class="ds-body-m fc-comment__date">· 18:02</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">руки потому что не из тго места</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1413,6 +1513,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/group-7.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1420,7 +1521,7 @@
                   <span class="ds-body-m caf__date">· 18:02</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Первый финал Мирры на «Ролан Гаррос» и ТБШ!. Юная россиянка разгромила украинку Костюк и добыла путёвку в решающий матч грунтового мэйджора.</p>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://img.championat.com/caWfEA3LezFjVnP2JPXp7NFhWD36ZbU30qp9lnjp84k/p(w:1350/h:900)/news/big/w/x/pervyj-final-mirry-na-rolan-garros-i-tbsh_17805842321074752508.jpg" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>34</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>52</span></button></span>
@@ -1428,6 +1529,38 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Зинаида Халина (Стребкова)</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">Я тоже уверен....что сейчас это произойдет.....она готова, если конечно наша Миррочка только не перегорит....психология, она такая<span class="feed-more__full"> штука....удачи Миррочка в финале....да и в будущих тоже )</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1442,7 +1575,7 @@
                   <span class="ds-title-s caf__name">Антонида Чекалова (Гахова)</span>
                   <span class="ds-body-m caf__date">· 12:03</span>
                 </div>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSykFZdUS5d72azKYyGWFCN43QFZwomD7H9WzDjK4q4jNdtt350_O1jdqFoPDBGYmIaz3RHg6CdaGeeNBJGbaCvUbxFDGfsa-Rd_I2_uaLpCshlQ_BT8kNiMEnpLYc1lFlCa2yyoxyFhy6hvqXqiS0FE5AhUjznJDLnS_NYXX00v5KOs2-oeoeZAVc5xFVnQAAACk&amp;dpr=2" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSykFZdUS5d72azKYyGWFCN43QFZwomD7H9WzDjK4q4jNdtt350_O1jdqFoPDBGYmIaz3RHg6CdaGeeNBJGbaCvUbxFDGfsa-Rd_I2_uaLpCshlQ_BT8kNiMEnpLYc1lFlCa2yyoxyFhy6hvqXqiS0FE5AhUjznJDLnS_NYXX00v5KOs2-oeoeZAVc5xFVnQAAACk&amp;dpr=2" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span></span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span></span></button></span>
@@ -1465,7 +1598,7 @@
                   <span class="ds-body-m caf__date">· 10:05</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Ох помню разбили окно соседке тете Люде, столько люлей отхватили ))) хорошее раньше было детство.</p>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&amp;s=10" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUIwVk-yE_AhxsqAelteG6dP92IT3z773VhFVHHhOAum9-jr-iK_eN7SDi&amp;s=10" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>2</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
@@ -1486,6 +1619,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/group-10.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1496,7 +1630,7 @@
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body caf__text feed-more__text">Соседи не верили, что лук можно выращивать без перекопки. Когда я впервые посадила лук без перекопки, была уверена, что осенью он обязательно взойдет, лето<span class="feed-more__full"> должно быть сухое</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Allium_sativum_001.JPG" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Allium_sativum_001.JPG" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>12</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>2</span></button></span>
@@ -1504,6 +1638,58 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/5.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Антонида Чекалова (Гахова)</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">Мы перестали копать и пахать огород сразу как дом купили.весной мотоблоком рыхлим неглубоко.копаем пока под морковь,грядки тоже<span class="feed-more__full"> делаем</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/6.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Александр Кириевич</span>
+                  <span class="ds-body-m fc-comment__date">· 18:02</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">Ой, какая красота с мотоблоком, а не подскажите какой у вас, тоже хочу, выбираем не можем выбрать, может фото есть агрегата<span class="feed-more__full"> спасибо</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1512,6 +1698,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1529,6 +1716,32 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/4.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Виктор Бондарев</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">я люблю груши</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1537,6 +1750,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/8.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1544,7 +1758,7 @@
                   <span class="ds-body-m caf__date">· 14:02</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Мои любимые и родные!!!!Обожаю вас</p>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://восход-сямженский.рф/media/resized/Yv9ucaHaoJDFQ8ptdjWzfwpOb74TY-66-L4n64Ye8Ik/rs:fit:1024:768/aHR0cHM6Ly94bi0t/LS1jdGJnZmVuaGdw/bWZhMmJkZTljeWsu/eG4tLXAxYWkvbWVk/aWEvcHJvamVjdF9z/bWkzXzgyOS85Ny8z/Ny9jOC83Zi8yYS8w/NC96YWp0c2V2YS5q/cGc.jpg" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>1</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
@@ -1552,6 +1766,32 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/5.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Антонида Чекалова (Гахова)</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">ну красавицы!!!!!</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1560,6 +1800,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/9.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1567,7 +1808,7 @@
                   <span class="ds-body-m caf__date">· 11:18</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Помню, когда была маленькая, мы с бабушкой каждый год выращивали рассаду и… соревновались. У кого вырастет крепче и лучше.</p>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/1714257/pub_5dc141ab9c944600aeb23c3c_5dc14c2e5eb26800b0a355c1/scale_1200" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>1</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
@@ -1575,6 +1816,32 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/7.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Галина Гаджикулиева</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">Внученька, я тоже тебя люблю</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1588,6 +1855,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/group-8.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1595,7 +1863,7 @@
                   <span class="ds-body-m caf__date">· 7:30</span>
                 </div>
           <p class="ds-body-m text-feed__body caf__text feed-more__text">Шринкфляция отобрала у россиян сосиску. В упаковке «Клинских» теперь 7 сосисок вместо 8. Вес снизился на 50 граммов, а цена осталась прежней.</p>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://avatars.dzeninfra.ru/get-zen_doc/5233346/pub_6327c45876cc3128dadfaa81_6327c88b0ed4f941ee6de702/scale_1200" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>35</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>4</span></button></span>
@@ -1603,6 +1871,58 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/11.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Ольга Стрельникова</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">А что туалетная бумага была много разовая, я такого не помню! Видимо собирали сушили и еще несколько раз пользовались таким<span class="feed-more__full"> макаром!</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/9.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Екатерина )))))</span>
+                  <span class="ds-body-m fc-comment__date">· 18:02</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">Просто у вас ум короток и с юмором туговато. Вспомните, что раньше выпускали в рулоне бумаги, было определенное количество метража<span class="feed-more__full"> и он был постоянный. А теперь упаковка туалетной бумаги стоит дороже, но бумаги в ней меньше, можно сказать на один раз.</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1616,6 +1936,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/group-9.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1626,7 +1947,7 @@
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body caf__text feed-more__text">Рыба под маринадом с пюре. 1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить<span class="feed-more__full"> лук пару минут, далее добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://img.iamcook.ru/old/upl/recipes/cat/u-b6ecc0158277d4ef2eb2627477a48375.JPG" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>44</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>2</span></button></span>
@@ -1634,6 +1955,52 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/vvz-1.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Карасев Дмитрий</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">Очень вкусно и просто. Спасибо за рецепт.</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/2.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Сергей Чернышов</span>
+                  <span class="ds-body-m fc-comment__date">· 18:02</span>
+                </div>
+          <p class="fc-comment__text ds-body-m feed-more__text">Замечательное блюдо! И полезное.</p>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
 
@@ -1647,6 +2014,7 @@
             <div class="caf__row">
               <div class="caf__aside">
                 <div class="avatar __size-44 __type-image"><img src="assets/people/group-11.jpg" alt=""></div>
+                <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
                 <div class="caf__head">
@@ -1657,7 +2025,7 @@
             <input type="checkbox" hidden>
             <p class="ds-body-m text-feed__body caf__text feed-more__text">Из Москвы скоро побегут. Москва начала уезжать. Без оркестров и прощальных речей. Люди уходят и больше не возвращаются жить в этот дорогой аттракцион<span class="feed-more__full">. Не верите? Давайте посморим на Москву через 100 лет</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
           </label>
-                <div class="caf__media"><img style="width:100%; display:block" src="https://static.mk.ru/upload/entities/2015/12/28/articles/detailPicture/fd/6a/2d/980042405_8194598.jpg" alt=""></div>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="https://static.mk.ru/upload/entities/2015/12/28/articles/detailPicture/fd/6a/2d/980042405_8194598.jpg" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>76</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>45</span></button></span>
@@ -1665,6 +2033,38 @@
               </div>
               </div>
             </div>
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like">
+              <div class="fc-comment__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+                <span class="fc-comment__line" aria-hidden="true"></span>
+              </div>
+              <div class="fc-comment__body">
+                <div class="fc-comment__head">
+                  <span class="ds-title-s fc-comment__author">Зинаида Халина (Стребкова)</span>
+                  <span class="ds-body-m fc-comment__date">· 12:48</span>
+                </div>
+          <label class="feed-more">
+            <input type="checkbox" hidden>
+            <p class="fc-comment__text ds-body-m feed-more__text">Посмотрите во что превратилась столица автомобиле строения Дейтрот в Америке, то же самое ждёт и Москву если не прекратится<span class="feed-more__full"> бессистемное наполнение толпами</span><span class="feed-more__btn"><span class="feed-more__show">…&nbsp;ещё</span><span class="feed-more__hide">Скрыть</span></span></p>
+          </label>
+                <div class="fc-comment__actions">
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>
+                  <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+                </div>
+              </div>
+            </div>
+            <div class="fc-more __twitter-like">
+              <span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все комментарии</span></button></span>
+            </div>
+          </div>
+          <div class="fc-input">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.jpg" alt=""></div>
+            <div class="fc-input__field">
+              <input class="fc-input__text" placeholder="Написать комментарий…">
+              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+            </div>
+          </div>
           </div>
         </article>
         </div>
