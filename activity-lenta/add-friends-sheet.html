@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<!-- Прототип в подпапке activity-lenta/; общие ресурсы — в корне.
+     <base> резолвит все относительные пути от корня. Локальные ссылки
+     цепочки пишем явно с префиксом папки. -->
+<base href="../">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новые друзья — activity-лента</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="index.css">
+<!-- В head синхронно: pagereveal — направление перехода. -->
+<script src="components/screen-transition.js"></script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--dynamic-surface-base-primary);
+  }
+
+  .fp-scene {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--dynamic-surface-base-primary);
+    touch-action: pan-y;
+  }
+
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+
+  .fp-scene .meshok-up { position: absolute; left: 0; right: 0; top: 0; z-index: 5; }
+
+  /* Крестик закрытия — у правого края viewport */
+  .fp__close {
+    position: absolute;
+    /* Равный отступ 12px сверху и справа (статус-бар убран). */
+    top: 12px;
+    right: 12px;
+    width: 44px; height: 44px;
+    border: 0; padding: 0; background: transparent;
+    /* Явный цвет: иконка красится currentColor (CSS-mask), а Safari у
+       <button> по умолчанию ставит системный синий — крестик синел. */
+    color: var(--dynamic-text-and-icons-base-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .fp__close .icon { width: 24px; height: 24px; }
+
+  /* Заголовок — по центру по горизонтали через 50% + translateX(-50%). */
+  .fp__title {
+    position: absolute;
+    left: 50%;
+    width: 312px;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 32px; line-height: 1.2;
+    font-weight: 700;
+    /* Заголовок форсированно дисплейным катом OK Sans Display (а не Roboto). */
+    font-family: "OK Sans Display", var(--font-family, sans-serif);
+    letter-spacing: 0;
+    color: var(--dynamic-text-and-icons-base-primary);
+    margin: 0;
+    top: 56px;
+    transition: opacity 280ms ease-out;
+  }
+  /* Положение заголовка по стейтам задаётся из JS (STATES[i].title). */
+
+  /* Карточка — DS-компонент .friend-big-card 300×460. Позиция/размер/угол
+     задаются исключительно через transform (JS-спринг). */
+  .fp .friend-big-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: 0; /* левый край карточки прижат к центру viewport */
+    /* До того как JS-спринг выставит transform/opacity (applyState), карточки
+       не должны мелькать в полный рост по центру — стартуем скрытыми. */
+    opacity: 0;
+  }
+
+  /* z-index в кружковых стейтах (кучка): мелкие кружки (больший data-i) сверху. */
+  .fp .friend-big-card[data-i="1"] { z-index: 1; }
+  .fp .friend-big-card[data-i="2"] { z-index: 2; }
+  .fp .friend-big-card[data-i="3"] { z-index: 3; }
+  .fp .friend-big-card[data-i="4"] { z-index: 4; }
+  .fp .friend-big-card[data-i="5"] { z-index: 5; }
+  .fp .friend-big-card[data-i="6"] { z-index: 6; }
+  .fp .friend-big-card[data-i="7"] { z-index: 7; }
+
+  /* В стейтах 3+ (карточки в ряд) z-index одинаковый; улетающая — поверх. */
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card { z-index: 2; }
+  .fp .friend-big-card.__flying-up { z-index: 8; }
+
+  /* ── КРУЖОЧНЫЙ ВИЗУАЛ ─────────────────────────────────────────
+     В кружковых стейтах элементы выглядят как круглые аватарки: фото-квадрат
+     скруглён в круг и центрирован по высоте бокса (margin-top 80 = (460-300)/2),
+     карточная обвязка (фон, обводка, тень, инфо) скрыта.
+       __state-1 — кучка, __state-2 — разлёт, __state-5 — выход (падение вниз).
+     В ряду (__state-3/4) всё это плавно проявляется → полноценная карточка;
+     при «Дружить со всеми» (возврат в стейт 2 → падение) карточки так же
+     плавно сворачиваются обратно в кружки. Морф задаётся transition'ами в
+     friend-big-card.css. На первом рендере класс __state-1 уже стоит в разметке,
+     поэтому стартовый переход карточка→кружок НЕ проигрывается. */
+  /* По умолчанию карточка выглядит как голый кружок-фото: chrome (фон/рамка/
+     тень) и инфо СКРЫТЫ. Так на старте — до проявления ряда — мелькать нечему,
+     виден только круг. Chrome/инфо проявляем ТОЛЬКО в ряд-стейтах 3/4 (морф
+     кружок→карточка), а не гасим в кружковых — иначе ловим вспышку карточки. */
+  .fp .friend-big-card {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    /* Хром (фон/обводка/тень) проявляется синхронно с морфом — длительность
+       перебивает базовые 600ms из friend-big-card.css под EASE_DUR морфа. */
+    transition: background-color 600ms ease,
+                border-color 600ms ease,
+                box-shadow 600ms ease;
+  }
+  .fp .friend-big-card .friend-big-card__info { opacity: 0; }
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card {
+    background: #fff;
+    border-color: #e7e7e7;
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08),
+                0 2px 6px  rgba(0, 0, 0, 0.06);
+  }
+  .fp.__state-3 .friend-big-card .friend-big-card__info,
+  .fp.__state-4 .friend-big-card .friend-big-card__info { opacity: 1; }
+
+  /* В кружковых стейтах фото — круг 300×300, центрировано (margin-top 80). */
+  .fp.__state-1 .friend-big-card .friend-big-card__photo,
+  .fp.__state-2 .friend-big-card .friend-big-card__photo,
+  .fp.__state-5 .friend-big-card .friend-big-card__photo,
+  .fp.__state-6 .friend-big-card .friend-big-card__photo {
+    margin-top: 80px;
+    border-radius: 50%;
+  }
+
+  /* Логика высоты как в gift-card: фото ФИКСИРОВАННОЙ высоты (300×300 квадрат),
+     а карточка в ряду РАСТЁТ ВНИЗ (height:auto; позиционируется по верху через
+     transform ty), освобождая место под инфо/кнопку — фото НЕ сжимается.
+     В кружковых стейтах фото 300×300 центрируется (margin-top 80) в боксе 460. */
+  .friend-big-card__photo { transition: margin-top 600ms ease, border-radius 600ms ease; }
+  /* В ряду карточки равной высоты (по самой высокой — задаётся из JS в
+     --fp-row-card-h). min-height только в ряд-стейтах, чтобы не ломать
+     центровку кружков в кружковых стейтах (схлоп). */
+  .fp.__state-3 .friend-big-card,
+  .fp.__state-4 .friend-big-card { height: auto; min-height: var(--fp-row-card-h, 0px); }
+
+  /* Тех. класс для предварительного замера высоты карточки в ряду (на старте,
+     пока карточки невидимы): ряд-лейаут — фото без верхнего отступа, кнопка
+     «Дружить» развёрнута. JS снимает offsetHeight и фиксирует --fp-row-card-h
+     ДО показа ряда, чтобы карточки не «доезжали» по высоте на глазах.
+     Мерим ИСТИННЫЙ дизайн-бокс детерминированно, иначе замер разойдётся с
+     живой высотой и attachSwipe потом дёрнет recenter со ступенькой scale:
+       • transition:none — кнопка/фото встают в финал мгновенно (иначе offsetHeight
+         ловит max-height-переход 360ms в полёте → недомер);
+       • --friend-big-card-scale:1 — рамка ровно 1px (border-width: calc(1px/scale)
+         при мелком scale даёт 2px/сторону и +2px к боксу). --friend-big-card-scale
+         applyCard пишет ИНЛАЙНОМ, поэтому перебиваем !important, иначе замер
+         идёт с живым scale (0.42 в кучке → толстая рамка → +6px, недетерминизм). */
+  .fp.__measuring .friend-big-card { height: auto; min-height: 0; --friend-big-card-scale: 1 !important; }
+  .fp.__measuring .friend-big-card,
+  .fp.__measuring .friend-big-card * { transition: none !important; }
+  /* opacity:1 обязателен: measureRowCardH на миг снимает __state-4 и форсит
+     reflow (offsetHeight). Без этого правила кнопка в замере падает в базовый
+     opacity:0, и при возврате __state-4 проигрывается transition opacity 0→1 —
+     кнопка мигает ровно когда ряд доезжает в центр. Пин держит значение
+     одинаковым до и после замера → transition не запускается. */
+  .fp.__measuring .friend-big-card__accept { max-height: 100px; padding: 20px 16px 16px; opacity: 1; }
+
+  /* Транзишены полностью выключены — для атомарного коммита состояния ПОСЛЕ
+     замера: возвращаем стейт и снимаем __measuring под этим классом, чтобы
+     measure-значения (кнопка opacity:1/max-height, card-радиус фото) НЕ
+     анимировались в кружковые стейтовые → иначе кнопка мелькает на старте/1→2. */
+  .fp.__no-anim .friend-big-card,
+  .fp.__no-anim .friend-big-card * { transition: none !important; }
+
+  /* Кнопка «Дружить»: скрыта и НЕ занимает места (max-height/padding 0) в
+     кружковых стейтах. В ряду (state 3/4) показывается СРАЗУ — без свайпа.
+     При раскрытии карточка подрастает вниз, фото остаётся на месте. */
+  .friend-big-card__accept {
+    opacity: 0; pointer-events: none;
+    max-height: 0; padding: 0 16px; overflow: hidden;
+    transition: max-height 360ms ease, padding 360ms ease, opacity 320ms ease;
+  }
+  .fp.__state-3 .friend-big-card__accept,
+  .fp.__state-4 .friend-big-card__accept {
+    opacity: 1; pointer-events: auto;
+    max-height: 100px; padding: 20px 16px 16px;  /* 20 — зазор «авы → кнопка» */
+  }
+
+  /* Морф кружок→карточка: высоту (margin-top фото + max-height/padding кнопки)
+     на время приезда ведёт JS из того же прогресса, что и translate/scale
+     (см. transitionTo). Поэтому здесь выключаем CSS-transition'ы именно этих
+     свойств, оставляя анимироваться только косметику (скругление фото,
+     проявление кнопки). Без этого margin-top (600ms) и max-height (360ms)
+     разъезжаются: кнопка раскрывается раньше, чем съезжает фото, контент на
+     миг перерастает итоговую высоту — и бокс «прыгает» (≈576→550). */
+  .fp.__morphing .friend-big-card__photo { transition: border-radius 600ms ease; }
+  .fp.__morphing .friend-big-card__accept { transition: opacity 320ms ease; }
+
+  /* Карточка «Принять всех» — белая, по центру оранжевая галочка + текст.
+     Фиксируем высоту 460 даже в ряду (где остальные карточки height:auto) —
+     поэтому селектор со специфичностью стейта. */
+  .friend-big-card.__accept-all,
+  .fp.__state-3 .friend-big-card.__accept-all,
+  .fp.__state-4 .friend-big-card.__accept-all {
+    height: 460px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+  }
+  .friend-big-card.__accept-all .friend-big-card__all {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .friend-big-card__all-check { display: block; }
+  .friend-big-card__all-text {
+    color: var(--dynamic-text-and-icons-base-primary);
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+
+  .fp__handle {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 24px;
+  }
+  .fp__handle::after {
+    content: '';
+    position: absolute; bottom: 8px; left: 50%;
+    width: 134px; height: 5px; border-radius: 3px;
+    background: var(--dynamic-text-and-icons-base-primary);
+    transform: translateX(-50%);
+    opacity: .9;
+  }
+
+  /* Lottie-конфетти на финал «Дружить со всеми». */
+  .fp-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .fp-confetti svg { display: block; }
+
+  /* Финальная кнопка «Закрыть» — появляется через 2с после конфетти. Secondary
+     56, по 16px от краёв экрана, прижата к низу. Прячется до показа. */
+  .fp__finish {
+    position: absolute;
+    left: 16px; right: 16px; bottom: 24px;
+    z-index: 25;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 320ms ease, transform 320ms ease;
+  }
+  .fp__finish.__shown { opacity: 1; transform: none; pointer-events: auto; }
+  .fp__finish .button-wrapper,
+  .fp__finish .button-container { width: 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fp__title { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="fp-scene" id="fpScene">
+
+  <button class="fp__close" data-href="activity-lenta/lenta.html" aria-label="Закрыть">
+    <span class="icon __slot-close"></span>
+  </button>
+  <!-- Возврат крестика — на ленту Q3 (по умолчанию), либо на страницу из ?back.
+       Шторка открывается через location.replace (см. lenta-q3.html), поэтому
+       запись ленты в истории затёрта — history.back() увёл бы МИМО ленты.
+       Навигируем явно через location.replace; флаг screenNavBack сохраняет
+       анимацию «назад». nav-bar__back НЕ ставим — иначе общий back-обработчик
+       (screen-transition.js) сделал бы history.back(). -->
+  <script>
+    (function () {
+      // Шторка показана → помечаем гейт «afs-seen», чтобы возврат в ленту не
+      // переоткрывал её снова (баг «закрывается со второго раза»: при заходе
+      // напрямую из меню ОК флаг не выставлялся, и гейт в lenta-q3 на первом
+      // закрытии открывал ту же шторку заново).
+      try { sessionStorage.setItem('afs-seen-al', '1'); } catch (_) {}
+
+      var close = document.querySelector('.fp__close');
+      if (!close) return;
+      var target = 'activity-lenta/lenta.html';
+      try {
+        var back = new URLSearchParams(location.search).get('back');
+        if (back) { target = back; close.setAttribute('data-href', back); }
+      } catch (e) {}
+      close.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        try { sessionStorage.setItem('screenNavBack', '1'); } catch (_) {}
+        location.replace(target);
+      });
+    })();
+  </script>
+
+  <main class="fp __state-1" id="fp">
+    <h1 class="fp__title">У вас<br>5 заявок в друзья</h1>
+
+    <!-- 7 карточек-друзей. В кружковых стейтах рендерятся как круглые аватарки
+         (CSS), в ряду — как полноценные карточки с кнопкой «Дружить». -->
+    <article class="friend-big-card" data-i="1">
+      <div class="friend-big-card__photo">
+        <img src="assets/people/1.jpg" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Ольга Вайнер</div>
+        <div class="friend-big-card__caption">58 лет, Москва</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="assets/people/2.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/3.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/4.jpg" alt=""></div>
+          </div>
+          <span class="avatars-view__text">18 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="2">
+      <div class="friend-big-card__photo">
+        <img src="assets/people/2.jpg" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Александр Соколов</div>
+        <div class="friend-big-card__caption">42 года, Санкт-Петербург</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="assets/people/5.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/6.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/7.jpg" alt=""></div>
+          </div>
+          <span class="avatars-view__text">12 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="3">
+      <div class="friend-big-card__photo">
+        <img src="assets/people/3.jpg" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Михаил Фёдоров</div>
+        <div class="friend-big-card__caption">35 лет, Казань</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="assets/people/8.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/9.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/10.jpg" alt=""></div>
+          </div>
+          <span class="avatars-view__text">7 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="4">
+      <div class="friend-big-card__photo">
+        <img src="assets/people/4.jpg" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Екатерина Новикова</div>
+        <div class="friend-big-card__caption">29 лет, Москва</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="assets/people/11.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/5.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/6.jpg" alt=""></div>
+          </div>
+          <span class="avatars-view__text">5 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+    <article class="friend-big-card" data-i="5">
+      <div class="friend-big-card__photo">
+        <img src="assets/people/5.jpg" alt="" loading="lazy">
+      </div>
+      <div class="friend-big-card__info">
+        <div class="friend-big-card__name">Дмитрий Орлов</div>
+        <div class="friend-big-card__caption">47 лет, Сочи</div>
+        <div class="avatars-view __size-36 friend-big-card__mutual">
+          <div class="avatars-view__stack">
+            <div class="avatar __size-36 __type-image"><img src="assets/people/7.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/8.jpg" alt=""></div>
+            <div class="avatar __size-36 __type-image"><img src="assets/people/9.jpg" alt=""></div>
+          </div>
+          <span class="avatars-view__text">9 общих друзей</span>
+        </div>
+      </div>
+      <div class="friend-big-card__accept">
+        <div class="button-wrapper __size-56">
+          <button class="button-container __style-primary"><span class="button-content">Дружить</span></button>
+        </div>
+      </div>
+      <div class="friend-big-card__accept-overlay" aria-hidden="true"></div>
+      <div class="friend-big-card__accept-check" aria-hidden="true">
+        <img src="assets/icons/галочка.svg" alt="" width="115" height="98">
+      </div>
+    </article>
+
+
+
+    <!-- Последняя карточка «Принять всех» — точка входа в массовое принятие.
+         По тапу запускается схлоп оставшихся карточек + конфетти. -->
+    <article class="friend-big-card __accept-all" data-i="8">
+      <div class="friend-big-card__all">
+        <svg class="friend-big-card__all-check" width="96" height="82" viewBox="0 0 115 98" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4.21094 58.3466C21.0354 69.7613 28.7942 77.2497 39.1654 92.8613C62.8023 51.3892 77.96 31.608 110.211 5.86133" stroke="#F55418" stroke-width="15" stroke-linejoin="bevel"/>
+        </svg>
+        <div class="friend-big-card__all-text">Принять<br>всех друзей</div>
+      </div>
+    </article>
+  </main>
+
+  <div class="fp-confetti" id="fpConfetti" aria-hidden="true"></div>
+
+  <!-- Финальная кнопка «Закрыть» (показывается через 2с после конфетти). -->
+  <div class="fp__finish" id="fpFinish" aria-hidden="true">
+    <div class="button-wrapper __size-56">
+      <button class="button-container __style-secondary" type="button" id="fpFinishClose"><span class="button-content">Закрыть</span></button>
+    </div>
+  </div>
+
+</div>
+
+<script src="components/back-button.js"></script>
+<!-- Реальные люди из листа «Люди» (data/people.js). Берём первых 7 и
+     раскладываем по карточкам data-i 1..7: имя, подпись (возраст, город), фото. -->
+<script src="data/people.js"></script>
+<script>
+  (function () {
+    var people = window.DS_PEOPLE_DATA || [];
+    function ageWord(n) {
+      var a = n % 100;
+      if (a >= 11 && a <= 14) return 'лет';
+      var b = n % 10;
+      if (b === 1) return 'год';
+      if (b >= 2 && b <= 4) return 'года';
+      return 'лет';
+    }
+    function caption(p) {
+      var parts = [];
+      if (p.age != null) parts.push(p.age + ' ' + ageWord(p.age));
+      if (p.city) parts.push(p.city);
+      return parts.join(', ');
+    }
+    // Только люди (не сообщества) — у групп id-строка вида "group-N". Общие
+    // друзья должны быть людьми, поэтому группы из пула исключаем.
+    function isGroup(p) { return typeof p.id === 'string' && p.id.indexOf('group-') === 0; }
+    var withPhoto = people.filter(function (p) { return p && p.photo && !isGroup(p); });
+    // N РАЗНЫХ случайных фото (без повторов внутри одной карточки): тасуем копию
+    // реестра и берём первые n. exclude — фото самого человека карточки.
+    function distinctPhotos(n, exclude) {
+      var pool = withPhoto
+        .map(function (p) { return p.photo; })
+        .filter(function (ph) { return ph && ph !== exclude; });
+      for (var k = pool.length - 1; k > 0; k--) {
+        var j = Math.floor(Math.random() * (k + 1));
+        var t = pool[k]; pool[k] = pool[j]; pool[j] = t;
+      }
+      return pool.slice(0, n);
+    }
+    for (var i = 0; i < 5; i++) {
+      var p = people[i];
+      if (!p) continue;
+      var card = document.querySelector('.friend-big-card[data-i="' + (i + 1) + '"]');
+      if (!card) continue;
+      var nameEl = card.querySelector('.friend-big-card__name');
+      if (nameEl) nameEl.textContent = p.name;
+      var capEl = card.querySelector('.friend-big-card__caption');
+      if (capEl) capEl.textContent = caption(p);
+      var img = card.querySelector('.friend-big-card__photo img');
+      if (img && p.photo) { img.src = p.photo; img.alt = p.name; }
+      // Общие друзья — РАЗНЫЕ случайные аватарки из реестра (без повторов
+      // в пределах одной карточки и без фото самого человека).
+      var mutualImgs = card.querySelectorAll('.friend-big-card__mutual .avatar img');
+      var photos = distinctPhotos(mutualImgs.length, p.photo);
+      mutualImgs.forEach(function (a, k) {
+        if (photos[k]) { a.src = photos[k]; a.alt = ''; }
+      });
+    }
+  })();
+</script>
+<!-- Lottie-плеер для конфетти на финал «Дружить со всеми». -->
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+<script>
+  (function () {
+    var root  = document.getElementById('fp');
+    var scene = document.getElementById('fpScene');
+    if (!root) return;
+
+    // ── СПРИНГ ──────────────────────────────────────────────────
+    var SPRING = { k: 96, c: 6, m: 1, duration: 2000, delay: 500 };
+
+    function makeSpring(k, c, m) {
+      var w0 = Math.sqrt(k / m);
+      var z  = c / (2 * Math.sqrt(k * m));
+      if (Math.abs(z - 1) < 1e-6) {
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - (1 + w0 * t) * Math.exp(-w0 * t);
+        };
+      }
+      if (z < 1) {
+        var wd = w0 * Math.sqrt(1 - z * z);
+        return function (tMs) {
+          var t = tMs / 1000;
+          return 1 - Math.exp(-z * w0 * t) *
+            (Math.cos(wd * t) + (z * w0 / wd) * Math.sin(wd * t));
+        };
+      }
+      var wd2 = w0 * Math.sqrt(z * z - 1);
+      return function (tMs) {
+        var t = tMs / 1000;
+        return 1 - Math.exp(-z * w0 * t) *
+          (Math.cosh(wd2 * t) + (z * w0 / wd2) * Math.sinh(wd2 * t));
+      };
+    }
+
+    // ── СТЕЙТЫ ──────────────────────────────────────────────────
+    // Конверсия в transform-translate (карточка 300×460):
+    //   tx = cx - 330  (= cx - 180 (центр 360-сетки) - 150 (половина CSS-карточки))
+    //   ty = cy - 230  (половина высоты карточки 460)
+    //   scale = unrotated_w / 300
+    // 7 карточек (data-i 1..7). cx — в 360-сетке (центр=180); cy — центр круга
+    // (фото центрируется в боксе через margin-top:80); s — масштаб (⌀круга/300).
+    var STATES = [
+      // Стейт 1 — КУЧКА: все 7 кружков сбиты в кучу у центра (~190,455).
+      // Аватарки на 0% прозрачности → к стейту 2 (разлёт) проявляются до 100%.
+      { title: 210, cards: {
+          1: { cx: 193.45, cy: 442.35, s: 0.42234, r: 0, o: 0 },
+          2: { cx: 210.85, cy: 466.55, s: 0.48377, r: 0, o: 0 },
+          3: { cx: 169.45, cy: 457.55, s: 0.46317, r: 0, o: 0 },
+          4: { cx: 191.25, cy: 468.25, s: 0.30167, r: 0, o: 0 },
+          5: { cx: 213.90, cy: 448.90, s: 0.24600, r: 0, o: 0 },
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }   // «принять всех» — скрыта в интро
+      }},
+      // Стейт 2 — РАЗЛЁТ: облако кружков С ЗАЗОРАМИ, без наложений, по центру и
+      // в границах экрана (bbox-центр ≈ 180/468). ⌀ слегка уменьшены, чтобы 7
+      // кружков развести без перекрытий в ширину 390.
+      { title: 56, cards: {
+          1: { cx: 229, cy: 333, s: 0.65330, r: 0, o: 1 },  // ⌀196 (крупный, верх-право)
+          2: { cx: 224, cy: 578, s: 0.56000, r: 0, o: 1 },  // ⌀168 (низ-право)
+          3: { cx:  79, cy: 453, s: 0.50000, r: 0, o: 1 },  // ⌀150 (лево)
+          4: { cx:  74, cy: 253, s: 0.28000, r: 0, o: 1 },  // ⌀84  (верх-лево)
+          5: { cx: 324, cy: 458, s: 0.22000, r: 0, o: 1 },  // ⌀66  (право)
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }   // «принять всех» — скрыта в интро
+      }},
+      // Стейт 3 — в ряд (вход), шаг 316 (300 + gap 16), сдвинут вправо на +109.
+      // cy 480 — ряд центрирован по вертикали (нижняя кнопка убрана).
+      { title: 56, cards: {
+          1: { cx:  289, cy: 480, s: 1, r: 0, o: 1 },
+          2: { cx:  605, cy: 480, s: 1, r: 0, o: 1 },
+          3: { cx:  921, cy: 480, s: 1, r: 0, o: 1 },
+          4: { cx: 1237, cy: 480, s: 1, r: 0, o: 1 },
+          5: { cx: 1553, cy: 480, s: 1, r: 0, o: 1 },
+          8: { cx: 1869, cy: 480, s: 1, r: 0, o: 1 }   // «принять всех» — в конце ряда
+      }},
+      // Стейт 4 — ряд (покой). Карточки ЦЕНТРИРУЮТСЯ по горизонтали: card1 в
+      // центре (cx 180), шаг 316 — снап центрирует каждую карточку (в т.ч. последнюю).
+      { title: 56, cards: {
+          1: { cx:  180, cy: 480, s: 1, r: 0, o: 1 },
+          2: { cx:  496, cy: 480, s: 1, r: 0, o: 1 },
+          3: { cx:  812, cy: 480, s: 1, r: 0, o: 1 },
+          4: { cx: 1128, cy: 480, s: 1, r: 0, o: 1 },
+          5: { cx: 1444, cy: 480, s: 1, r: 0, o: 1 },
+          8: { cx: 1760, cy: 480, s: 1, r: 0, o: 1 }   // «принять всех» — в конце ряда
+      }},
+      // Стейт 5 (exit/drop) — ПЛОТНОЕ падение комком: все кружки сведены в одну
+      // точку по центру (cx 180) и падают строго вниз вместе (cy = центр + 650),
+      // гаснут до o:0 (быстрый фейд — fadeProgress в accept-all). Масштабы — как в
+      // «кучке» (стейт 1), чтобы комок был плотным шаром.
+      { title: 396, cards: {
+          1: { cx: 180, cy: 1105, s: 0.42234, r: 0, o: 0 },
+          2: { cx: 180, cy: 1105, s: 0.48377, r: 0, o: 0 },
+          3: { cx: 180, cy: 1105, s: 0.46317, r: 0, o: 0 },
+          4: { cx: 180, cy: 1105, s: 0.30167, r: 0, o: 0 },
+          5: { cx: 180, cy: 1105, s: 0.24600, r: 0, o: 0 },
+          8: { cx: 180, cy: 1105, s: 0.40000, r: 0, o: 0 }
+      }},
+      // Стейт 6 (collapse) — кружки СХЛОПЫВАЮТСЯ в плотный комок по центру НА МЕСТЕ
+      // (все в точку 180, 455), видимы (o:1). Промежуточный бит перед падением:
+      // разлёт (стейт 2) → схлопнулись здесь → полетели вниз (стейт 5).
+      { title: 56, cards: {
+          1: { cx: 180, cy: 455, s: 0.42234, r: 0, o: 1 },
+          2: { cx: 180, cy: 455, s: 0.48377, r: 0, o: 1 },
+          3: { cx: 180, cy: 455, s: 0.46317, r: 0, o: 1 },
+          4: { cx: 180, cy: 455, s: 0.30167, r: 0, o: 1 },
+          5: { cx: 180, cy: 455, s: 0.24600, r: 0, o: 1 },
+          8: { cx: 180, cy: 455, s: 0.40000, r: 0, o: 0 }
+      }}
+    ];
+    // Порядок слева-направо в ряду = 1..7 (card1 — первая видимая, крупный кружок),
+    // 8 — карточка «принять всех» в самом конце ряда.
+    // ── Флаг карточки «Принять всех» ─────────────────────────────────────
+    // Массовое принятие по тапу + финальный «комок» (autoFinish). Выключена по
+    // просьбе: финиш теперь по последней обычной карточке. КОД СОХРАНЁН —
+    // ACCEPT_ALL=true возвращает прежнее поведение (карточку, bulk-accept, финал).
+    var ACCEPT_ALL = false;
+    var ACCEPT_ALL_I = 8;
+    var IDX = ACCEPT_ALL ? [1, 2, 3, 4, 5, 8] : [1, 2, 3, 4, 5];
+    // Выключено → убираем accept-all из стейтов (чтобы не лезла в раскладку) и
+    // прячем её элемент. Сам HTML/JS остаётся для повторного включения.
+    if (!ACCEPT_ALL) {
+      STATES.forEach(function (s) { delete s.cards[ACCEPT_ALL_I]; });
+      var _aaEl = root.querySelector('.friend-big-card.__accept-all');
+      if (_aaEl) _aaEl.style.display = 'none';
+    }
+    var SUCCESS_TOP = 396;  // «Вы подружились со всеми» — между навбаром и кнопкой
+
+    var els = {};
+    IDX.forEach(function (i) {
+      els[i] = root.querySelector('.friend-big-card[data-i="' + i + '"]');
+    });
+    var titleEl = root.querySelector('.fp__title');
+
+    // Применить состояние одной карточки. dxPan — горизонтальный сдвиг (от свайпа).
+    function applyCard(el, s, dxPan) {
+      var tx = (s.cx - 330) + (dxPan || 0);
+      var ty = s.cy - 230;
+      el.style.transform =
+        'translate(' + tx.toFixed(3) + 'px, ' + ty.toFixed(3) + 'px) ' +
+        'scale(' + s.s.toFixed(5) + ') ' +
+        'rotate(' + s.r.toFixed(3) + 'deg)';
+      el.style.setProperty('--friend-big-card-scale', s.s.toFixed(5));
+      if (s.o !== undefined) el.style.opacity = s.o.toFixed(3);
+    }
+
+    // ── МОРФ ВЫСОТЫ кружок↔карточка как функция прогресса ───────────
+    // m: 0 = кружок (фото центрировано margin-top:80, кнопка свёрнута),
+    //    1 = карточка в ряду (фото вверху, кнопка раскрыта). Высоту ведём из
+    // того же p, что и translate/scale, — margin-top фото и max-height кнопки
+    // меняются синхронно, контент монотонен и не перерастает итоговую высоту,
+    // поэтому бокс не «прыгает». На время морфа висит класс .__morphing.
+    function morphFactor(idx) { return (idx === 2 || idx === 3) ? 1 : 0; }  // ряд (state-3/4) = карточка
+    function applyMorph(el, m) {
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = (80 * (1 - m)).toFixed(2) + 'px';
+      if (accept) {
+        accept.style.maxHeight     = (100 * m).toFixed(2) + 'px';
+        accept.style.paddingTop    = (20 * m).toFixed(2) + 'px';
+        accept.style.paddingBottom = (16 * m).toFixed(2) + 'px';
+      }
+    }
+    function clearMorph(el) {  // вернуть управление CSS-классам (значения уже = финальным)
+      var photo  = el.querySelector('.friend-big-card__photo');
+      var accept = el.querySelector('.friend-big-card__accept');
+      if (photo)  photo.style.marginTop = '';
+      if (accept) { accept.style.maxHeight = ''; accept.style.paddingTop = ''; accept.style.paddingBottom = ''; }
+    }
+
+    var current = 0;
+    var animating = false;
+    var panOffset = 0;
+
+    function applyState(idx) {
+      var st = STATES[idx];
+      IDX.forEach(function (i) { applyCard(els[i], st.cards[i], 0); });
+      titleEl.style.top = st.title + 'px';
+    }
+
+    // Ряд (карусель) прижат под заголовок: верх карточек на TITLE_GAP=24px ниже
+    // низа заголовка (а не центрируется по вертикали) — заголовок с каруселью
+    // подняты выше. На низких вьюпортах карточку ужимаем (по всем сторонам),
+    // чтобы влезла, сохраняя минимальный зазор снизу.
+    var ROW_CARD_H = 548, ROW_HALF = 230, MIN_GAP = 48;  // ROW_CARD_H уточняется по факту в attachSwipe
+    var TITLE_GAP = 24;  // зазор «заголовок → карусель»
+    var BASE = null;  // базовые {cx,cy,s} стейтов 1(разлёт),2(вход),3(ряд) — снимаем один раз
+    function recenterRow() {
+      if (!BASE) {
+        BASE = {};
+        [1, 2, 3].forEach(function (si) {
+          BASE[si] = {};
+          Object.keys(STATES[si].cards).forEach(function (k) {
+            var c = STATES[si].cards[k];
+            BASE[si][k] = { cx: c.cx, cy: c.cy, s: c.s };
+          });
+        });
+      }
+      var pageH = window.innerHeight || document.documentElement.clientHeight;
+      // Поднятый fp__title (ряд-стейты 2–4): top = 20%·H − высота тайтла,
+      // т.е. нижний край заголовка встаёт ровно на 20% высоты экрана.
+      var titleH = titleEl.offsetHeight || 80;
+      var raisedTop = Math.max(0, Math.round(pageH * 0.20 - titleH));
+      STATES[1].title = raisedTop;
+      STATES[2].title = raisedTop;
+      STATES[3].title = raisedTop;
+      var titleBottom = STATES[3].title + titleH;
+      var avail = pageH - titleBottom;
+      var s = 1;
+      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+        s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
+      }
+      // Верх карточки = titleBottom + TITLE_GAP. Визуальный верх карточки в ряду =
+      // centerY - (ROW_CARD_H * s)/2 (см. applyCard/rowCy), отсюда centerY.
+      var centerY = titleBottom + TITLE_GAP + (ROW_CARD_H * s) / 2;
+      // Ряд (стейты 2,3): все на rowCy, шаг (cx) сжимаем к центру сетки (180) на s.
+      var rowCy = centerY - (ROW_CARD_H / 2 - ROW_HALF);
+      [2, 3].forEach(function (si) {
+        Object.keys(STATES[si].cards).forEach(function (k) {
+          var c = STATES[si].cards[k], b = BASE[si][k];
+          c.cy = rowCy;
+          c.s = s;                          // базовый масштаб в ряду = 1
+          c.cx = 180 + (b.cx - 180) * s;
+        });
+      });
+      // Стак-разлёт (стейт 1): масштабируем и размеры карточек, и шаг; на низких
+      // экранах дополнительно центрируем облако по вертикали.
+      var b1 = BASE[1], cys = [];
+      Object.keys(b1).forEach(function (k) { cys.push(b1[k].cy); });
+      var cloudC = (Math.min.apply(null, cys) + Math.max.apply(null, cys)) / 2;
+      var cloudCenterY = (s < 1) ? centerY : cloudC;
+      Object.keys(STATES[1].cards).forEach(function (k) {
+        var c = STATES[1].cards[k], b = b1[k];
+        c.cx = 180 + (b.cx - 180) * s;
+        c.cy = cloudCenterY + (b.cy - cloudC) * s;
+        c.s = b.s * s;
+      });
+    }
+    // Заранее (пока карточки невидимы, opacity:0) меряем высоту карточки в
+    // ряд-лейауте и фиксируем --fp-row-card-h / ROW_CARD_H — чтобы при входе в
+    // ряд карточки сразу были равной высоты и не «растягивались» на глазах.
+    function measureRowCardH() {
+      // Снимаем текущие стейт-классы (ряд-лейаут для замера), потом возвращаем —
+      // функция безопасна для повторного вызова (напр. после догрузки шрифтов),
+      // в каком бы стейте ни была штора.
+      var stateCls = Array.prototype.filter.call(root.classList, function (c) {
+        return c.indexOf('__state-') === 0;
+      });
+      stateCls.forEach(function (c) { root.classList.remove(c); });   // снять кружковый лейаут (margin-top фото)
+      root.classList.add('__measuring');
+      var maxH = 0;
+      IDX.forEach(function (i) { if (els[i]) maxH = Math.max(maxH, els[i].offsetHeight); });
+      // Возврат стейта и снятие __measuring — под выключенными transition'ами
+      // (__no-anim) с принудительным reflow. Иначе measure-значения (кнопка
+      // opacity:1/max-height, card-радиус фото) при возврате в кружковый стейт
+      // АНИМИРУЮТСЯ → кнопка/фото мелькают на старте и на переходе 1→2.
+      root.classList.add('__no-anim');
+      stateCls.forEach(function (c) { root.classList.add(c); });
+      root.classList.remove('__measuring');
+      void root.offsetHeight;
+      root.classList.remove('__no-anim');
+      // Замер детерминированный (см. CSS .__measuring) → значение стабильно от
+      // вызова к вызову. Применяем и сообщаем, поменялось ли (>0.5px) — чтобы
+      // повторный замер (fonts.ready / attachSwipe) не дёргал recenter впустую.
+      if (maxH && Math.abs(maxH - ROW_CARD_H) > 0.5) {
+        root.style.setProperty('--fp-row-card-h', maxH + 'px');
+        ROW_CARD_H = maxH;
+        if (els[8]) els[8].style.height = maxH + 'px';
+        return true;
+      }
+      return false;
+    }
+    measureRowCardH();
+
+    recenterRow();
+
+    applyState(0);
+    root.classList.add('__state-1');
+
+    // Веб-шрифты (OK Sans Display) могут догрузиться ПОСЛЕ первого замера и
+    // изменить метрики строк. Перемеряем по fonts.ready тем же детерминированным
+    // measureRowCardH и переприменяем стейт ТОЛЬКО если высота реально изменилась
+    // (обычно — no-op: замер не зависит от scale/transition, см. .__measuring).
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        if (measureRowCardH()) { recenterRow(); applyState(current); }
+      });
+    }
+
+    // Пересчёт центрирования при ресайзе/смене ориентации.
+    window.addEventListener('resize', function () {
+      recenterRow();
+      if (current === 2 || current === 3) applyState(current);
+    });
+
+    // Предзагружаем lottie-конфетти. Запустим после exit-цепочки.
+    var confettiHost = document.getElementById('fpConfetti');
+    var confettiData = null;
+    fetch('assets/lottie/confetti.json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { confettiData = d; })
+      .catch(function () { /* offline / file missing — silently skip */ });
+    // Хаптик в момент салюта. Android — navigator.vibrate. iOS Safari (нет
+    // Vibration API) — трюк с системным переключателем <input switch>: его
+    // программное переключение даёт системный тактильный отклик (iOS 17.4+).
+    var hapticLabel = null;
+    function ensureHaptic() {
+      if (hapticLabel) return;
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.setAttribute('switch', '');
+      box.id = 'hapticSwitch';
+      box.tabIndex = -1;
+      box.setAttribute('aria-hidden', 'true');
+      hapticLabel = document.createElement('label');
+      hapticLabel.setAttribute('for', 'hapticSwitch');
+      hapticLabel.setAttribute('aria-hidden', 'true');
+      var hide = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0;';
+      box.style.cssText = hide;
+      hapticLabel.style.cssText = hide;
+      document.body.appendChild(box);
+      document.body.appendChild(hapticLabel);
+    }
+    var HAPTIC_MS = 1400;  // ~длительность вылета конфетти
+    function fireHaptic() {
+      // Android: длинный «раскатистый» паттерн на весь период.
+      try {
+        if (navigator.vibrate) {
+          var pat = [], t = 0;
+          while (t < HAPTIC_MS) { pat.push(90, 40); t += 130; }
+          navigator.vibrate(pat);
+        }
+      } catch (_) {}
+      // iOS: системный switch «долго» не умеет — повторяем тап интервалом весь период.
+      try {
+        ensureHaptic();
+        hapticLabel.click();
+        var ticks = Math.round(HAPTIC_MS / 120), i = 0;
+        var iv = setInterval(function () {
+          try { hapticLabel.click(); } catch (_) {}
+          if (++i >= ticks) clearInterval(iv);
+        }, 120);
+      } catch (_) {}
+    }
+
+    function fireConfetti() {
+      fireHaptic();
+      if (!confettiData || !window.lottie || !confettiHost) return;
+      var anim = window.lottie.loadAnimation({
+        container: confettiHost,
+        renderer: 'svg', loop: false, autoplay: true,
+        rendererSettings: { preserveAspectRatio: 'xMidYMid slice' },
+        animationData: JSON.parse(JSON.stringify(confettiData))
+      });
+      anim.addEventListener('complete', function () {
+        anim.destroy();
+        confettiHost.innerHTML = '';
+      });
+    }
+    // Финальный экран: «Вы подружились со всеми» — по центру между навбаром и
+    // нижней кнопкой (top = SUCCESS_TOP) + конфетти. Через пару секунд шторка
+    // автоматически закрывается (клик по крестику → переход на ленту).
+    function showAllAccepted() {
+      var pageH = window.innerHeight || document.documentElement.clientHeight;
+      // Кроссфейд вместо «съезда»: гасим текущий заголовок, ПОКА он невидим —
+      // меняем текст и ставим финальную позицию (центр) без анимации top, затем
+      // плавно проявляем уже на месте. Так нет дёрганого слайда нового текста.
+      titleEl.style.transition = 'opacity 220ms ease-out';
+      titleEl.style.opacity = '0';
+      setTimeout(function () {
+        titleEl.innerHTML = 'Вы подружились<br>со всеми';
+        var th = titleEl.offsetHeight || 80;
+        titleEl.style.transition = 'none';
+        titleEl.style.top = Math.round(pageH / 2 - th / 2) + 'px';
+        // форс-reflow, чтобы новый top применился мгновенно (без перехода)
+        void titleEl.offsetHeight;
+        titleEl.style.transition = 'opacity 280ms ease-out';
+        titleEl.style.opacity = '1';
+      }, 220);
+      fireConfetti();
+      // Через 2с после запуска конфетти показываем secondary-кнопку «Закрыть».
+      var finish = document.getElementById('fpFinish');
+      var finishBtn = document.getElementById('fpFinishClose');
+      if (finishBtn) finishBtn.addEventListener('click', function () {
+        var closeBtn = document.querySelector('.fp__close');
+        if (closeBtn) closeBtn.click();
+      });
+      function autoClose() {
+        var closeBtn = document.querySelector('.fp__close');
+        if (closeBtn) closeBtn.click();
+      }
+      setTimeout(function () {
+        if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+        // Авто-скрытие шторки: спустя 6с после появления кнопки «Закрыть»
+        // (конфетти t0, кнопка t0+2с, закрытие t0+8с).
+        setTimeout(autoClose, 6000);
+      }, 2000);
+    }
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    // CSS cubic-bezier(x1, y1, x2, y2) реализация: по x находим u через
+    // Ньютона, потом считаем y(u).
+    function makeBezier(x1, y1, x2, y2) {
+      return function (t) {
+        var u = t;
+        for (var i = 0; i < 8; i++) {
+          var omu = 1 - u;
+          var x  = 3 * omu * omu * u * x1 + 3 * omu * u * u * x2 + u * u * u;
+          var dx = 3 * omu * omu * x1 + 6 * omu * u * (x2 - x1) + 3 * u * u * (1 - x2);
+          if (Math.abs(dx) < 1e-6) break;
+          u -= (x - t) / dx;
+          if (u < 0) u = 0; else if (u > 1) u = 1;
+        }
+        var omu2 = 1 - u;
+        return 3 * omu2 * omu2 * u * y1 + 3 * omu2 * u * u * y2 + u * u * u;
+      };
+    }
+    function reducedMotion() {
+      try { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+      catch (_) { return false; }
+    }
+
+    function transitionTo(toIdx, opts) {
+      opts = opts || { mode: 'spring' };
+      if (animating || toIdx === current) return;
+      animating = true;
+      var prevIdx = current;
+      var from    = STATES[prevIdx];
+      var to      = STATES[toIdx];
+      current = toIdx;
+      root.classList.remove('__state-1', '__state-2', '__state-3', '__state-4', '__state-5');
+      root.classList.add('__state-' + (toIdx + 1));
+      // Флаг «дошли до ряда» (хук для тестов/стилей; на визуал не влияет —
+      // кружковый вид задаётся классами __state-1/2/5).
+      if (toIdx >= 2) root.classList.add('__cards-revealed');
+
+      // Морфим высоту синхронно с движением только когда пересекаем границу
+      // кружок↔карточка (напр. вход в ряд state-2→state-3).
+      var fm = morphFactor(prevIdx), tm = morphFactor(toIdx);
+      var isMorph = fm !== tm;
+
+      function done() {
+        if (isMorph) {
+          IDX.forEach(function (i) { clearMorph(els[i]); });
+          root.classList.remove('__morphing');
+        }
+        applyState(toIdx);
+        animating = false;
+        if (toIdx === 3) attachSwipe();
+        if (opts.onDone) opts.onDone();
+      }
+
+      if (reducedMotion()) { done(); return; }
+
+      if (isMorph) {
+        root.classList.add('__morphing');                       // CSS-transition'ы высоты — выкл
+        IDX.forEach(function (i) { applyMorph(els[i], fm); });   // стартовое значение до 1-го кадра (без глитча)
+      }
+
+      var dur, progress;
+      if (opts.mode === 'spring') {
+        dur = opts.duration || SPRING.duration;
+        progress = makeSpring(opts.k || SPRING.k, opts.c || SPRING.c, opts.m || SPRING.m);
+      } else if (opts.mode === 'bezier') {
+        dur = opts.duration || 300;
+        var bz = opts.bezier;
+        var ease = makeBezier(bz[0], bz[1], bz[2], bz[3]);
+        progress = function (tMs) { return ease(Math.min(1, tMs / dur)); };
+      } else {
+        dur = opts.duration || 300;
+        progress = function (tMs) { return easeOutCubic(Math.min(1, tMs / dur)); };
+      }
+
+      var t0 = performance.now();
+      (function frame(now) {
+        var elapsed = Math.min(dur, now - t0);
+        var p = progress(elapsed);
+        // Отдельный прогресс для прозрачности (опц.) — чтобы фейд успевал
+        // раньше, чем закончится движение (напр. погасить до кнопки на exit).
+        var op = opts.fadeProgress ? opts.fadeProgress(p) : p;
+        IDX.forEach(function (i) {
+          var fc = from.cards[i], tc = to.cards[i];
+          var fo = fc.o !== undefined ? fc.o : 1;
+          var to_ = tc.o !== undefined ? tc.o : 1;
+          applyCard(els[i], {
+            cx: fc.cx + (tc.cx - fc.cx) * p,
+            cy: fc.cy + (tc.cy - fc.cy) * p,
+            s:  fc.s  + (tc.s  - fc.s)  * p,
+            r:  fc.r  + (tc.r  - fc.r)  * p,
+            o:  fo    + (to_   - fo)    * op
+          }, 0);
+          if (isMorph) applyMorph(els[i], fm + (tm - fm) * p);  // высота — из того же p
+        });
+        titleEl.style.top =
+          (from.title + (to.title - from.title) * p).toFixed(3) + 'px';
+        if (elapsed < dur) requestAnimationFrame(frame);
+        else done();
+      })(performance.now());
+    }
+
+    // ── СВАЙП КАРУСЕЛИ ──────────────────────────────────────────
+    function attachSwipe() {
+      if (scene.dataset.swipeAttached) return;
+      scene.dataset.swipeAttached = '1';
+
+      // Высота уже зафиксирована на старте (measureRowCardH, детерминированный
+      // дизайн-бокс). Перемеряем ТЕМ ЖЕ методом (не живым offsetHeight, который
+      // зависит от текущего scale через border-width) — recenter сработает только
+      // если высота реально изменилась (напр. перенос строки), без ложной ступеньки.
+      if (measureRowCardH()) {
+        recenterRow();
+        applyState(current);
+      }
+
+      var rowState = STATES[3].cards;
+      var STEP = rowState[IDX[1]].cx - rowState[IDX[0]].cx;  // масштабированный шаг
+      var firstCx = rowState[IDX[0]].cx;                     // card1, leftmost
+      var liveCards = IDX.slice();                           // [1..8], слева-направо (8 — «принять всех»)
+      var minSnap = -(liveCards.length - 1);
+      var processing = {};
+
+      var startX = 0, startY = 0;
+      var dragging = false;
+      var locked = false;
+      var pointerId = null;
+      var snapRaf = null;
+      var GUTTER = 5;
+      var snapped = 0;
+      // Скорость пальца (px/мс) для флик-снапа — сглаженная по последним сэмплам.
+      var velocity = 0, lastMoveX = 0, lastMoveT = 0;
+      var downAcceptAll = false;  // тап начат на карточке «принять всех»?
+      var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять всех» (8)
+      var finishing = false;      // идёт авто-финиш (приняли всё по одной)
+
+      // Авто-финиш: приняли все карточки по одной → карточка «принять всех» сама
+      // улетает вниз, затем конфетти + финальный заголовок.
+      function autoFinish() {
+        if (finishing) return;
+        finishing = true;
+        var el = els[acceptAllI], cs = rowState[acceptAllI];
+        el.style.transition = '';            // снять остаточный transition сдвига
+        el.classList.add('__flying-down');
+        var tx = (cs.cx - 330) + panOffset;
+        var ty = (cs.cy - 230) + 900;
+        var sc = cs.s || 1;
+        requestAnimationFrame(function () {
+          el.style.transform = 'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) scale(' + sc + ') rotate(-10deg)';
+        });
+        setTimeout(showAllAccepted, 450);
+      }
+
+      function symmetricRound(x) {
+        return x < 0 ? -Math.round(-x) : Math.round(x);
+      }
+
+      // pan для снапа. card1 в центре (cx 180), шаг STEP → каждая карточка
+      // (включая первую и последнюю) центрируется по горизонтали экрана.
+      function panForSnap(target) {
+        return target * STEP;
+      }
+
+      function onDown(e) {
+        if (animating) return;
+        if (dragging) return;
+        if (e.target && e.target.closest && e.target.closest('button')) return;
+        // По карточке «принять всех» drag РАЗРЕШАЕМ (чтобы листать назад с конца),
+        // а тап по ней ловим в onUp (без свайпа) — см. downAcceptAll.
+        downAcceptAll = !!(e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all'));
+
+        startX = e.clientX;
+        startY = e.clientY;
+        dragging = true;
+        locked = false;
+        velocity = 0;
+        lastMoveX = e.clientX;
+        lastMoveT = e.timeStamp;
+        pointerId = e.pointerId;
+        try { scene.setPointerCapture(pointerId); } catch (_) {}
+      }
+      function releaseCapture() {
+        if (pointerId !== null) {
+          try { scene.releasePointerCapture(pointerId); } catch (_) {}
+          pointerId = null;
+        }
+      }
+      function endDrag() {
+        dragging = false;
+        locked = false;
+        releaseCapture();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        if (e.pointerId !== pointerId) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (!locked) {
+          if (Math.abs(dx) < GUTTER && Math.abs(dy) < GUTTER) return;
+          if (Math.abs(dy) > Math.abs(dx)) { endDrag(); return; }
+          if (e.cancelable) e.preventDefault();
+          locked = true;
+          if (snapRaf) {
+            cancelAnimationFrame(snapRaf);
+            snapRaf = null;
+            startX = e.clientX - (panOffset - panForSnap(snapped));
+            dx = e.clientX - startX;
+          }
+        } else if (e.cancelable) {
+          e.preventDefault();
+        }
+        // Сэмплим скорость пальца (px/мс) со сглаживанием — для флик-снапа в onUp.
+        var dt = e.timeStamp - lastMoveT;
+        if (dt > 0) {
+          var vInst = (e.clientX - lastMoveX) / dt;
+          velocity = velocity * 0.6 + vInst * 0.4;
+        }
+        lastMoveX = e.clientX;
+        lastMoveT = e.timeStamp;
+        var pan = panForSnap(snapped) + dx;
+        if (pan > 0 && snapped === 0) pan = pan * 0.3;
+        var minPan = panForSnap(minSnap);
+        if (pan < minPan) pan = minPan + (pan - minPan) * 0.3;
+        panOffset = pan;
+        IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+      }
+      function onUp(e) {
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        endDrag();
+        if (!wasLocked) {
+          // Тап без свайпа по карточке «принять всех» → массовое принятие.
+          if (downAcceptAll) runAcceptAll();
+          return;
+        }
+        var raw = panOffset / STEP;
+        // Снап с учётом скорости: быстрый «мах» (флик) листает на одну карточку,
+        // даже если палец не дотащил до середины шага — иначе symmetricRound
+        // округлял короткий бросок ОБРАТНО и карточка дёргалась. Медленное
+        // ведение/отпускание без скорости — снап по позиции, как раньше.
+        var FLICK_VELO = 0.4;  // px/мс — порог броска
+        var target;
+        if (Math.abs(velocity) > FLICK_VELO) {
+          // velocity<0 — палец влево (листаем вперёд, pan уменьшается) → floor;
+          // velocity>0 — вправо (назад) → ceil. Гарантирует шаг в сторону маха.
+          target = velocity < 0 ? Math.floor(raw) : Math.ceil(raw);
+        } else {
+          target = symmetricRound(raw);
+        }
+        if (target > 0) target = 0;
+        if (target < minSnap) target = minSnap;
+        snapped = target;
+        animateSnap(panForSnap(target));
+      }
+      function onCancel(e) {
+        if (e && pointerId !== null && e.pointerId !== pointerId) return;
+        var wasLocked = locked;
+        endDrag();
+        if (!wasLocked) return;
+        animateSnap(panForSnap(snapped));
+      }
+      function animateSnap(targetPan) {
+        if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+        var fromPan = panOffset;
+        var t0 = performance.now();
+        var dur = 280;
+        function frame(now) {
+          var p = Math.min(1, (now - t0) / dur);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var pan = fromPan + (targetPan - fromPan) * eased;
+          panOffset = pan;
+          IDX.forEach(function (i) { applyCard(els[i], rowState[i], pan); });
+          if (p < 1) snapRaf = requestAnimationFrame(frame);
+          else snapRaf = null;
+        }
+        snapRaf = requestAnimationFrame(frame);
+      }
+
+      // ── ACCEPT («Дружить» на карточке) ─────────────────────
+      // Тап «Дружить» → заливка оранжевым + галочка (класс __accepting)
+      // → улёт ВВЕРХ → ряд сдвигается влево.
+      function processCard(i) {
+        if (processing[i]) return;
+        processing[i] = true;
+        var el = els[i];
+        var FILL_DUR = 600;   // время заливки/галочки до улёта
+        var FLY_DUR  = 600;
+        var SHIFT_DUR = 350;
+
+        function flyOut() {
+          el.classList.add('__flying-up');
+          var cs = rowState[i];
+          var tx = (cs.cx - 330) + panOffset;
+          var ty = (cs.cy - 230) - 800;
+          var rot = 22;
+          var sc = cs.s || 1;
+          requestAnimationFrame(function () {
+            el.style.transform =
+              'translate(' + tx.toFixed(2) + 'px, ' + ty.toFixed(2) + 'px) ' +
+              'scale(' + sc + ') rotate(' + rot + 'deg)';
+          });
+          setTimeout(removeFromRow, FLY_DUR);
+        }
+        function removeFromRow() {
+          el.style.display = 'none';
+          var idx = liveCards.indexOf(i);
+          if (idx >= 0) liveCards.splice(idx, 1);
+          for (var k = 0; k < liveCards.length; k++) {
+            rowState[liveCards[k]].cx = firstCx + k * STEP;
+          }
+          minSnap = -(liveCards.length - 1);
+          if (snapped < minSnap) snapped = minSnap;
+          liveCards.forEach(function (j) {
+            els[j].style.transition = 'transform ' + SHIFT_DUR + 'ms ease-out';
+          });
+          var newPan = panForSnap(snapped);
+          requestAnimationFrame(function () {
+            panOffset = newPan;
+            liveCards.forEach(function (j) {
+              applyCard(els[j], rowState[j], newPan);
+            });
+          });
+          setTimeout(function () {
+            liveCards.forEach(function (j) {
+              els[j].style.transition = '';
+            });
+          }, SHIFT_DUR + 30);
+          // Приняли все по одной → финал (конфетти + «Вы подружились со всеми»).
+          // С accept-all: остаётся её карточка, она сама улетает вниз (autoFinish).
+          // Без accept-all: ряд опустел на последней карточке → финал сразу.
+          if (ACCEPT_ALL) {
+            if (liveCards.length === 1 && liveCards[0] === acceptAllI) {
+              setTimeout(autoFinish, SHIFT_DUR);
+            }
+          } else if (liveCards.length === 0) {
+            setTimeout(showAllAccepted, SHIFT_DUR);
+          }
+        }
+
+        // Заливка + галочка, затем улёт вверх.
+        el.classList.add('__accepting');
+        setTimeout(flyOut, FILL_DUR);
+      }
+
+      IDX.forEach(function (i) {
+        var el = els[i];
+        var accBtn = el.querySelector('.friend-big-card__accept .button-container');
+        if (accBtn) accBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          processCard(i, 'accept');
+        });
+      });
+
+      scene.addEventListener('pointerdown', onDown);
+      scene.addEventListener('pointermove', onMove);
+      scene.addEventListener('pointerup', onUp);
+      scene.addEventListener('pointercancel', onCancel);
+
+      // ── «Принять всех» (тап по последней карточке) ─────────────
+      // Шаг 1: карточки возвращаются в стейт 2 (разлёт) и сворачиваются
+      // обратно в кружки (CSS-морф по классу __state-2). Шаг 2: кружки
+      // схлопываются в комок (state 6). Шаг 3: комок падает вниз, тая
+      // (state 5). Карточка «принять всех» (8) гаснет на шаге 1 (o:0 в state 2).
+      function runAcceptAll() {
+          if (animating || finishing) return;
+          if (!liveCards.length) return;
+          if (snapRaf) { cancelAnimationFrame(snapRaf); snapRaf = null; }
+          if (panOffset !== 0) {
+            liveCards.forEach(function (j) {
+              STATES[3].cards[j].cx += panOffset;
+            });
+            panOffset = 0;
+            snapped = 0;
+          }
+          // Шаг 1 — обратно в сетку/разлёт (state 2), overdamped spring 600мс.
+          // Шаг 2 — СХЛОПЫВАНИЕ в плотный комок по центру на месте (state 6), ease 300мс.
+          // Шаг 3 — комок ПАДАЕТ вниз вместе (state 5), bezier 600мс;
+          //         fadeProgress — гасим до 0 уже к ~40% падения (до кнопки).
+          transitionTo(1, {
+            mode: 'spring', k: 80, c: 20, m: 1, duration: 600,
+            onDone: function () {
+              setTimeout(function () {
+                transitionTo(5, {
+                  mode: 'css', duration: 300, easing: 'ease-out',
+                  onDone: function () {
+                    transitionTo(4, {
+                      mode: 'bezier', bezier: [0, 0, 1, -0.01], duration: 600,
+                      fadeProgress: function (p) { return Math.min(1, p / 0.4); },
+                      onDone: showAllAccepted
+                    });
+                  }
+                });
+              }, 1);
+            }
+          });
+      }
+    }
+
+    // ── СЦЕНАРИЙ ────────────────────────────────────────────────
+    //   1 → 2 (спринг 2000мс, k=96 c=6 m=1) — после старта SPRING.delay
+    //   2 → 3 (ease-out 600мс)              — пауза PAUSE_BETWEEN после 1→2
+    //   3 → 4 (overdamped спринг 600мс)     — Figma: delay 1мс после 2→3
+    var PAUSE_BETWEEN = 800;
+    // Морф кружок→карточка (разлёт → ряд). Длительность синхронизирована с CSS-
+    // хромом карточки (фон/обводка/тень/скругление фото) — чтобы геометрия и
+    // оформление приезжали вместе, а не «обгоняли» друг друга (иначе рывок/мельк).
+    // Хром-длительности подняты scoped в локальном <style> (.fp .friend-big-card
+    // и .fp.__morphing .friend-big-card__photo) под это же значение.
+    var EASE_DUR = 600;
+
+    if (reducedMotion()) {
+      current = 3;
+      root.classList.remove('__state-1');
+      root.classList.add('__state-4', '__cards-revealed');
+      applyState(3);
+      attachSwipe();
+    } else {
+      setTimeout(function () {
+        transitionTo(1, {
+          mode: 'spring',
+          onDone: function () {
+            setTimeout(function () {
+              transitionTo(2, {
+                mode: 'css', duration: EASE_DUR, easing: 'ease-out',
+                onDone: function () {
+                  transitionTo(3, { mode: 'spring', k: 80, c: 20, m: 1, duration: 600 });
+                }
+              });
+            }, PAUSE_BETWEEN);
+          }
+        });
+      }, 250);  // короткая пауза: кучка невидима (o:0), быстро стартуем фейд-ин разлёта
+    }
+  })();
+</script>
+
+</body>
+</html>

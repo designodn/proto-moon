@@ -35,9 +35,10 @@ node scripts/fetch-activity.mjs
 ```
 
 Скрипт: тянет лист через gviz-CSV, резолвит людей/имена/род из `data/people.json`,
-рендерит ячейки и **вставляет их в два места** между маркерами:
+рендерит ячейки и **вставляет их в три места** между маркерами:
 - `new-vision/lenta.html` — виджет-конвейер `#activityConveyor` (между `ACTIVITY-WIDGET:START/END`);
-- `new-vision/okruzhenie.html` — список `#activityList` (между `ACTIVITY:START/END`, промо-баннер «Копите народные билеты» сверху сохраняется).
+- `new-vision/okruzhenie.html` — список `#activityList` (между `ACTIVITY:START/END`, промо-баннер «Копите народные билеты» сверху сохраняется);
+- `activity-lenta/lenta.html` — виджет-конвейер `#activityConveyor` (компонент `activity-widget`, остров перед ВВЗ; между `ACTIVITY-WIDGET:START/END`). У этой страницы `<base href="../">`, поэтому ячейки для неё рендерятся с путями БЕЗ «../» (`cellsBase`).
 
 Плюс пишет `data/activity.json` (выгрузка «как есть»).
 

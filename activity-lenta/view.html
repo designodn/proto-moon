@@ -2,10 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<!-- Файлы прототипа лежат в подпапке activity-lenta/, а все общие ресурсы
+     (assets, components, data, fonts, *.css) — в корне. <base> заставляет
+     ВСЕ относительные пути (включая динамические из data/*.js) резолвиться
+     от корня. Локальные ссылки внутри цепочки пишем явно с префиксом папки. -->
+<base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0c1116">
-<title>Запуск — прототип (Android)</title>
+<title>Activity-лента — запуск (Android)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
@@ -328,7 +333,7 @@
        своим фоном — .unlocked раньше ставился только в pageshow (после загрузки). -->
   <script>
     try {
-      if (sessionStorage.getItem('okstart_at_home') === '1') {
+      if (sessionStorage.getItem('okstart_at_home_al') === '1') {
         document.getElementById('device').classList.add('unlocked', 'no-anim');
       }
     } catch (e) {}
@@ -435,8 +440,8 @@
 
     <!-- App grid -->
     <div class="home-grid">
-      <!-- ОК → шит «Принять друзей» после сплеша (крестик шита ведёт в ленту lenta-q3.html). -->
-      <button class="app" data-launch="add-friends-sheet.html">
+      <!-- ОК → шит «Принять друзей» после сплеша (крестик шита ведёт в activity-lenta/lenta.html). -->
+      <button class="app" data-launch="activity-lenta/add-friends-sheet.html">
         <span class="app__icon icon-ok">
           <img src="assets/icons/appLogoDefault.png" alt="ОК" width="58" height="58">
         </span>
@@ -520,7 +525,7 @@
   // Remembers, for this tab session, that the phone is already unlocked /
   // sitting on the home screen — so coming Back from a feed lands on the
   // menu instead of the lock screen.
-  var HOME_KEY = 'okstart_at_home';
+  var HOME_KEY = 'okstart_at_home_al';
   // Базовая запись истории = локскрин, чтобы Back с меню всегда вёл сюда.
   try { if (!history.state || history.state.scr !== 'menu') history.replaceState({ scr: 'lock' }, ''); } catch (e) {}
 

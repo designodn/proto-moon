@@ -53,12 +53,24 @@ const FEEDS = {
     // зависеть от чужих CDN. У Q3 кэш не включён (mediaDir не задан).
     mediaDir: 'assets/tribune', mediaManifest: 'data/tribune-media.json',
   },
+  activity: {
+    // Activity-лента (дубль q3-стиля) — лист «lenta-activity» (та же схема/типы,
+    // что Q3-посты). gid пока нет (лист создаётся вручную копией «Q3-посты»),
+    // поэтому тянем ПО ИМЕНИ листа. Как только узнаешь стабильный gid — впиши его
+    // сюда (gid переживает переименования, имя — нет). Целевой html — в подпапке
+    // activity-lenta/, где стоит <base href="../">, поэтому пути ассетов БЕЗ «../»
+    // (как у Q3 в корне) резолвятся корректно — рендер общий, ничего не меняем.
+    name: 'lenta-activity', gid: null,
+    json: 'data/activity-feed.json', html: 'activity-lenta/lenta.html',
+    cmd: 'scripts/fetch-q3.mjs --activity',
+  },
 };
 const IS_TRIBUNE = process.argv.includes('--tribune');
+const IS_ACTIVITY = process.argv.includes('--activity');
 const CHECK_ONLY = process.argv.includes('--check');
-const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : 'q3'];
+const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_ACTIVITY ? 'activity' : 'q3')];
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
-const SHEET_GID = FEED.gid;                   // стабильный gid листа
+const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -70,9 +82,14 @@ const ROOT = resolve(__dirname, '..');
 // headers=1 — принудительно одна строка шапки. Без него gviz авто-детектит шапку
 // и для post-1 (vvz-portlet без счётчиков лайков/комментов/репостов) ошибочно
 // считает ДВЕ строки шапки → склеивает их в подписи колонок, а post-1 теряется.
-const csvUrl =
-  `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
+// Источник: по стабильному gid (предпочтительно), либо по имени листа, если gid
+// ещё не известен (новый лист «lenta-activity»). gviz с явным sheet=<имя> тянет
+// именно его (а не первый лист), пока имя не переименовали.
+const csvUrl = SHEET_GID
+  ? `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+    `?tqx=out:csv&gid=${SHEET_GID}&headers=1`
+  : `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+    `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`;
 
 /* ── Компаньон-данные (то, чего нет в плоских колонках листа) ──────────────── */
 /* Вложенные куски не лезут в колонки таблицы, поэтому держим их здесь и вешаем
