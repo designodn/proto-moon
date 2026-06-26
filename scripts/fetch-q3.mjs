@@ -55,14 +55,13 @@ const FEEDS = {
   },
   activity: {
     // Activity-лента (дубль q3-стиля) — лист «lenta-activity» (та же схема/типы,
-    // что Q3-посты). gid пока нет (лист создаётся вручную копией «Q3-посты»),
-    // поэтому тянем ПО ИМЕНИ листа. Как только узнаешь стабильный gid — впиши его
-    // сюда (gid переживает переименования, имя — нет). Целевой html — в подпапке
-    // activity-lenta/, где стоит <base href="../">, поэтому пути ассетов БЕЗ «../»
-    // (как у Q3 в корне) резолвятся корректно — рендер общий, ничего не меняем.
-    name: 'lenta-activity', gid: null,
+    // что Q3-посты). Целевой html — в подпапке activity-lenta/, где стоит
+    // <base href="../">, поэтому пути ассетов БЕЗ «../» (как у Q3 в корне)
+    // резолвятся корректно — рендер общий, ничего не меняем.
+    name: 'lenta-activity', gid: '2116709014',
     json: 'data/activity-feed.json', html: 'activity-lenta/lenta.html',
     cmd: 'scripts/fetch-q3.mjs --activity',
+    tabs: true,   // вверху первого НЕ-ВВЗ поста — таб-стрип «Лента/Сегодня/…»
   },
 };
 const IS_TRIBUNE = process.argv.includes('--tribune');
@@ -1292,6 +1291,33 @@ function splice(cardsHtml) {
   writeFileSync(file, html);
 }
 
+/* ── Таб-стрип ленты (только для фидов с FEED.tabs, напр. activity-lenta) ──────
+   «Лента / Сегодня / Подарки / Обсуждение» — DS-компонент .tabs (components/tabs.css,
+   типографика ds-title-xl). Прикрепляется к ВЕРХУ ПЕРВОГО поста, который НЕ ВВЗ
+   (ВВЗ-портлет — полноширинный остров, табы на нём не сидят): вставляется первым
+   ребёнком карточки-острова, сразу после её открывающего тега. Отступы: бока 16 /
+   низ 8 даёт сам .tabs; верх 22 — класс .ll-feed-tabs (правило в самой странице).
+   Пути today/gifts — без «../» (у activity-lenta есть <base href="../">). */
+const FEED_TABS =
+`          <div class="tabs ll-feed-tabs">
+            <button class="tabs-tab ds-title-xl __state-on">Лента</button>
+            <button class="tabs-tab ds-title-xl" data-href="today.html">Сегодня</button>
+            <button class="tabs-tab ds-title-xl" data-href="gifts-catalog.html">Подарки</button>
+            <button class="tabs-tab ds-title-xl">Обсуждение</button>
+          </div>`;
+
+function injectFeedTabs(cardsArr) {
+  for (let i = 0; i < cardsArr.length; i++) {
+    if (/vvz-portlet/.test(cardsArr[i])) continue;     // ВВЗ — пропускаем
+    const injected = cardsArr[i].replace(
+      /^(\s*<(?:article|section)\b[^>]*>\n)/,
+      (m) => m + FEED_TABS + '\n');
+    if (injected !== cardsArr[i]) { cardsArr[i] = injected; return cardsArr; }
+  }
+  console.warn('  ⚠️  таб-стрип не вставлен: не нашёл первого НЕ-ВВЗ поста-острова');
+  return cardsArr;
+}
+
 /* ── main ───────────────────────────────────────────────────────────────────── */
 async function main() {
   // --offline: реген из data/q3-feed.json без обращения к таблице.
@@ -1427,6 +1453,7 @@ async function main() {
   // — не вставляем пустоту в живую ленту.
   if (rendered.length === 0)
     throw new Error('не отрисовано ни одной карточки — лента НЕ тронута (проверь лист/типы).');
+  if (FEED.tabs) injectFeedTabs(rendered);   // таб-стрип на первом НЕ-ВВЗ посте
   const cards = rendered.join('\n\n');
   splice(cards);
 
