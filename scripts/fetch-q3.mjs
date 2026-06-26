@@ -454,6 +454,30 @@ ${cells}
           </div>`;
 }
 
+/** ЕДИНОЕ ПРАВИЛО медиа для ВСЕХ twitter-like карточек (comment-as-feed,
+ *  renderTwitterCard). Централизовано, чтобы не дублировать:
+ *   • 2 автора (есть ids[1]) ⇒ цитата оригинала в reshare-контейнере
+ *     (автор ids[1] + опц. текст оригинала + фото);
+ *   • 1 автор (нет ids[1]) ⇒ фото просто под текстом обычным .text-feed__media,
+ *     БЕЗ reshare-контейнера.
+ *  Возвращает готовый HTML-блок (или '' если нечего показывать). */
+function twMedia(ids, photos = [], { origText = '' } = {}) {
+  const to = ids[1];
+  if (!to) return photos.length ? media(photos) : '';     // 1 автор → обычное медиа
+  const author = `
+              <div class="text-feed__reshare-card-author">
+                <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
+                <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
+              </div>`;
+  const body = origText ? `
+              <p class="ds-body-m text-feed__body">${esc(origText)}</p>` : '';
+  // img абсолютом: высоту держит aspect-ratio 16/9 контейнера, картинка — cover.
+  const med = photos.length ? `
+              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
+  return `            <div class="text-feed__reshare-card">${author}${body}${med}
+            </div>`;
+}
+
 /** Иконка экшена (NV-пак лежит в assets/icons, путь без «../»). */
 const llIcon = (file, cls = 'll-icon', w = 20) =>
   `<img class="${cls}" src="assets/icons/${file}" width="${w}" height="${w}" alt="">`;
@@ -1222,22 +1246,9 @@ ${mediaInner}
               <span class="caf__line" aria-hidden="true"></span>` : '';
       // Превью оригинала: автор (ава 24 + имя) + текст оригинала (его заголовок).
       const orig = text || nbsp(resolveNames(p.desc)) || '';
-      const previewAuthor = to ? `
-              <div class="text-feed__reshare-card-author">
-                <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
-                <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
-              </div>` : '';
-      const previewBody = orig ? `
-              <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
-      // Фото оригинала (если есть ссылка) — медиа reshare-card, отступ до него 12
-      // даёт сам компонент (.text-feed__reshare-card-media:not(:first-child)).
-      // img абсолютом внутри бокса: высоту держит aspect-ratio 16/9 контейнера
-      // (position:relative из базы), а картинка заполняет его cover'ом. Через
-      // height:100% в потоке загруженная img диктовала бы свой нативный ratio.
-      const previewMedia = photos.length ? `
-              <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
-      const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
-            </div>` : '';
+      // Медиа/цитата — по единому правилу twMedia (2 автора → reshare-контейнер
+      // с оригиналом; 1 автор → фото обычным медиа под текстом).
+      const preview = twMedia(ids, photos, { origText: orig });
       // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
       // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
       const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
@@ -1306,14 +1317,14 @@ function splice(cardsHtml) {
    Контент панелей:
      Лента      — comment-as-feed из шита;
      Подборки   — заглушка (наполним позже);
-     Сегодня    — заглушка (порт виджетов today.html — отдельным шагом);
+     Сегодня    — виджеты today.html (components/today-widgets.{css,js,partial.html});
      Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
      Друзья     — photo / text / video, модификатор twitter-like;
      Локальное  — comment-as-feed (как Лента, пока). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
   { id: 'podborki', label: 'Подборки',  stub: 'Здесь скоро появятся подборки' },
-  { id: 'segodnya', label: 'Сегодня',   stub: 'Виджеты «Сегодня» — скоро' },
+  { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
   { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
@@ -1359,23 +1370,10 @@ function renderTwitterCard(p, idx) {
   } else {
     const body = title && text ? `${title}. ${text}` : (title || text);
     if (body) inner += '\n' + cafTextTw(body);
-    if (photos.length) {
-      if (ids.length >= 2) {
-        // 2 автора → репост/цитата: медиа в reshare-превью (reply-стиль оригинала).
-        const to = ids[1];
-        inner += `
-                <div class="text-feed__reshare-card">
-                  <div class="text-feed__reshare-card-author">
-                    <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
-                    <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
-                  </div>
-                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>
-                </div>`;
-      } else {
-        // 1 автор → нормальное медиа под текстом, как в обычном фиде (text-feed__media).
-        inner += '\n' + media(photos);
-      }
-    }
+    // Медиа/цитата — по единому правилу twMedia (1 автор → обычное медиа под
+    // текстом; 2 автора → reshare-контейнер с оригиналом).
+    const m = twMedia(ids, photos);
+    if (m) inner += '\n' + m;
   }
 
   // Комменты к фиду — тем же твиттер-рядом (fc-comment __twitter-like), но с
@@ -1409,9 +1407,38 @@ function tabStub(text) {
         </article>`;
 }
 
+/* Разметка виджетов «Сегодня» — централизованный partial (стили/поведение —
+   components/today-widgets.{css,js}). Читаем лениво (нужно только activity-фиду). */
+function todayWidgets() {
+  try { return readFileSync(resolve(ROOT, 'components/today-widgets.partial.html'), 'utf8').trim(); }
+  catch (_) { return null; }
+}
+
 /* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип. */
 function buildActivityTabs(posts) {
   return ACTIVITY_TABS.map(tab => {
+    const hidden = tab.id === 'lenta' ? '' : ' hidden';
+
+    // Таб-виджеты (Сегодня): таб-стрип отдельным островом, ниже — виджеты из
+    // центрального partial (поведение/стили — components/today-widgets.{js,css}).
+    if (tab.widgets) {
+      const w = todayWidgets();
+      if (!w) {
+        const stub = tabStub('Виджеты «Сегодня» недоступны').replace(/^(\s*<article\b[^>]*>\n)/, (m) => m + tabStrip(tab.id) + '\n');
+        return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>\n${stub}\n        </div>`;
+      }
+      // Таб-стрип отдельным островом + виджеты в .tg-feed (ритм 12, как в today.html).
+      return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
+        <div class="tg-feed">
+        <div class="island ll-tabs-island">
+${tabStrip(tab.id)}
+        </div>
+
+${w}
+        </div>
+        </div>`;
+    }
+
     let cards;
     if (tab.stub) {
       cards = [tabStub(tab.stub)];
@@ -1423,7 +1450,6 @@ function buildActivityTabs(posts) {
     // Вставляем таб-стрип первым ребёнком первого острова панели.
     cards[0] = cards[0].replace(/^(\s*<(?:article|section|div)\b[^>]*>\n)/,
       (m) => m + tabStrip(tab.id) + '\n');
-    const hidden = tab.id === 'lenta' ? '' : ' hidden';
     return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
 ${cards.join('\n\n')}
         </div>`;

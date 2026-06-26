@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="components/tooltip.css">
 <link rel="stylesheet" href="components/onboarding-marathon.css">
 <link rel="stylesheet" href="components/activity-widget.css">
+<link rel="stylesheet" href="components/today-widgets.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <!-- Онбординг фотомарафона: перехват на window(capture) → раньше навигации в screen-transition.js -->
@@ -1229,7 +1230,8 @@
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="segodnya" hidden>
-        <article class="text-feed island ll-tab-stub">
+        <div class="tg-feed">
+        <div class="island ll-tabs-island">
           <div class="tabs ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Подборки</button>
@@ -1238,8 +1240,126 @@
             <button class="tabs-tab ds-title-xl" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
-          <div class="ds-body-m ll-tab-stub__text">Виджеты «Сегодня» — скоро</div>
-        </article>
+        </div>
+
+<!-- Today widgets — разметка виджетов «Сегодня» (вставляется генератором
+     scripts/fetch-q3.mjs в таб «Сегодня» activity-lenta; стили/поведение —
+     components/today-widgets.{css,js}). Ассеты — assets/…, путь от корня
+     (на activity-lenta есть <base href="../">). -->
+
+        <!-- 1. Сейчас в СМИ — Дзен-портлет новостей -->
+        <section class="tg-island">
+          <article class="tg-news">
+            <div class="tg-news__title ds-title-xl">Сейчас в СМИ</div>
+            <div class="tg-news__tabs">
+              <button type="button" class="tg-news__tab __active">Главное</button>
+              <button type="button" class="tg-news__tab">Санкт-Петербург</button>
+              <button type="button" class="tg-news__tab">Происшествия</button>
+            </div>
+            <div class="tg-news__list">
+              <div class="tg-news__item">
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
+                <div class="tg-news__text ds-body-l">ЦИК: выборы депутатов Госдумы пройдут с 18 по 20 сентября</div>
+              </div>
+              <div class="tg-news__item">
+                <div class="avatar __size-24 __type-image"><img src="assets/embedded/ee75bd3ea67f4f7b.png" alt=""></div>
+                <div class="tg-news__text ds-body-l">Летчик-космонавт и депутат ГД Александр Самокутяев умер в возрасте 56 лет</div>
+              </div>
+              <div class="tg-news__item">
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
+                <div class="tg-news__text ds-body-l">Слово «преддверие» вызвало самые большие проблемы на ЕГЭ по русскому языку</div>
+              </div>
+              <div class="tg-news__item">
+                <div class="avatar __size-24 __type-image"><img src="assets/embedded/ee75bd3ea67f4f7b.png" alt=""></div>
+                <div class="tg-news__text ds-body-l">«Единая Россия» предложила заменить предупреждениями штрафы за мелкие нарушения</div>
+              </div>
+              <div class="tg-news__item">
+                <div class="avatar __size-24 __type-image"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Russia-today-logo.svg" alt=""></div>
+                <div class="tg-news__text ds-body-l">Трамп назвал условие возвращения санкций против российской нефти</div>
+              </div>
+            </div>
+            <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
+              <button class="button-container __style-primary-on-color"><span class="button-content">Посмотреть ещё</span></button>
+            </span>
+          </article>
+        </section>
+
+        <!-- 3. Колесо призов -->
+        <section class="tg-island">
+          <article class="cover-card __size-220 __fill" id="rouletteWidget"
+                   role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
+                   style="cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
+            <video class="tg-roulette__video" src="assets/koleso/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
+            <div class="cover-card__body">
+              <div class="cover-card__bottom cover-card__cta">
+                <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
+                  <button class="button-container __style-primary-on-color"><span class="button-content">Крутить</span></button>
+                </span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до баннера ровно
+             12px через gap .tg-feed) -->
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
+          <header class="header"><div class="header__title ds-title-xl">Какой сегодня день</div></header>
+        </div>
+
+        <!-- Картинка дня -->
+        <div class="tg-island">
+          <img src="assets/today/segodnya-day.png" alt="" style="width: 100%; display: block; border-radius: 16px;">
+        </div>
+
+        <!-- 4. Друзья на сайте (люди из data/people.js, рендер ниже) — под картинкой дня -->
+        <div class="tg-sec-head" style="padding: 0 var(--space-4);">
+          <header class="header"><div class="header__title ds-title-xl">Друзья на сайте</div></header>
+          <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">Все</span></button></span>
+        </div>
+        <div class="tg-carousel" id="friendsRow" style="padding-left: var(--space-4); scroll-padding-left: var(--space-4);"></div>
+
+        <!-- 5. Виджеты: погода + луна (в ряд) и гороскоп (на всю ширину) -->
+        <section class="tg-island">
+          <div class="tg-cards">
+            <div class="tg-cards__row">
+
+              <!-- Погода -->
+              <article class="tg-card tg-card--weather">
+                <video class="tg-card__bg" src="assets/today/weather-back.mp4" autoplay muted loop playsinline></video>
+                <div class="tg-card__wx-top">
+                  <div class="ds-title-m">Дождь</div>
+                  <div class="ds-display-xl">+14°</div>
+                </div>
+                <div class="ds-title-m">Слабый ветер 4 м/с</div>
+              </article>
+
+              <!-- Луна -->
+              <article class="tg-card tg-card--moon">
+                <img class="tg-card__bg" src="assets/today/new-moon-back.png" alt="">
+                <div class="tg-card__heading">Новая луна</div>
+                <div class="tg-card__moon-list">
+                  <div class="tg-card__moon-row">
+                    <span class="tg-card__moon-ic __indigo"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/cut_24.svg)"></span></span>
+                    <span class="ds-body-l">Можно стричься</span>
+                  </div>
+                  <div class="tg-card__moon-row">
+                    <span class="tg-card__moon-ic __jungle"><span class="tg-card__moon-glyph" style="--glyph: url(assets/icons/flower_24.svg)"></span></span>
+                    <span class="ds-body-l">Сажайте помидоры</span>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+            <!-- Гороскоп -->
+            <article class="tg-card tg-card--horo">
+              <img class="tg-card__bg" src="assets/today/horo-back.png" alt="">
+              <div class="tg-card__heading tg-card__horo-title">Козерог</div>
+              <div class="ds-body-l tg-card__horo-text">Козероги, в этом месяце вам стоит быть готовыми к неожиданным поворотам судьбы. Возможно, вам придется пересмотреть свои старые планы и адаптироваться к новым обстоятельствам. Не бойтесь изменений — они могут привести к интересным возможностям!</div>
+            </article>
+          </div>
+        </section>
+        </div>
         </div>
 
         <div class="ll-tabpanel" data-tab-panel="podarki" hidden>
@@ -2856,6 +2976,7 @@
   <script src="components/people-data.js"></script>
   <script src="components/activity-widget.js"></script>
   <script src="components/feed-tabs.js"></script>
+  <script src="components/today-widgets.js"></script>
   <!-- Сториз (Моменты) из листа «Сториз» → window.DS_STORIES -->
   <script src="data/stories.js"></script>
 
