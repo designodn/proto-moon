@@ -1306,14 +1306,14 @@ function splice(cardsHtml) {
    Контент панелей:
      Лента      — comment-as-feed из шита;
      Подборки   — заглушка (наполним позже);
-     Сегодня    — заглушка (порт виджетов today.html — отдельным шагом);
+     Сегодня    — виджеты today.html (components/today-widgets.{css,js,partial.html});
      Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
      Друзья     — photo / text / video, модификатор twitter-like;
      Локальное  — comment-as-feed (как Лента, пока). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
   { id: 'podborki', label: 'Подборки',  stub: 'Здесь скоро появятся подборки' },
-  { id: 'segodnya', label: 'Сегодня',   stub: 'Виджеты «Сегодня» — скоро' },
+  { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
   { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
@@ -1409,9 +1409,38 @@ function tabStub(text) {
         </article>`;
 }
 
+/* Разметка виджетов «Сегодня» — централизованный partial (стили/поведение —
+   components/today-widgets.{css,js}). Читаем лениво (нужно только activity-фиду). */
+function todayWidgets() {
+  try { return readFileSync(resolve(ROOT, 'components/today-widgets.partial.html'), 'utf8').trim(); }
+  catch (_) { return null; }
+}
+
 /* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип. */
 function buildActivityTabs(posts) {
   return ACTIVITY_TABS.map(tab => {
+    const hidden = tab.id === 'lenta' ? '' : ' hidden';
+
+    // Таб-виджеты (Сегодня): таб-стрип отдельным островом, ниже — виджеты из
+    // центрального partial (поведение/стили — components/today-widgets.{js,css}).
+    if (tab.widgets) {
+      const w = todayWidgets();
+      if (!w) {
+        const stub = tabStub('Виджеты «Сегодня» недоступны').replace(/^(\s*<article\b[^>]*>\n)/, (m) => m + tabStrip(tab.id) + '\n');
+        return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>\n${stub}\n        </div>`;
+      }
+      // Таб-стрип отдельным островом + виджеты в .tg-feed (ритм 12, как в today.html).
+      return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
+        <div class="tg-feed">
+        <div class="island ll-tabs-island">
+${tabStrip(tab.id)}
+        </div>
+
+${w}
+        </div>
+        </div>`;
+    }
+
     let cards;
     if (tab.stub) {
       cards = [tabStub(tab.stub)];
@@ -1423,7 +1452,6 @@ function buildActivityTabs(posts) {
     // Вставляем таб-стрип первым ребёнком первого острова панели.
     cards[0] = cards[0].replace(/^(\s*<(?:article|section|div)\b[^>]*>\n)/,
       (m) => m + tabStrip(tab.id) + '\n');
-    const hidden = tab.id === 'lenta' ? '' : ' hidden';
     return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
 ${cards.join('\n\n')}
         </div>`;
