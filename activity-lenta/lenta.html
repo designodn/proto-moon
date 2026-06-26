@@ -420,9 +420,9 @@
 
   /* Таб-стрип «Лента/Сегодня/…» прикреплён к верху первого НЕ-ВВЗ поста
      (генерит scripts/fetch-q3.mjs --activity). Верх табов = 0 — отступ 16 сверху
-     даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs; низ
-     переопределяем на 16. */
-  .ll-feed-tabs { padding-bottom: var(--space-4); }
+     даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs.
+     Низ: 4 + 12 (flex-gap карточки .text-feed) = 16 до «шапки» поста. */
+  .ll-feed-tabs { padding-bottom: var(--space-1); }
 </style>
 </head>
 <body>
