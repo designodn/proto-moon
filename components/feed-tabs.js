@@ -48,8 +48,8 @@
     });
   }
 
-  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый
-  // и скроллим ленту в начало (sticky-таббар не «скачет» из-за разной высоты).
+  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый.
+  // Вертикальный скролл НЕ трогаем — страница не «скачет» вверх при смене таба.
   function switchTo(id) {
     if (!id) return;
     var fromStrip = document.querySelector('[data-tab-panel]:not([hidden]) .ll-feed-tabs');
@@ -58,8 +58,6 @@
     var panel = document.querySelector('[data-tab-panel="' + id + '"]');
     var toStrip = panel && panel.querySelector('.ll-feed-tabs');
     if (toStrip) toStrip.scrollLeft = scrollLeft;
-    var feed = document.querySelector('.phone-frame__feed');
-    if (feed) feed.scrollTop = 0;
     clearPressed();
   }
 
