@@ -1222,22 +1222,27 @@ ${mediaInner}
               <span class="caf__line" aria-hidden="true"></span>` : '';
       // Превью оригинала: автор (ава 24 + имя) + текст оригинала (его заголовок).
       const orig = text || nbsp(resolveNames(p.desc)) || '';
-      const previewAuthor = to ? `
+      // ПРАВИЛО ГЕНЕРАЦИИ: 2 автора ⇒ цитата оригинала в reshare-контейнере;
+      // 1 автор (нет ids[1], оригинала нет) ⇒ фото просто под текстом обычным
+      // медиа (.text-feed__media), без reshare-контейнера. (То же — в renderTwitterCard.)
+      let preview;
+      if (to) {
+        const previewAuthor = `
               <div class="text-feed__reshare-card-author">
                 <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
                 <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
-              </div>` : '';
-      const previewBody = orig ? `
+              </div>`;
+        const previewBody = orig ? `
               <p class="ds-body-m text-feed__body">${esc(orig)}</p>` : '';
-      // Фото оригинала (если есть ссылка) — медиа reshare-card, отступ до него 12
-      // даёт сам компонент (.text-feed__reshare-card-media:not(:first-child)).
-      // img абсолютом внутри бокса: высоту держит aspect-ratio 16/9 контейнера
-      // (position:relative из базы), а картинка заполняет его cover'ом. Через
-      // height:100% в потоке загруженная img диктовала бы свой нативный ratio.
-      const previewMedia = photos.length ? `
+        // Фото оригинала — медиа reshare-card, отступ до него 12 даёт сам компонент.
+        // img абсолютом: высоту держит aspect-ratio 16/9 контейнера, картинка — cover.
+        const previewMedia = photos.length ? `
               <div class="text-feed__reshare-card-media" style="aspect-ratio: 16 / 9">${img(photos[0], 'style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block" ')}</div>` : '';
-      const preview = (to || orig || previewMedia) ? `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
-            </div>` : '';
+        preview = `            <div class="text-feed__reshare-card">${previewAuthor}${previewBody}${previewMedia}
+            </div>`;
+      } else {
+        preview = photos.length ? media(photos) : '';
+      }
       // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
       // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
       const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
