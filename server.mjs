@@ -62,7 +62,7 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-/* Лендинг по «/»: простой список прототипов, чтобы было что расшарить. */
+/* Лендинг по «/»: выбор прототипа + ручное обновление ленты из таблицы. */
 const LANDING = `<!DOCTYPE html>
 <html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -70,32 +70,101 @@ const LANDING = `<!DOCTYPE html>
 <style>
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;
        background:#f5f5f7;color:#111;display:flex;min-height:100vh;
-       align-items:center;justify-content:center}
-  .card{background:#fff;border-radius:16px;padding:32px 28px;max-width:360px;width:100%;
+       align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+  .card{background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:100%;
         box-shadow:0 8px 30px rgba(0,0,0,.08)}
   h1{font-size:18px;margin:0 0 4px}
-  p{font-size:13px;color:#666;margin:0 0 20px}
-  a{display:flex;justify-content:space-between;align-items:center;text-decoration:none;
+  .sub{font-size:13px;color:#666;margin:0 0 20px}
+  a.proto{display:flex;justify-content:space-between;align-items:center;text-decoration:none;
     color:#111;padding:14px 16px;border:1px solid #ececec;border-radius:12px;margin-bottom:10px;
     font-size:15px;font-weight:600;transition:.15s}
-  a:hover{border-color:#d0d0d0;background:#fafafa}
-  a span{font-size:12px;color:#999;font-weight:400}
+  a.proto:hover{border-color:#d0d0d0;background:#fafafa}
+  a.proto span{font-size:12px;color:#999;font-weight:400}
+  .sync{margin-top:20px;padding-top:20px;border-top:1px solid #ececec}
+  button{width:100%;padding:14px 16px;border:0;border-radius:12px;background:#111;color:#fff;
+    font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
+  button:hover{background:#000}
+  button:disabled{background:#bdbdbd;cursor:default}
+  .status{font-size:12px;color:#777;margin:10px 2px 0;min-height:16px;text-align:center}
+  .status.ok{color:#1a8f3c}
+  .status.err{color:#d33}
 </style></head>
 <body><div class="card">
   <h1>Прототипы OK DS</h1>
-  <p>Лента обновляется из Google-таблицы автоматически.</p>
-  <a href="/nv">New Vision <span>/nv</span></a>
-  <a href="/activity">Вокруг вас <span>/activity</span></a>
-  <a href="/q3">Q3 <span>/q3</span></a>
-  <a href="/preview">Дизайн-система <span>/preview</span></a>
+  <p class="sub">Выберите прототип или обновите ленту из Google-таблицы.</p>
+  <a class="proto" href="/nv">New Vision <span>/nv</span></a>
+  <a class="proto" href="/activity">Вокруг вас <span>/activity</span></a>
+  <a class="proto" href="/q3">Q3 <span>/q3</span></a>
+  <a class="proto" href="/preview">Дизайн-система <span>/preview</span></a>
+  <div class="sync">
+    <button id="syncBtn">Обновить ленту из таблицы</button>
+    <div class="status" id="status"></div>
+  </div>
+<script>
+  const btn = document.getElementById('syncBtn');
+  const status = document.getElementById('status');
+  const setStatus = (t, cls='') => { status.textContent = t; status.className = 'status ' + cls; };
+
+  function fmtTime(iso){ try { return new Date(iso).toLocaleTimeString('ru-RU'); } catch { return ''; } }
+
+  async function refreshLast(){
+    try {
+      const h = await (await fetch('/healthz')).json();
+      if (h.syncing){ startPolling(); return; }
+      if (h.lastSync){
+        const ls = h.lastSync;
+        if (ls.ok) setStatus('Обновлено в ' + fmtTime(ls.finishedAt), 'ok');
+        else setStatus('Прошлый прогон с ошибкой (код ' + (ls.code ?? '—') + ')', 'err');
+      }
+    } catch {}
+  }
+
+  let polling = false;
+  function startPolling(){
+    if (polling) return;
+    polling = true;
+    btn.disabled = true;
+    setStatus('Обновляю ленту из таблицы…');
+    const tick = async () => {
+      try {
+        const h = await (await fetch('/healthz')).json();
+        if (h.syncing){ setTimeout(tick, 2000); return; }
+        polling = false; btn.disabled = false;
+        const ls = h.lastSync;
+        if (ls && ls.ok) setStatus('Готово — обновлено в ' + fmtTime(ls.finishedAt), 'ok');
+        else setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
+      } catch {
+        polling = false; btn.disabled = false;
+        setStatus('Не удалось получить статус', 'err');
+      }
+    };
+    setTimeout(tick, 2000);
+  }
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    setStatus('Запускаю…');
+    try {
+      const r = await fetch('/api/sync', { method: 'POST' });
+      startPolling();
+    } catch {
+      btn.disabled = false;
+      setStatus('Не удалось запустить обновление', 'err');
+    }
+  });
+
+  refreshLast();
+</script>
 </div></body></html>`;
 
 /* ── Синк ленты из гуглшита ───────────────────────────────────────────────── */
 let syncing = false;
+let lastSync = null; // { reason, startedAt, finishedAt, ok, code }
+
 function runSync(reason) {
   if (syncing) {
     console.log(`[sync] пропуск (${reason}): предыдущий прогон ещё идёт`);
-    return;
+    return false;
   }
   syncing = true;
   const startedAt = new Date().toISOString();
@@ -106,12 +175,15 @@ function runSync(reason) {
   });
   child.on('close', (code) => {
     syncing = false;
+    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(), ok: code === 0, code };
     console.log(`[sync] финиш (${reason}), код ${code ?? '—'}`);
   });
   child.on('error', (err) => {
     syncing = false;
+    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(), ok: false, error: err.message };
     console.error(`[sync] не удалось запустить fetch-all: ${err.message}`);
   });
+  return true;
 }
 
 /* ── Статика ──────────────────────────────────────────────────────────────── */
@@ -127,10 +199,23 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     let pathname = decodeURIComponent(url.pathname);
 
-    // Здоровье для Railway/мониторинга.
+    // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, syncing }));
+      res.end(JSON.stringify({ ok: true, syncing, lastSync }));
+      return;
+    }
+
+    // Ручной запуск синка с лендинга.
+    if (pathname === '/api/sync') {
+      if (req.method !== 'POST') {
+        res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST' });
+        res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+        return;
+      }
+      const started = runSync('manual');
+      res.writeHead(started ? 202 : 409, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ started, syncing }));
       return;
     }
 
