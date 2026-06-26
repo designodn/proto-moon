@@ -436,6 +436,10 @@
   /* Медиа в twitter-ряду (Друзья, 1 автор) — обычный .text-feed__media под текстом,
      отступ сверху как у секций карточки (12). */
   .caf__content > .text-feed__media { margin-top: var(--space-3); border-radius: 12px; }
+
+  /* Шапка 2-го круга («кто-то поставил класс») над twitter-картой: 16 по бокам
+     (как .caf__crumbs), 8 до ряда; 16 сверху даёт padding-top острова. */
+  .caf.__twitter-like > .text-feed__activity { padding: 0 var(--space-4); margin-bottom: var(--space-2); }
 </style>
 </head>
 <body>
@@ -1529,6 +1533,7 @@
             <button class="tabs-tab ds-title-xl __state-on" data-tab="druzya">Друзья</button>
             <button class="tabs-tab ds-title-xl" data-tab="lokalnoe">Локальное</button>
           </div>
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Сергей Чернышов</span> поставил класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
@@ -1685,6 +1690,7 @@
         </article>
 
         <article class="caf __twitter-like island">
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Зинаида Халина (Стребкова)</span> поставила класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
@@ -1916,6 +1922,7 @@
         </article>
 
         <article class="caf __twitter-like island">
+          <div class="text-feed__activity ds-body-m"><span class="ds-title-s">Ольга Стрельникова</span> поставила класс</div>
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">

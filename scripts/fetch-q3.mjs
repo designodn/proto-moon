@@ -1383,7 +1383,12 @@ function renderTwitterCard(p, idx) {
   const thread = renderCommentThread(p, { tw: true, replies: false });
   const threadBlock = thread ? '\n' + thread : '';
 
-  return `        <article class="caf __twitter-like island">${crumbsBlock}
+  // Шапка 2-го круга друзей — «кто-то поставил класс / прокомментировал»
+  // (колонка «шапка», id_X → имя). Пусто (1-й круг — обычный пост) → не выводим.
+  const activity = activityLine(p.header);
+  const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
+
+  return `        <article class="caf __twitter-like island">${activityBlock}${crumbsBlock}
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
