@@ -33,7 +33,7 @@ const SYNC_ON_START = String(process.env.SYNC_ON_START ?? 'true') !== 'false';
 const PROTOTYPES = {
   '/nv':       '/new-vision/lenta.html',      // New Vision — основная лента
   '/activity': '/activity-lenta/view.html',   // Activity-лента — локскрин-старт (как q3-view)
-  '/q3':       '/lenta-q3.html',              // Q3
+  '/q3':       '/q3-view.html',               // Q3 — локскрин-старт
   '/preview':  '/preview.html',              // витрина дизайн-системы
 };
 
