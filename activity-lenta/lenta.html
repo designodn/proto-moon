@@ -419,9 +419,10 @@
   .mp-toast__icon { flex-shrink: 0; color: var(--static-surface-status-positive); }  /* check-circle 24, positive */
 
   /* Таб-стрип «Лента/Сегодня/…» прикреплён к верху первого НЕ-ВВЗ поста
-     (генерит scripts/fetch-q3.mjs --activity). DS-компонент .tabs даёт бока 16
-     и низ 8; .island даёт верх 16 — добавляем 6 до 22 по макету. */
-  .ll-feed-tabs { padding-top: 6px; }
+     (генерит scripts/fetch-q3.mjs --activity). Верх табов = 0 — отступ 16 сверху
+     даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs.
+     Низ: 4 + 12 (flex-gap карточки .text-feed) = 16 до «шапки» поста. */
+  .ll-feed-tabs { padding-bottom: var(--space-1); }
 </style>
 </head>
 <body>
