@@ -64,6 +64,11 @@ const FEEDS = {
     tabs: true,   // вверху первого НЕ-ВВЗ поста — таб-стрип «Лента/Сегодня/…»
   },
 };
+// Подборки (Pinterest-таб activity-ленты) — отдельный лист той же таблицы
+// (колонки: id, автор=group-*, текст=подпись, фото=URL картинки). Кэш-выгрузка —
+// data/activity-pins.json (для офлайн-регена).
+const ACTIVITY_PINS = { gid: '802612828', json: 'data/activity-pins.json' };
+
 const IS_TRIBUNE = process.argv.includes('--tribune');
 const IS_ACTIVITY = process.argv.includes('--activity');
 const CHECK_ONLY = process.argv.includes('--check');
@@ -1514,8 +1519,52 @@ function todayWidgets() {
   catch (_) { return null; }
 }
 
-/* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип. */
-function buildActivityTabs(posts) {
+/* Подборки: тянем отдельный лист (gid ACTIVITY_PINS.gid) → массив пинов
+   {type:'pin', author:'group-*', title:подпись, photos:[URL]}. Онлайн — фетчим и
+   кэшируем в json; офлайн — читаем кэш. Сбой подборок НЕ валит всю ленту. */
+async function loadActivityPins(offline) {
+  const jsonPath = resolve(ROOT, ACTIVITY_PINS.json);
+  if (offline) {
+    try { return JSON.parse(readFileSync(jsonPath, 'utf8')).pins || []; }
+    catch (_) { return []; }
+  }
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+    `?tqx=out:csv&gid=${ACTIVITY_PINS.gid}&headers=1`;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rows = parseCsv(await res.text());
+    const [header = [], ...body] = rows;
+    const head = header.map(h => String(h || '').trim().toLowerCase());
+    const col = (...names) => { for (const n of names) { const i = head.findIndex(h => h === n || h.startsWith(n + ' ')); if (i >= 0) return i; } return -1; };
+    const Ia = { author: col('автор'), text: col('текст', 'заголовок', 'подпись'), photos: col('фото', 'картинка'), tema: col('тема', 'категория') };
+    if (Ia.author < 0 || Ia.photos < 0)
+      throw new Error(`лист подборок (gid=${ACTIVITY_PINS.gid}) без колонок «автор»/«фото»: ${head.join(' | ')}`);
+    const cell = (c, i) => (i >= 0 ? (c[i] || '').trim() : '');
+    const pins = [];
+    for (const c of body) {
+      const photo = cell(c, Ia.photos), author = cell(c, Ia.author);
+      if (!photo && !author) continue;
+      pins.push({
+        type: 'pin', author,
+        title: cell(c, Ia.text),
+        tema: cell(c, Ia.tema),
+        photos: photo.split(',').map(s => s.trim()).filter(u => /^https?:\/\//.test(u)),
+        photosRaw: photo.split(',').map(s => s.trim()).filter(Boolean),
+      });
+    }
+    writeFileSync(jsonPath, JSON.stringify({ _readme: { 'источник': `Google-таблица, лист подборок (gid ${ACTIVITY_PINS.gid})`, 'как_обновить': 'node scripts/fetch-q3.mjs --activity' }, pins }, null, 2) + '\n');
+    console.log(`  ↳ подборки: ${pins.length} пинов (gid ${ACTIVITY_PINS.gid})`);
+    return pins;
+  } catch (e) {
+    console.warn(`  ⚠️  подборки не обновлены: ${e.message} — беру прошлый кэш/SAMPLE`);
+    try { return JSON.parse(readFileSync(jsonPath, 'utf8')).pins || []; } catch (_) { return []; }
+  }
+}
+
+/* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип.
+   pins — пины Подборок из отдельного листа (см. loadActivityPins). */
+function buildActivityTabs(posts, pins) {
   return ACTIVITY_TABS.map(tab => {
     const hidden = tab.id === 'lenta' ? '' : ' hidden';
 
@@ -1541,8 +1590,9 @@ ${w}
     // Подборки (пинтерест-masonry): таб-стрип + чипсы + грид .uni-card — ВСЁ в
     // одном острове (.island), чтобы чипсы и сетка лежали в рамках первого острова.
     if (tab.collection) {
-      const pins = posts.filter(p => p.type === 'pin');
-      const list = pins.length ? pins : SAMPLE_PINS;
+      // Пины из отдельного листа (pins); фолбэк — пины из основного листа, затем SAMPLE.
+      const sheetPins = (pins && pins.length) ? pins : posts.filter(p => p.type === 'pin');
+      const list = sheetPins.length ? sheetPins : SAMPLE_PINS;
       const items = list.map(renderPin).filter(Boolean).join('\n');
       return `        <div class="ll-tabpanel" data-tab-panel="${tab.id}"${hidden}>
         <div class="island">
@@ -1708,7 +1758,8 @@ async function main() {
     // Activity-лента: ВВЗ-портлет(ы) сверху (общая шапка), ниже — панели табов.
     const vvz = posts.filter(p => p.type === 'vvz-portlet')
       .map((p, i) => renderPost(p, i)).filter(Boolean);
-    const panels = buildActivityTabs(posts);
+    const pins = IS_ACTIVITY ? await loadActivityPins(offline) : [];
+    const panels = buildActivityTabs(posts, pins);
     if (!panels) throw new Error('панели табов пусты — лента НЕ тронута (проверь лист/типы).');
     cards = [...vvz, panels].join('\n\n');
   } else {
