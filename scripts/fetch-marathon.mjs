@@ -23,8 +23,10 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Марафон';
 const SHEET_GID = 123647512;       // лист рейтинга работ (место · автор · фото · классы)
@@ -161,6 +163,7 @@ function splice(cardsHtml) {
 async function main() {
   const offline = process.argv.includes('--offline') || csvUrl == null;
   let data, entries;
+  let gate = null;
 
   if (offline) {
     if (csvUrl == null && !process.argv.includes('--offline'))
@@ -172,7 +175,16 @@ async function main() {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-    const rows = parseCsv(await res.text());
+    const csvText = await res.text();
+    // people.json в зависимостях: имя/аватар автора запекаются из него.
+    gate = createSyncGate({ root: ROOT, key: 'marathon',
+      codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
+                 resolve(ROOT, 'data/people.json')] });
+    if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
+      console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+      return;
+    }
+    const rows = parseCsv(csvText);
     const [header = [], ...body] = rows;
     const head = header.map(h => String(h || '').trim().toLowerCase());
     const col = (...names) => {
@@ -229,6 +241,7 @@ async function main() {
   if (entries.length === 0)
     throw new Error('ни одной работы — лента НЕ тронута (проверь лист).');
   splice(renderEntries(entries));
+  if (gate) gate.commit();
   console.log(`✓ ${entries.length} работ → вставлено в marathon.html`);
 }
 

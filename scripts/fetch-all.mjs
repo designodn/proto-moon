@@ -32,11 +32,16 @@ const STEPS = [
   ['wire-vvz.mjs'],                  // доразметка data-person на ВВЗ-карточках страниц
 ];
 
+// --force прокидываем во все шаги: пересобрать всё, игнорируя инкрементальный
+// пропуск неизменённых листов (по умолчанию лист без правок пропускается).
+const FORCE = process.argv.includes('--force');
+
 const results = [];
 for (const [script, ...args] of STEPS) {
-  const label = [script, ...args].join(' ');
+  const stepArgs = FORCE ? [...args, '--force'] : args;
+  const label = [script, ...stepArgs].join(' ');
   console.log(`\n════════ ${label} ════════`);
-  const r = spawnSync(process.execPath, [resolve(HERE, script), ...args], { stdio: 'inherit', cwd: ROOT });
+  const r = spawnSync(process.execPath, [resolve(HERE, script), ...stepArgs], { stdio: 'inherit', cwd: ROOT });
   results.push({ step: label, ok: r.status === 0 });
   if (r.status !== 0) console.error(`⚠ ${label}: ошибка (код ${r.status ?? '—'}) — продолжаю дальше`);
 }

@@ -31,6 +31,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 
@@ -44,13 +45,15 @@ const FEEDS = {
     name: 'Q3-посты',  gid: '1662648328',     // стабильный gid листа Q3-постов
     json: 'data/q3-feed.json', html: 'lenta-q3.html',
     cmd: 'scripts/fetch-q3.mjs',              // подпись в маркере FEED:START
+    // Фото запекаются в lenta-q3.html (корень) → кэшируем локально, чтобы не
+    // зависеть от чужих CDN (ссылки протухают). Пути assets/q3/… (страница в корне).
+    mediaDir: 'assets/q3', mediaManifest: 'data/q3-media.json',
   },
   tribune: {
     name: 'Трибуна',   gid: '803749593',      // лист трибуны (та же схема, что Q3)
     json: 'data/tribune-feed.json', html: 'tribune.html',
     cmd: 'scripts/fetch-q3.mjs --tribune',
-    // Фото запекаются в tribune.html (корень) → кэшируем локально, чтобы не
-    // зависеть от чужих CDN. У Q3 кэш не включён (mediaDir не задан).
+    // Фото запекаются в tribune.html (корень) → кэшируем локально.
     mediaDir: 'assets/tribune', mediaManifest: 'data/tribune-media.json',
   },
   activity: {
@@ -62,6 +65,8 @@ const FEEDS = {
     json: 'data/activity-feed.json', html: 'activity-lenta/lenta.html',
     cmd: 'scripts/fetch-q3.mjs --activity',
     tabs: true,   // вверху первого НЕ-ВВЗ поста — таб-стрип «Лента/Сегодня/…»
+    // Пути assets/activity/… корректны под <base href="../"> страницы.
+    mediaDir: 'assets/activity', mediaManifest: 'data/activity-feed-media.json',
   },
 };
 // Подборки (Pinterest-таб activity-ленты) — отдельный лист той же таблицы
@@ -72,6 +77,7 @@ const ACTIVITY_PINS = { gid: '802612828', json: 'data/activity-pins.json' };
 const IS_TRIBUNE = process.argv.includes('--tribune');
 const IS_ACTIVITY = process.argv.includes('--activity');
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_ACTIVITY ? 'activity' : 'q3')];
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
@@ -1553,6 +1559,20 @@ async function loadActivityPins(offline) {
         photosRaw: photo.split(',').map(s => s.trim()).filter(Boolean),
       });
     }
+    // Фото подборок тоже кэшируем в репо (как фид) — пути assets/activity-pins/…
+    // корректны под <base href="../"> страницы activity-lenta.
+    {
+      const cache = createMediaCache({
+        root: ROOT, dirRel: 'assets/activity-pins',
+        manifestPath: resolve(ROOT, 'data/activity-pins-media.json'), dryRun: CHECK_ONLY,
+      });
+      for (const pin of pins) {
+        if (pin.photos.length)    pin.photos    = await Promise.all(pin.photos.map(u => cache.resolveUrl(u)));
+        if (pin.photosRaw.length) pin.photosRaw = await Promise.all(pin.photosRaw.map(u => cache.resolveUrl(u)));
+      }
+      cache.save();
+      console.log('  ' + cache.report());
+    }
     writeFileSync(jsonPath, JSON.stringify({ _readme: { 'источник': `Google-таблица, лист подборок (gid ${ACTIVITY_PINS.gid})`, 'как_обновить': 'node scripts/fetch-q3.mjs --activity' }, pins }, null, 2) + '\n');
     console.log(`  ↳ подборки: ${pins.length} пинов (gid ${ACTIVITY_PINS.gid})`);
     return pins;
@@ -1630,6 +1650,7 @@ async function main() {
   // --offline: реген из data/q3-feed.json без обращения к таблице.
   const offline = process.argv.includes('--offline');
   let posts;
+  let gate = null;
 
   if (offline) {
     console.log(`→ Офлайн-реген из ${FEED.json} (таблицу не тяну)…`);
@@ -1638,7 +1659,30 @@ async function main() {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-    const rows = parseCsv(await res.text());
+    const csvText = await res.text();
+
+    // Инкрементально: если CSV листа (для activity — ещё и листа подборок) не
+    // менялся и код тот же — пропускаем пересборку целиком.
+    // people.json в зависимостях: имена/аватары авторов и комментаторов
+    // запекаются из него → правка листа «Люди» пересобирает и ленту.
+    gate = createSyncGate({ root: ROOT, key: `q3:${IS_TRIBUNE ? 'tribune' : IS_ACTIVITY ? 'activity' : 'q3'}`,
+      codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
+                 resolve(ROOT, 'data/people.json')] });
+    const gateInputs = [csvText];
+    if (IS_ACTIVITY) {
+      try {
+        const pinsCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
+          `?tqx=out:csv&gid=${ACTIVITY_PINS.gid}&headers=1`;
+        const pr = await fetch(pinsCsvUrl, { signal: AbortSignal.timeout(20000) });
+        if (pr.ok) gateInputs.push(await pr.text());
+      } catch { /* подборки недоступны — детектим по основному листу */ }
+    }
+    if (gate.unchanged(...gateInputs) && !FORCE && !CHECK_ONLY) {
+      console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+      return;
+    }
+
+    const rows = parseCsv(csvText);
     const [header = [], ...body] = rows;
 
     // Колонки матчим ПО ИМЕНИ заголовка, а не по позиции — так столбцы можно
@@ -1736,6 +1780,8 @@ async function main() {
       for (const p of posts) {
         if (Array.isArray(p.photos) && p.photos.length)
           p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
+        if (Array.isArray(p.photosRaw) && p.photosRaw.length)
+          p.photosRaw = await Promise.all(p.photosRaw.map(u => cache.resolveUrl(u)));
       }
       cache.save();
       console.log('  ' + cache.report());
@@ -1774,6 +1820,7 @@ async function main() {
   }
   splice(cards);
 
+  if (gate) gate.commit();
   console.log(`✓ ${posts.length} постов → ${FEED.json} + вставлено в ${FEED.html}`);
   posts.forEach(p => console.log(`  • ${p.id.padEnd(8)} ${p.type}`));
 }

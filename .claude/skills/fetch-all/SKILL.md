@@ -1,47 +1,70 @@
 ---
 name: fetch-all
-description: Единый сбор обновлений со ВСЕЙ Google-таблицы за один прогон — люди, ленты (New Vision, Q3 и Трибуна), клипы, активности «Вокруг вас», сториз/моменты, марафон, подарки + доразметка ВВЗ. Используй, когда пользователь просит «обновить всё», «перечитать всю таблицу», «синхронизировать всё», «прогнать все листы», «собрать обновления со всей таблицы», или сказал, что поправил несколько листов сразу.
+description: Единый сбор обновлений из Google-таблицы — все листы за один прогон ИЛИ один лист точечно. Люди, ленты (New Vision, Q3, Трибуна, Activity), профиль, клипы, активности «Вокруг вас», сториз/моменты, марафон, подарки + доразметка ВВЗ. Используй, когда пользователь просит обновить/перечитать/пересобрать что-либо из таблицы: «обновить всё», «прогнать всю таблицу», «синхронизировать», ИЛИ один лист — «поправил Клипы/Посты/Людей/Активности/Профиль/Q3/Трибуну», «подтянуть авы», «обновить ленту/фид».
 ---
 
-# Сбор обновлений со всей таблицы
+# Сбор обновлений из таблицы
 
-Один источник на все данные:
+Единый скилл на все данные. Один источник:
 Spreadsheet ID: `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y`
 
-Запускает по порядку все fetch-скрипты (люди — первыми, остальные резолвят
-людей по id), затем `wire-vvz` (доразметка ВВЗ-карточек на страницах).
+- **Обновить всё разом** — `node scripts/fetch-all.mjs` (запускает по порядку все
+  fetch-скрипты: люди первыми, остальные резолвят людей по id, затем `wire-vvz`).
+- **Обновить один лист** — запусти соответствующий скрипт напрямую (колонка
+  «Команда» ниже). Так быстрее, чем гонять всю таблицу.
 
-## Как обновить всё
+Подробности по каждому листу (колонки, типы карточек, компаньон-данные в коде,
+gid'ы, нюансы, запасной путь при 401/403) — в **[sheets.md](sheets.md)**.
 
-```sh
-node scripts/fetch-all.mjs
-```
+## Что прогоняется (в этом порядке) и куда пишет
 
-Что прогоняется (в этом порядке) и куда пишет:
-
-| Шаг | Лист | Результат |
-|-----|------|-----------|
-| `fetch-people.mjs`   | «Люди»       | `data/people.json` + `data/people.js` |
-| `fetch-feed.mjs`     | «Посты»      | `new-vision/lenta.html` (+ `data/feed.json`) |
-| `fetch-q3.mjs`       | «Q3-посты»   | `lenta-q3.html` (+ `data/q3-feed.json`) |
-| `fetch-q3.mjs --tribune` | «Трибуна» (gid 803749593) | `tribune.html` (+ `data/tribune-feed.json`) |
-| `fetch-q3.mjs --activity` | «lenta-activity» (Q3-схема) | `activity-lenta/lenta.html` (+ `data/activity-feed.json`) |
-| `fetch-profile.mjs`  | «Профили» (gid 877262163) | `profile.html` (+ `data/profile-posts.json`) |
-| `fetch-clips.mjs`    | «Клипы»      | `data/clips.json` + `data/clips.js` |
-| `fetch-activity.mjs` | «Активности» | виджет/страница «Вокруг вас» |
-| `fetch-stories.mjs`  | «Сториз»     | `data/stories.json` + `data/stories.js` |
-| `fetch-marathon.mjs` | «Марафон»    | `marathon.html` |
-| `fetch-gifts.mjs`    | «Подарки»    | `data/gifts.json` + `data/gifts.js` |
-| `wire-vvz.mjs`       | —            | доразметка `data-person-*` на ВВЗ-карточках страниц |
+| Лист | Команда | Результат |
+|------|---------|-----------|
+| «Люди»       | `node scripts/fetch-people.mjs`       | `data/people.json` + `data/people.js` |
+| «Посты»      | `node scripts/fetch-feed.mjs`         | `new-vision/lenta.html` (+ `data/feed.json`) |
+| «Q3-посты»   | `node scripts/fetch-q3.mjs`           | `lenta-q3.html` (+ `data/q3-feed.json`) |
+| «Трибуна» (gid 803749593) | `node scripts/fetch-q3.mjs --tribune` | `tribune.html` (+ `data/tribune-feed.json`) |
+| «lenta-activity» (Q3-схема) | `node scripts/fetch-q3.mjs --activity` | `activity-lenta/lenta.html` (+ `data/activity-feed.json`) |
+| «профиль» (gid 877262163) | `node scripts/fetch-profile.mjs`   | `profile.html` (+ `data/profile-posts.json`) |
+| «Клипы»      | `node scripts/fetch-clips.mjs`        | `data/clips.json` + `data/clips.js` |
+| «Вокруг нас» | `node scripts/fetch-activity.mjs`     | виджет + `okruzhenie.html` (+ `data/activity.json`) |
+| «Сториз»     | `node scripts/fetch-stories.mjs`      | `data/stories.json` (+ `data/stories.js`) |
+| «Марафон»    | `node scripts/fetch-marathon.mjs`     | `marathon.html` (+ `data/marathon.json`) |
+| «Подарки»    | `node scripts/fetch-gifts.mjs`        | `data/gifts.json` + `data/gifts.js` |
+| —            | `node scripts/wire-vvz.mjs`           | доразметка `data-person-*` на ВВЗ-карточках страниц |
 
 Падение одного шага (нет доступа к листу / сети) не останавливает остальные —
-в конце печатается сводка `✓/✗` по каждому шагу.
+в конце `fetch-all.mjs` печатает сводку `✓/✗` по каждому шагу.
 
-## Отдельные листы
+## Инкрементально: пропуск неизменённых листов
 
-Если нужно обновить только что-то одно — используй точечные скиллы/скрипты:
-`fetch-people`, `fetch-feed`, `fetch-clips`, `fetch-activity`, либо напрямую
-`node scripts/fetch-<имя>.mjs`.
+По умолчанию каждый скрипт сначала тянет CSV листа (дёшево) и сравнивает его
+хэш с сохранённым в `data/.sync-state.json`. Если лист (и код рендера) не
+менялись — пересборка пропускается целиком: ни ре-рендера, ни перекачки
+картинок. Так `fetch-all` при отсутствии правок отрабатывает за секунды и даёт
+пустой git diff; меняются только реально затронутые страницы.
+
+- Детект — по хэшу CSV (Google не отдаёт время правки по отдельному листу, а
+  весь файл-таблица «меняется» от любой ячейки), поэтому 1 лёгкий запрос CSV на
+  лист всё же делается.
+- В зависимостях листа учтены: сам скрипт, общие либы и `data/people.json` для
+  лент, где имена/аватары запекаются (правка «Людей» пересобирает зависимые
+  страницы). Правка кода/шаблона тоже триггерит пересборку (хэш кода).
+- Принудительно пересобрать всё: `node scripts/fetch-all.mjs --force`
+  (или один скрипт: `node scripts/fetch-<имя>.mjs --force`).
+- `data/.sync-state.json` коммитим вместе с данными — он соответствует
+  запечённым страницам, и после деплоя синк сразу инкрементальный.
+
+## Медиа кешируются в репо
+
+Картинки/видео из таблицы скачиваются в репозиторий (`scripts/lib/media-cache.mjs`),
+страницы ссылаются на локальные копии (`assets/<лента>/<хэш>.ext`) — рантайм не
+зависит от чужих CDN. Проверка по хэшу: не менялась — не перекачивается; менялась
+— старый файл удаляется (prune), кладётся новый.
+
+Реген только разметки из уже сохранённого json (без сети) — у лент:
+`node scripts/fetch-feed.mjs --offline`, `... fetch-q3.mjs --offline` (+ `--tribune`/
+`--activity`), `... fetch-profile.mjs --offline`. Подробности по медиа — в `sheets.md`.
 
 ## После обновления
 

@@ -26,10 +26,12 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlink
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Люди';
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -151,7 +153,13 @@ async function main() {
       `Проверь, что таблица открыта «всем, у кого есть ссылка».`
     );
   }
-  const rows = parseCsv(await res.text());
+  const csvText = await res.text();
+  const gate = createSyncGate({ root: ROOT, key: 'people', codeDeps: [fileURLToPath(import.meta.url)] });
+  if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
+    console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+    return;
+  }
+  const rows = parseCsv(csvText);
   // Колонки читаем ПО НАЗВАНИЯМ (порядок столбцов в листе менялся) — по ключевому слову.
   const header = (rows[0] || []).map(h => h.trim().toLowerCase());
   const body = rows.slice(1);
@@ -255,6 +263,7 @@ async function main() {
   );
   writeFileSync(MANIFEST_PATH, JSON.stringify(nextManifest, null, 2) + '\n');
 
+  gate.commit();
   const ok = people.filter(p => p.media).length;
   console.log(`✓ Записано ${people.length} чел. (с медиа: ${ok}) → data/people.json, data/people.js, data/people-media.json`);
 }

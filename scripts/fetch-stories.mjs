@@ -28,8 +28,10 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_GID = '907583109';             // вкладка «Сториз»
 const SHEET_NAME = 'Сториз';
@@ -77,7 +79,14 @@ async function main() {
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} — проверь доступ к таблице и gid «${SHEET_GID}».`);
   }
-  const rows = parseCsv(await res.text());
+  const csvText = await res.text();
+  const gate = createSyncGate({ root: ROOT, key: 'stories',
+    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs')] });
+  if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
+    console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+    return;
+  }
+  const rows = parseCsv(csvText);
   if (!rows.length) throw new Error('Пустой лист.');
 
   // Заголовок → индексы колонок по именам.
@@ -150,6 +159,7 @@ async function main() {
     'window.DS_STORIES = ' + JSON.stringify(stories, null, 2) + ';\n'
   );
 
+  gate.commit();
   console.log(`✓ Записал ${stories.length} строк → data/stories.json + data/stories.js`);
 }
 
