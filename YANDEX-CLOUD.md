@@ -1,153 +1,46 @@
-# Переезд с Railway → Yandex Serverless Containers
+# Хостинг прототипа на Yandex Compute Cloud (VM) + автодеплой через SourceCraft
 
-Прототип раздаёт Node-сервер `server.mjs`: он отдаёт статику и сам пересобирает
+Прототип раздаёт Node-сервер `server.mjs`: отдаёт статику и сам пересобирает
 ленту из Google-таблицы (`scripts/fetch-all.mjs`) при старте и **по кнопке
-«Обновить ленту»** на лендинге. Чтобы сохранить ровно это поведение (включая
-живую кнопку), на стороне Yandex Cloud берём **Serverless Containers** — это
-прямой аналог Railway: тот же контейнер, тот же `npm start`.
+«Обновить ленту»** на лендинге. Он крутится в Docker-контейнере на постоянной
+виртуалке (VM) Yandex Compute Cloud — прямой аналог Railway: машина всегда
+включена, поэтому синк и кнопка работают стабильно.
 
-> Если живая кнопка не нужна, а лента может обновляться только при пуше/по
-> расписанию — проще и дешевле статика в Object Storage (см. `DEPLOY.md`) или
-> SourceCraft Sites + CI (см. `.sourcecraft/`). Здесь — путь «как на Railway».
+Автодеплой: **push в `main` → SourceCraft CI заходит на VM по SSH и
+пересобирает контейнер** (`docker compose up -d --build`). Менять что-то руками
+для обычного обновления не нужно — просто мерджи в `main`.
 
-В репозитории для этого уже лежат:
+> История: сначала пробовали Serverless Containers (эфемерные, деплой через
+> `yc`), но из-за их «засыпания» лента обновлялась нестабильно. Переехали на
+> постоянную VM — см. раздел «Почему VM» ниже. Старый serverless-контейнер удалён.
+
+В репозитории для этого лежат:
 - `Dockerfile` — образ на `node:22-slim`, запускает `server.mjs`;
-- `.dockerignore` — выкидывает из образа `.git`, доки, скрипты деплоя;
-- `deploy-yandex-container.sh` — собирает образ, пушит в реестр и выкатывает ревизию.
+- `.dockerignore` — выкидывает из образа `.git`, доки, скрипты;
+- `docker-compose.yml` — сервис `web` (порт 80→8080, `SYNC_ON_START=true`);
+- `.sourcecraft/ci.yaml` — SSH-деплой на VM при push в `main`.
 
 ---
 
-## Почему Serverless Containers, а не Cloud Functions
+## Как это работает (схема)
 
-Функции рассчитаны на короткий обработчик, а тут — обычный HTTP-сервер с
-дочерними процессами синка. Контейнер запускает наш образ как есть и сам
-прокидывает в него переменную `PORT` (её `server.mjs` уже читает) — менять код
-не нужно.
+```
+push / merge в main (GitHub)
+   → .github/workflows/mirror-sourcecraft.yml зеркалит репо в SourceCraft
+   → SourceCraft CI, workflow `deploy` (.sourcecraft/ci.yaml)
+   → по SSH: tar кода в /opt/proto-moon на VM, затем docker compose up -d --build
 
----
-
-## Часть 1. Разовая подготовка (руками, автоматизировать нельзя)
-
-Это нужно сделать один раз. Дальше каждый деплой — одна команда.
-
-### 1.1. Аккаунт и каталог
-1. Зайдите в <https://console.yandex.cloud>, создайте облако и каталог (folder),
-   привяжите платёжный аккаунт. Для такой нагрузки — копейки в месяц
-   (контейнер тарифицируется по времени обработки запросов).
-
-### 1.2. CLI
-```bash
-# Установка: https://yandex.cloud/docs/cli/quickstart
-yc init                 # залогиниться, выбрать облако, каталог и зону
+запрос пользователя:
+   proto-design-okds.ru
+   → Cloud DNS (зона okds-zone, ANAME на шлюз)
+   → API Gateway okds-gw (HTTPS, Let's Encrypt; http-интеграция → VM:80)
+   → VM ok-ds-vm (89.169.132.5), контейнер server.mjs на :80
 ```
 
-### 1.3. Container Registry (где лежит образ)
-```bash
-yc container registry create --name ok-ds
-yc container registry list      # запомните ID реестра вида crp********
-yc container registry configure-docker   # научить docker пушить в cr.yandex
-```
-
-### 1.4. Сервисный аккаунт для контейнера
-Контейнеру нужен аккаунт, под которым он тянет образ из реестра.
-```bash
-yc iam service-account create --name ok-ds-runner
-yc iam service-account list     # запомните ID аккаунта вида aje********
-```
-Выдайте ему права на каталог (CONTAINER_REGISTRY → каталог):
-```bash
-# FOLDER_ID берётся из `yc config get folder-id`
-yc resource-manager folder add-access-binding <FOLDER_ID> \
-  --role container-registry.images.puller \
-  --subject serviceAccount:<SERVICE_ACCOUNT_ID>
-yc resource-manager folder add-access-binding <FOLDER_ID> \
-  --role serverless-containers.admin \
-  --subject serviceAccount:<SERVICE_ACCOUNT_ID>
-```
-
----
-
-## Часть 2. Деплой (повторяемый)
-
-```bash
-export REGISTRY_ID=crp********            # из шага 1.3
-export SERVICE_ACCOUNT_ID=aje********     # из шага 1.4
-./deploy-yandex-container.sh
-```
-
-Скрипт: соберёт образ → запушит в реестр → создаст контейнер `ok-ds-proto`
-(если его ещё нет) → выкатит новую ревизию.
-
-После **первого** деплоя один раз откройте контейнер наружу без авторизации:
-```bash
-yc serverless container allow-unauthenticated-invoke --name ok-ds-proto
-```
-
-Адрес прототипа (вида `https://bba********.containers.yandexcloud.net/`):
-```bash
-yc serverless container get --name ok-ds-proto
-```
-
-Дальше всё как на Railway:
-- `/` — разводящая с кнопкой «Обновить ленту из таблицы»;
-- `/q3`, `/activity`, `/nv`, `/preview` — прототипы;
-- `/healthz` — статус сервера и последнего синка;
-- `POST /api/sync` — ручной запуск синка (его дёргает кнопка).
-
-> Условие, как и на Railway: Google-таблица открыта «всем, у кого есть ссылка»,
-> иначе gviz-CSV не отдаст данные и синк упадёт (сайт при этом раздаётся).
-
-### Переменные окружения деплоя (необязательные)
-| Переменная           | Дефолт        | Зачем |
-|----------------------|---------------|-------|
-| `CONTAINER_NAME`     | `ok-ds-proto` | имя контейнера |
-| `IMAGE_TAG`          | `latest`      | тег образа |
-| `CORES` / `MEMORY`   | `1` / `1GB`   | ресурсы инстанса |
-| `CONCURRENCY`        | `4`           | запросов на инстанс |
-| `EXEC_TIMEOUT`       | `600s`        | таймаут запроса (синк бывает долгим) |
-| `SYNC_ON_START`      | `true`        | синкать ленту при старте (как на Railway) |
-
----
-
-## Важно про Serverless Containers (отличия от Railway)
-
-Railway держит один контейнер всегда живым, поэтому синканутые в него файлы
-живут до редеплоя. У Serverless Containers инстансы **эфемерны и могут
-масштабироваться/засыпать**:
-
-- Синк (`fetch-all.mjs`) перезаписывает файлы **внутри конкретного тёплого
-  инстанса**. Запросы к тому же инстансу увидят свежую ленту; новый/холодный
-  инстанс отдаст ленту, **запечённую в образ** на момент сборки.
-- Кнопка работает: `server.mjs` запускает синк фоном и сразу отдаёт `202`, а
-  браузер каждые 2с опрашивает `/healthz` — эти запросы не дают инстансу
-  заснуть, пока синк идёт.
-- Чтобы лента в образе изначально была свежей, прогоняйте `npm run sync` локально
-  перед деплоем (или выкатывайте после пуша в main, когда лента уже пересобрана).
-- Хотите, чтобы синканутое состояние жило стабильно и не было холодных стартов —
-  включите провиженинг 1 инстанса (`--min-instances 1` при деплое ревизии);
-  это держит инстанс тёплым, но тарифицируется постоянно.
-
-Для прототипа «показать завтра» дефолтов достаточно.
-
----
-
-## Часть 3. Отключение Railway
-
-Когда новый адрес проверен и всё открывается:
-1. В Railway-проекте: **Settings → Danger → Delete Service / Delete Project**
-   (или просто отключите автодеплой из GitHub, если хотите оставить как запас).
-2. `RAILWAY.md` оставлен в репозитории как справка — он больше не основной путь.
-
----
-
-## Чек-лист «переехать»
-- [x] `yc init` сделан, каталог выбран
-- [x] Container Registry создан, `configure-docker` выполнен (есть `REGISTRY_ID`)
-- [x] Сервисный аккаунт создан, роли выданы (есть `SERVICE_ACCOUNT_ID`)
-- [x] `./deploy-yandex-container.sh` отработал, ревизия активна
-- [x] `allow-unauthenticated-invoke` включён
-- [x] Прототип открывается по `*.containers.yandexcloud.net`, кнопка синка работает
-- [ ] Railway отключён
+**Почему VM, а не Serverless:** `server.mjs` пишет файлы в рантайме (синк ленты)
+и держит дочерние процессы. На serverless инстансы эфемерны и засыпают —
+синканутые данные терялись, лента «не обновлялась». Постоянная VM ведёт себя как
+Railway: один всегда живой процесс, состояние сохраняется, кнопка синка работает.
 
 ---
 
@@ -155,48 +48,84 @@ Railway держит один контейнер всегда живым, поэ
 
 Каталог `default` (folder `b1g072enfcmkigbqem47`, cloud `b1gnhmibe8oinctgao9v`).
 
-| Ресурс | Имя | ID |
+| Ресурс | Имя | ID / адрес |
 |---|---|---|
-| Container Registry | `ok-ds` | `crp00hn2b224r9p3r4c9` |
-| Serverless Container | `ok-ds-proto` | `bbasbrdpofr31h0nen4l` |
+| Compute VM | `ok-ds-vm` | `fhm4fsj5ia9nbh9th9p6`, IP `89.169.132.5`, зона `ru-central1-a` |
 | API Gateway | `okds-gw` | `d5dpkskhhsasgbkcguu1` |
 | DNS-зона | `okds-zone` | `dnsckb5gb22r8sh1emn9` |
 | Сертификат (Let's Encrypt) | `okds-cert` | `fpq4v4m5bgdn432b6n0e` |
-| Сервисный аккаунт | `ok-ds-deployer` | `ajelabfql2u109qc1p0j` |
+| Сервисный аккаунт (robot) | `ok-ds-deployer` | `ajelabfql2u109qc1p0j` |
 
 **Адреса:**
 - основной (красивый): <https://proto-design-okds.ru/>
-- технический контейнер: `https://bbasbrdpofr31h0nen4l.containers.yandexcloud.net/`
 - технический шлюз: `https://d5dpkskhhsasgbkcguu1.kr8f6hld.apigw.yandexcloud.net/`
+- VM напрямую (http, для отладки): `http://89.169.132.5/`
 
-**Приватность:** контейнер отдаёт `X-Robots-Tag: noindex` и `robots.txt` с полным
-`Disallow` — из поиска не находится, доступ только по ссылке.
+**Приватность:** `server.mjs` отдаёт `X-Robots-Tag: noindex` и `robots.txt` с
+полным `Disallow` — из поиска не находится, доступ только по ссылке.
 
-### Как привязан домен (схема)
-Домен делегирован в Yandex Cloud DNS (NS `ns1/ns2.yandexcloud.net`). Запросы:
-`proto-design-okds.ru` → (ANAME в зоне) → API Gateway `okds-gw` → Serverless
-Container `ok-ds-proto`. HTTPS — managed-сертификат Let's Encrypt из Certificate
-Manager, привязан к домену шлюза.
+**Пути:** `/` — разводящая с кнопкой «Обновить ленту»; `/q3`, `/activity`,
+`/nv`, `/preview` — прототипы; `/healthz` — статус синка; `POST /api/sync` —
+ручной синк (его дёргает кнопка).
 
-### Обновить прототип (передеплой)
+> Условие: Google-таблица открыта «всем, у кого есть ссылка», иначе gviz-CSV не
+> отдаст данные и синк упадёт (сайт при этом продолжит раздаваться).
+
+---
+
+## Обновление прототипа
+
+### Обычный путь — просто мерж в `main`
+Любой push/merge в `main` автоматически выкатывается на VM (SourceCraft CI →
+SSH → `docker compose up -d --build`). Ничего вручную делать не надо.
+
+Секрет, который это питает (задан в SourceCraft, репозиторий `proto-moon-mirror`,
+**Settings → Secrets**):
+- `DEPLOY_SSH_KEY` — приватный SSH-ключ для входа на VM, в base64.
+
+### Обновить только ленту (без кода)
+- на сайте нажми кнопку **«Обновить ленту из таблицы»** (дёргает `POST /api/sync`),
+  либо
+- передеплой (мерж в `main`) — при старте контейнера синк прогоняется заново.
+
+---
+
+## Ручные операции на VM (нужен SSH)
+
+Заходить на VM нужно приватным деплой-ключом (тем, что лежит в секрете
+`DEPLOY_SSH_KEY`, в декодированном виде):
 ```bash
-yc config profile activate ok-ds            # профиль с ключом ok-ds-deployer
-# (по желанию свежие данные в образ:) npm run sync
-yc iam create-token | docker login --username iam --password-stdin cr.yandex
-IMAGE=cr.yandex/crp00hn2b224r9p3r4c9/ok-ds-proto:latest
-docker build -t "$IMAGE" . && docker push "$IMAGE"
-yc serverless container revision deploy \
-  --container-name ok-ds-proto --image "$IMAGE" \
-  --cores 1 --memory 1GB --concurrency 4 --execution-timeout 600s \
-  --environment SYNC_ON_START=true \
-  --service-account-id ajelabfql2u109qc1p0j
+ssh -i <путь_к_приватному_ключу> yc-user@89.169.132.5
+
+# на VM код лежит в /opt/proto-moon:
+cd /opt/proto-moon
+docker compose ps             # статус контейнера
+docker compose logs -f web    # логи сервера (синк, ошибки)
+docker compose restart web    # перезапуск
+docker compose up -d --build  # пересборка вручную
 ```
+
+### Если нужно пересоздать VM с нуля
+Машина поднималась с cloud-init, который ставит Docker и заводит пользователя
+`yc-user` с публичным деплой-ключом, и создаёт `/opt/proto-moon`. Образ —
+`ubuntu-2204-lts`, тип `2 vCPU (core_fraction 20) / 2 GB`.
+
+---
+
+## Домен и HTTPS
+
+Домен `proto-design-okds.ru` делегирован в Yandex Cloud DNS (NS
+`ns1/ns2.yandexcloud.net`). В зоне `okds-zone`:
+- `ANAME @ → d5dpkskhhsasgbkcguu1.kr8f6hld.apigw.yandexcloud.net` (шлюз);
+- `_acme-challenge … CNAME` — подтверждение сертификата.
+
+HTTPS — managed-сертификат Let's Encrypt (`okds-cert`) в Certificate Manager,
+привязан к домену на API Gateway. Шлюз проксирует на VM по HTTP
+(`type: http`, `url: http://89.169.132.5/{proxy}`).
 
 ### Полезные команды
 ```bash
-# адрес и статус контейнера
-yc serverless container get --name ok-ds-proto
-# домены шлюза / записи зоны / статус сертификата
+yc compute instance get --name ok-ds-vm
 yc serverless api-gateway get --name okds-gw
 yc dns zone list-records --name okds-zone
 yc certificate-manager certificate get --id fpq4v4m5bgdn432b6n0e
@@ -204,44 +133,48 @@ yc certificate-manager certificate get --id fpq4v4m5bgdn432b6n0e
 
 ---
 
-## Робот (сервисный аккаунт) и ключ доступа
+## Робот (сервисный аккаунт) и ключи
 
-Весь деплой делается от имени технического пользователя — **сервисного
-аккаунта** (он же «робот»), а не от живого человека. Это безопаснее и позволяет
-автоматизировать выкат.
+Инфраструктуру (VM, шлюз, DNS-зону, сертификат) поднимали от имени технического
+**сервисного аккаунта** (робота), а не живого человека.
 
 | Параметр | Значение |
 |---|---|
 | Имя | `ok-ds-deployer` |
 | ID | `ajelabfql2u109qc1p0j` |
 | Роль | `admin` на каталог `default` |
-| Ключ | авторизованный ключ (RSA), скачан как `authorized_key.json` |
+| Ключ | авторизованный ключ (RSA) `authorized_key.json` — для `yc` |
 
-Этот же аккаунт назначен **рантайм-аккаунтом контейнера** (`--service-account-id`)
-— под ним контейнер тянет образ из Container Registry.
+Важно: для **автодеплоя** этот SA-ключ не нужен — деплой ходит на VM по
+отдельному **SSH-ключу** (секрет `DEPLOY_SSH_KEY` в SourceCraft). SA-ключ нужен
+только для управления облаком через `yc` (создать/изменить ресурсы).
 
-### Зачем нужна роль `admin`
-Сначала роли `editor` хватало для всего, кроме одного: открыть контейнер всему
-интернету (`allUsers`) и привязать публичный домен может только `admin` — это
-защита Yandex от случайной публикации. Поэтому роль повышена до `admin`.
+Оба ключа — секреты, в git их не коммитим.
 
-### Ключ — это секрет
-Авторизованный ключ (`authorized_key.json`) даёт полный доступ к каталогу.
-Его нельзя коммитить в git и выкладывать. Если он утёк — удалите ключ (команды
-ниже), доступ по нему сразу пропадёт.
-
-### Управление ключом и аккаунтом
+### Управление ключами
 ```bash
-# посмотреть ключи аккаунта
+# SA-ключи (yc)
 yc iam key list --service-account-name ok-ds-deployer
-# удалить ключ (доступ по нему мгновенно закроется)
 yc iam key delete --id <KEY_ID>
-# выпустить новый ключ (если нужен для будущих деплоев)
 yc iam key create --service-account-name ok-ds-deployer --output new-key.json
-# понизить роль обратно до editor (если публичный доступ больше не меняем)
+
+# понизить роль робота обратно до editor (если облако больше не меняем)
 yc resource-manager folder remove-access-binding b1g072enfcmkigbqem47 \
   --role admin --subject serviceAccount:ajelabfql2u109qc1p0j
 ```
 
-> Если деплои больше не планируются — ключ можно удалить, контейнер от этого не
-> остановится (ключ нужен только для сборки/выката, а не для работы сайта).
+> SA-ключ можно удалить, если управление облаком через `yc` больше не нужно —
+> сайт и автодеплой от этого не остановятся (они на SSH-ключе). Для будущих
+> правок инфраструктуры ключ придётся выпустить заново.
+
+---
+
+## Чек-лист (выполнено)
+- [x] VM `ok-ds-vm` создана (Docker через cloud-init)
+- [x] `docker-compose.yml` + `.sourcecraft/ci.yaml` (SSH-деплой) в репозитории
+- [x] Секрет `DEPLOY_SSH_KEY` добавлен в SourceCraft (`proto-moon-mirror`)
+- [x] Автодеплой при push в `main` работает
+- [x] Домен `proto-design-okds.ru` + HTTPS через API Gateway → VM
+- [x] Приватность: `noindex` + `robots.txt`
+- [x] Старый serverless-контейнер удалён
+- [ ] Railway отключён
