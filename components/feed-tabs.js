@@ -22,7 +22,8 @@
      срабатывает, поэтому ставим .__clicked на pointerdown (tabs.css → scale).
    - #7 не сбрасывать горизонтальный скролл таб-стрипа: у каждой панели свой
      дубль стрипа, поэтому переносим scrollLeft со старого на новый при switch.
-   - после переключения активный таб плавно доводится целиком во вьюпорт стрипа.
+   - после переключения активный таб плавно доводится во вьюпорт стрипа:
+     по ТАПУ встаёт по центру, по СВАЙПУ — мягкий доезд в ближайший край.
    - свайп НЕ срабатывает, если жест начат на горизонтальном скроллере
      (таб-стрип, карусели, чипсы, сториз) — иначе конфликт с их прокруткой. */
 (function () {
@@ -85,15 +86,32 @@
       delta = bRect.right + TAB_INSET - sRect.right;        // таб подрезан справа
     }
     if (Math.abs(delta) < 1) return;
+    scrollStripBy(strip, delta);
+  }
+
+  // Подскролл таб-стрипа так, чтобы активный таб встал по ЦЕНТРУ стрипа.
+  // На краях упрётся в границы скролла (clamp) — крайние табы не центрируются.
+  function centerTab(strip, btn) {
+    if (!strip || !btn) return;
+    var sRect = strip.getBoundingClientRect();
+    var bRect = btn.getBoundingClientRect();
+    var delta = (bRect.left + bRect.right) / 2 - (sRect.left + sRect.right) / 2;
+    if (Math.abs(delta) < 1) return;
+    scrollStripBy(strip, delta);
+  }
+
+  // Плавный относительный доскролл стрипа по горизонтали (с clamp по краям).
+  function scrollStripBy(strip, delta) {
     var max = strip.scrollWidth - strip.clientWidth;
     var target = Math.max(0, Math.min(strip.scrollLeft + delta, max));
     strip.scrollTo({ left: target, behavior: 'smooth' });
   }
 
   // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый,
-  // затем плавно доводим активный таб целиком во вьюпорт.
+  // затем плавно доводим активный таб во вьюпорт. По тапу (center=true) таб
+  // встаёт по центру; по свайпу — мягкий доезд в ближайший край.
   // Вертикальный скролл НЕ трогаем — страница не «скачет» вверх при смене таба.
-  function switchTo(id) {
+  function switchTo(id, center) {
     if (!id) return;
     var fromStrip = $(SEL.panel + ':not([hidden]) ' + SEL.strip);
     var scrollLeft = fromStrip ? fromStrip.scrollLeft : 0;
@@ -102,7 +120,9 @@
     var toStrip = panel && $(SEL.strip, panel);
     if (toStrip) {
       toStrip.scrollLeft = scrollLeft;                       // визуальная непрерывность
-      scrollTabIntoView(toStrip, tabInStrip(toStrip, id));
+      var btn = tabInStrip(toStrip, id);
+      if (center) centerTab(toStrip, btn);
+      else scrollTabIntoView(toStrip, btn);
     }
     clearPressed();
   }
@@ -133,7 +153,7 @@
     if (!btn) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    switchTo(btn.getAttribute('data-tab'));
+    switchTo(btn.getAttribute('data-tab'), true);   // тап → таб встаёт по центру
   }, true);
 
   // ── СВАЙП между лентами ───────────────────────────────────────────────────
