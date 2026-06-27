@@ -51,7 +51,8 @@
 1. **New Project → Deploy from GitHub repo**, выберите этот репозиторий и ветку.
 2. Railway увидит `package.json` и соберёт Node-проект (Nixpacks).
    Команда запуска по умолчанию — `npm start` (то есть `node server.mjs`).
-   Зависимостей нет, `npm install` отрабатывает мгновенно.
+   Зависимость одна — `sharp` (сжатие картинок при синке); `npm install`
+   ставит её из prebuilt-бинарника, сам сервер её не требует.
 3. В **Settings → Networking** включите публичный домен (Generate Domain).
 4. (Опционально) В **Variables** задайте:
    - `SYNC_ON_START` — `false`, чтобы не синкать при старте сервера

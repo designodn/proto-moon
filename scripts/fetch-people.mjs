@@ -27,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createSyncGate } from './lib/sheet-cache.mjs';
+import { compressImage } from './lib/media-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Люди';
@@ -154,7 +155,8 @@ async function main() {
     );
   }
   const csvText = await res.text();
-  const gate = createSyncGate({ root: ROOT, key: 'people', codeDeps: [fileURLToPath(import.meta.url)] });
+  const gate = createSyncGate({ root: ROOT, key: 'people',
+    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs')] });
   if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
     console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
     return;
@@ -191,6 +193,11 @@ async function main() {
       flag = '·'; note = 'нет ссылки'; stats.none++;
     } else {
       const dl = await download(srcUrl);
+      if (dl.ok && dl.kind === 'image') {
+        // hash оставляем по исходнику (детект изменения), на диск — сжатую версию.
+        const c = await compressImage(dl.bytes, dl.ext);
+        if (c) { dl.bytes = c.bytes; dl.ext = c.ext; }
+      }
       if (dl.ok) {
         const file = `${safeId(id)}.${dl.ext}`;
         media = dl.kind;
@@ -207,10 +214,18 @@ async function main() {
         }
         nextManifest[key] = { src: srcUrl, file, type: media, hash: dl.hash, status: 'ok', checkedAt: now };
       } else if (prev && prev.file && existsSync(resolve(MEDIA_DIR, prev.file))) {
-        // исходник умер, но локальная копия есть — сохраняем её, помечаем как протухший источник
-        flag = '⚠️'; note = `протухло (источник умер; оставлена копия ${prev.file})`; stats.stale++;
-        media = prev.type; photo = `${MEDIA_DIR_REL}/${prev.file}`;
-        nextManifest[key] = { ...prev, src: srcUrl, status: 'stale', checkedAt: now };
+        // исходник умер, но локальная копия есть — сохраняем её, помечаем как протухший
+        // источник. Заодно дожимаем старые png/jpg-копии в webp (храним только webp).
+        flag = '⚠️'; stats.stale++;
+        let file = prev.file;
+        const m = /\.(png|jpe?g)$/i.exec(file);
+        if (m && !CHECK_ONLY) {
+          const c = await compressImage(readFileSync(resolve(MEDIA_DIR, file)), m[1].toLowerCase());
+          if (c) { file = `${safeId(id)}.${c.ext}`; writeFileSync(resolve(MEDIA_DIR, file), c.bytes); cleanupFor(id, file); }
+        }
+        note = `протухло (источник умер; оставлена копия ${file})`;
+        media = prev.type; photo = `${MEDIA_DIR_REL}/${file}`;
+        nextManifest[key] = { ...prev, file, src: srcUrl, status: 'stale', checkedAt: now };
       } else {
         flag = '⚠️'; note = 'битая ссылка (копии нет)'; stats.none++;
         nextManifest[key] = { src: srcUrl, file: null, type: null, hash: null, status: 'dead', checkedAt: now };

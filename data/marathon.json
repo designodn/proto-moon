@@ -23,31 +23,31 @@
       "place": 1,
       "authorId": "1",
       "name": "Александра Бачурина (Душка)",
-      "avatar": "assets/people/1.jpg",
-      "photo": "assets/marathon/03902011710051cf.jpg",
+      "avatar": "assets/people/1.webp",
+      "photo": "assets/marathon/03902011710051cf.webp",
       "likes": "123"
     },
     {
       "place": 2,
       "authorId": "2",
       "name": "Сергей Чернышов",
-      "avatar": "assets/people/2.jpg",
-      "photo": "assets/marathon/245935008e129c61.jpg",
+      "avatar": "assets/people/2.webp",
+      "photo": "assets/marathon/245935008e129c61.webp",
       "likes": "119"
     },
     {
       "place": 3,
       "authorId": "3",
       "name": "Зинаида Халина (Стребкова)",
-      "avatar": "assets/people/3.jpg",
-      "photo": "assets/marathon/8a64a2ede36707c6.jpg",
+      "avatar": "assets/people/3.webp",
+      "photo": "assets/marathon/8a64a2ede36707c6.webp",
       "likes": "89"
     },
     {
       "place": 4,
       "authorId": "4",
       "name": "Виктор Бондарев",
-      "avatar": "assets/people/4.jpg",
+      "avatar": "assets/people/4.webp",
       "photo": "assets/marathon/79e6e4524288f721.webp",
       "likes": "78"
     },
@@ -55,56 +55,56 @@
       "place": 5,
       "authorId": "5",
       "name": "Антонида Чекалова (Гахова)",
-      "avatar": "assets/people/5.jpg",
-      "photo": "assets/marathon/09fc286070c80a10.jpg",
+      "avatar": "assets/people/5.webp",
+      "photo": "assets/marathon/09fc286070c80a10.webp",
       "likes": "77"
     },
     {
       "place": 6,
       "authorId": "6",
       "name": "Александр Кириевич",
-      "avatar": "assets/people/6.jpg",
-      "photo": "assets/marathon/d6b8ac56fcd7f7ea.jpg",
+      "avatar": "assets/people/6.webp",
+      "photo": "assets/marathon/d6b8ac56fcd7f7ea.webp",
       "likes": "60"
     },
     {
       "place": 7,
       "authorId": "7",
       "name": "Галина Гаджикулиева",
-      "avatar": "assets/people/7.jpg",
-      "photo": "assets/marathon/bbdfecb18232ff43.jpg",
+      "avatar": "assets/people/7.webp",
+      "photo": "assets/marathon/bbdfecb18232ff43.webp",
       "likes": "43"
     },
     {
       "place": 8,
       "authorId": "8",
       "name": "Александр Мещеряков",
-      "avatar": "assets/people/8.jpg",
-      "photo": "assets/marathon/14187cfde3313bc1.jpg",
+      "avatar": "assets/people/8.webp",
+      "photo": "assets/marathon/14187cfde3313bc1.webp",
       "likes": "33"
     },
     {
       "place": 9,
       "authorId": "9",
       "name": "Екатерина )))))",
-      "avatar": "assets/people/9.jpg",
-      "photo": "assets/marathon/b7f12e4e6a010df3.jpg",
+      "avatar": "assets/people/9.webp",
+      "photo": "assets/marathon/b7f12e4e6a010df3.webp",
       "likes": "32"
     },
     {
       "place": 10,
       "authorId": "10",
       "name": "Александр Попов",
-      "avatar": "assets/people/10.jpg",
-      "photo": "assets/marathon/60fa890605650486.jpg",
+      "avatar": "assets/people/10.webp",
+      "photo": "assets/marathon/60fa890605650486.webp",
       "likes": "12"
     },
     {
       "place": 11,
       "authorId": "vvz-3",
       "name": "Ксения Лысенко",
-      "avatar": "assets/people/vvz-3.jpg",
-      "photo": "assets/marathon/ac19a432327cd34c.jpg",
+      "avatar": "assets/people/vvz-3.webp",
+      "photo": "assets/marathon/ac19a432327cd34c.webp",
       "likes": "3"
     }
   ]
