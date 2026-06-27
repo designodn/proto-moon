@@ -13,3 +13,12 @@ services:
     environment:
       - PORT=8080
       - SYNC_ON_START=true # синкать ленту при старте, как было на Railway
+      # Кнопка-синк коммитит результат и пушит. Значения берутся из окружения VM
+      # или из /opt/proto-moon/.env (НЕ коммить .env с токеном!). Без токена/URL
+      # коммит сделается, но пуш не пройдёт. Подробно — в YANDEX-CLOUD.md.
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}              # для пуша на GitHub
+      - SYNC_GIT_PUSH_URL=${SYNC_GIT_PUSH_URL:-}    # или готовый remote (Sourcecraft) — приоритетнее
+      - SYNC_GIT_BRANCH=${SYNC_GIT_BRANCH:-main}
+      - SYNC_GIT_NAME=${SYNC_GIT_NAME:-proto-moon sync}
+      - SYNC_GIT_EMAIL=${SYNC_GIT_EMAIL:-sync@proto-moon.local}
+      - SYNC_GIT_COMMIT=${SYNC_GIT_COMMIT:-true}    # false — выключить авто-коммит
