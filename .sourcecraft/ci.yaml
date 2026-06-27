@@ -1,54 +1,40 @@
-# SourceCraft CI — пересборка лент из Google-таблицы на деплое.
+# SourceCraft CI/CD — автодеплой прототипа на Yandex Compute Cloud по SSH.
 #
-# Зачем: ленты (Q3 + New Vision) и люди должны обновляться из таблицы сами,
-# в момент публикации, без ручного запуска скилов и без GitHub Actions.
+# На каждый push в main: код упаковывается tar'ом, отправляется на VM по ssh
+# в /opt/proto-moon и контейнер пересобирается/перезапускается
+# (docker compose up -d --build). Сервис — server.mjs (раздача статики + синк
+# ленты из Google-таблицы). VM всегда включена → кнопка «Обновить ленту» и
+# синк при старте работают стабильно (как было на Railway).
 #
-# Как работает:
-#   • триггер — push в main (на SourceCraft main приезжает через зеркало с GitHub,
-#     см. .github/workflows/mirror-sourcecraft.yml);
-#   • в контейнере node гоним три генератора по порядку (люди → Q3 → New Vision);
-#     раннер SourceCraft имеет нормальную сеть, поэтому gviz-таблица и мета ссылок
-#     (fetchLinkMeta) доступны;
-#   • если что-то изменилось — коммитим результат обратно в main, и Sites сразу
-#     раздаёт свежую статику (sites.yaml: ref=main, корень репозитория).
-#
-# Защита от петли: пуш в main снова запускает этот воркфлоу, но второй прогон при
-# неизменной таблице даёт тот же HTML → `git status` пуст → коммита и пуша нет.
-# Так процесс сходится за один лишний холостой прогон (и только когда были правки).
+# Нужен ОДИН секрет в SourceCraft (Settings → Secrets):
+#   DEPLOY_SSH_KEY — приватный SSH-ключ, закодированный в base64.
+#                    (выдаётся отдельно; на Маке: base64 < key | pbcopy)
+# Адрес сервера и пользователь не секретны — заданы ниже в env.
 
 on:
   push:
-    - workflows: [build-feeds]
+    - workflows: [deploy]
       filter:
         branches: ["main"]
 
 workflows:
-  build-feeds:
-    settings:
-      max_cube_duration: 10m
+  deploy:
     tasks:
-      - name: rebuild-feeds
+      - name: deploy-to-yandex
         cubes:
-          - name: render-and-publish
-            # node:22 (bookworm) — есть node 22 (нужен встроенный fetch) и git.
-            image: docker.io/library/node:22
+          - name: ship
+            image: docker.io/library/alpine:3.20
+            env:
+              DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+              DEPLOY_HOST: "89.169.132.5"
+              DEPLOY_USER: "yc-user"
             script:
-              # 1) Перечитать данные из таблицы и пересобрать статику.
-              #    Порядок важен: ленты берут авторов из data/people.json.
-              - node scripts/fetch-people.mjs
-              - node scripts/fetch-q3.mjs
-              - node scripts/fetch-feed.mjs
-              # 2) Опубликовать результат обратно в main (если есть изменения).
-              - |
-                if [ -z "$(git status --porcelain)" ]; then
-                  echo "Лента не изменилась — публиковать нечего."
-                  exit 0
-                fi
-                git config user.email "ci@sourcecraft.dev"
-                git config user.name  "SourceCraft CI"
-                git add -A
-                git commit -m "chore(feeds): пересборка лент из Google-таблицы [skip ci]"
-                # SOURCECRAFT_REPO_URL = https://git@git.sourcecraft.dev/<org>/<repo>.git
-                # Меняем плейсхолдер-логин git@ на токен для авторизованного пуша.
-                push_url="https://${SOURCECRAFT_TOKEN}@${SOURCECRAFT_REPO_URL#https://git@}"
-                git push "$push_url" HEAD:main
+              - apk add --no-cache openssh-client tar
+              - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+              # Ключ хранится в секрете как base64 — декодируем обратно в файл.
+              - printf '%s' "$DEPLOY_SSH_KEY" | base64 -d > ~/.ssh/id_deploy
+              - chmod 600 ~/.ssh/id_deploy
+              # Заливаем код на VM (tar по ssh) в /opt/proto-moon.
+              - tar --exclude='./.git' --exclude='./node_modules' -C /sourcecraft/workspace -czf - . | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "tar -C /opt/proto-moon -xzf -"
+              # Пересобираем и перезапускаем контейнер на VM.
+              - ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "cd /opt/proto-moon && docker compose up -d --build && docker image prune -f"
