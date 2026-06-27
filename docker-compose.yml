@@ -1,0 +1,15 @@
+# docker-compose для VM (Yandex Compute Cloud).
+#
+# На VM лежит копия репозитория в /opt/proto-moon; SourceCraft CI на каждый
+# push в main заливает свежий код и делает `docker compose up -d --build`.
+# Сервис — тот же server.mjs: раздаёт статику + синкает ленту из Google-таблицы
+# (живая кнопка «Обновить ленту» работает, т.к. VM всегда включена).
+services:
+  web:
+    build: .
+    restart: always
+    ports:
+      - "80:8080"          # наружу 80 → внутри контейнера PORT=8080
+    environment:
+      - PORT=8080
+      - SYNC_ON_START=true # синкать ленту при старте, как было на Railway
