@@ -216,6 +216,17 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     let pathname = decodeURIComponent(url.pathname);
 
+    // Прототип доступен только по ссылке — просим поисковики не индексировать
+    // его, чтобы он не всплыл в выдаче, даже если ссылка где-то засветится.
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+
+    // robots.txt — полный запрет обхода краулерами.
+    if (pathname === '/robots.txt') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('User-agent: *\nDisallow: /\n');
+      return;
+    }
+
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
