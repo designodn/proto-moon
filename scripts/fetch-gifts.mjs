@@ -17,8 +17,10 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SHEET = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const GID = '1382684946';
@@ -47,7 +49,14 @@ function parseCSV(text) {
 console.log('→ Тяну «Подарки» из таблицы…');
 const res = await fetch(URL);
 if (!res.ok) { console.error('Не удалось получить лист:', res.status); process.exit(1); }
-const rows = parseCSV(await res.text());
+const csvText = await res.text();
+const gate = createSyncGate({ root: ROOT, key: 'gifts',
+  codeDeps: [fileURLToPath(import.meta.url), resolve(ROOT, 'scripts/lib/media-cache.mjs')] });
+if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
+  console.log('✓ «Подарки» без изменений — пропускаю (--force чтобы пересобрать).');
+  process.exit(0);
+}
+const rows = parseCSV(csvText);
 const header = rows.shift(); // тип, подарок 1..N
 
 const sets = {};
@@ -85,5 +94,6 @@ writeFileSync(resolve(ROOT, 'data/gifts.js'),
   ' */\n' +
   'window.DS_GIFTS_DATA = ' + JSON.stringify(sets, null, 2) + ';\n');
 
+gate.commit();
 console.log(`✓ ${Object.keys(sets).length} набора(ов) → data/gifts.json + data/gifts.js`);
 Object.entries(sets).forEach(([t, list]) => console.log(`  • ${t}: ${list.length} подарков`));

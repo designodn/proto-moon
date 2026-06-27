@@ -19,22 +19,22 @@ window.DS_GIFTS_DATA = {
     },
     {
       "id": "friendversary-3",
-      "image": "assets/gifts/62a8065ef24ed574.jpg",
+      "image": "assets/gifts/62a8065ef24ed574.webp",
       "price": "0 ОК"
     },
     {
       "id": "friendversary-4",
-      "image": "assets/gifts/2ae0737717d8c24e.jpg",
+      "image": "assets/gifts/2ae0737717d8c24e.webp",
       "price": "0 ОК"
     },
     {
       "id": "friendversary-5",
-      "image": "assets/gifts/15f2ca0817f1d351.jpg",
+      "image": "assets/gifts/15f2ca0817f1d351.webp",
       "price": "0 ОК"
     },
     {
       "id": "friendversary-6",
-      "image": "assets/gifts/5e6d61ff848b8a76.jpg",
+      "image": "assets/gifts/5e6d61ff848b8a76.webp",
       "price": "0 ОК"
     }
   ],
@@ -46,7 +46,7 @@ window.DS_GIFTS_DATA = {
     },
     {
       "id": "basic-2",
-      "image": "assets/gifts/a80cb5926503b03a.jpg",
+      "image": "assets/gifts/a80cb5926503b03a.webp",
       "price": "0 ОК"
     },
     {

@@ -33,8 +33,10 @@ import {
   renderPost, attachComments, esc, img, COMPANION, EXTRAS, SPREADSHEET_ID, parseCsv,
 } from './fetch-q3.mjs';
 import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const CHECK_ONLY = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const SHEET_NAME = 'профиль';            // человекочитаемое имя листа (для логов)
 const SHEET_GID = '877262163';           // стабильный gid листа профильных постов
@@ -118,6 +120,7 @@ function splice(selfCards, strangerCards) {
 async function main() {
   const offline = process.argv.includes('--offline');
   let posts;
+  let gate = null;
 
   if (offline) {
     console.log('→ Офлайн-реген из data/profile-posts.json (таблицу не тяну)…');
@@ -126,7 +129,17 @@ async function main() {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-    const rows = parseCsv(await res.text());
+    const csvText = await res.text();
+    // Зависимости: рендереры из fetch-q3.mjs + people.json (имена/аватары
+    // комментаторов запекаются) → их правка тоже пересобирает профиль.
+    gate = createSyncGate({ root: ROOT, key: 'profile',
+      codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'fetch-q3.mjs'),
+                 resolve(__dirname, 'lib/media-cache.mjs'), resolve(ROOT, 'data/people.json')] });
+    if (gate.unchanged(csvText) && !FORCE && !CHECK_ONLY) {
+      console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+      return;
+    }
+    const rows = parseCsv(csvText);
     const [header = [], ...body] = rows;
 
     // Колонки матчим ПО ИМЕНИ заголовка (порядок столбцов в этом листе слегка
@@ -215,6 +228,7 @@ async function main() {
   const strangerCards = renderAll(posts, 'subject');
   splice(selfCards, strangerCards);
 
+  if (gate) gate.commit();
   console.log(`✓ ${posts.length} постов → data/profile-posts.json + вставлено в profile.html (self + stranger)`);
   posts.forEach(p => console.log(`  • ${p.id.padEnd(10)} ${p.type}`));
 }

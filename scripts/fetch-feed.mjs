@@ -21,9 +21,12 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Посты';
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -232,6 +235,11 @@ const ctaButton = (label, { style = 'primary', extraClass = '' } = {}) =>
         </div>`;
 
 /* ── медиа ──────────────────────────────────────────────────────────────────── */
+// Кэш кладёт файлы в assets/feed/… (репо-относительно). Страница new-vision/lenta.html
+// в подпапке — ассеты подключаются через «../». Переводим локальные пути в
+// страничные перед рендером; http-ссылки (живой внешний CDN) оставляем как есть.
+const pageUrl = (u) => (typeof u === 'string' && u.startsWith('assets/')) ? '../' + u : u;
+
 const img = (url, attr = '') => `<img ${attr}src="${esc(url)}" alt="">`;
 
 function mediaPhoto(photos)  { return photos[0] ? `        <div class="media __aspect-4-3">${img(photos[0])}</div>` : ''; }
@@ -562,6 +570,7 @@ async function main() {
   // не обращаясь к таблице (полезно, когда нет сети или меняли только шаблон).
   const offline = process.argv.includes('--offline');
   let posts;
+  let gate = null;
 
   if (offline) {
     console.log('→ Офлайн-реген из data/feed.json (таблицу не тяну)…');
@@ -570,7 +579,17 @@ async function main() {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице по ссылке.`);
-    const rows = parseCsv(await res.text());
+    const csvText = await res.text();
+    // people.json в зависимостях: имена/аватары авторов запекаются из него,
+    // поэтому правка листа «Люди» должна пересобрать и ленту.
+    gate = createSyncGate({ root: ROOT, key: 'feed',
+      codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
+                 resolve(ROOT, 'data/people.json')] });
+    if (gate.unchanged(csvText) && !FORCE) {
+      console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+      return;
+    }
+    const rows = parseCsv(csvText);
     const [, ...body] = rows;
 
     posts = [];
@@ -592,9 +611,23 @@ async function main() {
       });
     }
 
+    // Фото в репо: качаем локально (хэш-проверка «изменилось ли», старое удаляется
+    // при prune). В json кладём репо-относительный путь assets/feed/… .
+    const cache = createMediaCache({ root: ROOT, dirRel: 'assets/feed',
+      manifestPath: resolve(ROOT, 'data/feed-media.json') });
+    for (const p of posts) {
+      if (Array.isArray(p.photos) && p.photos.length)
+        p.photos = await Promise.all(p.photos.map(u => cache.resolveUrl(u)));
+    }
+    cache.save();
+    console.log('  ' + cache.report());
+
     writeFileSync(resolve(ROOT, 'data/feed.json'),
       JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-feed.mjs' }, posts }, null, 2) + '\n');
   }
+
+  // Локальные пути → страничные (../assets/…) для рендера; http-ссылки не трогаем.
+  for (const p of posts) if (Array.isArray(p.photos)) p.photos = p.photos.map(pageUrl);
 
   // Разложить компаньон-данные по актуальным id (привязка к ТИПУ, не к id).
   for (const p of posts) if (COMPANION[p.type]) EXTRAS[p.id] = COMPANION[p.type];
@@ -605,6 +638,7 @@ async function main() {
   const cards = posts.map((p, i) => renderPost(p, i)).filter(Boolean).join('\n\n');
   splice(cards);
 
+  if (gate) gate.commit();
   console.log(`✓ ${posts.length} постов → data/feed.json + вставлено в new-vision/lenta.html`);
   posts.forEach(p => console.log(`  • ${p.id.padEnd(8)} ${p.type}`));
 }

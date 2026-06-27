@@ -22,10 +22,13 @@
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_GID = '1801786104';            // вкладка «Клипы»
 const SHEET_NAME = 'Клипы';
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -63,7 +66,14 @@ async function main() {
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} — проверь доступ к таблице и gid «${SHEET_GID}».`);
   }
-  const rows = parseCsv(await res.text());
+  const csvText = await res.text();
+  const gate = createSyncGate({ root: ROOT, key: 'clips',
+    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs')] });
+  if (gate.unchanged(csvText) && !FORCE) {
+    console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+    return;
+  }
+  const rows = parseCsv(csvText);
   if (!rows.length) throw new Error('Пустой лист.');
 
   // Заголовок → индексы колонок по именам.
@@ -103,6 +113,17 @@ async function main() {
     clips.push(clip);
   }
 
+  // Видео по прямым ссылкам качаем в репо (assets/clips/<hash>.ext) — хэш-проверка
+  // «изменилось ли», старое чистится при prune. Файлы по конвенции assets/clips/<id>.mp4
+  // (вне манифеста) кэш не трогает. Голые имена/локальные пути оставляем как есть.
+  const cache = createMediaCache({ root: ROOT, dirRel: 'assets/clips',
+    manifestPath: resolve(ROOT, 'data/clips-media.json') });
+  for (const c of clips) {
+    if (c.video && /^https?:\/\//.test(c.video)) c.video = await cache.resolveUrl(c.video);
+  }
+  cache.save();
+  console.log('  ' + cache.report());
+
   // data/clips.json
   writeFileSync(
     resolve(ROOT, 'data/clips.json'),
@@ -125,6 +146,7 @@ async function main() {
     'window.DS_CLIPS_DATA = ' + JSON.stringify(clips, null, 2) + ';\n'
   );
 
+  gate.commit();
   console.log(`✓ Записал ${clips.length} строк → data/clips.json + data/clips.js`);
 }
 

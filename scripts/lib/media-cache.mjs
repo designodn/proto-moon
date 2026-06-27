@@ -26,6 +26,34 @@ import { createHash } from 'node:crypto';
 
 const sha = (buf) => createHash('sha256').update(buf).digest('hex');
 
+// sharp опционален: если не установлен — просто не жмём (репо остаётся рабочим).
+let sharp = null;
+try { sharp = (await import('sharp')).default; }
+catch { console.warn('[media] sharp не установлен — картинки без сжатия (npm i sharp)'); }
+
+// Параметры сжатия. Прототип мобильный → 1600px по ширине с запасом на ретину
+// хватает; webp q80 — хороший баланс размер/качество.
+const MAX_W = 1600;
+const WEBP_Q = 80;
+
+/** Сжимает картинку: ресайз до MAX_W (без апскейла) + перекодирование в webp.
+ *  ВСЕГДА отдаёт webp — png/jpg на диске не храним. Не трогает только svg
+ *  (вектор) и анимацию (gif/animated webp — потеряли бы кадры).
+ *  Возвращает { bytes, ext:'webp' } или null (sharp нет / не растровая / ошибка). */
+export async function compressImage(buf, ext) {
+  if (!sharp || ext === 'svg') return null;
+  try {
+    const img = sharp(buf, { failOn: 'none' });
+    const meta = await img.metadata();
+    if (meta.pages && meta.pages > 1) return null;          // анимированный gif/webp — не трогаем
+    let pipe = img.rotate();                                  // учесть EXIF-ориентацию
+    if (meta.width && meta.width > MAX_W)
+      pipe = pipe.resize({ width: MAX_W, withoutEnlargement: true });
+    const out = await pipe.webp({ quality: WEBP_Q }).toBuffer();
+    return { bytes: out, ext: 'webp' };                      // всегда webp
+  } catch { return null; }
+}
+
 /** Расширение по Content-Type, фолбэк — по URL. */
 function extFor(contentType, url) {
   const ct = (contentType || '').toLowerCase();
@@ -111,7 +139,13 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
         const looksHtml = /^\s*</.test(bytes.toString('latin1', 0, 64));
         if (bytes.length && (sig || (ctMedia && !looksHtml))) {
           const kind = sig?.kind || (ct.startsWith('video/') ? 'video' : 'image');
+          // hash считаем по ИСХОДНЫМ байтам (детект изменения источника), а на диск
+          // кладём сжатую версию. Так смена настроек сжатия не ломает change-detection.
           dl = { kind, ext: sig?.ext || extFor(ct, url), hash: sha(bytes), bytes };
+          if (kind === 'image') {
+            const c = await compressImage(bytes, dl.ext);
+            if (c) { dl.bytes = c.bytes; dl.ext = c.ext; }
+          }
         }
       }
     } catch { /* падаем в ветку «источник недоступен» */ }
@@ -130,11 +164,23 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
       used.add(file);
       result = `${dirRel}/${file}`;
     } else if (prev && prev.file && existsSync(resolve(dir, prev.file))) {
-      // источник умер, но локальная копия есть — оставляем её
+      // источник умер, но локальная копия есть — оставляем её. Заодно дожимаем
+      // старые png/jpg-копии в webp (храним только webp), хэш-источника не трогаем.
       stats.stale++;
-      next[key] = { ...prev, src: url, status: 'stale', checkedAt: now };
-      used.add(prev.file);
-      result = `${dirRel}/${prev.file}`;
+      let file = prev.file;
+      const m = /\.(png|jpe?g)$/i.exec(file);
+      if (m && sharp && !dryRun) {
+        const c = await compressImage(readFileSync(resolve(dir, file)), m[1].toLowerCase());
+        if (c) {
+          const nf = `${key}.${c.ext}`;
+          if (nf !== file) { try { unlinkSync(resolve(dir, file)); } catch { /* ignore */ } }
+          file = nf;
+          writeFileSync(resolve(dir, file), c.bytes);
+        }
+      }
+      next[key] = { ...prev, file, src: url, status: 'stale', checkedAt: now };
+      used.add(file);
+      result = `${dirRel}/${file}`;
     } else {
       // умер и копии нет — оставляем внешний URL (не делаем хуже)
       stats.dead++;

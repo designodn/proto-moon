@@ -33,9 +33,12 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { createMediaCache } from './lib/media-cache.mjs';
+import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Вокруг нас';
+const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -91,6 +94,13 @@ const avatarOnline = id => `<div class="avatar __size-44 __type-image __has-addo
                   <img data-person-avatar="${esc(id)}" alt="">
                   <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
                 </div>`;
+
+// Кэш кладёт картинки в assets/around-you/… (репо-относительно). На NV-страницах
+// ассеты идут через «../», на activity-lenta (<base href="../">) — без «../»
+// (это делает cellsBase, срезая «../assets/»). Поэтому в рендер отдаём «../»-форму;
+// http-ссылки (живой внешний CDN, если файл не скачался) не трогаем.
+const pageUrl = (u) => (typeof u === 'string' && u.startsWith('assets/')) ? '../' + u : u;
+const pageImages = (s) => s.split(',').map(x => x.trim()).filter(Boolean).map(pageUrl).join(', ');
 
 function leadFor(a) {
   switch (a.lead) {
@@ -192,7 +202,17 @@ function colIndex(header) {
 
 async function main() {
   console.log(`→ Тяну «${SHEET_NAME}»…`);
-  const rows = parseCsv(await getCsv());
+  const csvText = await getCsv();
+  // people.json в зависимостях: жирное имя в person-ячейках запекается из него →
+  // правка листа «Люди» пересобирает и виджет «Вокруг вас».
+  const gate = createSyncGate({ root: ROOT, key: 'activity-around',
+    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
+               resolve(ROOT, 'data/people.json')] });
+  if (gate.unchanged(csvText) && !FORCE) {
+    console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
+    return;
+  }
+  const rows = parseCsv(csvText);
   const [header, ...body] = rows;
   const idx = colIndex(header);
   const at = (r, i) => (i >= 0 ? (r[i] || '').trim() : '');
@@ -217,8 +237,25 @@ async function main() {
     });
   }
 
+  // Картинки активностей (section/photo/photo-pair) — в репо: качаем локально
+  // (хэш-проверка «изменилось ли», старое чистится при prune). В json кладём
+  // репо-относительный путь assets/around-you/… (для рендера добавим «../» ниже).
+  const cache = createMediaCache({ root: ROOT, dirRel: 'assets/around-you',
+    manifestPath: resolve(ROOT, 'data/around-you-media.json') });
+  for (const a of acts) {
+    if (!a.image) continue;
+    const parts = a.image.split(',').map(s => s.trim()).filter(Boolean);
+    const resolved = await Promise.all(parts.map(u => cache.resolveUrl(u)));
+    a.image = resolved.join(', ');
+  }
+  cache.save();
+  console.log('  ' + cache.report());
+
   writeFileSync(resolve(ROOT, 'data/activity.json'),
     JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-activity.mjs (или скилл fetch-activity)' }, activities: acts }, null, 2) + '\n');
+
+  // Локальные пути → страничные («../assets/…») для рендера; http-ссылки не трогаем.
+  for (const a of acts) if (a.image) a.image = pageImages(a.image);
 
   const cells = acts.map(renderCell).join('\n');
   // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
@@ -269,6 +306,7 @@ async function main() {
     '<!-- ACTIVITY:END -->',
   );
 
+  gate.commit();
   console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta (виджеты)`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
 }
