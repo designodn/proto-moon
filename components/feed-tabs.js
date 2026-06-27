@@ -48,7 +48,28 @@
     });
   }
 
-  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый.
+  // Подскролл таб-стрипа по горизонтали, чтобы активный таб целиком попал во
+  // вьюпорт стрипа (с отступом от краёв). Только горизонталь — страницу по
+  // вертикали не трогаем (поэтому не scrollIntoView, который дёргает и блок).
+  var TAB_INSET = 20;   // комфортный отступ активного таба от края стрипа
+  function scrollTabIntoView(strip, btn) {
+    if (!strip || !btn) return;
+    var sRect = strip.getBoundingClientRect();
+    var bRect = btn.getBoundingClientRect();
+    var delta = 0;
+    if (bRect.left - TAB_INSET < sRect.left) {
+      delta = bRect.left - TAB_INSET - sRect.left;          // таб подрезан слева
+    } else if (bRect.right + TAB_INSET > sRect.right) {
+      delta = bRect.right + TAB_INSET - sRect.right;        // таб подрезан справа
+    }
+    if (Math.abs(delta) < 1) return;
+    var max = strip.scrollWidth - strip.clientWidth;
+    var target = Math.max(0, Math.min(strip.scrollLeft + delta, max));
+    strip.scrollTo({ left: target, behavior: 'smooth' });
+  }
+
+  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый,
+  // затем плавно доводим активный таб целиком во вьюпорт.
   // Вертикальный скролл НЕ трогаем — страница не «скачет» вверх при смене таба.
   function switchTo(id) {
     if (!id) return;
@@ -57,7 +78,12 @@
     activate(id);
     var panel = document.querySelector('[data-tab-panel="' + id + '"]');
     var toStrip = panel && panel.querySelector('.ll-feed-tabs');
-    if (toStrip) toStrip.scrollLeft = scrollLeft;
+    if (toStrip) {
+      toStrip.scrollLeft = scrollLeft;                       // визуальная непрерывность
+      var activeBtn = toStrip.querySelector('.tabs-tab.__state-on[data-tab="' + id + '"]')
+        || toStrip.querySelector('.tabs-tab[data-tab="' + id + '"]');
+      scrollTabIntoView(toStrip, activeBtn);
+    }
     clearPressed();
   }
 
