@@ -127,8 +127,18 @@ const LANDING = `<!DOCTYPE html>
         if (h.syncing){ setTimeout(tick, 2000); return; }
         polling = false; btn.disabled = false;
         const ls = h.lastSync;
-        if (ls && ls.ok) setStatus('Готово — обновлено в ' + fmtTime(ls.finishedAt), 'ok');
-        else setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
+        const g = ls && ls.git;
+        if (ls && ls.ok) {
+          let suffix = '';
+          if (g && g.pushed) suffix = ' и запушено';
+          else if (g && g.nochange) suffix = ' (без изменений)';
+          else if (g && g.skipped) suffix = ' (без коммита)';
+          setStatus('Готово — обновлено' + suffix + ' в ' + fmtTime(ls.finishedAt), 'ok');
+        } else if (g && g.committed && !g.ok) {
+          setStatus('Обновлено, но пуш не прошёл — проверь GITHUB_TOKEN', 'err');
+        } else {
+          setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
+        }
       } catch {
         polling = false; btn.disabled = false;
         setStatus('Не удалось получить статус', 'err');
@@ -155,7 +165,51 @@ const LANDING = `<!DOCTYPE html>
 
 /* ── Синк ленты из гуглшита ───────────────────────────────────────────────── */
 let syncing = false;
-let lastSync = null; // { reason, startedAt, finishedAt, ok, code }
+let lastSync = null; // { reason, startedAt, finishedAt, ok, code, git }
+
+/* Запуск git-команды (промис, не блокирует сервер). */
+function git(args) {
+  return new Promise((res) => {
+    const p = spawn('git', args, { cwd: ROOT });
+    let out = '', err = '';
+    p.stdout?.on('data', (d) => { out += d; });
+    p.stderr?.on('data', (d) => { err += d; });
+    p.on('close', (code) => res({ code, out, err }));
+    p.on('error', (e) => res({ code: -1, err: e.message }));
+  });
+}
+
+/* После успешного синка: коммитим изменённые данные/страницы и пушим, чтобы они
+ * пережили рестарт эфемерного контейнера. Включено по умолчанию; выключить —
+ * SYNC_GIT_COMMIT=false. Для пуша нужен токен (GITHUB_TOKEN) — без него коммит
+ * сделаем, но пуш не пройдёт (залогируем). Ветка/идентичность/репо — через env. */
+async function commitAndPush(reason) {
+  if (process.env.SYNC_GIT_COMMIT === 'false') return { ok: true, skipped: true };
+
+  const status = await git(['status', '--porcelain']);
+  if (status.code !== 0) return { ok: false, error: `git status: ${status.err.trim()}` };
+  if (!status.out.trim()) { console.log('[git] нечего коммитить'); return { ok: true, nochange: true }; }
+
+  await git(['add', '-A']);
+  const name = process.env.SYNC_GIT_NAME || 'proto-moon sync';
+  const email = process.env.SYNC_GIT_EMAIL || 'sync@proto-moon.local';
+  const msg = `sync: обновление из таблицы (${reason})`;
+  const commit = await git(['-c', `user.name=${name}`, '-c', `user.email=${email}`, 'commit', '-m', msg]);
+  if (commit.code !== 0) return { ok: false, error: `git commit: ${commit.err.trim()}` };
+
+  const branch = process.env.SYNC_GIT_BRANCH
+    || (await git(['rev-parse', '--abbrev-ref', 'HEAD'])).out.trim() || 'main';
+  const token = process.env.GITHUB_TOKEN || process.env.GIT_PUSH_TOKEN || '';
+  const slug = process.env.GIT_REPO_SLUG || 'designodn/proto-moon';
+  const target = token ? `https://x-access-token:${token}@github.com/${slug}.git` : 'origin';
+  const push = await git(['push', target, `HEAD:${branch}`]);
+  if (push.code !== 0) {
+    const safe = (push.err || '').split(token || '\0').join('***').trim();  // не светим токен
+    return { ok: false, committed: true, error: `git push: ${safe}` };
+  }
+  console.log(`[git] закоммичено и запушено в ${branch}`);
+  return { ok: true, pushed: true, branch };
+}
 
 function runSync(reason) {
   if (syncing) {
@@ -169,9 +223,15 @@ function runSync(reason) {
     cwd: ROOT,
     stdio: 'inherit',
   });
-  child.on('close', (code) => {
+  child.on('close', async (code) => {
+    let gitRes = null;
+    if (code === 0) {
+      gitRes = await commitAndPush(reason).catch((e) => ({ ok: false, error: e.message }));
+      if (gitRes && !gitRes.ok) console.error(`[git] ошибка: ${gitRes.error}`);
+    }
     syncing = false;
-    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(), ok: code === 0, code };
+    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(),
+      ok: code === 0 && (!gitRes || gitRes.ok), code, git: gitRes };
     console.log(`[sync] финиш (${reason}), код ${code ?? '—'}`);
   });
   child.on('error', (err) => {
