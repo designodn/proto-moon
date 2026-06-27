@@ -22,42 +22,88 @@
      срабатывает, поэтому ставим .__clicked на pointerdown (tabs.css → scale).
    - #7 не сбрасывать горизонтальный скролл таб-стрипа: у каждой панели свой
      дубль стрипа, поэтому переносим scrollLeft со старого на новый при switch.
+   - после переключения активный таб плавно доводится целиком во вьюпорт стрипа.
    - свайп НЕ срабатывает, если жест начат на горизонтальном скроллере
      (таб-стрип, карусели, чипсы, сториз) — иначе конфликт с их прокруткой. */
 (function () {
-  function tabs() { return document.querySelectorAll('.tabs-tab[data-tab]'); }
+  // ── Селекторы и классы разметки (см. fetch-q3.mjs --activity) ──────────────
+  var SEL = {
+    tab:   '.tabs-tab[data-tab]',   // кнопка таба
+    panel: '[data-tab-panel]',      // панель ленты
+    strip: '.ll-feed-tabs'          // горизонтальный таб-стрип
+  };
+  var CLS = { on: '__state-on', pressed: '__clicked' };
+
+  // ── Настройки доезда и жеста (px, если не указано иное) ────────────────────
+  var TAB_INSET   = 20;     // отступ активного таба от края стрипа при доезде
+  var SWIPE_MIN   = 50;     // мин. горизонталь, чтобы счесть жест свайпом
+  var DECIDE      = 8;      // порог, на котором фиксируем направление жеста
+  var H_DOMINANCE = 1.2;    // горизонталь должна доминировать над вертикалью
+
+  // Горизонтальные скроллеры, на которых свайп НЕ переключает ленту.
+  var H_SCROLLERS = SEL.strip + ', .tg-carousel, .chips-view__row, .tg-news__tabs,'
+    + ' .collection-chips, .stories-row, .tg-chan-row, .clips-rail, [data-no-feed-swipe]';
+
+  // ── DOM-хелперы ───────────────────────────────────────────────────────────
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return (root || document).querySelectorAll(sel); }
+  function panelById(id) { return $('[data-tab-panel="' + id + '"]'); }
+  function tabInStrip(strip, id) { return $('.tabs-tab[data-tab="' + id + '"]', strip); }
+
   function panelIds() {
-    return Array.prototype.map.call(
-      document.querySelectorAll('[data-tab-panel]'),
-      function (p) { return p.getAttribute('data-tab-panel'); }
-    );
+    return Array.prototype.map.call($$(SEL.panel), function (p) {
+      return p.getAttribute('data-tab-panel');
+    });
   }
   function currentId() {
-    var on = document.querySelector('.tabs-tab.__state-on[data-tab]');
+    var on = $(SEL.tab + '.' + CLS.on);
     if (on) return on.getAttribute('data-tab');
     var ids = panelIds();
     return ids.length ? ids[0] : null;
   }
 
   function activate(id) {
-    document.querySelectorAll('[data-tab-panel]').forEach(function (panel) {
+    $$(SEL.panel).forEach(function (panel) {
       panel.hidden = panel.getAttribute('data-tab-panel') !== id;
     });
-    tabs().forEach(function (btn) {
-      btn.classList.toggle('__state-on', btn.getAttribute('data-tab') === id);
+    $$(SEL.tab).forEach(function (btn) {
+      btn.classList.toggle(CLS.on, btn.getAttribute('data-tab') === id);
     });
   }
 
-  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый.
+  // Подскролл таб-стрипа по горизонтали, чтобы активный таб целиком попал во
+  // вьюпорт стрипа (с отступом от краёв). Только горизонталь — страницу по
+  // вертикали не трогаем (поэтому не scrollIntoView, который дёргает и блок).
+  function scrollTabIntoView(strip, btn) {
+    if (!strip || !btn) return;
+    var sRect = strip.getBoundingClientRect();
+    var bRect = btn.getBoundingClientRect();
+    var delta = 0;
+    if (bRect.left - TAB_INSET < sRect.left) {
+      delta = bRect.left - TAB_INSET - sRect.left;          // таб подрезан слева
+    } else if (bRect.right + TAB_INSET > sRect.right) {
+      delta = bRect.right + TAB_INSET - sRect.right;        // таб подрезан справа
+    }
+    if (Math.abs(delta) < 1) return;
+    var max = strip.scrollWidth - strip.clientWidth;
+    var target = Math.max(0, Math.min(strip.scrollLeft + delta, max));
+    strip.scrollTo({ left: target, behavior: 'smooth' });
+  }
+
+  // Единый переход на ленту id: переносим scrollLeft текущего стрипа на новый,
+  // затем плавно доводим активный таб целиком во вьюпорт.
   // Вертикальный скролл НЕ трогаем — страница не «скачет» вверх при смене таба.
   function switchTo(id) {
     if (!id) return;
-    var fromStrip = document.querySelector('[data-tab-panel]:not([hidden]) .ll-feed-tabs');
+    var fromStrip = $(SEL.panel + ':not([hidden]) ' + SEL.strip);
     var scrollLeft = fromStrip ? fromStrip.scrollLeft : 0;
     activate(id);
-    var panel = document.querySelector('[data-tab-panel="' + id + '"]');
-    var toStrip = panel && panel.querySelector('.ll-feed-tabs');
-    if (toStrip) toStrip.scrollLeft = scrollLeft;
+    var panel = panelById(id);
+    var toStrip = panel && $(SEL.strip, panel);
+    if (toStrip) {
+      toStrip.scrollLeft = scrollLeft;                       // визуальная непрерывность
+      scrollTabIntoView(toStrip, tabInStrip(toStrip, id));
+    }
     clearPressed();
   }
 
@@ -72,18 +118,18 @@
 
   // #3 — press-фидбэк по тапу (мобилка).
   document.addEventListener('pointerdown', function (e) {
-    var b = e.target.closest && e.target.closest('.tabs-tab[data-tab]');
-    if (b) b.classList.add('__clicked');
+    var b = e.target.closest && e.target.closest(SEL.tab);
+    if (b) b.classList.add(CLS.pressed);
   }, true);
   function clearPressed() {
-    document.querySelectorAll('.tabs-tab.__clicked').forEach(function (b) { b.classList.remove('__clicked'); });
+    $$(SEL.tab + '.' + CLS.pressed).forEach(function (b) { b.classList.remove(CLS.pressed); });
   }
   document.addEventListener('pointerup', clearPressed, true);
   document.addEventListener('pointercancel', clearPressed, true);
 
   // ТАП по табу.
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.tabs-tab[data-tab]') : null;
+    var btn = e.target.closest ? e.target.closest(SEL.tab) : null;
     if (!btn) return;
     e.preventDefault();
     e.stopImmediatePropagation();
@@ -91,13 +137,6 @@
   }, true);
 
   // ── СВАЙП между лентами ───────────────────────────────────────────────────
-  // Горизонтальные скроллеры, на которых свайп НЕ должен переключать ленту.
-  var H_SCROLLERS = '.ll-feed-tabs, .tg-carousel, .chips-view__row, .tg-news__tabs,'
-    + ' .collection-chips, .stories-row, .tg-chan-row, .clips-rail, [data-no-feed-swipe]';
-  var SWIPE_MIN = 50;        // мин. горизонталь, чтобы счесть жест свайпом
-  var DECIDE = 8;            // порог, на котором фиксируем направление жеста
-  var H_DOMINANCE = 1.2;     // горизонталь должна доминировать над вертикалью
-
   function onHScroller(node) {
     return !!(node && node.closest && node.closest(H_SCROLLERS));
   }
