@@ -199,12 +199,20 @@ async function commitAndPush(reason) {
 
   const branch = process.env.SYNC_GIT_BRANCH
     || (await git(['rev-parse', '--abbrev-ref', 'HEAD'])).out.trim() || 'main';
+  // Куда пушим (по приоритету):
+  //   1. SYNC_GIT_PUSH_URL — готовый remote с авторизацией (любой хост: Sourcecraft,
+  //      git.sourcecraft.dev, self-hosted), напр. https://<TOKEN>@git.sourcecraft.dev/<org>/<repo>.git
+  //   2. GITHUB_TOKEN/GIT_PUSH_TOKEN — собираем URL github.com по GIT_REPO_SLUG.
+  //   3. origin — как настроен remote в контейнере (если у него уже есть креды).
   const token = process.env.GITHUB_TOKEN || process.env.GIT_PUSH_TOKEN || '';
   const slug = process.env.GIT_REPO_SLUG || 'designodn/proto-moon';
-  const target = token ? `https://x-access-token:${token}@github.com/${slug}.git` : 'origin';
+  const explicit = process.env.SYNC_GIT_PUSH_URL || '';
+  const target = explicit || (token ? `https://x-access-token:${token}@github.com/${slug}.git` : 'origin');
   const push = await git(['push', target, `HEAD:${branch}`]);
   if (push.code !== 0) {
-    const safe = (push.err || '').split(token || '\0').join('***').trim();  // не светим токен
+    // не светим секреты: вырезаем токен и весь explicit-URL (в нём может быть токен)
+    let safe = (push.err || '').trim();
+    for (const s of [token, explicit]) if (s) safe = safe.split(s).join('***');
     return { ok: false, committed: true, error: `git push: ${safe}` };
   }
   console.log(`[git] закоммичено и запушено в ${branch}`);
