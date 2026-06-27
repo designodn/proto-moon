@@ -33,11 +33,15 @@ workflows:
             # node:22 (bookworm) — есть node 22 (нужен встроенный fetch) и git.
             image: docker.io/library/node:22
             script:
-              # 1) Перечитать данные из таблицы и пересобрать статику.
-              #    Порядок важен: ленты берут авторов из data/people.json.
-              - node scripts/fetch-people.mjs
-              - node scripts/fetch-q3.mjs
-              - node scripts/fetch-feed.mjs
+              # 1) Перечитать ВСЮ таблицу и пересобрать статику одним прогоном:
+              #    люди → ленты (NV/Q3/Трибуна/activity) → профиль → клипы →
+              #    «Вокруг вас» → сториз → марафон → подарки → доразметка ВВЗ.
+              #    fetch-all инкрементальный (пропускает неизменённые листы по
+              #    data/.sync-state.json) — холостые прогоны почти бесплатны.
+              #    npm install ставит sharp → картинки сжимаются в webp; без него
+              #    fetch-all отработает, но без сжатия.
+              - npm install --no-audit --no-fund
+              - node scripts/fetch-all.mjs
               # 2) Опубликовать результат обратно в main (если есть изменения).
               - |
                 if [ -z "$(git status --porcelain)" ]; then
@@ -47,7 +51,7 @@ workflows:
                 git config user.email "ci@sourcecraft.dev"
                 git config user.name  "SourceCraft CI"
                 git add -A
-                git commit -m "chore(feeds): пересборка лент из Google-таблицы [skip ci]"
+                git commit -m "chore(sync): пересборка из Google-таблицы (fetch-all) [skip ci]"
                 # SOURCECRAFT_REPO_URL = https://git@git.sourcecraft.dev/<org>/<repo>.git
                 # Меняем плейсхолдер-логин git@ на токен для авторизованного пуша.
                 push_url="https://${SOURCECRAFT_TOKEN}@${SOURCECRAFT_REPO_URL#https://git@}"
