@@ -141,10 +141,63 @@ Railway держит один контейнер всегда живым, поэ
 ---
 
 ## Чек-лист «переехать»
-- [ ] `yc init` сделан, каталог выбран
-- [ ] Container Registry создан, `configure-docker` выполнен (есть `REGISTRY_ID`)
-- [ ] Сервисный аккаунт создан, роли выданы (есть `SERVICE_ACCOUNT_ID`)
-- [ ] `./deploy-yandex-container.sh` отработал, ревизия активна
-- [ ] `allow-unauthenticated-invoke` включён
-- [ ] Прототип открывается по `*.containers.yandexcloud.net`, кнопка синка работает
+- [x] `yc init` сделан, каталог выбран
+- [x] Container Registry создан, `configure-docker` выполнен (есть `REGISTRY_ID`)
+- [x] Сервисный аккаунт создан, роли выданы (есть `SERVICE_ACCOUNT_ID`)
+- [x] `./deploy-yandex-container.sh` отработал, ревизия активна
+- [x] `allow-unauthenticated-invoke` включён
+- [x] Прототип открывается по `*.containers.yandexcloud.net`, кнопка синка работает
 - [ ] Railway отключён
+
+---
+
+## Текущий боевой деплой (что реально поднято)
+
+Каталог `default` (folder `b1g072enfcmkigbqem47`, cloud `b1gnhmibe8oinctgao9v`).
+
+| Ресурс | Имя | ID |
+|---|---|---|
+| Container Registry | `ok-ds` | `crp00hn2b224r9p3r4c9` |
+| Serverless Container | `ok-ds-proto` | `bbasbrdpofr31h0nen4l` |
+| API Gateway | `okds-gw` | `d5dpkskhhsasgbkcguu1` |
+| DNS-зона | `okds-zone` | `dnsckb5gb22r8sh1emn9` |
+| Сертификат (Let's Encrypt) | `okds-cert` | `fpq4v4m5bgdn432b6n0e` |
+| Сервисный аккаунт | `ok-ds-deployer` | `ajelabfql2u109qc1p0j` |
+
+**Адреса:**
+- основной (красивый): <https://proto-design-okds.ru/>
+- технический контейнер: `https://bbasbrdpofr31h0nen4l.containers.yandexcloud.net/`
+- технический шлюз: `https://d5dpkskhhsasgbkcguu1.kr8f6hld.apigw.yandexcloud.net/`
+
+**Приватность:** контейнер отдаёт `X-Robots-Tag: noindex` и `robots.txt` с полным
+`Disallow` — из поиска не находится, доступ только по ссылке.
+
+### Как привязан домен (схема)
+Домен делегирован в Yandex Cloud DNS (NS `ns1/ns2.yandexcloud.net`). Запросы:
+`proto-design-okds.ru` → (ANAME в зоне) → API Gateway `okds-gw` → Serverless
+Container `ok-ds-proto`. HTTPS — managed-сертификат Let's Encrypt из Certificate
+Manager, привязан к домену шлюза.
+
+### Обновить прототип (передеплой)
+```bash
+yc config profile activate ok-ds            # профиль с ключом ok-ds-deployer
+# (по желанию свежие данные в образ:) npm run sync
+yc iam create-token | docker login --username iam --password-stdin cr.yandex
+IMAGE=cr.yandex/crp00hn2b224r9p3r4c9/ok-ds-proto:latest
+docker build -t "$IMAGE" . && docker push "$IMAGE"
+yc serverless container revision deploy \
+  --container-name ok-ds-proto --image "$IMAGE" \
+  --cores 1 --memory 1GB --concurrency 4 --execution-timeout 600s \
+  --environment SYNC_ON_START=true \
+  --service-account-id ajelabfql2u109qc1p0j
+```
+
+### Полезные команды
+```bash
+# адрес и статус контейнера
+yc serverless container get --name ok-ds-proto
+# домены шлюза / записи зоны / статус сертификата
+yc serverless api-gateway get --name okds-gw
+yc dns zone list-records --name okds-zone
+yc certificate-manager certificate get --id fpq4v4m5bgdn432b6n0e
+```
