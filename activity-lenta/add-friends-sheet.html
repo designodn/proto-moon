@@ -121,6 +121,16 @@
                 border-color 600ms ease,
                 box-shadow 600ms ease;
   }
+  /* Улёт карточки (accept → вверх). Базовое правило выше (специфичность 0,2,1)
+     перебивало компонентное .friend-big-card.__flying-up (0,2,0), из-за чего в
+     transition не попадал transform и карточка телепортировалась за экран без
+     анимации. Возвращаем transition transform С БОЛЬШЕЙ специфичностью (0,3,0),
+     но ТОЛЬКО на классах улёта — базовую карточку не трогаем, иначе во время
+     пан-драга (transform каждый кадр) карточки бы лагали. */
+  .fp .friend-big-card.__flying-up,
+  .fp .friend-big-card.__flying-down {
+    transition: transform 600ms cubic-bezier(.5, 0, .75, 0);
+  }
   .fp .friend-big-card .friend-big-card__info { opacity: 0; }
   .fp.__state-3 .friend-big-card,
   .fp.__state-4 .friend-big-card {
