@@ -20,7 +20,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, extname, basename } from 'node:path';
-import { isUploadConfigured, putToBucket } from '../upload.mjs';
+import { isUploadConfigured, putContentAddressed } from './lib/bucket.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -51,7 +51,7 @@ async function main() {
   for (const f of files) {
     const ext = extname(f).toLowerCase().slice(1);
     const bytes = readFileSync(resolve(CLIPS_DIR, f));
-    const { url } = await putToBucket(bytes, ext, CT[extname(f).toLowerCase()]);
+    const { url } = await putContentAddressed(bytes, ext, CT[extname(f).toLowerCase()]);
     const id = basename(f, extname(f));   // clip-1.mp4 → clip-1
     rows.push({ id, file: f, url });
     console.log(`  ✓ ${f}  →  ${url}`);
