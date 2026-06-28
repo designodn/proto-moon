@@ -207,7 +207,10 @@ async function commitAndPush(reason) {
   const token = process.env.GITHUB_TOKEN || process.env.GIT_PUSH_TOKEN || '';
   const slug = process.env.GIT_REPO_SLUG || 'designodn/proto-moon';
   const explicit = process.env.SYNC_GIT_PUSH_URL || '';
-  const target = explicit || (token ? `https://x-access-token:${token}@github.com/${slug}.git` : 'origin');
+  // Токен как userinfo (https://<token>@github.com/...). Формат «x-access-token:<token>»
+  // подходит для App- и classic-токенов, но fine-grained PAT его НЕ принимают
+  // («Invalid username or token»). Токен-как-username работает для всех видов PAT.
+  const target = explicit || (token ? `https://${token}@github.com/${slug}.git` : 'origin');
   const push = await git(['push', target, `HEAD:${branch}`]);
   if (push.code !== 0) {
     // не светим секреты: вырезаем токен и весь explicit-URL (в нём может быть токен)
