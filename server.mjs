@@ -354,7 +354,7 @@ const server = createServer(async (req, res) => {
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, build: 'leanfix-1', uploads: isUploadConfigured(), syncing, lastSync }));
+      res.end(JSON.stringify({ ok: true, build: 'cloud-1', uploads: isUploadConfigured(), syncing, lastSync }));
       return;
     }
 
