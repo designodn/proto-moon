@@ -56,7 +56,28 @@ workflows:
               # обрывался ДО сборки. Теперь: локальный tar пишем в ФАЙЛ (его код —
               # отдельно, шаг не валит), затем стримим в удалённую распаковку. Падаем
               # только на РЕАЛЬНОЙ ошибке удалённого tar (REMOTE_TAR_EXIT).
-              - ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "docker system prune -af >/dev/null 2>&1 || true; df -h / | tail -1"
+              #
+              # ─── ПРЕ-ДЕПЛОЙ ДИАГНОСТИКА (в ВИДИМОМ окне лога, ДО tar) ──────────
+              # Деплой зелёный, но контейнер не пересоздаётся (build застрял на
+              # leanfix-1 даже после --force-recreate + снос порта-80). Финальный
+              # compose-шаг с PS_ALL_BEFORE/BUILD_EXIT идёт ПОСЛЕ REMOTE_TAR_EXIT,
+              # докуда лог обычно и обрезают — мы его не видим. Поэтому печатаем
+              # состояние VM ДО любых изменений, в первой (всегда видимой) части:
+              #   PS_BEFORE  — кто реально держит порт 80 и из какого образа
+              #                (вдруг контейнер запущен ВНЕ compose → его down/
+              #                force-recreate не трогает = H3);
+              #   COMPOSE_PS — знает ли compose-проект /opt/proto-moon про этот
+              #                контейнер вообще;
+              #   SERVED_BUILD — какой build сейчас реально отдаётся (healthz).
+              - |
+                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
+                  echo "=== PRE-DEPLOY DIAG ==="
+                  echo "PS_BEFORE:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Ports}} | {{.Status}}"
+                  echo "COMPOSE_PS:"; (cd /opt/proto-moon && docker compose ps 2>&1 | tail -8) || echo "(no compose dir)"
+                  echo -n "SERVED_BUILD="; curl -s -m 3 localhost/healthz | head -c 200; echo
+                  docker system prune -af >/dev/null 2>&1 || true
+                  df -h / | tail -1
+                '
               - |
                 tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
                   && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
