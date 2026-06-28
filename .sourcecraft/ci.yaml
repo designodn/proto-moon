@@ -50,35 +50,18 @@ workflows:
               # Ключ хранится в секрете как base64 — декодируем обратно в файл.
               - printf '%s' "$DEPLOY_SSH_KEY" | base64 -d > ~/.ssh/id_deploy
               - chmod 600 ~/.ssh/id_deploy
-              # ─── ДИАГНОСТИКА (временно) ───────────────────────────────────────
-              # Деплой падал «молча» на заливке tar (ошибка уходила в stderr и не
-              # попадала в лог). Печатаем полное состояние VM ДО заливки — кто я,
-              # права/владелец /opt/proto-moon, docker, диск — чтобы перестать гадать.
+              # ─── ЗАЛИВКА: развязка tar и ssh (ФИКС + лёгкая диагностика) ───────
+              # Было: `tar | ssh "tar -x"`. Под pipefail весь шаг падал, если CI-tar
+              # вернул не ноль (а удалённая распаковка при этом успешна) → ран молча
+              # обрывался ДО сборки. Теперь: локальный tar пишем в ФАЙЛ (его код —
+              # отдельно, шаг не валит), затем стримим в удалённую распаковку. Падаем
+              # только на РЕАЛЬНОЙ ошибке удалённого tar (REMOTE_TAR_EXIT).
+              - ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "docker system prune -af >/dev/null 2>&1 || true; df -h / | tail -1"
               - |
-                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
-                  echo "===== WHOAMI ====="; whoami; id
-                  echo "===== DISK ====="; df -h /
-                  echo "===== /opt/proto-moon (dir) ====="; ls -ld /opt/proto-moon 2>&1
-                  echo "===== /opt/proto-moon (top 40) ====="; ls -la /opt/proto-moon 2>&1 | head -40
-                  echo "===== OWNERS (top 40) ====="; stat -c "%U:%G %a %n" /opt/proto-moon /opt/proto-moon/* 2>/dev/null | head -40
-                  echo "===== DOCKER PS ====="; docker ps -a 2>&1
-                  echo "===== DOCKER DF ====="; docker system df 2>&1
-                  echo "===== PRUNE ====="; docker system prune -af 2>&1 || true
-                  echo "===== DISK AFTER PRUNE ====="; df -h /
-                '
-              # Заливаем код на VM (tar по ssh) в /opt/proto-moon.
-              # ДИАГНОСТИКА: stderr и КОД ВОЗВРАТА tar пишем в файл и печатаем —
-              # раньше ошибка tar уходила в stderr и не была видна, отчего «лог
-              # обрывался без причины». В конце echo → шаг exit 0 и НЕ прерывает ран,
-              # чтобы за один прогон увидеть ещё и сборку (читаем ЛОГ, не статус).
-              - |
-                tar --exclude='./node_modules' -C /sourcecraft/workspace -czf - . \
-                  | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
-                      echo "===== TAR EXTRACT ====="
-                      tar -C /opt/proto-moon -xzf - 2>/tmp/tarerr
-                      echo "TAR_EXIT=$?"
-                      echo "===== TAR STDERR (tail 50) ====="; tail -50 /tmp/tarerr
-                    '
+                tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
+                  && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
+                  || echo "LOCAL_TAR_WARN=$? (продолжаем — архив создан)"
+                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" 'tar -C /opt/proto-moon -xzf -; e=$?; echo "REMOTE_TAR_EXIT=$e"; exit $e' < /tmp/code.tgz
               # /opt/proto-moon/.env собирается ИЗ СЕКРЕТОВ заново КАЖДЫЙ деплой
               # (cat > затирает файл) → правка .env руками по ssh бесполезна.
               # Содержит GitHub-токен (кнопка-синк пушит в main) и ключи облака
@@ -109,15 +92,15 @@ workflows:
                 else
                   echo "ENV: секреты не заданы — .env не трогаем (пропуск)"
                 fi
-              # Пересборка/перезапуск. ДИАГНОСТИКА: код возврата + последние строки
-              # сборки (раньше тоже могли «молча» падать). Не прерываем ран.
+              # Сборка+запуск. Короткий ЧЕСТНЫЙ статус: COMPOSE_EXIT + хвост сборки.
+              # Шаг падает (red), только если реально упала сборка — и тогда в логе
+              # сразу видна причина (последние 40 строк build-лога).
               - |
                 ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
-                  cd /opt/proto-moon || { echo "CD_FAIL=$?"; exit 0; }
-                  echo "===== COMPOSE UP --build ====="
-                  docker compose up -d --build > /tmp/compose.log 2>&1
-                  echo "COMPOSE_EXIT=$?"
-                  tail -100 /tmp/compose.log
-                  echo "===== COMPOSE PS ====="; docker compose ps 2>&1
+                  cd /opt/proto-moon || exit 9
+                  docker compose up -d --build > /tmp/compose.log 2>&1; e=$?
+                  echo "COMPOSE_EXIT=$e"
+                  echo "----- build tail (40) -----"; tail -40 /tmp/compose.log
                   docker image prune -f >/dev/null 2>&1 || true
+                  exit $e
                 '
