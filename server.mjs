@@ -181,15 +181,21 @@ function git(args) {
   });
 }
 
-/* После успешного синка: коммитим изменённые данные/страницы и пушим, чтобы они
- * пережили рестарт эфемерного контейнера. Включено по умолчанию; выключить —
- * SYNC_GIT_COMMIT=false. Для пуша нужен токен (GITHUB_TOKEN) — без него коммит
- * сделаем, но пуш не пройдёт (залогируем). Ветка/идентичность/репо — через env. */
+/* После успешного синка: коммитим изменённые данные/страницы и вливаем в base
+ * (main) через PR, т.к. base защищён от прямого push. Поток: коммит → пуш во
+ * временную ветку sync/* → создаём PR → мержим (squash) через GitHub API.
+ * Нужен токен (GITHUB_TOKEN) с правами Contents: RW и Pull requests: RW.
+ * Выключить целиком — SYNC_GIT_COMMIT=false. Ветка/идентичность/репо — через env. */
 async function commitAndPush(reason) {
   if (process.env.SYNC_GIT_COMMIT === 'false') return { ok: true, skipped: true };
 
   const status = await git(['status', '--porcelain']);
-  if (status.code !== 0) return { ok: false, error: `git status: ${status.err.trim()}` };
+  if (status.code !== 0) {
+    // В образе нет .git (исключён для лёгкости) → коммитить некуда. Синк при этом
+    // прошёл успешно: данные обновлены в контейнере, в git не сохраняем.
+    if (/not a git repository/i.test(status.err)) { console.log('[git] нет репозитория — пропускаю коммит'); return { ok: true, skipped: 'no-repo' }; }
+    return { ok: false, error: `git status: ${status.err.trim()}` };
+  }
   if (!status.out.trim()) { console.log('[git] нечего коммитить'); return { ok: true, nochange: true }; }
 
   await git(['add', '-A']);
@@ -199,26 +205,74 @@ async function commitAndPush(reason) {
   const commit = await git(['-c', `user.name=${name}`, '-c', `user.email=${email}`, 'commit', '-m', msg]);
   if (commit.code !== 0) return { ok: false, error: `git commit: ${commit.err.trim()}` };
 
-  const branch = process.env.SYNC_GIT_BRANCH
-    || (await git(['rev-parse', '--abbrev-ref', 'HEAD'])).out.trim() || 'main';
-  // Куда пушим (по приоритету):
-  //   1. SYNC_GIT_PUSH_URL — готовый remote с авторизацией (любой хост: Sourcecraft,
-  //      git.sourcecraft.dev, self-hosted), напр. https://<TOKEN>@git.sourcecraft.dev/<org>/<repo>.git
-  //   2. GITHUB_TOKEN/GIT_PUSH_TOKEN — собираем URL github.com по GIT_REPO_SLUG.
-  //   3. origin — как настроен remote в контейнере (если у него уже есть креды).
   const token = process.env.GITHUB_TOKEN || process.env.GIT_PUSH_TOKEN || '';
   const slug = process.env.GIT_REPO_SLUG || 'designodn/proto-moon';
-  const explicit = process.env.SYNC_GIT_PUSH_URL || '';
-  const target = explicit || (token ? `https://x-access-token:${token}@github.com/${slug}.git` : 'origin');
-  const push = await git(['push', target, `HEAD:${branch}`]);
-  if (push.code !== 0) {
-    // не светим секреты: вырезаем токен и весь explicit-URL (в нём может быть токен)
-    let safe = (push.err || '').trim();
-    for (const s of [token, explicit]) if (s) safe = safe.split(s).join('***');
-    return { ok: false, committed: true, error: `git push: ${safe}` };
+  const base = process.env.SYNC_GIT_BRANCH || 'main';
+  if (!token) return { ok: false, committed: true, error: 'нет токена (GITHUB_TOKEN)' };
+  const [owner, repo] = slug.split('/');
+  const mask = (s) => String(s == null ? '' : s).split(token).join('***');
+
+  // base (main) защищён — прямой push запрещён. Поэтому: пушим коммит во временную
+  // ветку → создаём PR → мержим его через GitHub API. Нужен токен с правами
+  // Contents: RW и Pull requests: RW.
+
+  // 1) Пуш во временную ветку. fine-grained PAT капризен к формату userinfo —
+  //    пробуем несколько, какой пройдёт.
+  const tempBranch = `sync/${Date.now().toString(36)}`;
+  const urls = [
+    `https://${token}@github.com/${slug}.git`,
+    `https://oauth2:${token}@github.com/${slug}.git`,
+    `https://x-access-token:${token}@github.com/${slug}.git`,
+  ];
+  let okUrl = null, lastErr = '';
+  for (const u of urls) {
+    const p = await git(['push', u, `HEAD:refs/heads/${tempBranch}`]);
+    if (p.code === 0) { okUrl = u; break; }
+    lastErr = p.err || '';
   }
-  console.log(`[git] закоммичено и запушено в ${branch}`);
-  return { ok: true, pushed: true, branch };
+  if (!okUrl) return { ok: false, committed: true, error: `git push: ${mask(lastErr).trim()}` };
+
+  // 2) GitHub API: создаём PR и мержим (squash).
+  const api = async (path, method, body) => {
+    const res = await fetch(`https://api.github.com${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'proto-moon-sync',
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const text = await res.text();
+    let json = null; try { json = JSON.parse(text); } catch { /* not json */ }
+    return { status: res.status, json, text };
+  };
+  const cleanup = () => api(`/repos/${owner}/${repo}/git/refs/heads/${tempBranch}`, 'DELETE').catch(() => {});
+
+  const pr = await api(`/repos/${owner}/${repo}/pulls`, 'POST',
+    { title: msg, head: tempBranch, base, body: 'Автокоммит синка ленты из Google-таблицы.' });
+  if (pr.status >= 300 || !pr.json || !pr.json.number) {
+    await cleanup();
+    return { ok: false, committed: true, pushed: true, error: `PR ${pr.status}: ${mask(pr.text).slice(0, 200)}` };
+  }
+  const num = pr.json.number;
+
+  const merge = await api(`/repos/${owner}/${repo}/pulls/${num}/merge`, 'PUT', { merge_method: 'squash' });
+  if (merge.status >= 300 || !merge.json || !merge.json.merged) {
+    await cleanup();
+    return { ok: false, committed: true, pushed: true, pr: num, error: `merge ${merge.status}: ${mask(merge.text).slice(0, 200)}` };
+  }
+  await cleanup();
+
+  // 3) Подровнять локальный репо под смерженный base (на случай нескольких синков
+  //    между деплоями) — иначе следующий PR пойдёт от устаревшей базы. Best-effort.
+  await git(['fetch', okUrl, base]);
+  await git(['reset', '--hard', 'FETCH_HEAD']);
+
+  console.log(`[git] PR #${num} смержен в ${base}`);
+  return { ok: true, pushed: true, pr: num, branch: base };
 }
 
 function runSync(reason) {
@@ -300,7 +354,7 @@ const server = createServer(async (req, res) => {
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, syncing, lastSync }));
+      res.end(JSON.stringify({ ok: true, build: 'leanfix-1', syncing, lastSync }));
       return;
     }
 
