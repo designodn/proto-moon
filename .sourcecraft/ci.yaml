@@ -102,9 +102,12 @@ workflows:
               - |
                 ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
                   cd /opt/proto-moon || exit 9
-                  docker compose up -d --build --force-recreate > /tmp/compose.log 2>&1; e=$?
-                  echo "COMPOSE_EXIT=$e"
-                  echo "----- build tail (40) -----"; tail -40 /tmp/compose.log
+                  echo "PS_BEFORE:"; docker compose ps --format "{{.Name}} | {{.Image}} | {{.Status}}" 2>/dev/null
+                  # Канонично для CI: сборка ОТДЕЛЬНО, затем up --force-recreate. Если
+                  # сборка упадёт — старый контейнер остаётся жить (без простоя).
+                  docker compose build > /tmp/build.log 2>&1; b=$?; echo "BUILD_EXIT=$b"; tail -20 /tmp/build.log
+                  docker compose up -d --force-recreate > /tmp/up.log 2>&1; u=$?; echo "UP_EXIT=$u"; cat /tmp/up.log
+                  echo "PS_AFTER:"; docker compose ps --format "{{.Name}} | {{.Image}} | {{.Status}}" 2>/dev/null
                   docker image prune -f >/dev/null 2>&1 || true
-                  exit $e
+                  [ "$b" -ne 0 ] && exit "$b"; exit "$u"
                 '
