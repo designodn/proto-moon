@@ -84,6 +84,10 @@ workflows:
                     printf 'UPLOADS_SECRET_ACCESS_KEY=%s\n' "$sk"
                     [ -n "$up" ] && printf 'UPLOAD_PASSWORD=%s\n' "$up"
                   fi
+                  :   # гарантируем exit 0 субшелла: иначе при пустом UPLOAD_PASSWORD
+                      # последняя [ -n "$up" ] вернёт 1 → env_body=$(...) код 1 → под
+                      # set -e весь шаг .env молча падает ДО сборки (баг проявился
+                      # после очистки секрета UPLOAD_PASSWORD).
                 )
                 # Пишем .env ТОЛЬКО если есть что писать — иначе не трогаем файл
                 # (пустой `cat >` затёр бы существующий .env с токеном).
