@@ -213,3 +213,5 @@ yc resource-manager folder remove-access-binding b1g072enfcmkigbqem47 \
 - [x] Приватность: `noindex` + `robots.txt`
 - [x] Старый serverless-контейнер удалён
 - [ ] Railway отключён
+
+<!-- redeploy: подхватить SYNC_GIT_TOKEN на VM -->
