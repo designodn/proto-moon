@@ -22,6 +22,7 @@ import { spawn } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join, normalize, extname } from 'node:path';
+import { renderContentPage, handleUploadApi } from './upload.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
@@ -92,6 +93,7 @@ const LANDING = `<!DOCTYPE html>
   <p class="sub">Выберите прототип или обновите ленту из Google-таблицы.</p>
   <a class="proto" href="/q3">Q-3</a>
   <a class="proto" href="/activity">Активити</a>
+  <a class="proto" href="/content">Обновление контента <span>таблица + медиа</span></a>
   <div class="sync">
     <button id="syncBtn">Обновить ленту из таблицы</button>
     <div class="status" id="status"></div>
@@ -353,6 +355,24 @@ const server = createServer(async (req, res) => {
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true, build: 'leanfix-1', syncing, lastSync }));
+      return;
+    }
+
+    // Раздел «Обновление контента» — таблица + загрузка медиа для дизайнеров.
+    if (pathname === '/content') {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.end(renderContentPage());
+      return;
+    }
+
+    // Приём файла от страницы /content (по файлу на запрос).
+    if (pathname === '/api/upload') {
+      if (req.method !== 'POST') {
+        res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST' });
+        res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+        return;
+      }
+      await handleUploadApi(req, res);
       return;
     }
 

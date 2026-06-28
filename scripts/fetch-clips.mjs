@@ -12,6 +12,8 @@
  * Лист «Клипы» (gid 1662648328 → см. ниже), колонки:
  *   id · тип · автор · заголовок · текст · лайки · комменты · репосты
  *
+ *   id:    можно НЕ заполнять — нумеруется автоматически «clip-N» по порядку
+ *          строк-клипов. Заданный вручную id уважается (обратная совместимость).
  *   тип:   'clip' — обычный клип; 'vvz-clip' — слайд «Возможно, вы знакомы».
  *   автор: id человека из листа «Люди» (имя/аватар резолвятся на странице
  *          через DS_PEOPLE — здесь храним только id).
@@ -88,17 +90,21 @@ async function main() {
   }
 
   const clips = [];
+  let clipSeq = 0;                                    // авто-нумерация клипов по порядку
   for (const r of rows.slice(1)) {
     const id = clean(r[iId]);
     const type = clean(r[iType]);
     if (!id && !type) continue;                       // пустая строка
     if (type === 'vvz-clip') {
-      clips.push({ id, type: 'vvz-clip' });
+      clips.push({ id, type: 'vvz-clip' });           // у ВВЗ-слайда id не используется
       continue;
     }
     if (type !== 'clip') continue;                    // прочие типы игнорируем
+    clipSeq++;
     const clip = {
-      id,
+      // id можно не заполнять в таблице — авто «clip-N» по порядку строк-клипов.
+      // Если id задан вручную — берём его (обратная совместимость).
+      id: id || `clip-${clipSeq}`,
       type: 'clip',
       author: clean(r[iAuthor]),
       likes: clean(r[iLikes]),

@@ -6,7 +6,8 @@ window.DS_CLIPS_DATA = [
     "author": "1",
     "likes": "2",
     "comments": "12",
-    "reshares": "34"
+    "reshares": "34",
+    "video": "https://proto-design-okds-uploads.storage.yandexcloud.net/5ec6876474cb5b74.mp4"
   },
   {
     "id": "clip-2",
@@ -14,10 +15,11 @@ window.DS_CLIPS_DATA = [
     "author": "2",
     "likes": "2",
     "comments": "23",
-    "reshares": "3"
+    "reshares": "3",
+    "video": "https://proto-design-okds-uploads.storage.yandexcloud.net/fdd707ee73420516.mp4"
   },
   {
-    "id": "clip-2",
+    "id": "",
     "type": "vvz-clip"
   },
   {
@@ -26,7 +28,8 @@ window.DS_CLIPS_DATA = [
     "author": "7",
     "likes": "51",
     "comments": "17",
-    "reshares": "5"
+    "reshares": "5",
+    "video": "https://proto-design-okds-uploads.storage.yandexcloud.net/5d4fa80501f8b855.mp4"
   },
   {
     "id": "clip-4",
@@ -34,6 +37,7 @@ window.DS_CLIPS_DATA = [
     "author": "group-3",
     "likes": "124",
     "comments": "34",
-    "reshares": "24"
+    "reshares": "24",
+    "video": "https://proto-design-okds-uploads.storage.yandexcloud.net/c700552d711e0193.mp4"
   }
 ];

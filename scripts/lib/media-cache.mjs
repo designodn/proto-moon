@@ -23,6 +23,7 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { isUploadConfigured, putAtKey, publicUrlFor, mimeForExt, bucketConfig, existsAtKey } from './bucket.mjs';
 
 const sha = (buf) => createHash('sha256').update(buf).digest('hex');
 
@@ -114,8 +115,22 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
   const stats = { same: 0, fresh: 0, changed: 0, stale: 0, dead: 0 };
   const now = new Date().toISOString();
 
+  // Режим хранения. Если бакет настроен (env UPLOADS_*) — заливаем медиа в облако
+  // и возвращаем публичный URL; репозиторий не растёт. Иначе — как раньше: качаем
+  // в assets/ и возвращаем относительный путь (локальная разработка без ключей).
+  const bucketMode = isUploadConfigured();
+
   async function resolveUrl(url) {
     if (!url || !/^https?:\/\//.test(url)) return url;   // пустые/локальные — как есть
+    // Наш собственный бакет загрузок — надёжное хранилище (в отличие от чужих CDN,
+    // которые протухают). Такие ссылки НЕ качаем в репо: оставляем как есть, чтобы
+    // картинки/клипы дизайнеров жили в облаке и не раздували репозиторий.
+    // Сверяемся с тем же базовым URL, по которому САМИ пишем ссылки
+    // (publicUrlFor → bucketConfig().publicBase), а не с сырым env: иначе при
+    // незаданном UPLOADS_PUBLIC_BASE (база выводится из имени бакета) passthrough
+    // не узнал бы собственные ссылки и пере-качивал бы их.
+    const uploadsBase = bucketConfig().publicBase;
+    if (uploadsBase && url.startsWith(uploadsBase)) return url;
     if (done.has(url)) return done.get(url);
 
     const key = sha(url).slice(0, 16);
@@ -156,31 +171,48 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
       if (!prev) stats.fresh++;
       else if (prev.hash !== dl.hash) stats.changed++;
       else stats.same++;
-      if (!dryRun) {
-        mkdirSync(dir, { recursive: true });
-        writeFileSync(resolve(dir, file), dl.bytes);
-      }
       next[key] = { src: url, file, type: dl.kind, hash: dl.hash, status: 'ok', checkedAt: now };
-      used.add(file);
-      result = `${dirRel}/${file}`;
-    } else if (prev && prev.file && existsSync(resolve(dir, prev.file))) {
-      // источник умер, но локальная копия есть — оставляем её. Заодно дожимаем
-      // старые png/jpg-копии в webp (храним только webp), хэш-источника не трогаем.
-      stats.stale++;
-      let file = prev.file;
-      const m = /\.(png|jpe?g)$/i.exec(file);
-      if (m && sharp && !dryRun) {
-        const c = await compressImage(readFileSync(resolve(dir, file)), m[1].toLowerCase());
-        if (c) {
-          const nf = `${key}.${c.ext}`;
-          if (nf !== file) { try { unlinkSync(resolve(dir, file)); } catch { /* ignore */ } }
-          file = nf;
-          writeFileSync(resolve(dir, file), c.bytes);
+      if (bucketMode) {
+        // Заливаем в бакет под путём assets/<dir>/<file>; пере-загрузку пропускаем,
+        // если содержимое не менялось (тот же hash и файл уже залит ранее).
+        const objKey = `${dirRel}/${file}`;
+        const unchanged = prev && prev.hash === dl.hash && prev.file === file && prev.status === 'ok';
+        if (!unchanged && !dryRun) await putAtKey(objKey, dl.bytes, mimeForExt(dl.ext));
+        result = publicUrlFor(objKey);
+      } else {
+        if (!dryRun) {
+          mkdirSync(dir, { recursive: true });
+          writeFileSync(resolve(dir, file), dl.bytes);
         }
+        used.add(file);
+        result = `${dirRel}/${file}`;
       }
-      next[key] = { ...prev, file, src: url, status: 'stale', checkedAt: now };
-      used.add(file);
-      result = `${dirRel}/${file}`;
+    } else if (prev && prev.file && prev.status !== 'dead' &&
+               (bucketMode ? await existsAtKey(`${dirRel}/${prev.file}`) : existsSync(resolve(dir, prev.file)))) {
+      // источник умер, но копия есть (на диске или реально в бакете) — оставляем её.
+      stats.stale++;
+      if (bucketMode) {
+        // копия уже в бакете (была залита ранее) — отдаём её URL
+        next[key] = { ...prev, src: url, status: 'stale', checkedAt: now };
+        result = publicUrlFor(`${dirRel}/${prev.file}`);
+      } else {
+        // локальная копия: заодно дожимаем старые png/jpg в webp (храним только
+        // webp), хэш-источника не трогаем.
+        let file = prev.file;
+        const m = /\.(png|jpe?g)$/i.exec(file);
+        if (m && sharp && !dryRun) {
+          const c = await compressImage(readFileSync(resolve(dir, file)), m[1].toLowerCase());
+          if (c) {
+            const nf = `${key}.${c.ext}`;
+            if (nf !== file) { try { unlinkSync(resolve(dir, file)); } catch { /* ignore */ } }
+            file = nf;
+            writeFileSync(resolve(dir, file), c.bytes);
+          }
+        }
+        next[key] = { ...prev, file, src: url, status: 'stale', checkedAt: now };
+        used.add(file);
+        result = `${dirRel}/${file}`;
+      }
     } else {
       // умер и копии нет — оставляем внешний URL (не делаем хуже)
       stats.dead++;
@@ -193,7 +225,9 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
 
   function save({ prune = true } = {}) {
     if (dryRun) return;
-    if (prune && existsSync(dir)) {
+    // Прун локальных осиротевших файлов — только в дисковом режиме. В облачном
+    // режиме локальной папки нет, а осиротевшие объекты в бакете безвредны.
+    if (prune && !bucketMode && existsSync(dir)) {
       // Удаляем ТОЛЬКО осиротевшие файлы кэша (были в старом манифесте, в этом
       // прогоне не использованы). Файлы вне manifest — не наши, не трогаем.
       for (const f of readdirSync(dir)) {
