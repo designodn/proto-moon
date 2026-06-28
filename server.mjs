@@ -22,7 +22,7 @@ import { spawn } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join, normalize, extname } from 'node:path';
-import { renderContentPage, handleUploadApi } from './upload.mjs';
+import { renderContentPage, handleUploadApi, isUploadConfigured } from './upload.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
@@ -354,7 +354,7 @@ const server = createServer(async (req, res) => {
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, build: 'leanfix-1', syncing, lastSync }));
+      res.end(JSON.stringify({ ok: true, build: 'leanfix-1', uploads: isUploadConfigured(), syncing, lastSync }));
       return;
     }
 
