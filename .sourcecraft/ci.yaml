@@ -78,16 +78,13 @@ workflows:
                   docker system prune -af >/dev/null 2>&1 || true
                   df -h / | tail -1
                 '
-              - |
-                tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
-                  && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
-                  || echo "LOCAL_TAR_WARN=$? (продолжаем — архив создан)"
-                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" 'tar -C /opt/proto-moon -xzf -; e=$?; echo "REMOTE_TAR_EXIT=$e"; echo -n "DEPLOYED_BUILD="; grep -m1 build: /opt/proto-moon/server.mjs | head -c 90; echo; exit $e' < /tmp/code.tgz
-              # /opt/proto-moon/.env собирается ИЗ СЕКРЕТОВ заново КАЖДЫЙ деплой
-              # (cat > затирает файл) → правка .env руками по ssh бесполезна.
-              # Содержит GitHub-токен (кнопка-синк пушит в main) и ключи облака
-              # (server.mjs/пайплайн пишут и отдают медиа из бакета).
-              # Всё идёт по stdin, не светится в списке процессов; .env = 600.
+              # ─── .env ИЗ СЕКРЕТОВ (пишем ДО деплоя; распаковка кода его не трогает) ──
+              # /opt/proto-moon/.env пересобирается из секретов на каждом деплое:
+              # GitHub-токен (кнопка-синк пушит в main) + ключи облака (медиа). Идёт
+              # по stdin (не светится в списке процессов), .env = 600. Ни один секрет
+              # не задан — существующий .env на VM НЕ трогаем (пустой cat> затёр бы
+              # токен). Собираем построчно во временный файл, БЕЗ обёртки $(...) над
+              # многострочным телом с комментариями — она хрупка в busybox-sh раннера.
               - |
                 # strip срезает \r\n: трейлинг-перенос при копи-пасте секрета
                 # ломает токен/ключ («Invalid token» / «SignatureDoesNotMatch»).
@@ -96,43 +93,61 @@ workflows:
                 ak=$(strip "$UPLOADS_ACCESS_KEY_ID")
                 sk=$(strip "$UPLOADS_SECRET_ACCESS_KEY")
                 up=$(strip "$UPLOAD_PASSWORD")
-                env_body=$(
-                  [ -n "$tok" ] && printf 'GITHUB_TOKEN=%s\n' "$tok"
-                  if [ -n "$ak" ] && [ -n "$sk" ]; then
-                    printf 'UPLOADS_BUCKET=%s\n' 'proto-design-okds-uploads'
-                    printf 'UPLOADS_PUBLIC_BASE=%s\n' 'https://proto-design-okds-uploads.storage.yandexcloud.net/'
-                    printf 'UPLOADS_ACCESS_KEY_ID=%s\n' "$ak"
-                    printf 'UPLOADS_SECRET_ACCESS_KEY=%s\n' "$sk"
-                    [ -n "$up" ] && printf 'UPLOAD_PASSWORD=%s\n' "$up"
-                  fi
-                  :   # гарантируем exit 0 субшелла: иначе при пустом UPLOAD_PASSWORD
-                      # последняя [ -n "$up" ] вернёт 1 → env_body=$(...) код 1 → под
-                      # set -e весь шаг .env молча падает ДО сборки (баг проявился
-                      # после очистки секрета UPLOAD_PASSWORD).
-                )
-                # Пишем .env ТОЛЬКО если есть что писать — иначе не трогаем файл
-                # (пустой `cat >` затёр бы существующий .env с токеном).
-                if [ -n "$env_body" ]; then
-                  printf '%s' "$env_body" | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "umask 077 && cat > /opt/proto-moon/.env && echo ENV_WRITTEN=ok || echo ENV_WRITTEN=FAIL"
+                envf=$(mktemp)
+                [ -n "$tok" ] && printf 'GITHUB_TOKEN=%s\n' "$tok" >> "$envf"
+                if [ -n "$ak" ] && [ -n "$sk" ]; then
+                  printf 'UPLOADS_BUCKET=%s\n' 'proto-design-okds-uploads' >> "$envf"
+                  printf 'UPLOADS_PUBLIC_BASE=%s\n' 'https://proto-design-okds-uploads.storage.yandexcloud.net/' >> "$envf"
+                  printf 'UPLOADS_ACCESS_KEY_ID=%s\n' "$ak" >> "$envf"
+                  printf 'UPLOADS_SECRET_ACCESS_KEY=%s\n' "$sk" >> "$envf"
+                  [ -n "$up" ] && printf 'UPLOAD_PASSWORD=%s\n' "$up" >> "$envf"
+                fi
+                if [ -s "$envf" ]; then
+                  ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "umask 077 && cat > /opt/proto-moon/.env && echo ENV_WRITTEN=ok || echo ENV_WRITTEN=FAIL" < "$envf"
                 else
                   echo "ENV: секреты не заданы — .env не трогаем (пропуск)"
                 fi
-              # Сборка+запуск. Короткий ЧЕСТНЫЙ статус: COMPOSE_EXIT + хвост сборки.
-              # Шаг падает (red), только если реально упала сборка — и тогда в логе
-              # сразу видна причина (последние 40 строк build-лога).
+                rm -f "$envf"
+              # ─── АТОМАРНЫЙ ДЕПЛОЙ: распаковка + build + recreate в ОДНОМ ssh ──────
+              # Корень бага «контейнер не пересоздаётся»: реальные build + up были
+              # ПОСЛЕДНИМ из череды отдельных ssh-шагов, а прямо перед ними сидела
+              # диагностика DEPLOYED_BUILD (grep build: server.mjs | head -c 90):
+              # она печатала ОБРЕЗАННУЮ по 90 байт строку healthz-исходника, рвущуюся
+              # на непарной «(» (...isUploadConfigured(). В busybox-sh раннера разбор
+              # такого вывода падал с «syntax error: unexpected end of file (expecting
+              # close-paren)» — РАНЬШЕ сборки. Оттого логи всегда обрывались на REMOTE_TAR_EXIT,
+              # секции COMPOSE/BUILD не было видно, на VM крутился старый образ
+              # (healthz застывал на старом build, lastSync.reason — на manual: контейнер
+              # ни разу не рестартовал), а правки внутри недостижимого шага (#667–#669)
+              # ничего не меняли. Чиним структурой, а не диагностикой: между «код
+              # приехал» и «контейнер пересоздан» больше НЕТ границы шага, где ран мог
+              # бы молча оборваться. Распаковка → build → down → up --force-recreate →
+              # проверка healthz идут в одном сеансе. Падаем (red) только на реальной
+              # ошибке сборки/запуска (с хвостом build-лога); распаковка не удалась →
+              # старый контейнер остаётся жив, без простоя. Проверка просто печатает
+              # JSON healthz, не парсит его в шелле — никаких grep исходника.
               - |
+                tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
+                  && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
+                  || echo "LOCAL_TAR_WARN=$? (продолжаем — архив создан)"
                 ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
-                  cd /opt/proto-moon || exit 9
-                  echo "PS_ALL_BEFORE:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Ports}} | {{.Status}}"
-                  # 1) собрать образ (старый контейнер ещё работает — без простоя при ошибке сборки)
-                  docker compose build > /tmp/build.log 2>&1; b=$?; echo "BUILD_EXIT=$b"; tail -20 /tmp/build.log
-                  # 2) ГАРАНТИРОВАННО снести старое: compose-контейнеры/orphans + ЛЮБОЙ
-                  #    контейнер, держащий порт 80 (вдруг запущен вне compose / из старого проекта)
+                  cd /opt/proto-moon || { echo "FATAL: нет каталога /opt/proto-moon"; exit 9; }
+                  # 1) Свежий код: tar приходит на stdin. Распаковка упала — НЕ трогаем
+                  #    работающий контейнер (старый код продолжает отдаваться).
+                  if tar -xzf -; then echo "UNTAR_OK"; else echo "UNTAR_FAIL"; exit 11; fi
+                  echo "PS_BEFORE:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Status}}"
+                  # 2) Собрать образ (старый контейнер ещё жив — без простоя при ошибке).
+                  docker compose build > /tmp/build.log 2>&1; b=$?; echo "BUILD_EXIT=$b"; tail -25 /tmp/build.log
+                  if [ "$b" -ne 0 ]; then echo "BUILD_FAILED — оставляем старый контейнер"; exit "$b"; fi
+                  # 3) Снести старое: compose-контейнеры/orphans + ЛЮБОЙ контейнер на порту 80.
                   docker compose down --remove-orphans 2>&1 | tail -4
-                  docker ps -aq --filter "publish=80" | xargs -r docker rm -f 2>&1
-                  # 3) поднять заново из свежего образа
+                  docker ps -aq --filter "publish=80" | xargs -r docker rm -f 2>&1 || true
+                  # 4) Поднять заново из свежего образа.
                   docker compose up -d --force-recreate > /tmp/up.log 2>&1; u=$?; echo "UP_EXIT=$u"; cat /tmp/up.log
-                  echo "PS_ALL_AFTER:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Ports}} | {{.Status}}"
+                  echo "PS_AFTER:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Status}}"
                   docker image prune -f >/dev/null 2>&1 || true
-                  [ "$b" -ne 0 ] && exit "$b"; exit "$u"
-                '
+                  # 5) Что РЕАЛЬНО отдаётся теперь. lastSync.reason=startup и новый build
+                  #    = контейнер физически пересоздан. JSON печатаем как есть, не парсим.
+                  sleep 2; echo -n "SERVED_AFTER="; curl -s -m 5 localhost/healthz | head -c 220; echo
+                  exit "$u"
+                ' < /tmp/code.tgz
