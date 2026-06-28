@@ -68,7 +68,7 @@ workflows:
                 ak=$(strip "$UPLOADS_ACCESS_KEY_ID")
                 sk=$(strip "$UPLOADS_SECRET_ACCESS_KEY")
                 up=$(strip "$UPLOAD_PASSWORD")
-                {
+                env_body=$(
                   [ -n "$tok" ] && printf 'GITHUB_TOKEN=%s\n' "$tok"
                   if [ -n "$ak" ] && [ -n "$sk" ]; then
                     printf 'UPLOADS_BUCKET=%s\n' 'proto-design-okds-uploads'
@@ -77,6 +77,11 @@ workflows:
                     printf 'UPLOADS_SECRET_ACCESS_KEY=%s\n' "$sk"
                     [ -n "$up" ] && printf 'UPLOAD_PASSWORD=%s\n' "$up"
                   fi
-                } | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "umask 077 && cat > /opt/proto-moon/.env"
+                )
+                # Пишем .env ТОЛЬКО если есть что писать — иначе не трогаем файл
+                # (пустой `cat >` затёр бы существующий .env с токеном).
+                if [ -n "$env_body" ]; then
+                  printf '%s' "$env_body" | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "umask 077 && cat > /opt/proto-moon/.env"
+                fi
               # Пересобираем и перезапускаем контейнер на VM.
               - ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "cd /opt/proto-moon && docker compose up -d --build && docker image prune -f"

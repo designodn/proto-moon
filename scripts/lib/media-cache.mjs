@@ -23,7 +23,7 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
-import { isUploadConfigured, putAtKey, publicUrlFor, mimeForExt } from './bucket.mjs';
+import { isUploadConfigured, putAtKey, publicUrlFor, mimeForExt, bucketConfig, existsAtKey } from './bucket.mjs';
 
 const sha = (buf) => createHash('sha256').update(buf).digest('hex');
 
@@ -125,7 +125,11 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
     // Наш собственный бакет загрузок — надёжное хранилище (в отличие от чужих CDN,
     // которые протухают). Такие ссылки НЕ качаем в репо: оставляем как есть, чтобы
     // картинки/клипы дизайнеров жили в облаке и не раздували репозиторий.
-    const uploadsBase = process.env.UPLOADS_PUBLIC_BASE;
+    // Сверяемся с тем же базовым URL, по которому САМИ пишем ссылки
+    // (publicUrlFor → bucketConfig().publicBase), а не с сырым env: иначе при
+    // незаданном UPLOADS_PUBLIC_BASE (база выводится из имени бакета) passthrough
+    // не узнал бы собственные ссылки и пере-качивал бы их.
+    const uploadsBase = bucketConfig().publicBase;
     if (uploadsBase && url.startsWith(uploadsBase)) return url;
     if (done.has(url)) return done.get(url);
 
@@ -183,8 +187,9 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
         used.add(file);
         result = `${dirRel}/${file}`;
       }
-    } else if (prev && prev.file && (bucketMode ? prev.status !== 'dead' : existsSync(resolve(dir, prev.file)))) {
-      // источник умер, но копия есть — оставляем её.
+    } else if (prev && prev.file && prev.status !== 'dead' &&
+               (bucketMode ? await existsAtKey(`${dirRel}/${prev.file}`) : existsSync(resolve(dir, prev.file)))) {
+      // источник умер, но копия есть (на диске или реально в бакете) — оставляем её.
       stats.stale++;
       if (bucketMode) {
         // копия уже в бакете (была залита ранее) — отдаём её URL

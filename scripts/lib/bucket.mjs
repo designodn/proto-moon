@@ -90,3 +90,17 @@ export async function putContentAddressed(bytes, ext, contentType) {
   const key = `${c.prefix}${sha(bytes).slice(0, 16)}.${ext}`;
   return putAtKey(key, bytes, contentType);
 }
+
+/** Есть ли объект в бакете (HEAD). false, если бакет не настроен или объекта нет.
+ *  Нужно, чтобы в облачном режиме не отдавать URL «протухшей» копии, которой на
+ *  самом деле в бакете нет (аналог existsSync для дискового режима). */
+export async function existsAtKey(key) {
+  const c = bucketConfig();
+  if (!isUploadConfigured()) return false;
+  try {
+    const { HeadObjectCommand } = await import('@aws-sdk/client-s3');
+    const s3 = await getS3(c);
+    await s3.send(new HeadObjectCommand({ Bucket: c.bucket, Key: key }));
+    return true;
+  } catch { return false; }
+}
