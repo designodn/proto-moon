@@ -102,12 +102,16 @@ workflows:
               - |
                 ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
                   cd /opt/proto-moon || exit 9
-                  echo "PS_BEFORE:"; docker compose ps --format "{{.Name}} | {{.Image}} | {{.Status}}" 2>/dev/null
-                  # Канонично для CI: сборка ОТДЕЛЬНО, затем up --force-recreate. Если
-                  # сборка упадёт — старый контейнер остаётся жить (без простоя).
+                  echo "PS_ALL_BEFORE:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Ports}} | {{.Status}}"
+                  # 1) собрать образ (старый контейнер ещё работает — без простоя при ошибке сборки)
                   docker compose build > /tmp/build.log 2>&1; b=$?; echo "BUILD_EXIT=$b"; tail -20 /tmp/build.log
+                  # 2) ГАРАНТИРОВАННО снести старое: compose-контейнеры/orphans + ЛЮБОЙ
+                  #    контейнер, держащий порт 80 (вдруг запущен вне compose / из старого проекта)
+                  docker compose down --remove-orphans 2>&1 | tail -4
+                  docker ps -aq --filter "publish=80" | xargs -r docker rm -f 2>&1
+                  # 3) поднять заново из свежего образа
                   docker compose up -d --force-recreate > /tmp/up.log 2>&1; u=$?; echo "UP_EXIT=$u"; cat /tmp/up.log
-                  echo "PS_AFTER:"; docker compose ps --format "{{.Name}} | {{.Image}} | {{.Status}}" 2>/dev/null
+                  echo "PS_ALL_AFTER:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Ports}} | {{.Status}}"
                   docker image prune -f >/dev/null 2>&1 || true
                   [ "$b" -ne 0 ] && exit "$b"; exit "$u"
                 '
