@@ -23,6 +23,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join, normalize, extname } from 'node:path';
 import { renderContentPage, handleUploadApi, isUploadConfigured } from './upload.mjs';
+import { uploadSnapshot, restoreSnapshot, snapshotUrl } from './scripts/lib/content-snapshot.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
@@ -129,15 +130,13 @@ const LANDING = `<!DOCTYPE html>
         if (h.syncing){ setTimeout(tick, 2000); return; }
         polling = false; btn.disabled = false;
         const ls = h.lastSync;
-        const g = ls && ls.git;
+        const snap = ls && ls.snapshot;
         if (ls && ls.ok) {
           let suffix = '';
-          if (g && g.pushed) suffix = ' и запушено';
-          else if (g && g.nochange) suffix = ' (без изменений)';
-          else if (g && g.skipped) suffix = ' (без коммита)';
+          if (snap && snap.ok) suffix = ' и сохранено в облако';
+          else if (snap && snap.skipped === 'no-bucket') suffix = ' (облако не настроено)';
+          else if (snap && snap.error) suffix = ' (в облако не сохранилось)';
           setStatus('Готово — обновлено' + suffix + ' в ' + fmtTime(ls.finishedAt), 'ok');
-        } else if (g && g.committed && !g.ok) {
-          setStatus('Обновлено, но пуш не прошёл — проверь GITHUB_TOKEN', 'err');
         } else {
           setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
         }
@@ -288,14 +287,20 @@ function runSync(reason) {
     stdio: 'inherit',
   });
   child.on('close', async (code) => {
-    let gitRes = null;
+    let snap = null;
     if (code === 0) {
-      gitRes = await commitAndPush(reason).catch((e) => ({ ok: false, error: e.message }));
-      if (gitRes && !gitRes.ok) console.error(`[git] ошибка: ${gitRes.error}`);
+      // Состояние синка кладём в БАКЕТ (durable, без git — main не трогаем).
+      // Снапшот = data/*.json|js + перерисованные HTML, одним state/content.json.
+      snap = await uploadSnapshot(ROOT).catch((e) => ({ ok: false, error: e.message }));
+      if (snap && snap.ok) console.log(`[snapshot] залит ${snap.count} файлов → ${snap.url}`);
+      else if (snap && snap.skipped) console.log(`[snapshot] пропуск: ${snap.skipped}`);
+      else if (snap) console.error(`[snapshot] ошибка: ${snap.error}`);
     }
     syncing = false;
+    // ok = успешный синк; неудача заливки снапшота не «ломает» синк (лента живая),
+    // просто состояние не сохранилось в облако — видно в lastSync.snapshot.
     lastSync = { reason, startedAt, finishedAt: new Date().toISOString(),
-      ok: code === 0 && (!gitRes || gitRes.ok), code, git: gitRes };
+      ok: code === 0, code, snapshot: snap };
     console.log(`[sync] финиш (${reason}), код ${code ?? '—'}`);
   });
   child.on('error', (err) => {
@@ -354,7 +359,7 @@ const server = createServer(async (req, res) => {
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, build: 'cloud-1', uploads: isUploadConfigured(), syncing, lastSync }));
+      res.end(JSON.stringify({ ok: true, build: 'snapshot-1', uploads: isUploadConfigured(), snapshotUrl: snapshotUrl(), syncing, lastSync }));
       return;
     }
 
@@ -432,9 +437,15 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`Сервер слушает :${PORT}`);
   console.log(`Прототипы: /nv, /activity, /q3, /preview`);
   console.log('Синк ленты: при старте и по кнопке на лендинге');
+  // Сначала восстанавливаем последнее состояние ленты из бакета (durable, не
+  // зависит от доступности таблицы), затем — обычный синк из таблицы (если включён).
+  const r = await restoreSnapshot(ROOT).catch((e) => ({ ok: false, error: e.message }));
+  if (r && r.ok) console.log(`[snapshot] восстановлено ${r.count} файлов из бакета (от ${r.createdAt})`);
+  else if (r && r.skipped) console.log(`[snapshot] восстановление пропущено: ${r.skipped}`);
+  else if (r && r.error) console.warn(`[snapshot] восстановление не удалось: ${r.error}`);
   if (SYNC_ON_START) runSync('startup');
 });
