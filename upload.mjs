@@ -29,7 +29,7 @@
  *   SHEET_EDIT_URL            — ссылка на таблицу для кнопки «Редактировать»
  */
 
-import { isUploadConfigured, putContentAddressed } from './scripts/lib/bucket.mjs';
+import { isUploadConfigured, putContentAddressed, listAllObjects, deleteKeys, publicUrlFor, bucketConfig } from './scripts/lib/bucket.mjs';
 import { compressImage } from './scripts/lib/media-cache.mjs';
 
 export { isUploadConfigured };
@@ -87,12 +87,8 @@ const json = (res, code, obj) => {
  * x-upload-password. Возвращает { url, key, bytes }.
  */
 export async function handleUploadApi(req, res) {
-  const { password } = uiCfg();
   if (!isUploadConfigured()) {
     return json(res, 503, { error: 'Хранилище не настроено: задайте env UPLOADS_BUCKET и ключи S3.' });
-  }
-  if (password && req.headers['x-upload-password'] !== password) {
-    return json(res, 401, { error: 'Неверный пароль.' });
   }
 
   const url = new URL(req.url, 'http://localhost');
@@ -133,6 +129,46 @@ export async function handleUploadApi(req, res) {
   return json(res, 200, { url: out.url, key: out.key, bytes: bytes.length });
 }
 
+/** Ключ — это загрузка ДИЗАЙНЕРА (а не синк-медиа assets/ и не снапшот state/)? */
+function isDesignerKey(key) {
+  if (!key || key.startsWith('assets/') || key.startsWith('state/')) return false;
+  const prefix = bucketConfig().prefix;            // UPLOADS_PREFIX, если задан
+  return prefix ? key.startsWith(prefix) : true;
+}
+
+const VIDEO_EXT = /\.(mp4|webm|mov|m4v)$/i;
+
+/** GET /api/uploads — список загрузок дизайнеров (без синк-медиа и снапшота),
+ *  свежие сверху. → { items: [{ key, url, kind, bytes, ts }] }. */
+export async function handleListUploads(req, res) {
+  if (!isUploadConfigured()) return json(res, 200, { items: [] });
+  let all;
+  try { all = await listAllObjects(); } catch (e) { return json(res, 502, { error: e.message }); }
+  const items = all
+    .filter((o) => isDesignerKey(o.key))
+    .map((o) => ({
+      key: o.key,
+      url: publicUrlFor(o.key),
+      kind: VIDEO_EXT.test(o.key) ? 'video' : 'image',
+      bytes: o.size,
+      ts: o.lastModified ? new Date(o.lastModified).getTime() : 0,
+    }))
+    .sort((a, b) => b.ts - a.ts);
+  return json(res, 200, { items });
+}
+
+/** POST /api/upload/delete?key=… — удалить ОДНУ загрузку дизайнера (крестик).
+ *  Защита: ключи синка (assets/) и снапшота (state/) удалять нельзя. */
+export async function handleDeleteUpload(req, res) {
+  if (!isUploadConfigured()) return json(res, 503, { error: 'Хранилище не настроено.' });
+  const u = new URL(req.url, 'http://localhost');
+  const key = u.searchParams.get('key') || '';
+  if (!key) return json(res, 400, { error: 'Не указан ключ.' });
+  if (!isDesignerKey(key)) return json(res, 403, { error: 'Этот объект удалять нельзя.' });
+  try { await deleteKeys([key]); } catch (e) { return json(res, 502, { error: e.message }); }
+  return json(res, 200, { ok: true, key });
+}
+
 const esc = (s) => String(s).replace(/[&<>"]/g, (ch) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
@@ -140,10 +176,9 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (ch) =>
 export function renderContentPage() {
   const c = uiCfg();
   const configured = isUploadConfigured();
-  const needPass = Boolean(c.password);
   const notReady = configured ? '' :
     `<div class="warn">Загрузка пока не настроена: задайте переменные окружения
-     <code>UPLOADS_BUCKET</code> и ключи S3. Редактирование таблицы и инструкция работают.</div>`;
+     <code>UPLOADS_BUCKET</code> и ключи S3. Редактирование таблицы работает.</div>`;
 
   return `<!DOCTYPE html>
 <html lang="ru"><head><meta charset="UTF-8">
@@ -158,35 +193,43 @@ export function renderContentPage() {
   .card{background:#fff;border-radius:16px;padding:22px 20px;margin-bottom:14px;
         box-shadow:0 8px 30px rgba(0,0,0,.06)}
   .card h2{font-size:15px;margin:0 0 10px}
-  a.btn,button{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  a.btn,button.primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;
     text-decoration:none;border:0;border-radius:12px;padding:13px 16px;font-size:15px;
-    font-weight:600;cursor:pointer;transition:.15s;width:100%;box-sizing:border-box}
-  a.btn{background:#111;color:#fff}
-  a.btn:hover{background:#000}
-  button.primary{background:#111;color:#fff}
-  button.primary:hover{background:#000}
-  button:disabled{background:#bdbdbd;cursor:default}
+    font-weight:600;cursor:pointer;transition:.15s;width:100%;box-sizing:border-box;background:#111;color:#fff}
+  a.btn:hover,button.primary:hover{background:#000}
+  button.primary:disabled{background:#bdbdbd;cursor:default}
+  button.primary{position:relative}
+  button.primary.sparkle{animation:sparkleGlow 1.9s ease-in-out infinite}
+  button.primary.sparkle::after{content:'✨';position:absolute;right:12px;top:50%;
+    transform:translateY(-50%);font-size:15px;animation:twinkle 1.5s ease-in-out infinite;pointer-events:none}
+  @keyframes sparkleGlow{0%,100%{box-shadow:0 0 0 0 rgba(124,108,255,0)}50%{box-shadow:0 0 16px 2px rgba(124,108,255,.5)}}
+  @keyframes twinkle{0%,100%{opacity:.35;transform:translateY(-50%) scale(.85)}50%{opacity:1;transform:translateY(-50%) scale(1.2)}}
+  .status{font-size:12px;color:#777;margin:10px 2px 0;min-height:16px;text-align:center}
+  .status.ok{color:#1a8f3c}
+  .status.err{color:#d33}
   .drop{border:2px dashed #d0d0d0;border-radius:12px;padding:26px 16px;text-align:center;
         color:#777;font-size:14px;cursor:pointer;transition:.15s;background:#fafafa}
   .drop.over{border-color:#111;background:#f0f0f0;color:#111}
   input[type=file]{display:none}
-  .pass{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #e0e0e0;
-        border-radius:10px;font-size:14px;margin-bottom:12px}
-  .item{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid #f0f0f0;
-        font-size:13px}
-  .item:first-child{border-top:0}
-  .item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .item .st{color:#999;font-size:12px;white-space:nowrap}
-  .item .st.ok{color:#1a8f3c}
-  .item .st.err{color:#d33}
-  .item label{display:flex;align-items:center;gap:4px;color:#777;font-size:12px;white-space:nowrap}
-  .res{margin-top:8px;font-size:12px}
-  .res input{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #e0e0e0;
-    border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#fafafa}
-  .copy{margin-top:6px;width:auto;padding:7px 12px;font-size:12px;background:#eee;color:#111}
-  .copy:hover{background:#e2e2e2}
+  .grid{margin-top:12px}
+  .row{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #f0f0f0}
+  .row:first-child{border-top:0}
+  .ava{width:72px;height:72px;flex:none;border-radius:14px;overflow:hidden;background:#eceef0}
+  .ava img,.ava video{width:100%;height:100%;object-fit:cover;display:block}
+  .row.pending .ava{display:flex;align-items:center;justify-content:center;color:#999;font-size:11px}
+  .acts{margin-left:auto;display:flex;gap:8px}
+  .acts button{width:34px;height:34px;padding:0;border:0;border-radius:50%;cursor:pointer;font-size:17px;
+    line-height:1;display:flex;align-items:center;justify-content:center;background:#eef0f2;color:#111}
+  .acts .copy:hover{background:#e2e4e7}
+  .acts .del{background:#fdecec;color:#d33}
+  .acts .del:hover{background:#fbd9d9}
+  .undo{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:#888}
+  .undo b{color:#111;font-variant-numeric:tabular-nums}
+  .undo .restore{width:auto;padding:7px 13px;border:0;border-radius:9px;background:#111;color:#fff;
+    font-weight:600;font-size:13px;cursor:pointer}
+  .undo .restore:hover{background:#000}
+  .empty{color:#999;font-size:13px;text-align:center;padding:14px 0}
   ol{margin:0;padding-left:20px;font-size:14px;line-height:1.6;color:#333}
-  ol code{background:#f0f0f0;padding:1px 5px;border-radius:5px;font-size:12px}
   .warn{background:#fff7e6;border:1px solid #ffe2a8;color:#8a5a00;border-radius:10px;
         padding:10px 12px;font-size:13px;margin-bottom:14px}
   .back{display:inline-block;margin-bottom:16px;font-size:13px;color:#666;text-decoration:none}
@@ -199,104 +242,168 @@ export function renderContentPage() {
   ${notReady}
 
   <div class="card">
-    <h2>1. Редактировать контент</h2>
+    <button class="primary" id="syncBtn">Обновить ленту из таблицы</button>
+    <div class="status" id="syncStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2>Редактировать контент</h2>
     <a class="btn" href="${esc(c.sheetUrl)}" target="_blank" rel="noopener">Открыть таблицу ↗</a>
   </div>
 
   <div class="card">
-    <h2>2. Загрузить своё медиа</h2>
-    ${needPass ? `<input class="pass" id="pass" type="password" placeholder="Пароль загрузки" autocomplete="off">` : ''}
+    <h2>Загрузить медиа</h2>
     <div class="drop" id="drop">Перетащи файлы сюда или нажми, чтобы выбрать<br>картинки и клипы</div>
     <input type="file" id="file" multiple accept="image/*,video/*">
-    <div id="list"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">Пока ничего не загружено.</div>
   </div>
 
   <div class="card">
-    <h2>3. Как это работает</h2>
+    <h2>Как это работает</h2>
     <ol>
-      <li>Открой таблицу и правь нужный лист (люди, ленты, клипы и т.д.).</li>
-      <li>Если у картинки/клипа есть внешняя ссылка — просто вставь её в таблицу.</li>
-      <li>Если файл свой — залей его здесь, нажми «Скопировать» и вставь ссылку в нужную ячейку таблицы.</li>
-      <li>Готово. Изменения подтянутся при обновлении ленты на главной (кнопка «Обновить ленту из таблицы»).</li>
+      <li>Картинка уже есть в интернете? Нажми на неё правой кнопкой → «Копировать адрес картинки» (Copy Image Address) и вставь ссылку прямо в ячейку таблицы.</li>
+      <li>Своё изображение или клип — перетащи в зону загрузки выше. В появившейся строке нажми <b>⧉</b> — ссылка скопируется, вставь её в нужную ячейку таблицы.</li>
+      <li>Передумал — нажми <b>×</b> (есть 6 секунд, чтобы «Вернуть»).</li>
+      <li>Готово — жми «Обновить ленту из таблицы» вверху, изменения подтянутся.</li>
     </ol>
   </div>
 </div>
 <script>
-  const drop = document.getElementById('drop');
-  const fileInput = document.getElementById('file');
-  const list = document.getElementById('list');
-  const passEl = document.getElementById('pass');
-  const isVideo = (f) => (f.type || '').startsWith('video/');
+  var $ = function(id){ return document.getElementById(id); };
 
-  drop.addEventListener('click', () => fileInput.click());
-  ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, (e) => {
-    e.preventDefault(); drop.classList.add('over');
-  }));
-  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, (e) => {
-    e.preventDefault(); drop.classList.remove('over');
-  }));
-  drop.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
-  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
-
-  function handleFiles(files) {
-    [...files].forEach(addItem);
+  /* ---- синк ---- */
+  var syncBtn = $('syncBtn'), syncStatus = $('syncStatus');
+  function setSync(t, cls){ syncStatus.textContent = t; syncStatus.className = 'status ' + (cls||''); }
+  function fmtTime(iso){ try { return new Date(iso).toLocaleTimeString('ru-RU'); } catch(e){ return ''; } }
+  var polling = false;
+  function pollSync(){
+    if (polling) return; polling = true; syncBtn.disabled = true; setSync('Обновляю ленту из таблицы…');
+    var tick = async function(){
+      try {
+        var h = await (await fetch('/healthz')).json();
+        if (h.syncing){ setTimeout(tick, 2000); return; }
+        polling = false; syncBtn.disabled = false;
+        var ls = h.lastSync, snap = ls && ls.snapshot;
+        if (ls && ls.ok){
+          var s = (snap && snap.ok) ? ' и сохранено в облако' : '';
+          setSync('Готово — обновлено' + s + ' в ' + fmtTime(ls.finishedAt), 'ok');
+        } else {
+          setSync('Синк с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
+        }
+      } catch(e){ polling = false; syncBtn.disabled = false; setSync('Не удалось получить статус', 'err'); }
+    };
+    setTimeout(tick, 2000);
   }
-
-  function addItem(file) {
-    const row = document.createElement('div');
-    row.className = 'item';
-    const video = isVideo(file);
-    row.innerHTML =
-      '<span class="nm">' + escapeHtml(file.name) + '</span>' +
-      (video
-        ? '<span class="st">клип — без сжатия</span>'
-        : '<label><input type="checkbox" class="cmp" checked> сжать</label>') +
-      '<span class="st">…</span>';
-    list.appendChild(row);
-    const st = row.querySelectorAll('.st');
-    const status = st[st.length - 1];
-    const cmp = row.querySelector('.cmp');
-    upload(file, video, cmp, status, row);
-  }
-
-  async function upload(file, video, cmpEl, status, row) {
-    const compress = !video && cmpEl && cmpEl.checked ? '1' : '0';
-    status.textContent = 'загружаю…'; status.className = 'st';
+  syncBtn.addEventListener('click', async function(){
+    syncBtn.disabled = true; setSync('Запускаю…');
+    try { await fetch('/api/sync', { method: 'POST' }); pollSync(); }
+    catch(e){ syncBtn.disabled = false; setSync('Не удалось запустить', 'err'); }
+  });
+  (async function(){
     try {
-      const qs = new URLSearchParams({ name: file.name, type: file.type || '', compress });
-      const headers = {};
-      if (passEl) headers['x-upload-password'] = passEl.value || '';
-      const r = await fetch('/api/upload?' + qs.toString(), { method: 'POST', headers, body: file });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
-      status.textContent = Math.round((data.bytes || 0) / 1024) + ' КБ'; status.className = 'st ok';
-      showResult(row, data.url);
-    } catch (e) {
-      status.textContent = 'ошибка'; status.className = 'st err';
-      const note = document.createElement('div');
-      note.className = 'res'; note.style.color = '#d33';
-      note.textContent = e.message; row.appendChild(note);
+      var h = await (await fetch('/healthz')).json();
+      if (h.syncing) pollSync();
+      else if (h.lastSync && h.lastSync.ok) setSync('Обновлено в ' + fmtTime(h.lastSync.finishedAt), 'ok');
+    } catch(e){}
+  })();
+
+  /* ---- галерея загрузок ---- */
+  var grid = $('grid'), empty = $('empty');
+  function updateState(){
+    var has = !!grid.querySelector('.row');
+    empty.style.display = has ? 'none' : 'block';
+    syncBtn.classList.toggle('sparkle', has);        // есть загрузки → кнопка искрит
+  }
+  function media(item){
+    return item.kind === 'video'
+      ? '<video src="' + item.url + '" muted playsinline></video>'
+      : '<img src="' + item.url + '" loading="lazy" alt="">';
+  }
+  function actsEl(item, el){
+    var acts = document.createElement('div'); acts.className = 'acts';
+    acts.innerHTML =
+      '<button class="copy" title="Скопировать ссылку">⧉</button>' +
+      '<button class="del" title="Удалить">×</button>';
+    acts.querySelector('.copy').onclick = function(){ copyUrl(item.url, el); };
+    acts.querySelector('.del').onclick = function(){ askDelete(item, el); };
+    return acts;
+  }
+  function rowEl(item){
+    var el = document.createElement('div'); el.className = 'row'; el.dataset.key = item.key;
+    el.innerHTML = '<div class="ava">' + media(item) + '</div>';
+    el.appendChild(actsEl(item, el));
+    return el;
+  }
+  async function copyUrl(url, el){
+    try { await navigator.clipboard.writeText(url); } catch(e){}
+    var b = el.querySelector('.copy'); if (!b) return;
+    var o = b.textContent; b.textContent = '✓';
+    setTimeout(function(){ b.textContent = o; }, 1200);
+  }
+  /* Удаление с отменой: 6 сек обратный отсчёт + «Вернуть». Реально удаляем ТОЛЬКО
+     когда таймер дошёл до нуля (нажал «Вернуть» — ничего и не удалилось). */
+  function askDelete(item, el){
+    var left = 6;
+    var ava = el.querySelector('.ava'); ava.style.opacity = '.4';
+    var und = document.createElement('div'); und.className = 'undo';
+    und.innerHTML = 'Удаляю через <b>' + left + '</b> с <button class="restore">Вернуть</button>';
+    el.replaceChild(und, el.querySelector('.acts'));
+    var iv = setInterval(function(){
+      left--; var b = und.querySelector('b'); if (b) b.textContent = left;
+      if (left <= 0) { clearInterval(iv); commitDelete(item, el); }
+    }, 1000);
+    und.querySelector('.restore').onclick = function(){
+      clearInterval(iv); ava.style.opacity = '1';
+      el.replaceChild(actsEl(item, el), und);
+    };
+  }
+  async function commitDelete(item, el){
+    try {
+      var r = await fetch('/api/upload/delete?key=' + encodeURIComponent(item.key), { method: 'POST' });
+      if (!r.ok) throw 0;
+      el.remove(); updateState();
+    } catch(e){
+      el.querySelector('.ava').style.opacity = '1';
+      el.replaceChild(actsEl(item, el), el.querySelector('.undo'));
+      alert('Не удалось удалить');
     }
   }
-
-  function showResult(row, url) {
-    const box = document.createElement('div');
-    box.className = 'res';
-    const input = document.createElement('input');
-    input.readOnly = true; input.value = url;
-    const btn = document.createElement('button');
-    btn.className = 'copy'; btn.textContent = 'Скопировать ссылку';
-    btn.onclick = async () => {
-      try { await navigator.clipboard.writeText(url); }
-      catch { input.select(); document.execCommand('copy'); }
-      btn.textContent = 'Скопировано ✓';
-      setTimeout(() => (btn.textContent = 'Скопировать ссылку'), 1500);
-    };
-    box.appendChild(input); box.appendChild(btn);
-    row.parentNode.insertBefore(box, row.nextSibling);
+  async function loadGallery(){
+    try {
+      var data = await (await fetch('/api/uploads')).json();
+      grid.innerHTML = '';
+      (data.items || []).forEach(function(it){ grid.appendChild(rowEl(it)); });
+    } catch(e){}
+    updateState();
   }
+  loadGallery();
 
-  function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  /* ---- загрузка ---- */
+  var drop = $('drop'), fileInput = $('file');
+  drop.addEventListener('click', function(){ fileInput.click(); });
+  ['dragover','dragenter'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function(e){ handleFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', function(){ handleFiles(fileInput.files); });
+  function handleFiles(files){ [].slice.call(files).forEach(uploadFile); }
+  async function uploadFile(file){
+    var video = (file.type || '').startsWith('video/');
+    var ph = document.createElement('div'); ph.className = 'row pending';
+    ph.innerHTML = '<div class="ava">…</div>';
+    grid.insertBefore(ph, grid.firstChild); updateState();
+    try {
+      var qs = new URLSearchParams({ name: file.name, type: file.type || '', compress: video ? '0' : '1' });
+      var r = await fetch('/api/upload?' + qs.toString(), { method: 'POST', body: file });
+      var data = await r.json();
+      if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+      grid.replaceChild(rowEl({ key: data.key, url: data.url, kind: video ? 'video' : 'image' }), ph);
+      updateState();
+    } catch(e){
+      ph.querySelector('.ava').textContent = '✗'; ph.title = e.message;
+      setTimeout(function(){ ph.remove(); updateState(); }, 2500);
+    }
+  }
 </script>
 </body></html>`;
 }

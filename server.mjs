@@ -22,7 +22,7 @@ import { spawn } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join, normalize, extname } from 'node:path';
-import { renderContentPage, handleUploadApi, isUploadConfigured } from './upload.mjs';
+import { renderContentPage, handleUploadApi, handleListUploads, handleDeleteUpload, isUploadConfigured } from './upload.mjs';
 import { uploadSnapshot, restoreSnapshot, snapshotUrl } from './scripts/lib/content-snapshot.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -91,77 +91,10 @@ const LANDING = `<!DOCTYPE html>
 </style></head>
 <body><div class="card">
   <h1>Прототипы OK DS</h1>
-  <p class="sub">Выберите прототип или обновите ленту из Google-таблицы.</p>
+  <p class="sub">Выберите прототип. Обновление ленты и загрузка медиа — в разделе «Обновление контента».</p>
   <a class="proto" href="/q3">Q-3</a>
   <a class="proto" href="/activity">Активити</a>
-  <a class="proto" href="/content">Обновление контента <span>таблица + медиа</span></a>
-  <div class="sync">
-    <button id="syncBtn">Обновить ленту из таблицы</button>
-    <div class="status" id="status"></div>
-  </div>
-<script>
-  const btn = document.getElementById('syncBtn');
-  const status = document.getElementById('status');
-  const setStatus = (t, cls='') => { status.textContent = t; status.className = 'status ' + cls; };
-
-  function fmtTime(iso){ try { return new Date(iso).toLocaleTimeString('ru-RU'); } catch { return ''; } }
-
-  async function refreshLast(){
-    try {
-      const h = await (await fetch('/healthz')).json();
-      if (h.syncing){ startPolling(); return; }
-      if (h.lastSync){
-        const ls = h.lastSync;
-        if (ls.ok) setStatus('Обновлено в ' + fmtTime(ls.finishedAt), 'ok');
-        else setStatus('Прошлый прогон с ошибкой (код ' + (ls.code ?? '—') + ')', 'err');
-      }
-    } catch {}
-  }
-
-  let polling = false;
-  function startPolling(){
-    if (polling) return;
-    polling = true;
-    btn.disabled = true;
-    setStatus('Обновляю ленту из таблицы…');
-    const tick = async () => {
-      try {
-        const h = await (await fetch('/healthz')).json();
-        if (h.syncing){ setTimeout(tick, 2000); return; }
-        polling = false; btn.disabled = false;
-        const ls = h.lastSync;
-        const snap = ls && ls.snapshot;
-        if (ls && ls.ok) {
-          let suffix = '';
-          if (snap && snap.ok) suffix = ' и сохранено в облако';
-          else if (snap && snap.skipped === 'no-bucket') suffix = ' (облако не настроено)';
-          else if (snap && snap.error) suffix = ' (в облако не сохранилось)';
-          setStatus('Готово — обновлено' + suffix + ' в ' + fmtTime(ls.finishedAt), 'ok');
-        } else {
-          setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
-        }
-      } catch {
-        polling = false; btn.disabled = false;
-        setStatus('Не удалось получить статус', 'err');
-      }
-    };
-    setTimeout(tick, 2000);
-  }
-
-  btn.addEventListener('click', async () => {
-    btn.disabled = true;
-    setStatus('Запускаю…');
-    try {
-      const r = await fetch('/api/sync', { method: 'POST' });
-      startPolling();
-    } catch {
-      btn.disabled = false;
-      setStatus('Не удалось запустить обновление', 'err');
-    }
-  });
-
-  refreshLast();
-</script>
+  <a class="proto" href="/content">Обновление контента <span>таблица · медиа · обновить ленту</span></a>
 </div></body></html>`;
 
 /* ── Синк ленты из гуглшита ───────────────────────────────────────────────── */
@@ -381,7 +314,19 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    // Ручной запуск синка с лендинга.
+    // Список загрузок дизайнеров — для галереи на /content.
+    if (pathname === '/api/uploads' && req.method === 'GET') {
+      await handleListUploads(req, res);
+      return;
+    }
+
+    // Удаление одной загрузки (крестик в галерее).
+    if (pathname === '/api/upload/delete' && req.method === 'POST') {
+      await handleDeleteUpload(req, res);
+      return;
+    }
+
+    // Ручной запуск синка (кнопка на /content).
     if (pathname === '/api/sync') {
       if (req.method !== 'POST') {
         res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST' });

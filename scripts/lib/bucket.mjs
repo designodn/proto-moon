@@ -107,3 +107,36 @@ export async function existsAtKey(key) {
     return true;
   } catch { return false; }
 }
+
+/** Все объекты бакета с пагинацией. → [{ key, size, lastModified }]. */
+export async function listAllObjects() {
+  const c = bucketConfig();
+  if (!isUploadConfigured()) return [];
+  const { ListObjectsV2Command } = await import('@aws-sdk/client-s3');
+  const s3 = await getS3(c);
+  const out = [];
+  let token;
+  do {
+    const r = await s3.send(new ListObjectsV2Command({
+      Bucket: c.bucket, ContinuationToken: token, MaxKeys: 1000,
+    }));
+    for (const o of r.Contents || []) out.push({ key: o.Key, size: o.Size, lastModified: o.LastModified });
+    token = r.IsTruncated ? r.NextContinuationToken : undefined;
+  } while (token);
+  return out;
+}
+
+/** Удаляет объекты по ключам (батчами по 1000). → число запрошенных к удалению. */
+export async function deleteKeys(keys) {
+  const c = bucketConfig();
+  if (!isUploadConfigured() || !keys.length) return 0;
+  const { DeleteObjectsCommand } = await import('@aws-sdk/client-s3');
+  const s3 = await getS3(c);
+  let n = 0;
+  for (let i = 0; i < keys.length; i += 1000) {
+    const chunk = keys.slice(i, i + 1000).map((Key) => ({ Key }));
+    const r = await s3.send(new DeleteObjectsCommand({ Bucket: c.bucket, Delete: { Objects: chunk, Quiet: true } }));
+    n += chunk.length - ((r.Errors && r.Errors.length) || 0);
+  }
+  return n;
+}
