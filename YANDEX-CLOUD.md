@@ -215,3 +215,5 @@ yc resource-manager folder remove-access-binding b1g072enfcmkigbqem47 \
 - [ ] Railway отключён
 
 <!-- redeploy: подхватить SYNC_GIT_TOKEN на VM -->
+
+<!-- redeploy: новый SYNC_GIT_TOKEN (classic, repo) -->
