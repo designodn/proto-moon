@@ -188,7 +188,12 @@ async function commitAndPush(reason) {
   if (process.env.SYNC_GIT_COMMIT === 'false') return { ok: true, skipped: true };
 
   const status = await git(['status', '--porcelain']);
-  if (status.code !== 0) return { ok: false, error: `git status: ${status.err.trim()}` };
+  if (status.code !== 0) {
+    // В образе нет .git (исключён для лёгкости) → коммитить некуда. Синк при этом
+    // прошёл успешно: данные обновлены в контейнере, в git не сохраняем.
+    if (/not a git repository/i.test(status.err)) { console.log('[git] нет репозитория — пропускаю коммит'); return { ok: true, skipped: 'no-repo' }; }
+    return { ok: false, error: `git status: ${status.err.trim()}` };
+  }
   if (!status.out.trim()) { console.log('[git] нечего коммитить'); return { ok: true, nochange: true }; }
 
   await git(['add', '-A']);
@@ -347,7 +352,7 @@ const server = createServer(async (req, res) => {
     // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, build: 'pr-flow-1', syncing, lastSync }));
+      res.end(JSON.stringify({ ok: true, build: 'leanfix-1', syncing, lastSync }));
       return;
     }
 
