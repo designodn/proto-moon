@@ -75,7 +75,7 @@ Spreadsheet ID (все листы): `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7
 | `tagged-photo` | — | `heroAvatar`, `title`, media=image, `tag {name, top, left}` | — | full-bleed media + tooltip с именем, CTA «Поделиться» |
 | `clip` | да | media=clip (9:16) | да | спец-класс `clip-feed`, тёмные actions |
 | `memories-clip` | self | `title`, `label` (=период), `photos[]` (кадры) | — | island «Ваш клип из воспоминаний»: бейдж «Видите только вы», кадры сменяются кросс-фейдом, подпись в OK Sans Display, без звука. Тап → `clip-edit.html` |
-| `comment-as-feed` | 2 id `[комментатор, автор оригинала]` | `breadcrumbs (тема/рубрика)`, `commentText`(=заголовок), `origPreview {title, snippet}`, `replies` | да | коммент как карточка. Шапка `feed-header` (крошки + «Комментарий к <автор>»). Крупный текст `.caf-text` 22/26. Превью оригинала. Ветка ОТВЕТОВ. Компонент `components/comment-as-feed.css` |
+| `comment-as-feed` | 2 id `[комментатор, автор оригинала]` | `breadcrumbs (тема/рубрика)`, `commentText`(=заголовок), `origPreview {title, snippet}`, `replies` | да | коммент как карточка. Шапка `feed-header` (крошки + «Комментарий к <автор>»). Крупный текст `.caf-text` 22/26. Превью оригинала. Ветка ОТВЕТОВ. **Рендерится twitter-like (см. §8).** Компонент `components/comment-as-feed.css` |
 
 ---
 
@@ -177,12 +177,13 @@ Activity = Q3-контракт + надстройки. **Картинки пут
 | Лента | `lenta` | `comment-as-feed` из листа |
 | Подборки | `podborki` | Pinterest-masonry (чипсы + грид `.uni-card`, тип `pin`) — **отдельный лист** gid `802612828`, кэш `assets/activity-pins/` |
 | Сегодня | `segodnya` | виджеты `today.html` (`components/today-widgets.{css,js,partial.html}`) |
-| Подарки | `podarki` | `gift-received` / `ai-gift-received` (модификатор twitter-like) |
-| Друзья | `druzya` | `photo` / `text` / `video` / `friendversary` (twitter-like) |
+| Подарки | `podarki` | `gift-received` / `ai-gift-received` (twitter-like, §8) |
+| Друзья | `druzya` | `photo` / `text` / `video` / `friendversary` (twitter-like, §8) |
 | Локальное | `lokalnoe` | `comment-as-feed` (как Лента, пока) |
 
-Типы попадают в «твиттер-таб» компактным рядом, КРОМЕ самодостаточных блоков
-(со своим лейаутом) — те рендерятся полной q3-карточкой.
+В табах с флагом `tw:true` (Подарки, Друзья) типы рендерятся **компактным
+твиттер-рядом** (модификатор twitter-like, §8), КРОМЕ `FULL_CARD_TYPES`
+(сейчас `friendversary`) — они даже в tw-табе остаются полной q3-карточкой.
 
 ### 5.2. Подборки (Pinterest-таб)
 
@@ -221,6 +222,49 @@ node scripts/fetch-q3.mjs --activity --offline  # реген html из data/acti
 Карточки вставляются между `<!-- FEED:START … -->` / `<!-- FEED:END -->` целевого
 html. Всё вне маркеров (шапка-остров, таб-бар, «Вокруг вас») — статика, генератором
 не трогается.
+
+---
+
+## 8. Модификатор `twitter-like`
+
+Компактная двухколоночная раскладка карточки (`.caf.__twitter-like`, компонент
+`components/comment-as-feed.css`) — «твиттер-ряд» вместо полноширинной q3-карточки.
+
+**Структура:**
+
+```
+article.caf.__twitter-like.island
+├─ (activity-строка над рядом — колонка «шапка», опц.)
+├─ (crumbs тема › рубрика — опц.)
+└─ caf__row
+   ├─ caf__aside    — аватар 44px + caf__line («палка» вниз, если есть тред)
+   └─ caf__content  — имя·дата → тело (ds-body-m, инлайн-«ещё») → медиа/цитата
+                       → caf__actions (3 счётчика: comment · reshare · klass-outline)
+```
+
+- Тело — `ds-body-m` (`cafTextTw`), НЕ крупный `.caf-text`. Счётчики —
+  `button-inline 16 tertiary` (`inlineCount`): 0/пусто → только иконка.
+
+**Где применяется:**
+
+1. **Тип `comment-as-feed`** — всегда (родная раскладка типа).
+2. **Activity-табы с `tw:true`** (Подарки, Друзья) — НЕ-`comment-as-feed` типы
+   (`photo/text/video/gift-received/ai-gift-received`) перерисовываются твиттер-рядом
+   через `renderTwitterCard()` вместо полной карточки.
+
+**Механика:**
+
+- **`FULL_CARD_TYPES`** (сейчас `{friendversary}`) — исключение: даже в tw-табе
+  рендерятся ПОЛНОЙ карточкой (`renderPost`), а не твиттер-рядом.
+- **Единое правило медиа `twMedia(ids, photos)`** для всех twitter-like карточек:
+  - 1 автор (нет `ids[1]`) → фото обычным `.text-feed__media` под текстом;
+  - 2 автора (`ids[1]`) → оригинал в reshare-контейнере (автор `ids[1]` + опц.
+    текст + фото 16:9).
+- **Подарок в tw** → `text-feed__reshare-card` с модификатором `__gift` / `__ai-gift`
+  (повод + ава/имя дарителя + медиа 1:1).
+- **Комменты в tw** → тот же ряд (`fc-comment __twitter-like`), но лейблы
+  «комментарии», а не «ответы» (`renderCommentThread(p, {tw:true, replies:false})`);
+  «палка» у авы рисуется при наличии треда.
 
 ---
 
