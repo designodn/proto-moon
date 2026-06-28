@@ -47,8 +47,11 @@ workflows:
               # токеном (его читает docker-compose → кнопка-синк пушит в main).
               # Токен идёт по stdin, не светится в списке процессов; .env = 600.
               - |
-                if [ -n "$SYNC_GIT_TOKEN" ]; then
-                  printf 'GITHUB_TOKEN=%s\n' "$SYNC_GIT_TOKEN" \
+                # tr -d вырезает все пробелы/переносы — частая беда при копировании
+                # токена в секрет (трейлинг \n ломает аутентификацию → «Invalid token»).
+                tok=$(printf '%s' "$SYNC_GIT_TOKEN" | tr -d '[:space:]')
+                if [ -n "$tok" ]; then
+                  printf 'GITHUB_TOKEN=%s\n' "$tok" \
                     | ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "umask 077 && cat > /opt/proto-moon/.env"
                 fi
               # Пересобираем и перезапускаем контейнер на VM.
