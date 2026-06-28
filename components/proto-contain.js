@@ -30,6 +30,14 @@
 
   // Таб-бар (components/tab-bar.js): цель = data-href или дефолтная карта по слоту.
   var TAB_ROUTES = { feed: 'lenta-q3.html', book: 'tribune.html', message: 'messages.html', clip: 'klipy.html', menu: 'menu.html' };
+  // Слоты таб-бара, которым РАЗРЕШЁН выход за пределы папки прототипа — это общие
+  // разделы приложения (сообщения, клипы, меню), живущие в корне. Без этого
+  // исключения proto-contain глушит их как «чужие» и таб-бар не навигирует.
+  var TAB_ALLOW_OUT = { message: 1, clip: 1, menu: 1 };
+  function tabbarSlot(icon) {
+    var m = (icon.className || '').match(/__slot-([a-z]+)/);
+    return m ? m[1] : null;
+  }
   function tabbarForeign(icon) {
     var href = icon.getAttribute('data-href');
     if (!href) {
@@ -60,7 +68,12 @@
 
     // 1) Таб-бар.
     var icon = t.closest('.tabbar-icon');
-    if (icon) { if (tabbarForeign(icon)) block(e); return; }
+    if (icon) {
+      var slot = tabbarSlot(icon);
+      if (slot && TAB_ALLOW_OUT[slot]) return;     // разрешённый раздел — пропускаем
+      if (tabbarForeign(icon)) block(e);
+      return;
+    }
 
     // 2) Явный href / data-href на узле или предке (ссылки, friendversary,
     //    марафон-промо, vvz-portlet «Ещё» и т.п.).
