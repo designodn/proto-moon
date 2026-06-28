@@ -29,37 +29,22 @@
  *   SHEET_EDIT_URL            — ссылка на таблицу для кнопки «Редактировать»
  */
 
-import { createHash } from 'node:crypto';
+import { isUploadConfigured, putContentAddressed } from './scripts/lib/bucket.mjs';
 import { compressImage } from './scripts/lib/media-cache.mjs';
+
+export { isUploadConfigured };
 
 const DEFAULT_SHEET =
   'https://docs.google.com/spreadsheets/d/1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y/edit';
 
 const MAX_BYTES = 200 * 1024 * 1024; // 200 МБ — с запасом под клипы
 
-const sha = (buf) => createHash('sha256').update(buf).digest('hex');
-
-/** Конфиг из окружения (читаем на каждый запрос — env может поменяться без рестарта). */
-function cfg() {
-  const bucket = process.env.UPLOADS_BUCKET || '';
-  const endpoint = process.env.UPLOADS_ENDPOINT || 'https://storage.yandexcloud.net';
-  const region = process.env.UPLOADS_REGION || 'ru-central1';
-  const accessKeyId = process.env.UPLOADS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || '';
-  const secretAccessKey =
-    process.env.UPLOADS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || '';
-  const prefix = process.env.UPLOADS_PREFIX || '';
-  const publicBase =
-    process.env.UPLOADS_PUBLIC_BASE ||
-    (bucket ? `https://${bucket}.storage.yandexcloud.net/` : '');
-  const password = process.env.UPLOAD_PASSWORD || '';
-  const sheetUrl = process.env.SHEET_EDIT_URL || DEFAULT_SHEET;
-  return { bucket, endpoint, region, accessKeyId, secretAccessKey, prefix, publicBase, password, sheetUrl };
-}
-
-/** Настроен ли бакет (иначе загрузка отдаёт понятную 503). */
-export function isUploadConfigured() {
-  const c = cfg();
-  return Boolean(c.bucket && c.accessKeyId && c.secretAccessKey);
+/** UI-конфиг страницы (пароль + ссылка на таблицу). Бакет — в lib/bucket.mjs. */
+function uiCfg() {
+  return {
+    password: process.env.UPLOAD_PASSWORD || '',
+    sheetUrl: process.env.SHEET_EDIT_URL || DEFAULT_SHEET,
+  };
 }
 
 /** Расширение по mime, фолбэк — по имени файла. */
@@ -91,47 +76,10 @@ async function readBody(req, limit) {
   return Buffer.concat(chunks);
 }
 
-// S3-клиент создаём лениво (и кэшируем): чтобы server.mjs стартовал даже если
-// @aws-sdk/client-s3 ещё не установлен — ошибка всплывёт только при попытке залить.
-let _s3 = null;
-async function getS3(c) {
-  if (_s3) return _s3;
-  const { S3Client } = await import('@aws-sdk/client-s3');
-  _s3 = new S3Client({
-    region: c.region,
-    endpoint: c.endpoint,
-    forcePathStyle: false,
-    credentials: { accessKeyId: c.accessKeyId, secretAccessKey: c.secretAccessKey },
-  });
-  return _s3;
-}
-
 const json = (res, code, obj) => {
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(obj));
 };
-
-/**
- * Заливает буфер в бакет под контент-адресным ключом (sha256[0..16].ext) и
- * возвращает { url, key }. Используется и страницей загрузки, и миграцией клипов.
- * Бросает ошибку, если бакет не настроен или SDK не установлен.
- */
-export async function putToBucket(bytes, ext, contentType) {
-  const c = cfg();
-  if (!isUploadConfigured()) throw new Error('Хранилище не настроено (env UPLOADS_*).');
-  const key = `${c.prefix}${sha(bytes).slice(0, 16)}.${ext}`;
-  const { PutObjectCommand } = await import('@aws-sdk/client-s3');
-  const s3 = await getS3(c);
-  await s3.send(new PutObjectCommand({
-    Bucket: c.bucket,
-    Key: key,
-    Body: bytes,
-    ContentType: contentType,
-    ACL: 'public-read',
-    CacheControl: 'public, max-age=31536000, immutable',
-  }));
-  return { url: c.publicBase.replace(/\/?$/, '/') + key, key };
-}
 
 /**
  * POST /api/upload — тело = сырые байты ОДНОГО файла (по файлу на запрос).
@@ -139,11 +87,11 @@ export async function putToBucket(bytes, ext, contentType) {
  * x-upload-password. Возвращает { url, key, bytes }.
  */
 export async function handleUploadApi(req, res) {
-  const c = cfg();
+  const { password } = uiCfg();
   if (!isUploadConfigured()) {
     return json(res, 503, { error: 'Хранилище не настроено: задайте env UPLOADS_BUCKET и ключи S3.' });
   }
-  if (c.password && req.headers['x-upload-password'] !== c.password) {
+  if (password && req.headers['x-upload-password'] !== password) {
     return json(res, 401, { error: 'Неверный пароль.' });
   }
 
@@ -174,7 +122,7 @@ export async function handleUploadApi(req, res) {
 
   let out;
   try {
-    out = await putToBucket(bytes, ext, contentType);
+    out = await putContentAddressed(bytes, ext, contentType);
   } catch (e) {
     const msg = /Cannot find package '@aws-sdk\/client-s3'/.test(e.message || '')
       ? 'Не установлен @aws-sdk/client-s3 (npm install).'
@@ -190,7 +138,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (ch) =>
 
 /** GET /content — страница «Обновление контента». */
 export function renderContentPage() {
-  const c = cfg();
+  const c = uiCfg();
   const configured = isUploadConfigured();
   const needPass = Boolean(c.password);
   const notReady = configured ? '' :
