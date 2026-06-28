@@ -19,7 +19,7 @@ window.DS_CLIPS_DATA = [
     "video": "https://proto-design-okds-uploads.storage.yandexcloud.net/fdd707ee73420516.mp4"
   },
   {
-    "id": "vvz",
+    "id": "",
     "type": "vvz-clip"
   },
   {
