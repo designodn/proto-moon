@@ -570,17 +570,32 @@
   /* ---- Тап по гугл-серч-бару на главном экране → блокируем телефон
      (возврат на локскрин). Используем history.back() — попадает в наш
      popstate-листенер, который вызывает lockDevice() с правильным
-     синхром истории. */
+     синхром истории.
+     Скрытый жест: ТРИ тапа подряд по серч-бару (<400мс между тапами) →
+     выход на разводную «/». Блокировку откладываем на 400мс, чтобы за
+     время серии меню не успело уехать на локскрин (иначе 2-й/3-й тап не
+     попали бы по серч-бару). */
   (function () {
     var bar = document.querySelector('.search-bar');
     if (!bar) return;
     bar.style.cursor = 'pointer';
+    var taps = 0, timer = null;
     bar.addEventListener('click', function () {
-      if (history.state && history.state.scr === 'menu') {
-        history.back();
-      } else {
-        lockDevice();
+      taps += 1;
+      if (timer) clearTimeout(timer);
+      if (taps >= 3) {                 // скрытый выход на разводную
+        taps = 0;
+        window.location.href = '/';
+        return;
       }
+      timer = setTimeout(function () { // одиночный тап → блокировка телефона
+        taps = 0;
+        if (history.state && history.state.scr === 'menu') {
+          history.back();
+        } else {
+          lockDevice();
+        }
+      }, 400);
     });
   })();
 
