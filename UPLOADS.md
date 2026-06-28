@@ -62,6 +62,24 @@
 `UPLOADS_PUBLIC_BASE` должен совпадать с тем, как реально отдаётся бакет, —
 именно по этому префиксу работает passthrough.
 
+### Боевой деплой (VM на Yandex Cloud): через секреты SourceCraft
+
+На проде `/opt/proto-moon/.env` **пересоздаётся из секретов SourceCraft на каждом
+деплое** (`.sourcecraft/ci.yaml`), поэтому править его руками по SSH бесполезно —
+затрётся. Чтобы включить облако:
+
+1. SourceCraft → репозиторий-зеркало → **Settings → Secrets** → добавь:
+   - `UPLOADS_ACCESS_KEY_ID` — идентификатор статического ключа бакета;
+   - `UPLOADS_SECRET_ACCESS_KEY` — секретный ключ;
+   - `UPLOAD_PASSWORD` — пароль на страницу `/content` (по желанию).
+2. Имя бакета и публичная база зашиты в `ci.yaml` литералом
+   (`proto-design-okds-uploads`) — отдельными секретами не нужны.
+3. Залей в `main` (любой push/merge) → CI запишет `.env` и пересоберёт контейнер.
+4. Проверь: `docker compose exec web node scripts/check-bucket.mjs` на VM.
+
+Для **локальной** разработки переменные задаются обычным окружением/`.env` рядом
+с `server.mjs` — таблица выше.
+
 ## Настройка бакета (Yandex Object Storage)
 
 1. В консоли Yandex Cloud создай **отдельный бакет** под загрузки (напр.
