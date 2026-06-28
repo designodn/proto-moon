@@ -22,3 +22,14 @@ services:
       - SYNC_GIT_NAME=${SYNC_GIT_NAME:-proto-moon sync}
       - SYNC_GIT_EMAIL=${SYNC_GIT_EMAIL:-sync@proto-moon.local}
       - SYNC_GIT_COMMIT=${SYNC_GIT_COMMIT:-true}    # false — выключить авто-коммит
+      # Облако для медиа (S3 / Yandex Object Storage). Значения — из окружения VM
+      # или /opt/proto-moon/.env (см. UPLOADS.md). Пока пусто — дисковый режим, как
+      # раньше; заданы → server.mjs/пайплайн пишут и отдают медиа из бакета.
+      - UPLOADS_BUCKET=${UPLOADS_BUCKET:-}
+      - UPLOADS_ACCESS_KEY_ID=${UPLOADS_ACCESS_KEY_ID:-}
+      - UPLOADS_SECRET_ACCESS_KEY=${UPLOADS_SECRET_ACCESS_KEY:-}
+      - UPLOADS_PUBLIC_BASE=${UPLOADS_PUBLIC_BASE:-}
+      - UPLOAD_PASSWORD=${UPLOAD_PASSWORD:-}
+      - UPLOADS_ENDPOINT=${UPLOADS_ENDPOINT:-}      # необяз. (по умолч. storage.yandexcloud.net)
+      - UPLOADS_REGION=${UPLOADS_REGION:-}          # необяз. (по умолч. ru-central1)
+      - UPLOADS_PREFIX=${UPLOADS_PREFIX:-}          # необяз. префикс ключей
