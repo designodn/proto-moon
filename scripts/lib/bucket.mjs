@@ -68,7 +68,7 @@ async function getS3(c) {
 }
 
 /** Заливает байты по конкретному ключу. Возвращает { url, key }. */
-export async function putAtKey(key, bytes, contentType) {
+export async function putAtKey(key, bytes, contentType, cacheControl) {
   const c = bucketConfig();
   if (!isUploadConfigured()) throw new Error('Хранилище не настроено (env UPLOADS_*).');
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
@@ -79,7 +79,10 @@ export async function putAtKey(key, bytes, contentType) {
     Body: bytes,
     ContentType: contentType || mimeForExt((key.split('.').pop() || '')),
     ACL: 'public-read',
-    CacheControl: 'public, max-age=31536000, immutable',
+    // По умолчанию immutable (контент-адресные медиа не меняются). Для МЕНЯЮЩИХСЯ
+    // объектов (снапшот состояния) передавай 'no-cache' — иначе CDN/браузер отдаст
+    // устаревшую копию.
+    CacheControl: cacheControl || 'public, max-age=31536000, immutable',
   }));
   return { url: publicUrlFor(key), key };
 }
