@@ -116,6 +116,11 @@ export function createMediaCache({ root, dirRel, manifestPath, dryRun = false })
 
   async function resolveUrl(url) {
     if (!url || !/^https?:\/\//.test(url)) return url;   // пустые/локальные — как есть
+    // Наш собственный бакет загрузок — надёжное хранилище (в отличие от чужих CDN,
+    // которые протухают). Такие ссылки НЕ качаем в репо: оставляем как есть, чтобы
+    // картинки/клипы дизайнеров жили в облаке и не раздували репозиторий.
+    const uploadsBase = process.env.UPLOADS_PUBLIC_BASE;
+    if (uploadsBase && url.startsWith(uploadsBase)) return url;
     if (done.has(url)) return done.get(url);
 
     const key = sha(url).slice(0, 16);
