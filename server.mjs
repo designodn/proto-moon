@@ -306,32 +306,16 @@ function runSync(reason) {
   return true;
 }
 
-/* Скрытый возврат на разводящую — подмешивается во все HTML прототипов.
- * Видимой кнопки в макете нет (чтобы не мешала демо); вместо неё скрытый жест:
- * ТРИ тапа подряд по кнопке «Поиск» в навбаре → переход на «/». */
-const HOME_GESTURE = `
-<script>(function(){var n=0,t=null;function r(){n=0;if(t){clearTimeout(t);t=null;}}
-document.addEventListener('click',function(e){
-  if(!e.target.closest||!e.target.closest('[aria-label="Поиск"]'))return;
-  n++;if(t)clearTimeout(t);
-  if(n>=3){r();window.location.href='/';return;}
-  t=setTimeout(r,800);
-});})();</script>`;
+/* Возврат на разводящую — скрытый жест в меню прототипа (тройной тап по
+ * гугл-серч-бару на домашнем экране после локскрина). Реализован в самих
+ * лаунчер-страницах (q3-view.html, activity-lenta/view.html), поэтому сервер
+ * ничего в HTML не подмешивает. Раньше здесь была видимая кнопка «☰ Меню» —
+ * убрана, чтобы не мешать демо. */
 
 /* ── Статика ──────────────────────────────────────────────────────────────── */
 async function sendFile(res, filePath) {
   const data = await readFile(filePath);
   const type = MIME[extname(filePath).toLowerCase()] || 'application/octet-stream';
-  // В HTML-страницы прототипов подмешиваем скрытый жест возврата на разводящую.
-  if (type.startsWith('text/html')) {
-    let html = data.toString('utf8');
-    html = html.includes('</body>')
-      ? html.replace('</body>', `${HOME_GESTURE}\n</body>`)
-      : html + HOME_GESTURE;
-    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-cache' });
-    res.end(html);
-    return;
-  }
   res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-cache' });
   res.end(data);
 }
