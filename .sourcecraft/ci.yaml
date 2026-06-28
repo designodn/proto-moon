@@ -61,7 +61,7 @@ workflows:
                 tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
                   && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
                   || echo "LOCAL_TAR_WARN=$? (продолжаем — архив создан)"
-                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" 'tar -C /opt/proto-moon -xzf -; e=$?; echo "REMOTE_TAR_EXIT=$e"; exit $e' < /tmp/code.tgz
+                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" 'tar -C /opt/proto-moon -xzf -; e=$?; echo "REMOTE_TAR_EXIT=$e"; echo -n "DEPLOYED_BUILD="; grep -m1 build: /opt/proto-moon/server.mjs | head -c 90; echo; exit $e' < /tmp/code.tgz
               # /opt/proto-moon/.env собирается ИЗ СЕКРЕТОВ заново КАЖДЫЙ деплой
               # (cat > затирает файл) → правка .env руками по ssh бесполезна.
               # Содержит GitHub-токен (кнопка-синк пушит в main) и ключи облака
@@ -102,7 +102,7 @@ workflows:
               - |
                 ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
                   cd /opt/proto-moon || exit 9
-                  docker compose up -d --build > /tmp/compose.log 2>&1; e=$?
+                  docker compose up -d --build --force-recreate > /tmp/compose.log 2>&1; e=$?
                   echo "COMPOSE_EXIT=$e"
                   echo "----- build tail (40) -----"; tail -40 /tmp/compose.log
                   docker image prune -f >/dev/null 2>&1 || true
