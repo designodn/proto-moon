@@ -306,27 +306,28 @@ function runSync(reason) {
   return true;
 }
 
-/* Плавающая кнопка «в меню» — подмешивается во все HTML прототипов, чтобы из
- * любого экрана (локскрин, меню, приложение) можно было вернуться на разводящую. */
-const HOME_BUTTON = `
-<a href="/" id="__launcher-home" aria-label="В меню прототипов"
-   style="position:fixed;left:12px;bottom:12px;z-index:2147483647;display:flex;
-   align-items:center;gap:6px;padding:8px 12px;background:rgba(0,0,0,.62);
-   color:#fff;font:600 12px/1 system-ui,-apple-system,sans-serif;text-decoration:none;
-   border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.35);backdrop-filter:blur(4px);
-   opacity:.55;transition:opacity .15s" onmouseover="this.style.opacity=1"
-   onmouseout="this.style.opacity=.55">☰ Меню</a>`;
+/* Скрытый возврат на разводящую — подмешивается во все HTML прототипов.
+ * Видимой кнопки в макете нет (чтобы не мешала демо); вместо неё скрытый жест:
+ * ТРИ тапа подряд по кнопке «Поиск» в навбаре → переход на «/». */
+const HOME_GESTURE = `
+<script>(function(){var n=0,t=null;function r(){n=0;if(t){clearTimeout(t);t=null;}}
+document.addEventListener('click',function(e){
+  if(!e.target.closest||!e.target.closest('[aria-label="Поиск"]'))return;
+  n++;if(t)clearTimeout(t);
+  if(n>=3){r();window.location.href='/';return;}
+  t=setTimeout(r,800);
+});})();</script>`;
 
 /* ── Статика ──────────────────────────────────────────────────────────────── */
 async function sendFile(res, filePath) {
   const data = await readFile(filePath);
   const type = MIME[extname(filePath).toLowerCase()] || 'application/octet-stream';
-  // В HTML-страницы прототипов подмешиваем кнопку возврата на разводящую.
+  // В HTML-страницы прототипов подмешиваем скрытый жест возврата на разводящую.
   if (type.startsWith('text/html')) {
     let html = data.toString('utf8');
     html = html.includes('</body>')
-      ? html.replace('</body>', `${HOME_BUTTON}\n</body>`)
-      : html + HOME_BUTTON;
+      ? html.replace('</body>', `${HOME_GESTURE}\n</body>`)
+      : html + HOME_GESTURE;
     res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-cache' });
     res.end(html);
     return;
