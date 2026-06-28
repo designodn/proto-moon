@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join, normalize, extname } from 'node:path';
 import { renderContentPage, handleUploadApi, handleListUploads, handleDeleteUpload, isUploadConfigured } from './upload.mjs';
 import { uploadSnapshot, restoreSnapshot, snapshotUrl } from './scripts/lib/content-snapshot.mjs';
+import { scanDeadLinks } from './scripts/lib/dead-links.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
@@ -229,11 +230,19 @@ function runSync(reason) {
       else if (snap && snap.skipped) console.log(`[snapshot] пропуск: ${snap.skipped}`);
       else if (snap) console.error(`[snapshot] ошибка: ${snap.error}`);
     }
+    // Битые медиа-ссылки (источник умер, копии нет → в ленте остался внешний URL):
+    // сканируем манифесты, чтобы подсказать дизайнеру, ГДЕ их искать в таблице.
+    // Сканер чисто читающий и не кидает; на всякий случай оборачиваем в try/catch.
+    let dead = [];
+    if (code === 0) {
+      try { dead = scanDeadLinks(ROOT); } catch { dead = []; }
+    }
     syncing = false;
     // ok = успешный синк; неудача заливки снапшота не «ломает» синк (лента живая),
     // просто состояние не сохранилось в облако — видно в lastSync.snapshot.
     lastSync = { reason, startedAt, finishedAt: new Date().toISOString(),
-      ok: code === 0, code, snapshot: snap };
+      ok: code === 0, code, snapshot: snap,
+      deadCount: dead.length, dead: dead.slice(0, 50) };
     console.log(`[sync] финиш (${reason}), код ${code ?? '—'}`);
   });
   child.on('error', (err) => {

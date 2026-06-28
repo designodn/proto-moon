@@ -207,6 +207,14 @@ export function renderContentPage() {
   .status{font-size:12px;color:#777;margin:10px 2px 0;min-height:16px;text-align:center}
   .status.ok{color:#1a8f3c}
   .status.err{color:#d33}
+  .status.warn{color:#c47d00}
+  .dead{margin-top:8px}
+  .dead details{font-size:12px;color:#8a5a00;background:#fff7e6;border:1px solid #ffe2a8;
+    border-radius:10px;padding:8px 12px}
+  .dead summary{cursor:pointer;font-weight:600}
+  .dead ul{margin:8px 0 0;padding-left:18px;line-height:1.6}
+  .dead li{word-break:break-word}
+  .dead .where{color:#b45;font-weight:600}
   .drop{border:2px dashed #d0d0d0;border-radius:12px;padding:26px 16px;text-align:center;
         color:#777;font-size:14px;cursor:pointer;transition:.15s;background:#fafafa}
   .drop.over{border-color:#111;background:#f0f0f0;color:#111}
@@ -244,6 +252,7 @@ export function renderContentPage() {
   <div class="card">
     <button class="primary" id="syncBtn">Обновить ленту из таблицы</button>
     <div class="status" id="syncStatus"></div>
+    <div class="dead" id="syncDead"></div>
   </div>
 
   <div class="card">
@@ -273,9 +282,36 @@ export function renderContentPage() {
   var $ = function(id){ return document.getElementById(id); };
 
   /* ---- синк ---- */
-  var syncBtn = $('syncBtn'), syncStatus = $('syncStatus');
+  var syncBtn = $('syncBtn'), syncStatus = $('syncStatus'), syncDead = $('syncDead');
   function setSync(t, cls){ syncStatus.textContent = t; syncStatus.className = 'status ' + (cls||''); }
   function fmtTime(iso){ try { return new Date(iso).toLocaleTimeString('ru-RU'); } catch(e){ return ''; } }
+  /* Список битых медиа-ссылок (где искать в таблице). Собираем DOM-узлами, без
+     innerHTML с URL — чтобы не словить инъекцию из значения ячейки. */
+  function renderDead(list){
+    syncDead.textContent = '';
+    if (!list || !list.length) return;
+    var det = document.createElement('details');
+    var sum = document.createElement('summary');
+    sum.textContent = 'Где искать в таблице (' + list.length + ')';
+    det.appendChild(sum);
+    var ul = document.createElement('ul');
+    list.forEach(function(d){
+      var li = document.createElement('li');
+      var w = document.createElement('span'); w.className = 'where';
+      w.textContent = 'Лист «' + (d.sheet || '—') + '» > ' + (d.where || '—');
+      li.appendChild(w);
+      li.appendChild(document.createTextNode(' — ' + (d.url || '')));
+      ul.appendChild(li);
+    });
+    det.appendChild(ul);
+    syncDead.appendChild(det);
+  }
+  function plural(n){
+    var d = n % 10, dd = n % 100;
+    if (d === 1 && dd !== 11) return 'ссылка';
+    if (d >= 2 && d <= 4 && (dd < 12 || dd > 14)) return 'ссылки';
+    return 'ссылок';
+  }
   var polling = false;
   function pollSync(){
     if (polling) return; polling = true; syncBtn.disabled = true; setSync('Обновляю ленту из таблицы…');
@@ -286,10 +322,17 @@ export function renderContentPage() {
         polling = false; syncBtn.disabled = false;
         var ls = h.lastSync, snap = ls && ls.snapshot;
         if (ls && ls.ok){
-          var s = (snap && snap.ok) ? ' и сохранено в облако' : '';
-          setSync('Готово — обновлено' + s + ' в ' + fmtTime(ls.finishedAt), 'ok');
+          if (ls.deadCount > 0){
+            setSync('Готово, но ' + ls.deadCount + ' ' + plural(ls.deadCount) + ' не открылись', 'warn');
+            renderDead(ls.dead);
+          } else {
+            var s = (snap && snap.ok) ? ' и сохранено в облако' : '';
+            setSync('Готово — обновлено' + s + ' в ' + fmtTime(ls.finishedAt), 'ok');
+            renderDead(null);
+          }
         } else {
           setSync('Синк с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
+          renderDead(null);
         }
       } catch(e){ polling = false; syncBtn.disabled = false; setSync('Не удалось получить статус', 'err'); }
     };
@@ -304,7 +347,15 @@ export function renderContentPage() {
     try {
       var h = await (await fetch('/healthz')).json();
       if (h.syncing) pollSync();
-      else if (h.lastSync && h.lastSync.ok) setSync('Обновлено в ' + fmtTime(h.lastSync.finishedAt), 'ok');
+      else if (h.lastSync && h.lastSync.ok){
+        var ls = h.lastSync;
+        if (ls.deadCount > 0){
+          setSync('Готово, но ' + ls.deadCount + ' ' + plural(ls.deadCount) + ' не открылись', 'warn');
+          renderDead(ls.dead);
+        } else {
+          setSync('Обновлено в ' + fmtTime(ls.finishedAt), 'ok');
+        }
+      }
     } catch(e){}
   })();
 
