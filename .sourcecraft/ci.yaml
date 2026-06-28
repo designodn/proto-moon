@@ -50,6 +50,10 @@ workflows:
               # Ключ хранится в секрете как base64 — декодируем обратно в файл.
               - printf '%s' "$DEPLOY_SSH_KEY" | base64 -d > ~/.ssh/id_deploy
               - chmod 600 ~/.ssh/id_deploy
+              # На VM периодически кончается место (старые docker-образы/кэш сборки)
+              # → деплой молча падал на заливке/сборке (ENOSPC). Чистим неиспользуемое
+              # ПЕРЕД заливкой и логируем диск до/после, чтобы причина была видна.
+              - ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "echo '== disk before =='; df -h / | tail -1; docker system prune -af || true; echo '== disk after =='; df -h / | tail -1"
               # Заливаем код на VM (tar по ssh) в /opt/proto-moon.
               # .git ВКЛЮЧАЕМ (нужен для кнопки-коммита на VM); исключаем только node_modules.
               # tar затирает /opt/proto-moon содержимым main → VM каждый деплой
