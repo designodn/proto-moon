@@ -525,6 +525,18 @@ ${moreBtn({ style })}
           </div>`;
 }
 
+/** CTA подарка — единая для полной карточки (renderPost) и twitter-ряда
+ *  (renderTwitterCard), чтобы текст/стиль/иконка не разъезжались:
+ *   • ai-gift   → «Создать подарок из фото» (__style-ai-gift + sparkles);
+ *   • подарок   → «Сделать подарок» (primary, без иконки);
+ *   • открытка  → «Сделать открытку» (primary + gift).
+ *  Тип открытка/подарок различаем по подписи (наличие «подар»). */
+function giftCta(isAi, caption) {
+  if (isAi) return { cta: 'Создать подарок из фото', btnStyle: '__style-ai-gift', icon: llIcon('sparkles_16_20.svg') };
+  if (/подар/i.test(caption)) return { cta: 'Сделать подарок', btnStyle: '__style-primary', icon: '' };
+  return { cta: 'Сделать открытку', btnStyle: '__style-primary', icon: llIcon('gift_16_20.svg') };
+}
+
 /* SVG «поделиться» (из эталона) — переиспользуем в on-this-day / tagged-photo. */
 const SHARE_SVG = `<svg width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.1645 4.65638C3.4702 5.38788 1.593 7.80098 0.689897 10.0403L0.689197 10.0422C0.383997 10.8042 0.633197 11.6762 1.2949 12.162C1.9533 12.6453 2.854 12.6245 3.4892 12.1127C4.3669 11.458 5.4623 10.9827 7.1645 10.7663L7.1644 11.6697C7.1644 12.3734 7.5744 13.0125 8.214 13.3059C8.8536 13.5992 9.6055 13.4929 10.1388 13.0338L14.9137 8.92308C15.3114 8.58068 15.5398 8.08188 15.5393 7.55708C15.5388 7.03238 15.3093 6.53398 14.9109 6.19248L10.136 2.09858C9.6023 1.64098 8.851 1.53598 8.2123 1.82968C7.5737 2.12338 7.1644 2.76208 7.1644 3.46508L7.1645 4.65638ZM8.0696 6.12808C8.4673 6.07528 8.7644 5.73618 8.7644 5.33498V3.46508C8.7644 3.38698 8.8099 3.31598 8.8808 3.28338C8.9518 3.25078 9.0352 3.26238 9.0945 3.31318L13.8695 7.40718C13.9137 7.44508 13.9392 7.50048 13.9393 7.55878C13.9394 7.61708 13.914 7.67248 13.8698 7.71048L9.0949 11.8213C9.0356 11.8723 8.9521 11.8841 8.881 11.8515C8.81 11.8189 8.7644 11.7479 8.7644 11.6698V9.88518C8.7644 9.66338 8.6723 9.45158 8.5101 9.30018C8.3479 9.14888 8.1301 9.07178 7.9088 9.08718C5.2768 9.27048 3.7337 9.93058 2.513 10.8451C2.504 10.8519 2.4952 10.8588 2.4865 10.8659C2.4159 10.9236 2.3153 10.9262 2.2418 10.8722C2.1684 10.8184 2.1407 10.7217 2.1744 10.6372C2.9618 8.68578 4.655 6.58118 8.0696 6.12808Z" fill="currentColor"/></svg>`;
 
@@ -993,22 +1005,10 @@ ${actionsBar(likes, comments, reshares)}
       const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
       const giverId = ids[1] || ids[0];
       // По умолчанию (обычный подарок/открытка) — модификатор __gift с тёплой
-      // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ниже ставит __ai-gift.
-      // Обычный подарок/открытка — праймари-кнопка. Иконка подарка слева
-      // только у открытки; у обычного подарка кнопка без иконки.
-      let cta, icon = '', btnStyle = '__style-primary', cardMod = ' __gift';
-      if (isAi) {
-        cta = 'Создать подарок из фото';
-        btnStyle = '__style-ai-gift';
-        cardMod = ' __ai-gift';   // тёплая подложка #FFEFE5 у бордерного блока
-        icon = llIcon('sparkles_16_20.svg');
-      } else if (/подар/i.test(caption)) {
-        cta = 'Сделать подарок';
-        icon = '';   // обычный подарок — кнопка без иконки слева
-      } else {
-        cta = 'Сделать открытку';
-        icon = llIcon('gift_16_20.svg');
-      }
+      // подложкой #FFEFE5 (как у ИИ-подарка). ИИ-подарок ставит __ai-gift.
+      // CTA (текст/стиль/иконка) — общий хелпер giftCta (см. renderTwitterCard).
+      const cardMod = isAi ? ' __ai-gift' : ' __gift';
+      const { cta, btnStyle, icon } = giftCta(isAi, caption);
       const mediaBlock = photos[0] ? `
             <div class="text-feed__reshare-card-media" style="aspect-ratio: 1">
               ${img(photos[0])}
@@ -1388,6 +1388,10 @@ function renderTwitterCard(p, idx) {
     const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
     const giverId = ids[1] || ids[0];
     const mediaBlock = photos[0] ? `\n                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 1">${img(photos[0])}</div>` : '';
+    // CTA-кнопка («Сделать подарок» / «Создать подарок из фото») — как в полной
+    // карточке (renderPost), общий хелпер giftCta. Стоит под бордерным блоком
+    // подарка, перед компактными счётчиками caf__actions.
+    const { cta, btnStyle, icon } = giftCta(isAi, caption);
     inner = `
                 <div class="text-feed__reshare-card${isAi ? ' __ai-gift' : ' __gift'}">
                   <div class="ll-gift-from">
@@ -1397,6 +1401,11 @@ function renderTwitterCard(p, idx) {
                       <div class="ds-body-m text-feed__reshare-card-author-name"><b class="ds-title-s">${esc(personName(giverId))}</b></div>
                     </div>
                   </div>${mediaBlock}
+                </div>
+                <div class="actions-bar">
+                  <div class="button-wrapper __size-36 __full-width">
+                    <button class="button-container ${btnStyle}"><span class="button-content">${icon}${cta}</span></button>
+                  </div>
                 </div>`;
   } else {
     const body = title && text ? `${title}. ${text}` : (title || text);
