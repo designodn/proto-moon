@@ -77,6 +77,14 @@
   transform: scale(0.95);
 }
 
+/* Плейсхолдер на время загрузки фото: пока <img> не подгрузился, под ним
+   виден ровный surface-primary (как у .avatar.__type-placeholder), а не
+   просвет ленты или битая картинка. Непрозрачное фото (object-fit:cover)
+   перекрывает подложку, как только загрузится. */
+.stories-row .avatar.__type-image > img {
+  background-color: var(--dynamic-surface-base-primary);
+}
+
 /* «+»-бейдж добавления своей истории — оранжевый кружок в обводке под цвет
    фона ленты (base-primary), 24px. */
 .stories-row__add {
@@ -209,6 +217,8 @@
   width: 64%;
   height: 64%;
   border-radius: 50%;
+  /* surface-primary под фото-фоном — серый плейсхолдер на время загрузки */
+  background-color: var(--dynamic-surface-base-primary);
   background-size: cover;
   background-position: center;
   border: 2px solid var(--dynamic-surface-base-secondary, #fff);
