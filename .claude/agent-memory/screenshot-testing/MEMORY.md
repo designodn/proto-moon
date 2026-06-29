@@ -58,6 +58,15 @@ _(пока пусто — заполняется по мере прогонов)
   url = `…/add-friends-sheet.html`. Куча `ERR_ABORTED` на `components/*.js` — это
   просто прерванные запросы из-за `location.replace`, не сетевая поломка.
 
+### today.html — портлет «День рождения» (`.tg-card--bday`)
+- `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
+  `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
+- При viewport 390×844: карточка 374×220px, padding 16 со всех сторон. Лейаут
+  (отступы относительно карты): title top16/left16 (лево-верх, max-width 65%),
+  ava 56×56 top16/right16 (право-верх), cta «Поздравить!» 116×36 left16/bottom16
+  (низ, своя ширина). Auto-зазор title↔cta ≈ 80px (`.tg-bday__cta margin-top:auto`,
+  `.tg-bday__body` flex-column height:100%). Лейаут устойчив к reload.
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
