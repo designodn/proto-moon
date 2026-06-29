@@ -532,10 +532,13 @@ ${moreBtn({ style })}
  *   • подарок   → «Сделать подарок» (primary, без иконки);
  *   • открытка  → «Сделать открытку» (primary + gift).
  *  Тип открытка/подарок различаем по подписи (наличие «подар»). */
-function giftCta(isAi, caption) {
+function giftCta(isAi, caption, { tw = false } = {}) {
   if (isAi) return { cta: 'Создать подарок из фото', btnStyle: '__style-ai-gift', icon: llIcon('sparkles_16_20.svg') };
-  if (/подар/i.test(caption)) return { cta: 'Сделать подарок', btnStyle: '__style-primary', icon: '' };
-  return { cta: 'Сделать открытку', btnStyle: '__style-primary', icon: llIcon('gift_16_20.svg') };
+  // В twitter-ряду (таб «Подарки») обычный подарок/открытка — секондари-кнопка
+  // (ИИ-подарок остаётся градиентным акцентом); в полной q3-карточке — primary.
+  const giftStyle = tw ? '__style-secondary' : '__style-primary';
+  if (/подар/i.test(caption)) return { cta: 'Сделать подарок', btnStyle: giftStyle, icon: '' };
+  return { cta: 'Сделать открытку', btnStyle: giftStyle, icon: llIcon('gift_16_20.svg') };
 }
 
 /* SVG «поделиться» (из эталона) — переиспользуем в on-this-day / tagged-photo. */
@@ -1437,8 +1440,9 @@ ${birthdayInner(title, text, friendIds)}
     const mediaBlock = photos[0] ? `\n                  <div class="text-feed__reshare-card-media" style="aspect-ratio: 1">${img(photos[0])}</div>` : '';
     // CTA-кнопка («Сделать подарок» / «Создать подарок из фото») — как в полной
     // карточке (renderPost), общий хелпер giftCta. Стоит под бордерным блоком
-    // подарка, перед компактными счётчиками caf__actions.
-    const { cta, btnStyle, icon } = giftCta(isAi, caption);
+    // подарка, перед компактными счётчиками caf__actions. tw:true → обычный
+    // подарок секондари (ИИ-подарок остаётся градиентным).
+    const { cta, btnStyle, icon } = giftCta(isAi, caption, { tw: true });
     inner = `
                 <div class="text-feed__reshare-card${isAi ? ' __ai-gift' : ' __gift'}">
                   <div class="ll-gift-from">
