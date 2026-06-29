@@ -364,8 +364,12 @@
     display: flex; align-items: center; justify-content: center;
     color: var(--static-text-and-icons-base-inverse-primary);
   }
-  .tg-card__moon-ic.__indigo { background: var(--static-surface-indigo); }
-  .tg-card__moon-ic.__jungle { background: var(--static-surface-jungle); }
+  /* Фолбэк-значения: токены --static-surface-indigo/-jungle определены только в
+     :root.theme-cocktail (tokens.css). На страницах без этой темы (напр.
+     activity-lenta/lenta.html — таб «Сегодня») var() без фолбэка резолвился в
+     пусто → цветной подложки под иконками не было. Фолбэк = значения из cocktail. */
+  .tg-card__moon-ic.__indigo { background: var(--static-surface-indigo, #8B8DD4); }
+  .tg-card__moon-ic.__jungle { background: var(--static-surface-jungle, #64A495); }
   /* Глиф из SVG-файла, покрашенный в currentColor (белый, унаследован от
      карточки). Внешний <img src> не наследует currentColor, поэтому SVG
      подаётся как CSS-маска, а бокс заливается currentColor. */
