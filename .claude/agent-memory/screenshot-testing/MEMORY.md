@@ -27,7 +27,7 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 > Порог переноса (его применяет `macket-rules-checker`): **hits ≥ 3 И ≥ 2 разных
 > файла И признак точный.**
 
-_(пока пусто — заполняется по мере прогонов)_
+- CSS-маска с относительным `url()` в external stylesheet → признак: `mask`/`-webkit-mask`/`background`/`mask-image` со значением `url(assets/...)` (относительный путь БЕЗ ведущего `/` или `../`) внутри файла в `components/*.css`, либо через inline `--var: url(assets/...)`, который потребляется `mask:` в `components/*.css` → severity WARN → hits:1 (файлы: components/today-widgets.css). Причина: относительный url в CSS резолвится от расположения СТИЛЯ (`/components/`), а не от HTML → реальный путь `components/assets/...` = 404, маска пустая, иконка невидима. Фикс: `url(../assets/...)` или абсолютный `/assets/...`.
 
 ---
 
@@ -72,6 +72,29 @@ _(пока пусто — заполняется по мере прогонов)
   3px. Несмотря на `overflow:hidden` карты, ринг не клипается: правый край авы =
   card.right−16, ринг +3px → до card.right−13, с запасом внутри. Устойчиво к reload
   (размер/boxShadow/классы совпали до и после).
+
+### today.html — виджет «Луна» (`.tg-card--moon`): невидимые белые глифы
+- Карточки погода/луна/гороскоп в `section.tg-island:has(.tg-cards)`. Луна = две
+  строки `.tg-card__moon-row`: слева сквиркл `.tg-card__moon-ic` 44×44 (`.__indigo`
+  bg rgb(139,141,212) / `.__jungle` bg rgb(100,164,149)), внутри `.tg-card__moon-glyph`
+  24×24 — это CSS-МАСКА (`mask: var(--glyph) ... ; background-color: currentColor`,
+  color наследуется белым). `--glyph` задаётся inline: `--glyph: url(assets/icons/cut_24.svg)`.
+- БАГ (наблюдён, ПОЧИНЕН): сквирклы видны, белой иконки внутри НЕТ. Причина —
+  относительный url маски резолвится от стиля `components/today-widgets.css`, поэтому
+  computed `maskImage = .../components/assets/icons/cut_24.svg` → HTTP 404 (root
+  `assets/icons/cut_24.svg` = 200, но к нему путь не ведёт). Пустая маска = прозрачно.
+  Подтверждено: `new Image().src=maskURL` → onerror 404 изнутри страницы.
+- ФИКС (подтверждён hard-reload): inline `--glyph` заменён на классы в
+  `today-widgets.css`: `.tg-card__moon-glyph.__cut{--glyph:url(../assets/icons/cut_24.svg)}`
+  / `.__flower{url(../assets/icons/flower_24.svg)}`, HTML-спаны `__cut`/`__flower`.
+  Теперь computed maskImage = `/assets/icons/cut_24.svg` (и flower), Image LOADED w=24,
+  HTTP 200, белые ножницы/цветок видны. `../` относительно стиля в `/components/`
+  корректно даёт корень репо.
+- horo-карточка (`.tg-card--horo` «Козерог»): иллюстрации СЛЕВА от текста НЕТ по
+  дизайну. Есть только фон `assets/today/horo-back.png` (naturalW 688, complete,
+  object-fit cover, position absolute z-index 0, 374×220, перекрыт текстом сверху —
+  это фон, не «иллюстрация слева»). Т.е. «лунный гороскоп виджет с невидимой
+  иллюстрацией слева» = именно карточка ЛУНА, баг = 404 маски глифа.
 
 ### today.html — скрытие портлета ДР при входе из Q3 (`?from=q3`)
 - В `<head>` `today.html` синхронный скрипт: `?from=q3` → класс `today-from-q3` на
