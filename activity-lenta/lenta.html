@@ -481,11 +481,10 @@
       <!-- FEED ---------------------------------------------------------- -->
       <div class="ll-feed">
 
-        <!-- BANNER под сторис — картинка во всю ширину контейнера ленты -->
-        <div class="ll-banner">
-          <span class="ll-banner__text ds-body-m">Добрый дружеский привет!<br>С пожеланием добра!</span>
-          <img class="ll-banner__pic" src="assets/feed-banner/banner-feed-pic.png" alt="">
-        </div>
+        <!-- BANNER под сторис («красный линк») — СКРЫТ в activity-ленте по
+             запросу. Элемент .ll-banner убран из разметки; JS вставки постов
+             сам падает на фолбэк-якорь (anchor → feed.firstChild ниже).
+             Вернуть — из истории git. -->
 
         <!-- Activity widget «Вокруг вас» — остров-конвейер (компонент
              components/activity-widget.{css,js}). Ячейки между маркерами
