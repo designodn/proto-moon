@@ -168,9 +168,8 @@ async function main() {
   const col = kw => header.findIndex(h => h.includes(kw));
   const iId = col('id'), iName = col('имя'), iSub = col('текст'), iPhoto = col('фото'),
         iGender = col('пол'), iAge = col('возраст'), iCity = col('город'), iBio = col('о себе'),
-        iVerified = col('верифиц');
+        iVerified = col('верифи');   // колонка «Верификация» (да → бейдж верификации)
   const at = (cols, i) => (i >= 0 ? (cols[i] || '').trim() : '');
-  const isYes = v => /^\s*(да|yes|true|1|✓)\s*$/i.test(String(v || ''));
 
   if (!CHECK_ONLY) mkdirSync(MEDIA_DIR, { recursive: true });
   const manifest = loadManifest();
@@ -234,6 +233,8 @@ async function main() {
       }
     }
 
+    // «Верификация» = да → бейдж верификации рядом с именем (см. people-data.js).
+    const verified = /^(да|yes|true|1|✓|✔)$/.test(at(cols, iVerified).toLowerCase());
     people.push({
       id,
       name,
@@ -244,7 +245,7 @@ async function main() {
       age: parseAge(at(cols, iAge)),
       city: normCity(at(cols, iCity)),
       bio: at(cols, iBio),
-      ...(isYes(at(cols, iVerified)) ? { verified: true } : {}),
+      ...(verified ? { verified: true } : {}),
     });
     console.log(`  ${flag} #${id} ${name}${note ? ' — ' + note : ''}`);
   }

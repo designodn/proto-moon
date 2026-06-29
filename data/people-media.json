@@ -5,7 +5,7 @@
     "type": "image",
     "hash": "cb86f6fe23b2c014a5f7d55f56ec256907b42a259d2b9bf6e9a4a2df86ae91d9",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "2": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LczbUkeKmgarG14tEmY74kRkniwYFXMcfg6RxAO3PRwJkIHRE8jaM9JBpCoRFI0llhWSie0JuM7LKczKWpJanwBHMjwqKaBkG2yexZl5IAAAAp&dpr=2",
@@ -13,7 +13,7 @@
     "type": "image",
     "hash": "ce70986323d3950776ee98ef51324f8b3ed975f89e5c165c01c2d5ec930f0632",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "3": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LvXmpBBWDqV5Kv3gELNPJR7DbIG3teXVKMbvasrKVBpqpTLWOsmqACi1G2lhmKvYaP8lILetd5jjw6Ps0KuvAoVvZ43yIp4l_ReAO00tgAAAAp&dpr=2",
@@ -21,7 +21,7 @@
     "type": "image",
     "hash": "8034d53f95456ce5674fd883b9acecb7243d836dcd52ad811c7216a98342bd76",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "4": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L1QSPaTBhiOKQvhEp3565WeLYGi-zY12WjPx37MCNleyYFCdfAJ0mKddnUW8c2p6od34wsx5kvnDa03-MlUu9i-nmwZobcW3MFP6Z3k20AAAAp&dpr=2",
@@ -29,7 +29,7 @@
     "type": "image",
     "hash": "bbead5d7559c239aa36d0c834e17c13ee950dc36f311b3313603ea6604c136b7",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "5": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J6Gm6p2t0xJhdjxEWQTAwWygj5zuZvjkYRTERbe2RZFpHfsPMELmiSPV1SoASGDI0POyfsB0akFyVbNacAF_F0TVNxCoPGtwxWqgWqHyUAAAAp&dpr=2",
@@ -37,7 +37,7 @@
     "type": "image",
     "hash": "c8b7196e7a43cfea0df3c83ea6b0dc4f663e353b1d2f3ecd515f85384c6e8a52",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "6": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jb2Z3CR3TVlEIBGmsyuVHj3nGOZzY5iYgzJY72-7eXdUH8MXoBh4CsmUWv9LkauxZll8dkf1Ck66JN4htb2t-aYAhqkOfRboVL2xcSlWcAAAAp&dpr=2",
@@ -45,7 +45,7 @@
     "type": "image",
     "hash": "964d62b63bc4a4e2705231a4d1488de8757b40a6cbd93fc071d4347529dc227d",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "7": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JMMxpKO-TLJ0hV1q718XUpZ6jjJFfMNEDITBjmmbThOMnj2faSDUOg15NUZBUDI9D8DykJQKVjw_ZWf-u9AKvfJOqHvqn8sOpFKjLNPsoAAAAp&dpr=2",
@@ -53,15 +53,15 @@
     "type": "image",
     "hash": "696ff5d64ea5e0adb613a9b53d12eae775c2c59059fcb16bbfd8bf9cecdee487",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "8": {
     "src": "https://vki9.okcdn.ru/i?r=CHFAm_VFBkioSGBqh1KLAp2lgpkXRWXDptyIK_gmJkM5c0cyFg2Li3vjlh4Z7zQprIPwVimU2PajfYwY8Y6rggHVkf8CCd6ChTWhxcVazRc6S1xXRtPe9buwt2Vfl3cA606Si35hp6z3jWzu-MAOrIcyAAAAKQ&dpr=2",
     "file": "8.webp",
     "type": "image",
     "hash": "36a7fe6af2ea1f25714bf570320bbd32ca158e0f9d30cdcac7ace17861acd708",
-    "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "status": "ok",
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "9": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J1WD3AEPJaVgwT6CG1f8GOT4FLY1nIgjRpQTscysb3ZKZ-_fT87EGwybY4i33IiR-ADCg42dp7M6db3JEX55U6Rd8J4q4S3yuPD4hZiGoAAAAp&dpr=2",
@@ -69,7 +69,7 @@
     "type": "image",
     "hash": "6b55af28b4b985adf22812e84bb34c3ff3a73b3d80e8e6ef607b63a677582503",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "10": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IjuQx1LMkMCv4lnx8C8gmb5IHdBuRG0FpCPXSAN1QV05sMz9V8rd5hujvmQIWg_vsHwpXNSZUEOSERV2lTynKx4LWf8QsZ-AAlRBpxkCsAAAAp&dpr=2",
@@ -77,7 +77,7 @@
     "type": "image",
     "hash": "cc52b63fe3eb7850c04a338f37e6c8249684975b29f1bde4b0069084dab0f507",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "11": {
     "src": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRNsvNcbCzKwoAwhLVQ-si5PvbTUazkvUhiPZIIxtgfGrqDQcMEGkNKAIz-hpEIfFzWYVPT7To49pHeRqLOH0Vh-i6xEfVafpvvXo5e4AAAAp&dpr=2",
@@ -85,7 +85,7 @@
     "type": "image",
     "hash": "e12b6142bf10c9718980ac7f5465428c2331965f034120581ec5d99dcdb3614b",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "my_profile": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IfQABrMs5JMZBFDExjXZ75V-rTcAntoP0RQWBJ6IbgpEazbwqhn0_FHCJwVQxlfni_XZmVQQTBH6yJi_fqqsj7meaamsPXbBT20IJ3RHYAAAAp&dpr=2",
@@ -93,7 +93,7 @@
     "type": "image",
     "hash": "f4038ebbbef011ece6714e26da440a6f29832298e3245eac7c6db154f49e57ee",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "vvz-1": {
     "src": "https://vki9.okcdn.ru/i?r=CHFAm_VFBkioSGBqh1KHSkufhK9gKtLD5R1OaqCTGtaii43TDYLK6Xho4HCWziPYDnMakrjZb4lKohPRvQf2sfeHB5-hia1t6b5GWcyW2T0i53z2hk422DqZ6SMv6zRUBBmRQ7aghTJZy5Yi1jMvGsVcAAAAKQ&dpr=2",
@@ -101,7 +101,7 @@
     "type": "image",
     "hash": "c267f57f88a0135144b867bc51107810ce25a05395e2f0370141b1bcbd4e1ce6",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "vvz-2": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1J8s8x_f1BC-7P3v7tlkr_F6Bbbkc4Dhk0M5Xrkbsb0WkEVxPU7jFvmvycToJFt03gVCJie8SXeHU6kT1xjePo58EVEd-Op6GwRGDu2FrYAAAAp&dpr=2",
@@ -109,7 +109,7 @@
     "type": "image",
     "hash": "ee392ce562239437dbb374f307d87d7751652900a1f1c0f6c534fa0aa7f98f6e",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "vvz-3": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JNpBzacIh9w85MyWJ8lr9JG2DYXMREFeVQuOByMQp9nIOv_bjNm8VKQWtME8GPcKQvd9bJHra8d0060hQ0k2ierkYIpuYSAKfl_nXTzIMAAAAp&dpr=2",
@@ -117,7 +117,7 @@
     "type": "image",
     "hash": "d0361f248fe254e6cc266f499c223a0beeb8bd86dcb3b78862fd6c0a2d8ec522",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "vvz-4": {
     "src": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSi5Ec-9_PKTlhUgLaQVL1KiyDSJjlBWL0qVXBSS49OJ8BNQVW6NXCoBxtW2KPviTuQbQSUIXGL5u2i5G9d9onxFY_X2bxLSEDGAz8Msh_pf8dlQt91NBUQpbJKMzYv5hNtuAsB3Va6gUCIeuWYehOXhtDAx1_VI27uIDvkgtQHYLlTv8CXwuI_Gnjr3zKOwAAACk&dpr=2",
@@ -125,7 +125,7 @@
     "type": "image",
     "hash": "c16327e2511add8b723e802a8a604e9b7b8a442ae2efe5b926cd2e2bccede70c",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-1": {
     "src": "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1L4AGIpaJqmXBqZF5Jg5v6nSXQvFI-QmLlFmjaw9Z-c0442kX3cD9AR8knQYoSKDM7ZREk0nSHyafKVgfIidnFuLC615ccnAAAAKQ&dpr=2",
@@ -133,7 +133,7 @@
     "type": "image",
     "hash": "c8416cc28f3dd831012fc79a63877aa0888eafa84410d4b5de8ec70c6b935ab1",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-2": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LDgqkTIy8evV5-Cu096as6sS5ESXjenLwagcd7_plDLBwG_m44RmmxuRXww7C1h0LTOlIWF7aQhBkPdtPWdrC-u-nBCFGyTGBN4143G-sAAAAp&dpr=2",
@@ -141,7 +141,7 @@
     "type": "image",
     "hash": "aaed16290113f2190286ac91cc21eb8130b9890efdf0a68a01cb2b1f27fa05d5",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-3": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1JXRXwtU424YNhdd0EdU6dg0Cp51K1-5m4FS7w4i_Z7uqh4jpOPIb-KCsDlnXcjSJJvUwsQ7B6WyBwPBQUC79fx-5ye0qeEM9gwTsqgzEUAAAAp&dpr=2",
@@ -149,7 +149,7 @@
     "type": "image",
     "hash": "c966d437c75d8d3153899111c02aa2a4258a6cd1fd0d3de6765a464836a10ad5",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-4": {
     "src": "https://bigfoto.name/uploads/posts/2021-11/1636731024_1-bigfoto-name-p-ukrashenie-sada-i-ogoroda-svoimi-rukami-id-1.jpg",
@@ -157,7 +157,7 @@
     "type": "image",
     "hash": "817f420db18d0a0d7c67faed64b7de0a7954f2de71e8bf12ef1fc8fe2d737238",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-5": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1K3ZfIUJ2wQoa2mZ3cfO0RXX0hbFm3WyaSYZH-GZkyTe8xUwVTWOF-mQePtegmiCs2yTwd_JqaTz1HLT8Uv1yly8ZMlqo8ADaSxIyxvPMUAAAAp&dpr=2",
@@ -165,7 +165,7 @@
     "type": "image",
     "hash": "70da973f8f9f40fb27853aeb9cf13c44f37b527001d1daec7a29b4062880c361",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-6": {
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTliKRHnepvOtZ7CNiUGpgdRLczyEsZ-jI42g&s",
@@ -173,7 +173,7 @@
     "type": "image",
     "hash": "2fbf49163287010e48fd005519679ae1c94c80d2b84b8acd6df322de1ad56f79",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-7": {
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxPTM6RCmnE2NPvI7fBSgjMOcUM4WZAOnbvef25Bye2bhDCBlh5P09Tu4f&s=10",
@@ -181,7 +181,7 @@
     "type": "image",
     "hash": "d58cfe3365c55a44ba43fdd336ed4813165f5369e8601ea7f5e163983cf071ff",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-8": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LOq1mV1VM0SsGoA_Sd70rdjZFHO2-kwmN51_d9qI2JSXs5H4k_qE2b2HChbBydn2WY5ufrQZkC2l7TevUF6nv1VuuJLMn0CRh0MEExyJcAAAAp&dpr=2",
@@ -189,7 +189,7 @@
     "type": "image",
     "hash": "a06001a9899e9ad6962fd93b9e911f6dcf343924ac5c540717ef4156f4e2b15b",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-9": {
     "src": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqksNqxeidegiHmxBjQtV4bUb-aw_txmEHzs22FQ6ouBgHVGw96IoHZ5aGTokbAiwvr5daqxmOpgZ05OBiC4aIne6k38_V9Ttm7LyzZq0snYrGf5DR6DR7gwlSILk-RdBwMvfJnYimQns9UqKYQHjxlyowoDRNHc5203RNTtTXbxw-jyPcjrPmujD-xmD-gAAACk&dpr=2",
@@ -197,7 +197,7 @@
     "type": "image",
     "hash": "9aafd3c2c00c3ac37a96ca447541c254a3ea269aedcea2c3d5b4d82ed80fb4d9",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-10": {
     "src": "https://i.okcdn.ru/i?r=CICbQJv1RQZIqEhgaodSqNd1ho-na1UmY5ejrbKClE-8MTkaRChbgCRQ1B78wrWRTEGIQdMTpZ-lcK93Y9KwjeAYbG1eQM768Ye5_zeXOh_SUT7P2BmlKHtQvyKEtlR_L8jJYSizMcb41y6VZLVMvtFa0OXJ4kjeyjJkuakvmTTV0e1KCLAiX2lxql03uWYzNp4FF26xWrt4LNeWWwAAACk&dpr=2",
@@ -205,7 +205,7 @@
     "type": "image",
     "hash": "e8137eaf41a3b92eaf132640b509edec1a09ec6db1231a541a8a5fb4c563967d",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-11": {
     "src": "https://735606.selcdn.ru/thumbnails/photos/2018/09/03/54q7nziswegetpr0_1024.jpg",
@@ -213,7 +213,7 @@
     "type": "image",
     "hash": "f2c3dcc98d391b2aaf753f34c9b93d98c329f36411e8d76cc879186ca10badd1",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-12": {
     "src": "https://vki9.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1J5ONrv50iOunzwvthZBkaozoeP_SKruyfcEjcn1-s4oaGIYy5y1xo_fcvZiZai3gnjpk95d_mvc9kEPYi8VU7khsMqocwMAAAAKQ&dpr=2",
@@ -221,7 +221,7 @@
     "type": "image",
     "hash": "5fd09364f10298775462273363fee0840cae6fa8a3d641e7b8ddd1bcbb9b47b2",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-kudago": {
     "src": "https://habrastorage.org/getpro/moikrug/uploads/company/100/004/600/3/logo/medium_65cac9d0621266271915467f46ab3f75.png",
@@ -229,7 +229,7 @@
     "type": "image",
     "hash": "04c731e622ab476f9f15a3cd3a02e820a7399fd2d66b9205ec34da609d27b702",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-spb-news": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KpQuLXvE2PG5YKRRcgfROWZh0UIJnYhqMEtfgbZIZUk7qDaFTmwfsqLVUWVlW8HachWne21_W0izNdEEcNi10hzSL4kbdRM-kJtXyqBngAAAAp&dpr=2",
@@ -237,7 +237,7 @@
     "type": "image",
     "hash": "1770ea4d63a459e028dfaa1f9ab875d14f6296584711a30cf8a488e6ff253b3d",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "group-zenit": {
     "src": "https://fc-zenit.ru/local/templates/new_zenit/assets/images/emblems/00.jpg",
@@ -245,7 +245,7 @@
     "type": "image",
     "hash": "56c0ddc1043baa26e372f9eeef84871625cdee127a7ffcb752479c75cc956336",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "ad-1": {
     "src": "https://s0.rbk.ru/v6_top_pics/media/img/7/35/756195318013357.jpg",
@@ -253,7 +253,7 @@
     "type": "image",
     "hash": "45eded1c21ae7043b8422152123d317ddc419c790b9fee30a0bfd78f133b2cad",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "ad-2": {
     "src": "https://reg.huntfishexpo.ru/vendor/ecatalog/upload/crocus/14/1357/brend-2109.jpg",
@@ -261,7 +261,7 @@
     "type": "image",
     "hash": "bf1ca487c885a58c690e11832d7beb823f438ae12bf5ed83f5004b9f195f3f48",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "ad-3": {
     "src": "https://avatars.mds.yandex.net/get-altay/910613/2a00000160da5a5d8010b004bcd9a09d2f99/L_height",
@@ -269,7 +269,7 @@
     "type": "image",
     "hash": "4a893617b6a318116ab1b7b9720025cacbeaa287729b1fcba05a31ce69ceb69d",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   },
   "ad-4": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1KxbwaUoEwUu_eB1gSo7_F0w9HjGCF-RsElme3I_obZKlDNPdU9C0AnKj5IjaBsZ61q1dJaO0yCmUDRiwETqXt5BOvnk82vmHrc_32BCo4AAAAp&dpr=2",
@@ -277,14 +277,6 @@
     "type": "image",
     "hash": "758c3c78dae907273d40636aa58a7892ec4fef19300f9baf8c4e0efc3f81a126",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
-  },
-  "odkl": {
-    "src": "https://cloud.pllsll.ru/1366x/pollskill/storage/91/5d/d/0b14881df81.png",
-    "file": "odkl.webp",
-    "type": "image",
-    "hash": "e1721099e2ecef57bef2feb49f2f06566967e727974b922e19c043c3a923d0c4",
-    "status": "ok",
-    "checkedAt": "2026-06-29T14:37:05.815Z"
+    "checkedAt": "2026-06-29T14:29:20.154Z"
   }
 }
