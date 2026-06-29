@@ -61,7 +61,7 @@ Spreadsheet ID (все листы): `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7
 | `photo` | да | `text`, media=image (1 фото) | да | тот же `feed-text` |
 | `photo-gallery` | да | `text`, media=gallery (N фото) | да | тот же `feed-text` |
 | `video` | да | `text`, media=video | да | тот же `feed-text` |
-| `ad` | рекламодатель | `text`, media=image | нет | реклама. Автор inline (`name/initials/subtitle "Реклама 0+"`), CTA «Перейти» из шаблона, счётчиков нет |
+| `ad` | рекламодатель | `text`, media=image | нет | реклама. Автор inline (`name/initials/subtitle "Реклама 0+"`), CTA «Перейти» из шаблона, счётчиков нет. В tw-табе (Друзья) — twitter-like ряд (см. §8): date-слот = «Реклама 0+», футер = CTA «Перейти» вместо счётчиков |
 | `group-post` | группа | `text`, media=none\|image\|gallery | да | = `feed-text` + `entity:group` (автор `group-N`): «Подписаться» + бейдж «Сообщество» из шаблона. Подписка ТОЛЬКО у авторов-сообществ |
 | `vvz-portlet` | — | `cards[] {personId, name, subtitle}` | — | ряд «Возможно, вы знакомы» + финальная help-карточка; CTA «Дружить» |
 | `on-this-day` | self | `title`, `reshareCard {author, text, media}`, `likes {avatars[], text}` | — | бейдж «Видите только вы», CTA «Поделиться» |
@@ -188,7 +188,7 @@ Activity = Q3-контракт + надстройки. **Картинки пут
 | Подборки | `podborki` | Pinterest-masonry (чипсы + грид `.uni-card`, тип `pin`) — **отдельный лист** gid `802612828`, кэш `assets/activity-pins/` |
 | Сегодня | `segodnya` | виджеты `today.html` (`components/today-widgets.{css,js,partial.html}`) |
 | Подарки | `podarki` | `gift-received` / `ai-gift-received` (twitter-like, §8) |
-| Друзья | `druzya` | `photo` / `text` / `video` / `reshare-post` / `friendversary` (twitter-like, §8) |
+| Друзья | `druzya` | `photo` / `text` / `video` / `reshare-post` / `ad` / `friendversary` (twitter-like, §8) |
 | Локальное | `lokalnoe` | то, что помечено `Локальное` (напр. `clip`) |
 
 В табах с флагом `tw:true` (Подарки, Друзья) типы рендерятся **компактным
@@ -267,8 +267,11 @@ article.caf.__twitter-like.island
 
 1. **Тип `comment-as-feed`** — всегда (родная раскладка типа).
 2. **Activity-табы с `tw:true`** (Подарки, Друзья) — НЕ-`comment-as-feed` типы
-   (`photo/text/video/gift-received/ai-gift-received`) перерисовываются твиттер-рядом
-   через `renderTwitterCard()` вместо полной карточки.
+   (`photo/text/video/gift-received/ai-gift-received/ad`) перерисовываются твиттер-рядом
+   через `renderTwitterCard()` вместо полной карточки. Реклама (`ad`) в твиттер-ряду:
+   date-слот = дисклеймер «Реклама 0+» (subtitle рекламодателя), а вместо
+   счётчиков `caf__actions` — полноширинный CTA «Перейти» (`adActions()`), т.к.
+   у рекламы статистики нет.
 
 **Механика:**
 

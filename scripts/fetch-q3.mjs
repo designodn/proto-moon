@@ -525,6 +525,17 @@ ${moreBtn({ style })}
           </div>`;
 }
 
+/** CTA «Перейти» для рекламной twitter-карточки — вместо счётчиков cafActions
+ *  (у рекламы статистики нет). Полноширинная primary-кнопка, как в полной
+ *  ad-карточке (renderPost, case 'ad'). */
+function adActions() {
+  return `              <div class="actions-bar">
+                <div class="button-wrapper __size-36 __full-width">
+                  <button class="button-container __style-primary"><span class="button-content">Перейти</span></button>
+                </div>
+              </div>`;
+}
+
 /** CTA подарка — единая для полной карточки (renderPost) и twitter-ряда
  *  (renderTwitterCard), чтобы текст/стиль/иконка не разъезжались:
  *   • ai-gift   → «Создать подарок из фото» (__style-ai-gift + sparkles);
@@ -1334,14 +1345,15 @@ function splice(cardsHtml) {
      Подборки   — пинтерест-masonry (чипсы + грид .uni-card, тип «pin» из листа);
      Сегодня    — виджеты today.html (components/today-widgets.{css,js,partial.html});
      Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
-     Друзья     — photo / text / video / reshare-post / friendversary, twitter-like;
+     Друзья     — photo / text / video / reshare-post / ad / friendversary, twitter-like
+                  (ad → шапка «Реклама 0+» + CTA «Перейти» вместо счётчиков);
      Локальное  — что проставлено в колонке «Таб» (напр. clip). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
   { id: 'podborki', label: 'Подборки',  collection: true },
   { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
-  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'friendversary'], tw: true },
+  { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'ad', 'friendversary'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
 ];
 
@@ -1381,6 +1393,10 @@ function renderTwitterCard(p, idx) {
   const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
   const crumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
   const crumbsBlock = crumbs ? '\n' + crumbs : '';
+  // Реклама: в date-слот вместо времени идёт дисклеймер «Реклама 0+» (subtitle
+  // рекламодателя из «Люди»), а вместо счётчиков — CTA «Перейти» (статистики нет).
+  const isAd = type === 'ad';
+  const adMeta = isAd ? (PEOPLE[String(aid)]?.subtitle || 'Реклама 0+') : '';
 
   let inner = '';
   if (type === 'gift-received' || type === 'ai-gift-received') {
@@ -1434,9 +1450,9 @@ function renderTwitterCard(p, idx) {
               <div class="caf__content">
                 <div class="caf__head">
                   <span class="ds-title-s caf__name">${esc(personName(aid))}</span>
-                  <span class="ds-body-m caf__date">· ${esc(time)}</span>
+                  <span class="ds-body-m caf__date">· ${esc(isAd ? adMeta : time)}</span>
                 </div>${inner}
-${cafActions(comments, reshares, likes)}
+${isAd ? adActions() : cafActions(comments, reshares, likes)}
               </div>
             </div>${threadBlock}
           </div>
