@@ -465,6 +465,29 @@ ${cells}
           </div>`;
 }
 
+/** Видео клипа + ссылка на полноэкранный плеер klipy.html — общий код для полной
+ *  клип-карточки (renderPost, case 'clip') и компактного твиттер-ряда
+ *  (renderTwitterCard). Источник видео из листа («фото»): полный URL, имя файла
+ *  (с/без расширения → assets/clips/<имя>.mp4) или дефолт из COMPANION. */
+function clipVisual(p, aid, { likes = 0, reshares = 0 } = {}) {
+  const x = EXTRAS[p.id] || {};
+  const rawClip = (p.photos && p.photos[0]) || (p.photosRaw && p.photosRaw[0]) || '';
+  let src;
+  if (/^https?:\/\//.test(rawClip)) src = rawClip;
+  else if (rawClip) {
+    const f = /\.(mp4|webm|mov)(\?|#|$)/i.test(rawClip) ? rawClip : rawClip + '.mp4';
+    src = f.includes('/') ? f : `assets/clips/${f}`;
+  } else src = x.fallbackMedia;
+  const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
+    ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
+    : img(src);
+  const q = new URLSearchParams({
+    type: 'video', src, name: personName(aid), from: 'lenta-q3.html',
+    ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
+  });
+  return { src, visual, openUrl: `klipy.html?${q}` };
+}
+
 /** ЕДИНОЕ ПРАВИЛО медиа для ВСЕХ twitter-like карточек (comment-as-feed,
  *  renderTwitterCard). Централизовано, чтобы не дублировать:
  *   • 2 автора (есть ids[1]) ⇒ цитата оригинала в reshare-контейнере
@@ -1134,29 +1157,9 @@ ${birthdayInner(title, text, ids)}
       //     подставляем assets/clips/<имя>, при отсутствии расширения добавляем .mp4;
       //   • относительный путь (со слешем) — берём как есть;
       //   • пусто — дефолтный клип из COMPANION (assets/clips/sable-tepa.mp4).
-      const rawClip = photos[0] || (p.photosRaw && p.photosRaw[0]) || '';
-      let src;
-      if (/^https?:\/\//.test(rawClip)) {
-        src = rawClip;
-      } else if (rawClip) {
-        // имя без видео-расширения → дополняем .mp4 (ты вписала «hermitage»)
-        let f = /\.(mp4|webm|mov)(\?|#|$)/i.test(rawClip) ? rawClip : rawClip + '.mp4';
-        src = f.includes('/') ? f : `assets/clips/${f}`;
-      } else {
-        src = x.fallbackMedia;
-      }
-      const visual = /\.(mp4|webm|mov)(\?|#|$)/i.test(src)
-        ? `<video src="${esc(src)}" autoplay muted loop playsinline></video>`
-        : img(src);
-      // Тап по клипу открывает полноэкранный плеер klipy.html (как в main):
-      // ссылка-оверлей над media (z1), но под шапкой/mute/actions (z2).
-      // Прокидываем аватар/имя/счётчики — klipy.html подставляет их в шапку
-      // и actions плеера (data-author-ava / data-like-count / data-reshare-count).
-      const q = new URLSearchParams({
-        type: 'video', src, name: personName(aid), from: 'lenta-q3.html',
-        ava: personPhoto(aid), like: String(likes || 0), reshare: String(reshares || 0),
-      });
-      const openUrl = `klipy.html?${q}`;
+      // Видео клипа + ссылка на полноэкранный плеер — общий хелпер clipVisual
+      // (та же логика используется в твиттер-ряду renderTwitterCard).
+      const { visual, openUrl } = clipVisual(p, aid, { likes, reshares });
 
       // Шапка клипа (оверлей на видео): кнопка «Подписаться» (для сообществ) — на
       // ОДНОЙ строке с именем (feed-header__line), время — строкой ниже. Имя тянется
@@ -1385,7 +1388,7 @@ const postInTab = (p, tab) =>
    (колонка «Твиттер-лайк?») применяется ТОЛЬКО к типам из этого списка. */
 const TW_TYPES = new Set([
   'photo', 'text', 'video', 'reshare-post', 'group-post',
-  'ad', 'gift-received', 'ai-gift-received', 'friendversary',
+  'ad', 'gift-received', 'ai-gift-received', 'friendversary', 'clip',
 ]);
 
 function tabStrip(activeId) {
@@ -1451,7 +1454,18 @@ ${birthdayInner(title, text, friendIds)}
   }
 
   let inner = '';
-  if (type === 'gift-received' || type === 'ai-gift-received') {
+  if (type === 'clip') {
+    // Клип в твиттер-ряду: опц. текст + видео 9:16 в правой колонке (ll-clip-tw),
+    // тап-оверлей открывает полноэкранный плеер, кнопка mute — как в полной карточке.
+    const { visual, openUrl } = clipVisual(p, aid, { likes, reshares });
+    const body = title && text ? `${title}. ${text}` : (title || text);
+    if (body) inner += '\n' + cafTextTw(body);
+    inner += `
+                <div class="ll-clip-tw">
+                  ${visual}
+                  <a class="ll-clip-tw__open" aria-label="Открыть клип" href="${esc(openUrl)}"></a>
+                </div>`;
+  } else if (type === 'gift-received' || type === 'ai-gift-received') {
     const isAi = type === 'ai-gift-received';
     const caption = title || (isAi ? 'Создал ИИ-подарок для' : 'Получил подарок от');
     const giverId = ids[1] || ids[0];

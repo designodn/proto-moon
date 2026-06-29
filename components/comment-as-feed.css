@@ -231,6 +231,24 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* Клип в твиттер-ряду: вертикальное видео 9:16 на всю ширину колонки контента,
+   скруглённое; тап-оверлей открывает полноэкранный плеер.
+   Радиус литералом 12 — в DS нет radius-токена (как у reshare-card/медиа). */
+.caf__content .ll-clip-tw {
+  position: relative;
+  margin-top: var(--space-2);            /* 8 от текста/шапки */
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--static-surface-special-layer-primary);   /* #000 пока грузится видео */
+}
+.caf__content .ll-clip-tw > video,
+.caf__content .ll-clip-tw > img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.caf__content .ll-clip-tw__open { position: absolute; inset: 0; z-index: 1; }  /* тап → плеер */
 
 /* Ряд из 3 счётчиков-кнопок (button-inline __size-20) — 8 от превью,
    gap 12 между кнопками, отступ иконка↔счётчик 4 (как в макете). */

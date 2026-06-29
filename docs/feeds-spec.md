@@ -137,10 +137,11 @@ Spreadsheet ID (все листы): `1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7
 - **Твиттер-лайк?** *(только Activity-лента)* — `да/нет`: рисовать ли пост компактным
   твиттер-рядом (§8). `да` применяется только к типам, которые умеет твиттер-ряд
   (`photo/text/video/reshare-post/group-post/ad/gift-received/ai-gift-received/
-  friendversary` — `TW_TYPES`); `comment-as-feed` и так твиттер-лайк, а `clip /
-  memories-clip / marathon` всегда рисуются своим полноширинным лейаутом — флаг их
-  не трогает. Нет колонки в листе → фолбэк: твиттер-ряд в tw-табах (Друзья/Подарки)
-  + реклама везде.
+  friendversary/clip` — `TW_TYPES`); `comment-as-feed` и так твиттер-лайк, а
+  `memories-clip / marathon` всегда рисуются своим полноширинным лейаутом — флаг их
+  не трогает. Клип в твиттер-ряду — видео 9:16 на всю ширину колонки контента
+  (`.ll-clip-tw`), тап → плеер `klipy.html`. Нет колонки в листе → фолбэк: твиттер-ряд
+  в tw-табах (Друзья/Подарки) + реклама везде.
 - **тема / рубрика** — крошки `feed-header` (нужны `comment-as-feed`).
 - **шапка** — лейбл над карточкой (для клипа-с-комментами «может быть интересно»);
   в сыром виде это `activity`-строка над автором.
@@ -201,8 +202,8 @@ Activity = Q3-контракт + надстройки. **Картинки пут
 Формат поста (компактный **твиттер-ряд** §8 vs полная q3-карточка) задаёт **колонка
 «Твиттер-лайк?»** листа по-постно (`да/нет`), а НЕ таб. Флаг применяется только к
 типам из `TW_TYPES` (`photo/text/video/reshare-post/group-post/ad/gift-received/
-ai-gift-received/friendversary`) — их при `да` рисует `renderTwitterCard()`.
-`comment-as-feed` и так твиттер-лайк (через `renderPost`), а `clip / memories-clip /
+ai-gift-received/friendversary/clip`) — их при `да` рисует `renderTwitterCard()`.
+`comment-as-feed` и так твиттер-лайк (через `renderPost`), а `memories-clip /
 marathon` всегда остаются полноширинными — флаг их не трогает.
 
 `isTwitter = wantTw(p) && TW_TYPES.has(type)`, где `wantTw` = `p.tw` (колонка); нет
@@ -297,8 +298,9 @@ article.caf.__twitter-like.island
 - **`TW_TYPES`-allowlist** — твиттер-ряд рисуется только для типов, которые умеет
   `renderTwitterCard` (`photo/text/video/reshare-post/group-post/ad/gift-received/
   ai-gift-received/friendversary`). Остальные при `Твиттер-лайк?=да` всё равно идут
-  в `renderPost`: `comment-as-feed` и так twitter-like, а `clip/memories-clip/marathon`
-  сохраняют свой полноширинный лейаут.
+  в `renderPost`: `comment-as-feed` и так twitter-like, а `memories-clip/marathon`
+  сохраняют свой полноширинный лейаут. `clip` в твиттер-ряду — видео 9:16 на всю
+  ширину колонки (`.ll-clip-tw`), тап → `klipy.html`.
 - **Клэмп цитаты** — текст оригинала в `text-feed__reshare-card` твиттер-ряда
   ограничен по строкам (`-webkit-line-clamp`, components/comment-as-feed.css), чтобы
   длинная цитата не растягивала карточку.
