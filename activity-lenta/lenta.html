@@ -1161,16 +1161,16 @@
         <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
               <button class="chip-container __size-default __view-primary">Все</button>
-              <button class="chip-container __size-default __view-primary">
-                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt=""></span>
-                Люди
-              </button>
               <button class="chip-container __size-default __view-custom __selected-custom" style="
                 --chip-background-color: var(--dynamic-surface-contrast-low);
                 --chip-color-custom: var(--dynamic-text-and-icons-base-primary);
-                --chip-background-selected-color: #C93600;
+                --chip-background-selected-color: var(--static-surface-status-accent);
                 --chip-selected-color: #fff;">
-                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
+                Люди
+              </button>
+              <button class="chip-container __size-default __view-primary">
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
                 Еда
               </button>
               <button class="chip-container __size-default __view-primary">
@@ -1739,7 +1739,22 @@
           </div>
         </article>
 
-        <article class="feed-birthday island">
+        <article class="caf __twitter-like island">
+          <div class="caf__stack">
+            <div class="caf__row">
+              <div class="caf__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/odkl.webp" alt=""></div>
+              </div>
+              <div class="caf__content">
+                <div class="caf__head">
+                  <span class="ds-title-s caf__name">Одноклассники</span>
+                  <svg class="ll-badge-verified" width="16" height="16" viewBox="0 0 16 16" aria-label="Verified" role="img">
+                    <circle cx="8" cy="8" r="8" fill="#018DEB"/>
+                    <path d="M4.4 8.2 L6.9 10.6 L11.6 5.9" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="text-feed__reshare-card __friendversary">
+                  <div class="feed-birthday island">
           <div class="feed-birthday__deco"></div>
 
           <div class="feed-birthday__avatars">
@@ -1755,6 +1770,11 @@
               <button class="button-container __style-primary" data-href="gifts-catalog.html?to=1&anniv=3"><span class="button-content">Поздравить друга</span></button>
             </div>
             <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
+          </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </article>
 

@@ -250,6 +250,46 @@ async function main() {
     console.log(`  ${flag} #${id} ${name}${note ? ' — ' + note : ''}`);
   }
 
+  // ── Платформенные аккаунты (нет в листе «Люди»): фиксированные системные
+  //    авторы вроде самого сервиса ОК. Спека в коде, фото кешируется как у всех.
+  //    Сейчас один — `odkl` («Одноклассники», verified): автор сервисных постов
+  //    (напр. карточка-годовщина дружбы как репост от сервиса). ───────────────
+  const EXTRA_PEOPLE = [
+    { id: 'odkl', name: 'Одноклассники', verified: true,
+      photoUrl: 'https://cloud.pllsll.ru/1366x/pollskill/storage/91/5d/d/0b14881df81.png' },
+  ];
+  for (const ex of EXTRA_PEOPLE) {
+    const key = String(ex.id);
+    const prev = manifest[key] || null;
+    let photo = null, media = null, flag = '⚠️', note = '';
+    const dl = await download(ex.photoUrl);
+    if (dl.ok && dl.kind === 'image') {
+      const c = await compressImage(dl.bytes, dl.ext);
+      if (c) { dl.bytes = c.bytes; dl.ext = c.ext; }
+    }
+    if (dl.ok) {
+      const file = `${safeId(ex.id)}.${dl.ext}`;
+      media = dl.kind; photo = `${MEDIA_DIR_REL}/${file}`;
+      if (!prev) { flag = '🆕'; note = 'новое'; stats.fresh++; }
+      else if (prev.src !== ex.photoUrl) { flag = '🔁'; note = 'заменено'; stats.replaced++; }
+      else if (prev.hash !== dl.hash) { flag = '♻️'; note = 'обновлено'; stats.changed++; }
+      else { flag = '🖼'; note = ''; stats.same++; }
+      if (!CHECK_ONLY) { writeFileSync(resolve(MEDIA_DIR, file), dl.bytes); cleanupFor(ex.id, file); }
+      nextManifest[key] = { src: ex.photoUrl, file, type: media, hash: dl.hash, status: 'ok', checkedAt: now };
+    } else if (prev && prev.file && existsSync(resolve(MEDIA_DIR, prev.file))) {
+      flag = '⚠️'; stats.stale++;
+      const file = prev.file;
+      note = `протухло (источник умер; оставлена копия ${file})`;
+      media = prev.type; photo = `${MEDIA_DIR_REL}/${file}`;
+      nextManifest[key] = { ...prev, file, src: ex.photoUrl, status: 'stale', checkedAt: now };
+    } else {
+      flag = '⚠️'; note = 'битая ссылка (копии нет)'; stats.none++;
+    }
+    people.push({ id: ex.id, name: ex.name, subtitle: '', photo, media,
+      gender: '', age: null, city: '', bio: '', ...(ex.verified ? { verified: true } : {}) });
+    console.log(`  ${flag} #${ex.id} ${ex.name}${note ? ' — ' + note : ''}`);
+  }
+
   console.log(
     `\nИтого: 🖼 ${stats.same} без изм · 🆕 ${stats.fresh} новых · 🔁 ${stats.replaced} заменено · ` +
     `♻️ ${stats.changed} обновлено · ⚠️ ${stats.stale} протухло · ✗ ${stats.none} без фото`

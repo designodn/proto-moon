@@ -386,5 +386,17 @@ window.DS_PEOPLE_DATA = [
     "age": null,
     "city": "",
     "bio": ""
+  },
+  {
+    "id": "odkl",
+    "name": "Одноклассники",
+    "subtitle": "",
+    "photo": "assets/people/odkl.webp",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": "",
+    "verified": true
   }
 ];
