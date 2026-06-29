@@ -59,6 +59,23 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   url = `…/add-friends-sheet.html`. Куча `ERR_ABORTED` на `components/*.js` — это
   просто прерванные запросы из-за `location.replace`, не сетевая поломка.
 
+### activity-lenta/lenta.html — таб «Подборки» + чипсы подборок
+- Гейт `afs-seen-al`: до загрузки `addInitScript(()=>sessionStorage.setItem('afs-seen-al','1'))`
+  → первый `goto` не редиректит на `add-friends-sheet.html`. На reload тоже держится
+  (init-script переустанавливает). Подтверждено.
+- Таб «Подборки»: `button.tabs-tab[data-tab="podborki"]`, панель
+  `[data-tab-panel="podborki"]` рендерится с атрибутом `hidden`. Клик по табу
+  (`.click({force:true})`) снимает `hidden` (стало `false`) — таб реально
+  переключается, без навигации. URL не меняется.
+- Чипсы подборок: `.collection-chips .chips-view__row .chip-container`. Дефолтный
+  невыбранный `__view-primary` bg = `rgba(131,102,86,0.12)`, color `rgb(0,0,0)`,
+  imgFilter `none`. Кастомный выбранный чип делается через
+  `__view-custom __selected-custom` + inline `--chip-background-selected-color`/
+  `--chip-selected-color` (НЕ отдельным классом-модификатором цвета).
+- Подтверждено: «Еда» выбран — bg `rgb(201,54,0)` (=#C93600), color `rgb(255,255,255)`,
+  иконка инвертирована в белый (`filter: brightness(0) invert(1)`). «Люди» —
+  обычный невыбранный `__view-primary`. Устойчиво к reload.
+
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
