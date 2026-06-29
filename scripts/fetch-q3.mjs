@@ -190,6 +190,7 @@ const isGroupId = id => /^group-/.test(String(id));
 const personName = id => PEOPLE[String(id)]?.name || '';
 const personPhoto = id => PEOPLE[String(id)]?.photo || '';
 const personGender = id => PEOPLE[String(id)]?.gender || '';   // 'м' | 'ж' | ''
+const personVerified = id => !!PEOPLE[String(id)]?.verified;   // verified-бейдж (напр. odkl)
 const splitIds = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
 
 /* Подстановка имени: токен «<id>_name» в заголовках/текстах → имя человека из
@@ -688,6 +689,45 @@ function attachComments(card, p) {
   return `${card.slice(0, i)}${block}\n        ${card.slice(i)}`;
 }
 
+/* Внутренности карточки-годовщины (feed-birthday): деко-шапка, два аватара Ø120,
+ * заголовок/подзаголовок и ряд кнопок. Без внешней обёртки — её надевает вызов:
+ *   • renderPost → <article class="feed-birthday island"> (полная карточка);
+ *   • renderTwitterCard → reshare-card __friendversary (репост от Одноклассников).
+ * title/text — УЖЕ прогнанные через resolveNames+nbsp (как в обоих вызовах).
+ * ids — два друга (без сервисного автора odkl). */
+function birthdayInner(title, text, ids) {
+  const a1 = personPhoto(ids[0]) || 'https://i.pravatar.cc/288?img=49';
+  const a2 = personPhoto(ids[1]) || 'https://i.pravatar.cc/288?img=23';
+  // Получатель подарка — друг (id, отличный от my_profile). Кол-во лет — первое
+  // число из текста («Ровно 3 года назад…»). Прокидываем на страницу подарков:
+  // ?to=<id>&anniv=<лет> → там ряд «аватар + ФИ + разделитель» и заголовок.
+  const giftTo = ids.find(id => id && id !== 'my_profile') || ids[1] || ids[0] || '';
+  const giftYears = (String(text).match(/(\d+)/) || [])[1] || '';
+  const giftHref = 'gifts-catalog.html?to=' + encodeURIComponent(giftTo) +
+    (giftYears ? '&anniv=' + giftYears : '');
+  // Подзаголовок: «Ровно N <год/года/лет> назад вы добавили\n<Имя друга> в друзья
+  // OK». Число/единицу берём из текста листа, имя друга — из автора, перенос перед именем.
+  const annivUnit = (String(text).match(/\d+\s+(год[а-яё]*|лет)/i) || [])[1] || 'года';
+  const annivName = firstName(giftTo) || 'друга';
+  const annivText = `Ровно ${giftYears || '3'} ${annivUnit} назад вы добавили\n${annivName} в друзья OK`;
+  return `          <div class="feed-birthday__deco"></div>
+
+          <div class="feed-birthday__avatars">
+            <div class="avatar __size-120 __type-image __border">${img(a1)}</div>
+            <div class="avatar __size-120 __type-image __border">${img(a2)}</div>
+          </div>
+
+          <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
+          <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
+
+          <div class="actions-bar">
+            <div class="button-wrapper __size-36 __full-width">
+              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
+            </div>
+            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
+          </div>`;
+}
+
 /* ── рендер одного поста ──────────────────────────────────────────────────────
  * opts.authorHeader — необязательная замена authorHeader(id, time, {subscribe}).
  *   Нужна профильному пайплайну (scripts/fetch-profile.mjs): автор поста = хозяин
@@ -1037,39 +1077,10 @@ ${actionsBar(likes, comments, reshares)}
 
     /* ── Годовщина дружбы — спец-класс feed-birthday ── */
     case 'friendversary': {
-      const a1 = personPhoto(ids[0]) || 'https://i.pravatar.cc/288?img=49';
-      const a2 = personPhoto(ids[1]) || 'https://i.pravatar.cc/288?img=23';
-      // Получатель подарка — друг (id, отличный от my_profile). Кол-во лет —
-      // первое число из текста («Ровно 3 года назад…»). Прокидываем на
-      // страницу подарков: ?to=<id>&anniv=<лет> → там показывается ряд
-      // «аватар + ФИ + разделитель» и заголовок «N года дружбы».
-      const giftTo = ids.find(id => id && id !== 'my_profile') || ids[1] || ids[0] || '';
-      const giftYears = (String(text).match(/(\d+)/) || [])[1] || '';
-      const giftHref = 'gifts-catalog.html?to=' + encodeURIComponent(giftTo) +
-        (giftYears ? '&anniv=' + giftYears : '');
-      // Подзаголовок: «Ровно N <год/года/лет> назад вы добавили\n<Имя друга> в
-      // друзья OK». Число и грамматику единицы берём из текста листа (там уже
-      // «3 года»), имя друга — из автора, принудительный перенос перед именем.
-      const annivUnit = (String(text).match(/\d+\s+(год[а-яё]*|лет)/i) || [])[1] || 'года';
-      const annivName = firstName(giftTo) || 'друга';
-      const annivText = `Ровно ${giftYears || '3'} ${annivUnit} назад вы добавили\n${annivName} в друзья OK`;
+      // Полная карточка (Q3-лента, не-tw). В Activity-табе «Друзья» этот тип
+      // рисуется твиттер-рядом как репост от Одноклассников — см. renderTwitterCard.
       return `        <article class="feed-birthday island">
-          <div class="feed-birthday__deco"></div>
-
-          <div class="feed-birthday__avatars">
-            <div class="avatar __size-120 __type-image __border">${img(a1)}</div>
-            <div class="avatar __size-120 __type-image __border">${img(a2)}</div>
-          </div>
-
-          <div class="ds-title-l feed-birthday__title">${annivProse(title)}</div>
-          <div class="ds-body-m feed-birthday__text">${annivProse(annivText)}</div>
-
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36 __full-width">
-              <button class="button-container __style-primary" data-href="${giftHref}"><span class="button-content">Поздравить друга</span></button>
-            </div>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><span class="icon __size-20 __src feed-birthday__icon-more"></span></span></button></div>
-          </div>
+${birthdayInner(title, text, ids)}
         </article>`;
     }
 
@@ -1354,8 +1365,11 @@ const postInTab = (p, tab) =>
   normTab(p.tab) === normTab(tab.label) || normTab(p.tab) === tab.id;
 
 /* Типы, которые даже в «твиттер-табе» рендерятся полной q3-карточкой, а не
-   компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). */
-const FULL_CARD_TYPES = new Set(['friendversary']);
+   компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). Сейчас
+   пусто: friendversary раньше был исключением, теперь в tw-табе показывается
+   твиттер-рядом — праздничная карточка завёрнута в reshare-card, пост от
+   Одноклассников (см. renderTwitterCard). */
+const FULL_CARD_TYPES = new Set();
 
 function tabStrip(activeId) {
   const btns = ACTIVITY_TABS.map(t =>
@@ -1381,6 +1395,39 @@ function renderTwitterCard(p, idx) {
   const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
   const crumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
   const crumbsBlock = crumbs ? '\n' + crumbs : '';
+
+  // Годовщина дружбы: пост от сервиса (Одноклассники), а сама праздничная карточка
+  // завёрнута в reshare-card (__friendversary). Автор поста — odkl (verified);
+  // два друга карточки — остальные id (без odkl). Если odkl в авторах нет (старые
+  // данные) — фолбэк: автор = первый id, оба id идут в карточку.
+  if (type === 'friendversary') {
+    const POST_AUTHOR = 'odkl';
+    const hasOdkl = ids.includes(POST_AUTHOR);
+    const authorId = hasOdkl ? POST_AUTHOR : ids[0];
+    const friendIds = hasOdkl ? ids.filter(x => x !== POST_AUTHOR) : ids;
+    const badge = personVerified(authorId) ? ('\n                  ' + VERIFIED_SVG) : '';
+    // Сервисный пост: в шапке только имя+бейдж (без времени), и НЕ показываем
+    // твиттер-actions (comment/reshare/класс) — у карточки свой CTA «Поздравить».
+    return `        <article class="caf __twitter-like island">${activityBlock}${crumbsBlock}
+          <div class="caf__stack">
+            <div class="caf__row">
+              <div class="caf__aside">
+                <div class="avatar __size-44 __type-image">${img(personPhoto(authorId))}</div>
+              </div>
+              <div class="caf__content">
+                <div class="caf__head">
+                  <span class="ds-title-s caf__name">${esc(personName(authorId))}</span>${badge}
+                </div>
+                <div class="text-feed__reshare-card __friendversary">
+                  <div class="feed-birthday island">
+${birthdayInner(title, text, friendIds)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>`;
+  }
 
   let inner = '';
   if (type === 'gift-received' || type === 'ai-gift-received') {
