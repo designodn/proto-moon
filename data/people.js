@@ -122,6 +122,28 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": 12,
+    "name": "Валентина Крижановская",
+    "subtitle": "",
+    "photo": "assets/people/12.webp",
+    "media": "image",
+    "gender": "ж",
+    "age": null,
+    "city": "Пос. Куйтун",
+    "bio": ""
+  },
+  {
+    "id": 13,
+    "name": "Татьяна докунихина",
+    "subtitle": "",
+    "photo": "assets/people/13.webp",
+    "media": "image",
+    "gender": "ж",
+    "age": null,
+    "city": "Луза",
+    "bio": ""
+  },
+  {
     "id": "my_profile",
     "name": "Анфиса Тимирбаева (Абдуллина)",
     "subtitle": "",
@@ -196,7 +218,8 @@ window.DS_PEOPLE_DATA = [
     "gender": "",
     "age": null,
     "city": "",
-    "bio": ""
+    "bio": "",
+    "verified": true
   },
   {
     "id": "group-3",

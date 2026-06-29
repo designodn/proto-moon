@@ -30,7 +30,7 @@
       "threadComments": []
     },
     {
-      "id": "post-4",
+      "id": "row-2",
       "type": "ad",
       "author": "ad-1",
       "tab": "Друзья",
@@ -55,7 +55,7 @@
       "threadComments": []
     },
     {
-      "id": "post-3",
+      "id": "row-3",
       "type": "text",
       "author": "1",
       "tab": "Друзья",
@@ -85,7 +85,7 @@
       ]
     },
     {
-      "id": "post-18",
+      "id": "row-4",
       "type": "friendversary",
       "author": "my_profile, 1, odkl",
       "tab": "Друзья",
@@ -166,36 +166,6 @@
     },
     {
       "id": "row-7",
-      "type": "gift-received",
-      "author": "7, 4",
-      "tab": "Подарки",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Получила подарок на День сельскохозяйственных строителей от",
-      "photos": [
-        "assets/activity/845a69411aaf25c1.gif"
-      ],
-      "photosRaw": [
-        "assets/activity/845a69411aaf25c1.gif"
-      ],
-      "likes": "7",
-      "comments": "2",
-      "reshares": "1",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "11",
-          "text": "клас"
-        }
-      ]
-    },
-    {
-      "id": "row-8",
       "type": "photo",
       "author": "5",
       "tab": "Друзья",
@@ -211,6 +181,31 @@
         "assets/activity/77ce8ae020d69a75.webp"
       ],
       "likes": "9",
+      "comments": "",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": []
+    },
+    {
+      "id": "row-8",
+      "type": "ad",
+      "author": "ad-2",
+      "tab": "Друзья",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Все в наличии и под заказ из Японии",
+      "photos": [
+        "assets/activity/4457d9ef486f1cbb.webp"
+      ],
+      "photosRaw": [
+        "assets/activity/4457d9ef486f1cbb.webp"
+      ],
+      "likes": "",
       "comments": "",
       "reshares": "",
       "link": "",
@@ -315,31 +310,6 @@
     },
     {
       "id": "row-12",
-      "type": "ad",
-      "author": "ad-2",
-      "tab": "",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Все в наличии и под заказ из Японии",
-      "photos": [
-        "assets/activity/4457d9ef486f1cbb.webp"
-      ],
-      "photosRaw": [
-        "assets/activity/4457d9ef486f1cbb.webp"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
-      "id": "row-13",
       "type": "photo",
       "author": "8",
       "tab": "Друзья",
@@ -367,6 +337,31 @@
           "text": "ну красавицы!!!!!"
         }
       ]
+    },
+    {
+      "id": "row-13",
+      "type": "ad",
+      "author": "ad-4",
+      "tab": "Друзья",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "",
+      "text": "Радуйте любимых каждый день. Цветы по оптовым ценам. Тюльпаны из Нидерландов и розы из Африки",
+      "photos": [
+        "assets/activity/caa40c327cfa1f6e.webp"
+      ],
+      "photosRaw": [
+        "assets/activity/caa40c327cfa1f6e.webp"
+      ],
+      "likes": "",
+      "comments": "",
+      "reshares": "",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": []
     },
     {
       "id": "post-5",
@@ -399,50 +394,25 @@
       ]
     },
     {
-      "id": "row-15",
-      "type": "ad",
-      "author": "ad-4",
-      "tab": "",
-      "tema": "",
-      "rubrika": "",
-      "header": "",
-      "title": "",
-      "text": "Радуйте любимых каждый день. Цветы по оптовым ценам. Тюльпаны из Нидерландов и розы из Африки",
-      "photos": [
-        "assets/activity/caa40c327cfa1f6e.webp"
-      ],
-      "photosRaw": [
-        "assets/activity/caa40c327cfa1f6e.webp"
-      ],
-      "likes": "",
-      "comments": "",
-      "reshares": "",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": []
-    },
-    {
       "id": "post-13",
       "type": "reshare-post",
-      "author": "4",
+      "author": "4, 2",
       "tab": "Друзья",
       "tema": "",
       "rubrika": "",
       "header": "id_10 поставил класс",
-      "title": "",
+      "title": "хороша рыбалка!",
       "text": "6 месяцев назад с Андреем открыли зимний сезон, поймал судака на 5кг, ура товарищи!",
       "photos": [
-        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
-        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "assets/activity/417e876ba104e4f0.webp",
+        "assets/activity/a1dffaea7ad9d6be.webp",
         "assets/activity/4a513dfb646ef8db.webp",
         "assets/activity/ec3b3adb742f239c.webp",
         "assets/activity/5c4cbd36abfc7992.webp"
       ],
       "photosRaw": [
-        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1ItWli6YpI5F0RnPj_Qb0Hcyn_GOBXcY_f_9ERpzOqD3dor9h8VoONsyBzZcq-YpAi8HCF7ADTNZxO8mLRJBvuLpdt4dmRV0Tc6oTKvXUwAAAAp&dpr=2",
-        "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1LPVn5JqjqZdrHH4BndAmtiAzO_9R_MCuzQKLKORkY1pbwm__3mOJVmod_wb2lEp-WhaLvk79Hg5r_OUtUvrcabIkmq1qlpsXQUi1P4iVIAAAAp&dpr=2",
+        "assets/activity/417e876ba104e4f0.webp",
+        "assets/activity/a1dffaea7ad9d6be.webp",
         "assets/activity/4a513dfb646ef8db.webp",
         "assets/activity/ec3b3adb742f239c.webp",
         "assets/activity/5c4cbd36abfc7992.webp"
@@ -466,7 +436,41 @@
       ]
     },
     {
-      "id": "post-14",
+      "id": "row-16",
+      "type": "video",
+      "author": "group-9",
+      "tab": "Друзья",
+      "tema": "Еда",
+      "rubrika": "Рецепты",
+      "header": "id_5 поставил класс",
+      "title": "Рыба под маринадом с пюре",
+      "text": "1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить лук пару минут, далее добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре",
+      "photos": [
+        "assets/activity/8c7d14db754e54db.webp"
+      ],
+      "photosRaw": [
+        "assets/activity/8c7d14db754e54db.webp"
+      ],
+      "likes": "67",
+      "comments": "44",
+      "reshares": "2",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "vvz-1",
+          "text": "Очень вкусно и просто. Спасибо за рецепт."
+        },
+        {
+          "authorId": "2",
+          "text": "Замечательное блюдо! И полезное."
+        }
+      ]
+    },
+    {
+      "id": "row-17",
       "type": "memories-clip",
       "author": "my_profile",
       "tab": "",
@@ -477,17 +481,17 @@
       "text": "Лето 2026",
       "photos": [
         "assets/activity/8b2afb0d18b04f59.webp",
-        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kp4OGSbU3GN5vSxk4gOctp5N74-dvELrQD90VMWB215tv2BmFLgIIXI_bK8MTAFsNh68C-R1ov-XNxYMkCfLg-JGOUuZuSQU4LOE-AvQMAAAAp&dpr=2",
+        "assets/activity/43f14323858047c9.webp",
         "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jln2G3pjQWoWpm_sdZIQTuNLzajpFoBUlFMesNVN97WjFm9P2j7K0v5VTeiJvOCxqmd9opyn_PdaZPLpYjsoNPqa6cZ2Re__-0Bp29-NwAAAAp&dpr=2",
         "assets/activity/c1610cd360100e32.webp",
-        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IhQusVNDsLk747Uw82bPclyPRJ30hpQHAXX0on6hpczvRduO2RMf4f_hk4ZWMgdRsqjE9InlGPSAxMzSGMJShhMYfR7Zv7DGQCbJ3ac2oAAAAp&dpr=2"
+        "assets/activity/8f3a1c8f117fc3a8.webp"
       ],
       "photosRaw": [
         "assets/activity/8b2afb0d18b04f59.webp",
-        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Kp4OGSbU3GN5vSxk4gOctp5N74-dvELrQD90VMWB215tv2BmFLgIIXI_bK8MTAFsNh68C-R1ov-XNxYMkCfLg-JGOUuZuSQU4LOE-AvQMAAAAp&dpr=2",
+        "assets/activity/43f14323858047c9.webp",
         "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Jln2G3pjQWoWpm_sdZIQTuNLzajpFoBUlFMesNVN97WjFm9P2j7K0v5VTeiJvOCxqmd9opyn_PdaZPLpYjsoNPqa6cZ2Re__-0Bp29-NwAAAAp&dpr=2",
         "assets/activity/c1610cd360100e32.webp",
-        "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1IhQusVNDsLk747Uw82bPclyPRJ30hpQHAXX0on6hpczvRduO2RMf4f_hk4ZWMgdRsqjE9InlGPSAxMzSGMJShhMYfR7Zv7DGQCbJ3ac2oAAAAp&dpr=2"
+        "assets/activity/8f3a1c8f117fc3a8.webp"
       ],
       "likes": "",
       "comments": "",
@@ -534,35 +538,31 @@
     },
     {
       "id": "row-19",
-      "type": "video",
-      "author": "group-9",
-      "tab": "Друзья",
-      "tema": "Еда",
-      "rubrika": "Рецепты",
-      "header": "id_5 поставил класс",
-      "title": "Рыба под маринадом с пюре",
-      "text": "1 Нарезать лук полукольцами, морковь натереть на крупной терке 2 В крупной кастрюле разогреть немного растительного масла, обжарить лук пару минут, далее добавить морковь, жарить на среднем огне 5 минут 3 Добавить томатную пасту, перемешать, чуть прогреть вместе с овощами 4 Влить воду, всыпать сахар и соль, влить яблочный уксус, довести до кипения 5 Рыбное филе (можно не размораживать) уложить в форму одним слоем 6 Рыба должна быть покрыта маринадом, накрыть крышкой и тушить 15 минут 7 Подавать рыбу под маринадом с картофельным пюре",
+      "type": "ai-gift-received",
+      "author": "7, 2",
+      "tab": "Подарки",
+      "tema": "",
+      "rubrika": "",
+      "header": "",
+      "title": "Получила подарок от",
+      "text": "",
       "photos": [
-        "assets/activity/8c7d14db754e54db.webp"
+        "assets/activity/f819c8cfa6ee513f.webp"
       ],
       "photosRaw": [
-        "assets/activity/8c7d14db754e54db.webp"
+        "assets/activity/f819c8cfa6ee513f.webp"
       ],
-      "likes": "67",
-      "comments": "44",
-      "reshares": "2",
+      "likes": "7",
+      "comments": "2",
+      "reshares": "1",
       "link": "",
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
       "threadComments": [
         {
-          "authorId": "vvz-1",
-          "text": "Очень вкусно и просто. Спасибо за рецепт."
-        },
-        {
-          "authorId": "2",
-          "text": "Замечательное блюдо! И полезное."
+          "authorId": "10",
+          "text": "вауууу"
         }
       ]
     },
@@ -593,19 +593,19 @@
     },
     {
       "id": "row-21",
-      "type": "ai-gift-received",
-      "author": "7, 2",
+      "type": "gift-received",
+      "author": "7, 4",
       "tab": "Подарки",
       "tema": "",
       "rubrika": "",
       "header": "",
-      "title": "Получила подарок от",
-      "text": "",
+      "title": "",
+      "text": "Получила подарок на День сельскохозяйственных строителей от",
       "photos": [
-        "assets/activity/f819c8cfa6ee513f.webp"
+        "assets/activity/845a69411aaf25c1.gif"
       ],
       "photosRaw": [
-        "assets/activity/f819c8cfa6ee513f.webp"
+        "assets/activity/845a69411aaf25c1.gif"
       ],
       "likes": "7",
       "comments": "2",
@@ -616,38 +616,8 @@
       "desc": "",
       "threadComments": [
         {
-          "authorId": "10",
-          "text": "вауууу"
-        }
-      ]
-    },
-    {
-      "id": "row-22",
-      "type": "photo",
-      "author": "group-11",
-      "tab": "",
-      "tema": "Политика",
-      "rubrika": "Общество",
-      "header": "id_5 поставил класс",
-      "title": "Из Москвы скоро побегут",
-      "text": "Москва начала уезжать. Без оркестров и прощальных речей. Люди уходят и больше не возвращаются жить в этот дорогой аттракцион. Не верите? Давайте посморим на Москву через 100 лет",
-      "photos": [
-        "assets/activity/2a3837f755ea6bcb.webp"
-      ],
-      "photosRaw": [
-        "assets/activity/2a3837f755ea6bcb.webp"
-      ],
-      "likes": "123",
-      "comments": "76",
-      "reshares": "45",
-      "link": "",
-      "marathon": "",
-      "marathonJoined": "",
-      "desc": "",
-      "threadComments": [
-        {
-          "authorId": "3",
-          "text": "Посмотрите во что превратилась столица автомобиле строения Дейтрот в Америке, то же самое ждёт и Москву если не прекратится бессистемное наполнение толпами"
+          "authorId": "11",
+          "text": "клас"
         }
       ]
     },
@@ -675,6 +645,36 @@
       "marathonJoined": "",
       "desc": "",
       "threadComments": []
+    },
+    {
+      "id": "row-23",
+      "type": "photo",
+      "author": "group-11",
+      "tab": "",
+      "tema": "Политика",
+      "rubrika": "Общество",
+      "header": "id_5 поставил класс",
+      "title": "Из Москвы скоро побегут",
+      "text": "Москва начала уезжать. Без оркестров и прощальных речей. Люди уходят и больше не возвращаются жить в этот дорогой аттракцион. Не верите? Давайте посморим на Москву через 100 лет",
+      "photos": [
+        "assets/activity/2a3837f755ea6bcb.webp"
+      ],
+      "photosRaw": [
+        "assets/activity/2a3837f755ea6bcb.webp"
+      ],
+      "likes": "123",
+      "comments": "76",
+      "reshares": "45",
+      "link": "",
+      "marathon": "",
+      "marathonJoined": "",
+      "desc": "",
+      "threadComments": [
+        {
+          "authorId": "3",
+          "text": "Посмотрите во что превратилась столица автомобиле строения Дейтрот в Америке, то же самое ждёт и Москву если не прекратится бессистемное наполнение толпами"
+        }
+      ]
     },
     {
       "id": "post-7",
@@ -995,7 +995,7 @@
     {
       "id": "row-34",
       "type": "comment-as-feed",
-      "author": "group-zenit, 2",
+      "author": "2, group-zenit",
       "tab": "Локальное",
       "tema": "Санкт-Петербург",
       "rubrika": "Спорт",
@@ -1028,13 +1028,13 @@
     },
     {
       "id": "row-35",
-      "type": "comment-as-feed",
+      "type": "photo",
       "author": "group-spb-news",
       "tab": "Локальное",
       "tema": "Санкт-Петербург",
       "rubrika": "Новости",
       "header": "",
-      "title": "Обратно цены думаю уже не снизят",
+      "title": "",
       "text": "",
       "photos": [
         "assets/activity/e3905a80f0eec975.webp"
