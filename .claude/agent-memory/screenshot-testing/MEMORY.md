@@ -224,3 +224,14 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
   `el.click()` через `page.evaluate` — `locator.click({force})` всё равно ждёт
   attached/visible и таймаутит, если страница на самом деле на редиректе.
+
+### tribune.html — кастомный «выбранный» чипс (2026-06-29)
+- Чипсы Трибуны — `.ll-chips .chips-view__row .chip-container`. Выбранный делается
+  кастомом: `__view-custom __selected-custom` + inline-style CSS-перем:
+  `--chip-background-selected-color: #C93600; --chip-selected-color:#fff`.
+  Computed (live, mobile 390): bg=rgb(201,54,0)=#C93600, color=rgb(255,255,255). OK.
+- Невыбранные `__view-primary`: bg=rgba(131,102,86,0.12), color rgb(0,0,0).
+- Иконка выбранного чипса белая через inline `filter: brightness(0) invert(1)` на
+  `<img.ll-icon>` (SVG не имеет своего currentColor → красят фильтром). Это норма.
+- Статическая разметка → переживает reload/fresh goto без изменений (нет JS-гейта,
+  нет sessionStorage). Подтверждено reload: bg/color/sel идентичны.
