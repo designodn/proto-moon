@@ -121,6 +121,16 @@ const avatarOnline = id => `<div class="avatar __size-44 __type-image __has-addo
 const pageUrl = (u) => (typeof u === 'string' && u.startsWith('assets/')) ? '../' + u : u;
 const pageImages = (s) => s.split(',').map(x => x.trim()).filter(Boolean).map(pageUrl).join(', ');
 
+// Статичные авы рубрик для section-ячеек, когда «изображение» в листе пусто:
+// сопоставляем по ключевому слову текста. Файлы лежат в assets/sections/ (вне
+// медиа-кэша around-you), поэтому реген их не пруниит.
+const SECTION_AVATARS = [
+  [/заготовк/i, 'assets/sections/zagotovki.png'],  // ВАЖНО: раньше /готов/, иначе «заГОТОВки» съест Готовку
+  [/готов/i,    'assets/sections/gotovka.png'],
+  [/рыбалк/i,   'assets/sections/rybalka.png'],
+];
+const sectionAvatar = (text) => (SECTION_AVATARS.find(([re]) => re.test(text || '')) || [, ''])[1];
+
 function leadFor(a) {
   switch (a.lead) {
     case 'person':
@@ -131,10 +141,12 @@ function leadFor(a) {
                 ${ids.map(id => avatarImg(id, 24)).join('\n                ')}
               </div>`;
     }
-    case 'section':
-      return a.image
-        ? `<div class="avatar __size-44 __type-image"><img src="${esc(a.image)}" alt=""></div>`
+    case 'section': {
+      const sImg = a.image || pageUrl(sectionAvatar(a.text));
+      return sImg
+        ? `<div class="avatar __size-44 __type-image"><img src="${esc(sImg)}" alt=""></div>`
         : `<div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">${esc(a.who || '👥')}</div>`;
+    }
     case 'photo':
       return `<div class="picture __size-44 __type-image"><img src="${esc(a.image)}" alt=""></div>`;
     case 'photo-pair': {
@@ -184,7 +196,7 @@ function galleryTitle(lead, raw) {
 function tileBadge(kind, n) {
   return kind === 'live'
     ? `<span class="tag __style-live __size-20 au-tile__badge __pos-tl"><span class="icon __size-16 __slot-music-radio"></span>${n}</span>`
-    : `<span class="tag __style-primary __size-20 au-tile__badge __pos-bl"><span class="icon __size-16 __slot-klass-outline"></span>${n}</span>`;
+    : `<span class="tag __style-primary __size-20 au-tile__badge __pos-br"><span class="icon __size-16 __slot-klass-outline"></span>${n}</span>`;
 }
 
 /** Галерея эфиров (kind='live') / клипов (kind='clip') — портлет со скроллом плиток. */
@@ -207,14 +219,13 @@ ${row}
         </section>`;
 }
 
-/** Компактная ячейка «N в эфире» — live-превью 90×60 + 2 строки + «Смотреть». */
+/** Компактная ячейка «в эфире» — live-превью 90×60 + ТОЛЬКО имя + «Смотреть».
+ *  Число зрителей берём из текста листа («…34 смотрят») и кладём в бейдж на
+ *  превью, а не в подпись (по запросу: в строке пишем только имя). */
 function renderTrans(a) {
   const name = nameOf(a.who);
-  const t = renderText(a.text, genderOf(a.who));        // «в эфире 34 смотрят»
-  const m = t.match(/^(.*?)(\d.*)$/);                    // делим по первому числу
-  const line1 = `<b>${esc(name)}</b> ${m ? m[1].trim() : t}`.trim();
-  const line2 = m ? m[2].trim() : '';
-  const viewers = (line2.match(/\d+/) || [String(seededCount(a.who + 'trans'))])[0];
+  const t = renderText(a.text, genderOf(a.who));        // «в эфире 34 смотрят» — источник числа зрителей
+  const viewers = (t.match(/\d+/) || [String(seededCount(a.who + 'trans'))])[0];
   return `        <div class="uni-cell-wrapper __type-activity">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
@@ -223,7 +234,7 @@ function renderTrans(a) {
                 <img class="au-trans__img" data-person-avatar="${esc(a.who)}" alt="">
                 <span class="tag __style-live __size-20 au-trans__badge"><span class="icon __size-16 __slot-music-radio"></span>${viewers}</span>
               </div>
-              <div class="uni-cell-additional-content ds-body-m">${line1}<br><span class="au-trans__sub">${esc(line2)}</span></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>${esc(name)}</b></div>
               ${cellButton(a.button || 'Смотреть')}
             </div>
           </div>

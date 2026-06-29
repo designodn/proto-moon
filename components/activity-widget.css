@@ -530,7 +530,7 @@
 .au-tile__badge,
 .au-trans__badge { position: absolute; z-index: 2; }
 .au-tile__badge.__pos-tl { top: var(--space-1); left: var(--space-1); }
-.au-tile__badge.__pos-bl { bottom: var(--space-1); left: var(--space-1); }
+.au-tile__badge.__pos-br { bottom: var(--space-1); right: var(--space-1); }
 
 /* Красная live-пилюля (зрители эфира) — вариант DS-тега через токен статуса. */
 .tag.__style-live {
@@ -567,4 +567,3 @@
   object-fit: cover;
 }
 .au-trans__badge { top: var(--space-1); left: var(--space-1); }
-.au-trans__sub { color: var(--dynamic-text-and-icons-base-secondary); }

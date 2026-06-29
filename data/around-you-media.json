@@ -5,7 +5,7 @@
     "type": "image",
     "hash": "254faffa76a48214730caec3dc4cafcf11236123023e1cae49acbcd2af0befe8",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "0a7a921f21654125": {
     "src": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/10/38/dc/3b/na-vina.jpg?w=500&h=500&s=1",
@@ -13,7 +13,7 @@
     "type": "image",
     "hash": "43c8858840a4c8167d262c775950c3d363415dd007552a874775d6c4434c452f",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "2e9e99a78f9f53bb": {
     "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Nevsky_Prospekt_20240912_114912_MP.jpg/330px-Nevsky_Prospekt_20240912_114912_MP.jpg",
@@ -21,7 +21,7 @@
     "type": "image",
     "hash": "b0cf650cb26419594b9d1024817cf964308037066f67aa8da015b2603ed78d0e",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "30ea6ae6a68667df": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L8OexlrbVSsmNNWc72XeOn_Opeei0ASKn0y2biS-J7yzOKtXZsVy_k7ttqaJJjmYzxo62sj4527VBcuje0WDXvJ2U9fbuCzA-spbdIsD0AAAAp&dpr=2",
@@ -29,15 +29,7 @@
     "type": "image",
     "hash": "b28df77bda7b166375a9f42f2294e480ebfcfd7147332f1bdbf1f7f38258cfbf",
     "status": "stale",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
-  },
-  "dfe6688cb5c919a6": {
-    "src": "https://design-homes.ru/images/galery/2335/krasivye-dachi-prostykh-lyudej_5f1d331262197.jpg",
-    "file": "dfe6688cb5c919a6.jpg",
-    "type": "image",
-    "hash": "876824890a5365154db95d4c453ce54337246157f3fff391be6096ff25c37cb2",
-    "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "88a5b2f4e918b021": {
     "src": "https://konturland.ru/img/land-diz/1585766833Wx7eYzgaSa.webp",
@@ -45,7 +37,15 @@
     "type": "image",
     "hash": "465fdc507fb0d608fec09163d684797c5b3d18b9d58573ca9e9159533f6bfba8",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
+  },
+  "dfe6688cb5c919a6": {
+    "src": "https://design-homes.ru/images/galery/2335/krasivye-dachi-prostykh-lyudej_5f1d331262197.jpg",
+    "file": "dfe6688cb5c919a6.jpg",
+    "type": "image",
+    "hash": "876824890a5365154db95d4c453ce54337246157f3fff391be6096ff25c37cb2",
+    "status": "ok",
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "c5cd82677532277d": {
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs4Ooj7ELbjH7BA0Y8fP1mOAyHPEFc1zuQaYR1wx2ezrZKe5xwpg4yYyYk&s=10",
@@ -53,7 +53,7 @@
     "type": "image",
     "hash": "5375a6beffb0b83d706c1ebfcbcc225d812d7be59c58c1d42ff5a9af672cdcc6",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "a213a197af092031": {
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzSx6UQaiAsHmfVSwYfW9rBW-FDCLnuJ9MQ5zLuhizkwnF1ROKRH6nEBCY&s=10",
@@ -61,7 +61,7 @@
     "type": "image",
     "hash": "73aaf5f079c53d3f3e5796e4346a24559c992a8b08df05b3134a605736b5ef87",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   },
   "d836a182f8ec57cd": {
     "src": "https://ibirzha.kz/wp-content/uploads/2024/04/image3.jpg",
@@ -69,6 +69,6 @@
     "type": "image",
     "hash": "1dcb5770796b8a401bd8e205ec59b22aa1be3b70c7f11db6dd741e04120353de",
     "status": "ok",
-    "checkedAt": "2026-06-29T14:26:15.802Z"
+    "checkedAt": "2026-06-29T14:42:48.349Z"
   }
 }
