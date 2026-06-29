@@ -28,6 +28,7 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 > файла И признак точный.**
 
 - twitter-карта НЕ должна иметь одновременно крошки и activity-строку → признак: `article.caf.__twitter-like` содержит И `.breadcrumbs/.caf__crumbs` И `> .text-feed__activity` → FAIL → hits:1 (файлы: activity-lenta/lenta.html). «Шапка важнее крошек»: ровно одно из двух. Ловится grep'ом/селектором по диффу.
+- CSS-маска с относительным `url()` в external stylesheet → признак: `mask`/`-webkit-mask`/`background`/`mask-image` со значением `url(assets/...)` (относительный путь БЕЗ ведущего `/` или `../`) внутри файла в `components/*.css`, либо через inline `--var: url(assets/...)`, который потребляется `mask:` в `components/*.css` → severity WARN → hits:1 (файлы: components/today-widgets.css). Причина: относительный url в CSS резолвится от расположения СТИЛЯ (`/components/`), а не от HTML → реальный путь `components/assets/...` = 404, маска пустая, иконка невидима. Фикс: `url(../assets/...)` или абсолютный `/assets/...`.
 
 ---
 
@@ -72,6 +73,29 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   3px. Несмотря на `overflow:hidden` карты, ринг не клипается: правый край авы =
   card.right−16, ринг +3px → до card.right−13, с запасом внутри. Устойчиво к reload
   (размер/boxShadow/классы совпали до и после).
+
+### today.html — виджет «Луна» (`.tg-card--moon`): невидимые белые глифы
+- Карточки погода/луна/гороскоп в `section.tg-island:has(.tg-cards)`. Луна = две
+  строки `.tg-card__moon-row`: слева сквиркл `.tg-card__moon-ic` 44×44 (`.__indigo`
+  bg rgb(139,141,212) / `.__jungle` bg rgb(100,164,149)), внутри `.tg-card__moon-glyph`
+  24×24 — это CSS-МАСКА (`mask: var(--glyph) ... ; background-color: currentColor`,
+  color наследуется белым). `--glyph` задаётся inline: `--glyph: url(assets/icons/cut_24.svg)`.
+- БАГ (наблюдён, ПОЧИНЕН): сквирклы видны, белой иконки внутри НЕТ. Причина —
+  относительный url маски резолвится от стиля `components/today-widgets.css`, поэтому
+  computed `maskImage = .../components/assets/icons/cut_24.svg` → HTTP 404 (root
+  `assets/icons/cut_24.svg` = 200, но к нему путь не ведёт). Пустая маска = прозрачно.
+  Подтверждено: `new Image().src=maskURL` → onerror 404 изнутри страницы.
+- ФИКС (подтверждён hard-reload): inline `--glyph` заменён на классы в
+  `today-widgets.css`: `.tg-card__moon-glyph.__cut{--glyph:url(../assets/icons/cut_24.svg)}`
+  / `.__flower{url(../assets/icons/flower_24.svg)}`, HTML-спаны `__cut`/`__flower`.
+  Теперь computed maskImage = `/assets/icons/cut_24.svg` (и flower), Image LOADED w=24,
+  HTTP 200, белые ножницы/цветок видны. `../` относительно стиля в `/components/`
+  корректно даёт корень репо.
+- horo-карточка (`.tg-card--horo` «Козерог»): иллюстрации СЛЕВА от текста НЕТ по
+  дизайну. Есть только фон `assets/today/horo-back.png` (naturalW 688, complete,
+  object-fit cover, position absolute z-index 0, 374×220, перекрыт текстом сверху —
+  это фон, не «иллюстрация слева»). Т.е. «лунный гороскоп виджет с невидимой
+  иллюстрацией слева» = именно карточка ЛУНА, баг = 404 маски глифа.
 
 ### today.html — скрытие портлета ДР при входе из Q3 (`?from=q3`)
 - В `<head>` `today.html` синхронный скрипт: `?from=q3` → класс `today-from-q3` на
@@ -171,6 +195,29 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - ЛОВУШКА: `locator.screenshot()` карточки в loading таймаутит на «waiting for fonts»
   при pending-картинке. Бери `page.screenshot({clip, animations:'disabled'})` по
   boundingBox.
+
+### activity-lenta/lenta.html — «красный линк» = «Посмотреть все ответы»
+- Скролл-контейнер ленты — НЕ document: `.phone-frame__feed` (scrollHeight≈5268,
+  client 844). `document.documentElement.scrollHeight==844` → скроллить надо
+  `el.scrollTop`, иначе страница «не прокручивается».
+- Единственный КРАСНЫЙ ТЕКСТ на странице: `.fc-more.__twitter-like` «Посмотреть все
+  ответы» — кнопка-ссылка раскрытия ответов под каждым комментом твиттер-вью.
+  computed `color: rgb(228,57,0)` (#E43900 — это resolved `--…status-accent` через
+  button-inline `__view-primary`; токен задан #F64A00, но в light даёт #E43900).
+  Селектор `.fc-list.__twitter-like .fc-more .button-inline` (повторяется ~6×).
+  Это и есть «красный линк» в формулировке пользователя (выглядит как текст-ссылка,
+  не бейдж/кнопка-капсула).
+- `.pulse-dot` рядом с «Вокруг вас сейчас» — красный ДОТ через `background-color`
+  rgb(246,74,0)=#F64A00, а не текст (это не линк). Сам заголовок `a.activity-header`
+  («Вокруг вас сейчас», href=okruzhenie.html) — ЧЁРНЫЙ текст rgb(0,0,0), не красный.
+- Прочий красный: иконка таб-бара `.tabbar-icon.__slot-feed.__state-on` (активная
+  вкладка, цвет тоже #E43900) — не текст/линк.
+- Правка «отключён редирект на add-friends»: скрипт-гейт из `<head>` УДАЛЁН целиком
+  (не закомментирован условием) → ключ `afs-seen-al` больше НЕ ставится никогда.
+  Подтверждено: first load / reload / fresh goto — все остаются на lenta.html,
+  `#ll-stories-row` отсутствует, `afs-seen-al`=null во всех трёх. Т.е. для этого
+  файла прежний совет «выставь afs-seen-al до goto» теперь НЕ нужен (гейта нет).
+- `#ll-stories-row` удалён из разметки (ряд «Моменты» больше не рендерится).
 
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на

@@ -375,6 +375,13 @@
     -webkit-mask: var(--glyph) center / 24px 24px no-repeat;
             mask: var(--glyph) center / 24px 24px no-repeat;
   }
+  /* Конкретные глифы лунного списка. Путь к SVG задаём ЗДЕСЬ (в CSS-файле), а не
+     inline в HTML: url() в custom property резолвится относительно расположения
+     стиля (/components/), поэтому inline `--glyph: url(assets/…)` уходил в
+     /components/assets/… → 404 и маска была пустой. Пишем ../assets/… (как
+     слоты в icon.css). */
+  .tg-card__moon-glyph.__cut    { --glyph: url(../assets/icons/cut_24.svg); }
+  .tg-card__moon-glyph.__flower { --glyph: url(../assets/icons/flower_24.svg); }
 
   /* Гороскоп — radius 16, нижний паддинг 48, заголовок + текст (макс 4 строки). */
   .tg-card--horo {
