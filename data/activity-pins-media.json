@@ -5,7 +5,7 @@
     "type": "image",
     "hash": "31615e1d39d9b6e5ef47b18cb70385c59f6dd61de256225832c0d94ef29ce9ce",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "2b00494e3a21f4df": {
     "src": "https://icdn.lenta.ru/images/2024/04/26/16/20240426163558658/square_1280_7fbf6e4c70df3384680520dacbddd004.jpg",
@@ -13,7 +13,7 @@
     "type": "image",
     "hash": "0a38e5203061d331efb844bee61859636209a208b04442984320586bdf94c844",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "67e999296db7c332": {
     "src": "https://lilycookbook.com/wp-content/uploads/2024/10/%D0%9C%D0%B0%D0%BB%D0%BE%D1%81%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F-%D1%81%D0%BA%D1%83%D0%BC%D0%B1%D1%80%D0%B8%D1%8F.jpg",
@@ -21,7 +21,7 @@
     "type": "image",
     "hash": "d9e2a6dddb73f219178cbcec78816576cf9e3ac4a5ca87c82945aca86267c911",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "4f4a6872bba31427": {
     "src": "https://gotovim-doma.ru/images/recipe/c/98/c985188317e7c040115edbb77f3a9a24_l.jpg",
@@ -29,7 +29,7 @@
     "type": "image",
     "hash": "f1761fe998f517bce4492caf81b14df70148acacc6f23bf0fb99f914f7857e47",
     "status": "stale",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "15cd3d97d5aa5663": {
     "src": "https://www.photorecept.ru/wp-content/uploads/2021/07/malosolnye-ogurcy-v-stekljannoj-banke-864x1300.jpg",
@@ -37,7 +37,7 @@
     "type": "image",
     "hash": "a7aa9cdcd6d3393d1a3c267b666f9dbde7c7974218efa10819e31883a58f13d7",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "48f557b5b4009e5f": {
     "src": "https://s1.eda.ru/StaticContent/Photos/150108085750/150116125825/p_O.jpg",
@@ -45,7 +45,7 @@
     "type": "image",
     "hash": "355cb2dd615b7214afa305f62d965204cec3795825af94e90e530e2f006a2db3",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "967251f508cb7598": {
     "src": "https://ideireceptov.ru/wp-content/uploads/2023/10/domik.jpg",
@@ -53,7 +53,7 @@
     "type": "image",
     "hash": "000e22c12a0a6bb02e96f6dc8a7941752d262c8a244f0cb9d4e4d922f71df581",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   },
   "81c335c6b723c04f": {
     "src": "https://i.ytimg.com/vi/Oo0xcDzDZ08/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLD7aBbxAkcsBtdhGkDgk_Qj1pn2hQ",
@@ -61,6 +61,14 @@
     "type": "image",
     "hash": "08373efd001afc6fb20c0d0bfe816cf9601dd7c40e12bc2a60211dcdbde36b0d",
     "status": "ok",
-    "checkedAt": "2026-06-29T13:55:54.561Z"
+    "checkedAt": "2026-06-29T14:38:29.673Z"
+  },
+  "9aed266de4e72349": {
+    "src": "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_6853c77acf5cbe5a3784ab5b_6a413d79e5ce0a29523e0888/scale_1200",
+    "file": "9aed266de4e72349.webp",
+    "type": "image",
+    "hash": "e6781cc15d41fd9c2a5366b6707203524ec399830dc70d3d389af47468356ea2",
+    "status": "ok",
+    "checkedAt": "2026-06-29T14:38:29.673Z"
   }
 }
