@@ -194,6 +194,26 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   файла прежний совет «выставь afs-seen-al до goto» теперь НЕ нужен (гейта нет).
 - `#ll-stories-row` удалён из разметки (ряд «Моменты» больше не рендерится).
 
+### activity-lenta/okruzhenie.html — ВВЗ-галереи клипов/эфиров + «в эфире» (au-*)
+- НЕ редиректит на онбординг (нет afs-гейта). Скролл-контейнер = `.phone-frame__feed`
+  (как и lenta.html). CSS: `components/activity-widget.css` (au-gallery/au-tile/au-trans).
+- `.au-tile` computed = 120×164 (flex:0 0 120px). `.au-gallery__row` overflow-x:auto,
+  gap 8px. ЛОВУШКА: при 3 плитках в ряду scrollW≈408 vs clientW 390 → горизонт-скролл
+  РАБОТАЕт но всего ~18px (0→18). Заголовок «12 Клипов»/«5 эфиров» — это число-метка,
+  НЕ кол-во плиток (плиток по 3). Не путай: ряд не «обрезан», просто мало контента.
+- Бейджи = DS `.tag`: `__style-primary` (тёмная пилюля rgba(0,0,0,.56), клипы, pos-bl)
+  и `__style-live` (КРАСНАЯ rgb(255,85,85)=static-surface-status-negative, эфиры pos-tl
+  + au-trans). Текст/иконка белые. Кнопки «Все»/«Смотреть» = button-inline h=28.
+- ГРАБЛИ замера иконки-маски в бейдже: глиф рисуется на `el::before`
+  (`.icon[class*=__slot-]::before` в icon.css), НЕ на самом span. `getComputedStyle(el)`
+  даёт maskImage:none / bg transparent (ложно «пусто»!). Мерь `getComputedStyle(el,
+  '::before')` → там mask-image=url(...200) + background-color rgb(255,255,255). Иконки
+  `__slot-klass-outline`/`__slot-music-radio` используют `../assets/...` (корректно,
+  без 404-бага лунной карточки). Картинки плиток = ЛОКАЛЬНЫЕ `assets/around-you/*.jpg`
+  (есть в репе, грузятся). au-trans ава = `data-person-avatar` → people-data.js →
+  `assets/people/N.webp`. Битых нет. Всё переживает reload (titles/120×164/transText/
+  ава-src совпали до и после).
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее

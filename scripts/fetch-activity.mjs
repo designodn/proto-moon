@@ -38,6 +38,11 @@ import { createSyncGate } from './lib/sheet-cache.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Вокруг нас';
+// Тянем по СТАБИЛЬНОМУ gid (как Q3-лента), а не по имени листа: имя могут
+// переименовать, и gviz по ненайденному имени молча отдаёт первый лист. gid
+// переживает переименования и гарантирует, что читаем именно тот таб, где
+// заведены новые ячейки (trans / trans-gallery / clip-gallery).
+const SHEET_GID = '502211906';
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -45,7 +50,7 @@ const ROOT = resolve(__dirname, '..');
 
 const csvUrl =
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
 
 /* ── CSV ──────────────────────────────────────────────────────────────────── */
 function parseCsv(text) {
@@ -77,6 +82,20 @@ const genderOf = id => (PEOPLE[String(id)]?.gender || '').trim();
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const TICKET = '<img class="inline-ticket" src="../assets/koleso/biletik.png" alt="билет">';
 
+/** Стабильный псевдо-рандом 10–80 из строки-сида: одинаков между прогонами,
+ *  чтобы счётчики плиток (зрители/лайки) не «прыгали» в диффе при каждом регене. */
+function seededCount(seed) {
+  let h = 2166136261;
+  const s = String(seed);
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return 10 + (Math.abs(h) % 71);   // 10..80
+}
+
+/** Кнопка-действие справа в ячейке — DS secondary, размер 28 (по макету). */
+function cellButton(label) {
+  return `<div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">${esc(label)}</span></button></div>`;
+}
+
 /** Подставляет иконки/род и **жирный**. gender — 'м'|'ж'|'' (для токена {муж/жен}). */
 function renderText(raw, gender) {
   let t = esc(raw);
@@ -97,7 +116,7 @@ const avatarOnline = id => `<div class="avatar __size-44 __type-image __has-addo
 
 // Кэш кладёт картинки в assets/around-you/… (репо-относительно). На NV-страницах
 // ассеты идут через «../», на activity-lenta (<base href="../">) — без «../»
-// (это делает cellsBase, срезая «../assets/»). Поэтому в рендер отдаём «../»-форму;
+// (это делает pageCellsBase/widgetCellsBase, срезая «../assets/»). Поэтому в рендер отдаём «../»-форму;
 // http-ссылки (живой внешний CDN, если файл не скачался) не трогаем.
 const pageUrl = (u) => (typeof u === 'string' && u.startsWith('assets/')) ? '../' + u : u;
 const pageImages = (s) => s.split(',').map(x => x.trim()).filter(Boolean).map(pageUrl).join(', ');
@@ -139,8 +158,84 @@ const CONFETTI = `        <span class="confetti" aria-hidden="true">
           <i style="--tx:-22px;--ty:0px;background:#2ec4b6"></i>
         </span>`;
 
+/* ── Новые типы для страницы «Вокруг вас» (по тапу на виджет) ────────────────
+   trans-gallery / clip-gallery — портлет: шапка (ава + тайтл + «Все») +
+   горизонтальный ряд плиток 120×164 с бейджем. trans — компактная строка с
+   live-превью 90×60. Рендерятся ТОЛЬКО на полноэкранной странице okruzhenie —
+   в горизонтальный конвейер ленты не попадают (см. widgetCells в main). */
+
+/** Тайтл галереи: ведущая часть — полужирная (ds-title-s 600), хвост — regular.
+ *  clip-gallery: «N Клипов из …»; trans-gallery: «В Городе N эфиров».
+ *  Поддерживает и ручную разметку **жирным** в тексте листа. */
+function galleryTitle(lead, raw) {
+  const t = esc(raw);
+  if (t.includes('**')) return t.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  const wrap = (head, tail) => `${head}<span class="au-gallery__title-tail">${tail}</span>`;
+  if (lead === 'clip-gallery') {
+    const m = t.match(/^(\S+\s+\S+)(.*)$/);          // «12 Клипов» | « из … в топе»
+    return m ? wrap(m[1], m[2]) : t;
+  }
+  const m = t.match(/^(.*?)(\s+\d+\s+\S+)$/);         // «В Санкт-Петербурге» | « 5 эфиров»
+  return m ? wrap(m[1], m[2]) : t;
+}
+
+/** Бейдж плитки: live (красная пилюля, радио-глиф + зрители) или klass
+ *  (тёмная пилюля, палец вверх + лайки). DS-компонент tag + icon. */
+function tileBadge(kind, n) {
+  return kind === 'live'
+    ? `<span class="tag __style-live __size-20 au-tile__badge __pos-tl"><span class="icon __size-16 __slot-music-radio"></span>${n}</span>`
+    : `<span class="tag __style-primary __size-20 au-tile__badge __pos-bl"><span class="icon __size-16 __slot-klass-outline"></span>${n}</span>`;
+}
+
+/** Галерея эфиров (kind='live') / клипов (kind='clip') — портлет со скроллом плиток. */
+function renderGallery(a, kind) {
+  const tiles = (a.image || '').split(',').map(s => s.trim()).filter(Boolean);
+  const ava = tiles[0] || '';
+  const row = tiles.map((u, i) => `              <div class="au-tile">
+                <img class="au-tile__img" src="${esc(u)}" alt="" loading="lazy">
+                ${tileBadge(kind, seededCount(u + i))}
+              </div>`).join('\n');
+  return `        <section class="au-gallery">
+          <header class="au-gallery__header">
+            <div class="picture __size-44 __type-image au-gallery__ava"><img src="${esc(ava)}" alt=""></div>
+            <p class="au-gallery__title ds-title-s">${galleryTitle(a.lead, a.text)}</p>
+            ${cellButton(a.button || 'Все')}
+          </header>
+          <div class="au-gallery__row">
+${row}
+          </div>
+        </section>`;
+}
+
+/** Компактная ячейка «N в эфире» — live-превью 90×60 + 2 строки + «Смотреть». */
+function renderTrans(a) {
+  const name = nameOf(a.who);
+  const t = renderText(a.text, genderOf(a.who));        // «в эфире 34 смотрят»
+  const m = t.match(/^(.*?)(\d.*)$/);                    // делим по первому числу
+  const line1 = `<b>${esc(name)}</b> ${m ? m[1].trim() : t}`.trim();
+  const line2 = m ? m[2].trim() : '';
+  const viewers = (line2.match(/\d+/) || [String(seededCount(a.who + 'trans'))])[0];
+  return `        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="au-trans">
+                <img class="au-trans__bg" data-person-avatar="${esc(a.who)}" alt="">
+                <img class="au-trans__img" data-person-avatar="${esc(a.who)}" alt="">
+                <span class="tag __style-live __size-20 au-trans__badge"><span class="icon __size-16 __slot-music-radio"></span>${viewers}</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">${line1}<br><span class="au-trans__sub">${esc(line2)}</span></div>
+              ${cellButton(a.button || 'Смотреть')}
+            </div>
+          </div>
+        </div>`;
+}
+
 /** Рендер одной activity-ячейки. */
 function renderCell(a) {
+  if (a.lead === 'trans-gallery') return renderGallery(a, 'live');
+  if (a.lead === 'clip-gallery')  return renderGallery(a, 'clip');
+  if (a.lead === 'trans')         return renderTrans(a);
+
   const catClass = a.category ? ` __cat-${a.category}` : '';
   let text;
   if (a.lead === 'person') {
@@ -155,7 +250,7 @@ function renderCell(a) {
             <div class="uni-cell">
               ${leadFor(a)}
               <div class="uni-cell-additional-content ds-body-m">${text}</div>
-              <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">${esc(a.button)}</span></button></div>
+              ${cellButton(a.button)}
             </div>
           </div>${confetti}
         </div>`;
@@ -257,18 +352,26 @@ async function main() {
   // Локальные пути → страничные («../assets/…») для рендера; http-ссылки не трогаем.
   for (const a of acts) if (a.image) a.image = pageImages(a.image);
 
-  const cells = acts.map(renderCell).join('\n');
+  // Два потока ячеек:
+  //  • pageCells — ВСЕ типы (включая галереи эфиров/клипов и trans) → полноэкранная
+  //    страница «Вокруг вас» (okruzhenie), куда ведёт тап по виджету.
+  //  • widgetCells — только классические uni-cell-типы → горизонтальный конвейер
+  //    в ленте. Карусель-портлет в конвейер не кладём (сломает горизонтальный ряд).
+  const NEW_TYPES = new Set(['trans-gallery', 'clip-gallery', 'trans']);
+  const pageCells = acts.map(renderCell).join('\n');
+  const widgetCells = acts.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
   // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
   // от корня, поэтому БЕЗ «../» (иначе ушли бы выше корня). В new-vision/* base
-  // нет → там нужен «../» (cells как есть).
-  const cellsBase = cells.replace(/\.\.\/assets\//g, 'assets/');
+  // нет → там нужен «../» (как есть).
+  const pageCellsBase = pageCells.replace(/\.\.\/assets\//g, 'assets/');
+  const widgetCellsBase = widgetCells.replace(/\.\.\/assets\//g, 'assets/');
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
   spliceFile(
     resolve(ROOT, 'new-vision/okruzhenie.html'),
     '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY:END -->',
-    cells,
+    pageCells,
     '<!-- Спец-ячейка к промо',
     '\n      </div>\n\n    </div>\n\n    <ok-tabbar',
   );
@@ -278,30 +381,30 @@ async function main() {
     resolve(ROOT, 'new-vision/lenta.html'),
     '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY-WIDGET:END -->',
-    cells,
+    widgetCells,
     '          <div class="uni-cell-wrapper __type-activity __cat-win">',
     '\n          </div>\n        </div>\n      </div>',
   );
 
   // Виджет в ленте activity-lenta (q3-стиль, <base href="../">) — конвейер
-  // #activityConveyor. Те же ячейки, но пути без «../» (см. cellsBase). Маркеры
+  // #activityConveyor. Те же ячейки, но пути без «../» (см. pageCellsBase/widgetCellsBase). Маркеры
   // уже стоят в файле; вставка строго между ними.
   spliceFile(
     resolve(ROOT, 'activity-lenta/lenta.html'),
     '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY-WIDGET:END -->',
-    cellsBase,
+    widgetCellsBase,
     '          <div class="uni-cell-wrapper __type-activity __cat-win">',
     '\n          </div>\n        </div>\n      </div>',
   );
 
   // Страница «Вокруг вас» в activity-lenta (q3-стиль, <base href="../">) — список
-  // #activityList. Те же ячейки, пути без «../» (cellsBase). Маркеры уже в файле.
+  // #activityList. Те же ячейки, пути без «../» (pageCellsBase/widgetCellsBase). Маркеры уже в файле.
   spliceFile(
     resolve(ROOT, 'activity-lenta/okruzhenie.html'),
     '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY:END -->',
-    cellsBase,
+    pageCellsBase,
     '<!-- ACTIVITY:START',
     '<!-- ACTIVITY:END -->',
   );
