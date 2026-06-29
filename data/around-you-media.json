@@ -4,16 +4,8 @@
     "file": "30ea6ae6a68667df.webp",
     "type": "image",
     "hash": "b28df77bda7b166375a9f42f2294e480ebfcfd7147332f1bdbf1f7f38258cfbf",
-    "status": "ok",
-    "checkedAt": "2026-06-27T20:17:24.242Z"
-  },
-  "dfe6688cb5c919a6": {
-    "src": "https://design-homes.ru/images/galery/2335/krasivye-dachi-prostykh-lyudej_5f1d331262197.jpg",
-    "file": "dfe6688cb5c919a6.webp",
-    "type": "image",
-    "hash": "876824890a5365154db95d4c453ce54337246157f3fff391be6096ff25c37cb2",
-    "status": "ok",
-    "checkedAt": "2026-06-27T20:17:24.242Z"
+    "status": "stale",
+    "checkedAt": "2026-06-29T01:07:07.496Z"
   },
   "88a5b2f4e918b021": {
     "src": "https://konturland.ru/img/land-diz/1585766833Wx7eYzgaSa.webp",
@@ -21,6 +13,14 @@
     "type": "image",
     "hash": "465fdc507fb0d608fec09163d684797c5b3d18b9d58573ca9e9159533f6bfba8",
     "status": "ok",
-    "checkedAt": "2026-06-27T20:17:24.242Z"
+    "checkedAt": "2026-06-29T01:07:07.496Z"
+  },
+  "dfe6688cb5c919a6": {
+    "src": "https://design-homes.ru/images/galery/2335/krasivye-dachi-prostykh-lyudej_5f1d331262197.jpg",
+    "file": "dfe6688cb5c919a6.webp",
+    "type": "image",
+    "hash": "876824890a5365154db95d4c453ce54337246157f3fff391be6096ff25c37cb2",
+    "status": "ok",
+    "checkedAt": "2026-06-29T01:07:07.496Z"
   }
 }
