@@ -194,6 +194,33 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   файла прежний совет «выставь afs-seen-al до goto» теперь НЕ нужен (гейта нет).
 - `#ll-stories-row` удалён из разметки (ряд «Моменты» больше не рендерится).
 
+### Бейдж верификации (people-data.js, `.ds-verified-row` + `.ds-badge-verified`)
+- Механизм (data-driven, PASS во всех 3 путях). `DS_PEOPLE.apply(document)` оборачивает
+  имя автора в `span.ds-verified-row` и добавляет `img.ds-badge-verified` СПРАВА, если
+  автор verified. Цели селекторов: `.feed-header__name`, `.fc-comment__author`,
+  `.caf__name`.
+- Два пути матча: (1) `[data-person-name]` (New Vision, id-путь) → по id из
+  `DS_PEOPLE.get(id).verified`; (2) без атрибута (Q3/Трибуна/Activity, имя литералом)
+  → по СОВПАДЕНИЮ textContent с verifiedNames из листа «Люди».
+- Verified сообщества (data/people.js): `group-zenit` = «ЗЕНИТ» Санкт-Петербург,
+  `group-spb-news` = Телеканал «Санкт-Петербург». Имя для name-матча должно быть БУКВА
+  В БУКВУ (кавычки-ёлочки «»).
+- Замеры (390×844): `.ds-verified-row` display:flex (inline-flex в CSS), gap=**4px**
+  (=var(--space-1)), бейдж **16×16**, badgeLeft−nameRight = 4px. Имя сохраняет
+  ellipsis: whiteSpace nowrap, overflow hidden, textOverflow ellipsis, и реально
+  усекается (scrollWidth−clientWidth = 67 в NV, 38 в Q3 при длинном имени).
+- src бейджа резолвится относительно каталога скрипта: на корне `assets/badges/...`,
+  в `new-vision/` → `../assets/badges/...` (resolveSrc). Оба → HTTP **200**.
+- ИДЕМПОТЕНТНОСТЬ: повторный `apply()` НЕ дублирует — guard `parent.classList
+  .contains('ds-verified-row')` ранний return. После apply×3 = ровно 1 бейдж.
+- Контроль: неверифицированные авторы бейджа НЕ получают (проверено — «Чемпионат…»
+  в Q3 и «Ольга Стрельникова» в твиттер-ряду без бейджа в том же кадре).
+- twitter-like (`.fc-comment.__twitter-like .fc-comment__author`): после обёртки дата
+  `span.ds-body-m.fc-comment__date` («· 12:48») остаётся СЛЕДУЮЩИМ сиблингом row →
+  порядок имя·бейдж·дата корректный.
+- lenta-q3.html ловит гейт онбординга (`afs-seen`); выставлял ОБА ключа
+  `afs-seen`/`afs-seen-al` через addInitScript до goto — пропускает.
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
