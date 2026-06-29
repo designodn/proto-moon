@@ -11,25 +11,10 @@
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>Activity-лента (light) — прототип</title>
-<!-- При первом заходе в приложение показываем шторку «Добавить друзей»
-     (activity-lenta/add-friends-sheet.html, её крестик возвращает сюда). Гейт
-     по sessionStorage с отдельным ключом afs-seen-al (чтобы не пересекаться с
-     q3-цепочкой). Синхронно в head — до отрисовки ленты. -->
-<script>
-  (function () {
-    try {
-      // Обновление страницы (reload) сбрасывает гейт — шторка показывается снова.
-      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]);
-      var isReload = nav ? nav.type === 'reload'
-                         : (performance.navigation && performance.navigation.type === 1);
-      if (isReload) sessionStorage.removeItem('afs-seen-al');
-      if (!sessionStorage.getItem('afs-seen-al')) {
-        sessionStorage.setItem('afs-seen-al', '1');
-        location.replace('activity-lenta/add-friends-sheet.html');
-      }
-    } catch (e) {}
-  })();
-</script>
+<!-- Шторка «Добавить друзей» при открытии ленты ОТКЛЮЧЕНА (по запросу):
+     больше не редиректим на activity-lenta/add-friends-sheet.html на первом
+     заходе. Сам файл шторки оставлен в папке. -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -487,23 +472,10 @@
         </div>
       </div>
 
-      <!-- МОМЕНТЫ (истории) — вне ленты, между навбаром и фидом.
-           data-stories — сколько сториз у автора (= столько палочек прогресса
-           в viewer'е). data-name — заголовок viewer'а. -->
-      <div class="stories-row" id="ll-stories-row" aria-label="Моменты">
-        <!-- Ваша история (оранжевое кольцо + «+»). Тап по этой аватарке
-             не открывает viewer (data-skip-viewer). Аватары — из people.json
-             (data-person-avatar), резолвит people-data.js. -->
-        <div class="avatar __size-56 __type-image __ring-active __has-addon" data-skip-viewer>
-          <img data-person-avatar="my_profile" alt="Ваша история">
-          <div class="avatar__addon __pos-br stories-row__add">
-            <img src="assets/icons/add_24.svg" width="20" height="20" alt="">
-          </div>
-        </div>
-        <!-- Остальные сториз генерируются из листа «Сториз» (window.DS_STORIES)
-             скриптом ниже и дописываются сюда. По умолчанию все активные
-             (оранжевое кольцо, не просмотрены). -->
-      </div>
+      <!-- МОМЕНТЫ (истории) — СКРЫТЫ в activity-ленте по запросу.
+           Ряд .stories-row#ll-stories-row убран из разметки; связанный
+           MomentViewer ниже сам no-op'ит (см. `if (!row || !slot) return`).
+           Чтобы вернуть — восстановить блок из истории git. -->
 
 
       <!-- FEED ---------------------------------------------------------- -->
