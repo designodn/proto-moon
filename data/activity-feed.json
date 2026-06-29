@@ -1003,7 +1003,7 @@
     },
     {
       "id": "row-34",
-      "type": "photo",
+      "type": "comment-as-feed",
       "author": "group-spb-news",
       "tab": "Локальное",
       "tema": "Санкт-Петербург",
