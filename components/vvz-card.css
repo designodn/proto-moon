@@ -198,6 +198,13 @@
   flex-shrink: 0;
   border-radius: 50%;
   overflow: hidden;
+  /* Серый плейсхолдер на время загрузки фото (как в .stories-row и
+     .avatar.__type-placeholder): пока фото/blur грузятся — под ними виден
+     ровный surface-primary, а не просвет карточки/битая картинка. Непрозрачное
+     фото (object-fit:cover) перекрывает подложку после загрузки. Кладём на
+     контейнер, а не на <img>: так blur-подложка __default-варианта не задета.
+     Действует во всех вариантах ВВЗ (__default / __message / __stories). */
+  background-color: var(--dynamic-surface-base-primary);
 }
 .vvz-card__media > img {
   display: block;
