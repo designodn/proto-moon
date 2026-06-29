@@ -190,7 +190,6 @@ const isGroupId = id => /^group-/.test(String(id));
 const personName = id => PEOPLE[String(id)]?.name || '';
 const personPhoto = id => PEOPLE[String(id)]?.photo || '';
 const personGender = id => PEOPLE[String(id)]?.gender || '';   // 'м' | 'ж' | ''
-const personVerified = id => !!PEOPLE[String(id)]?.verified;   // verified-бейдж (напр. odkl)
 const splitIds = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
 
 /* Подстановка имени: токен «<id>_name» в заголовках/текстах → имя человека из
@@ -1408,9 +1407,9 @@ function renderTwitterCard(p, idx) {
     const hasOdkl = ids.includes(POST_AUTHOR);
     const authorId = hasOdkl ? POST_AUTHOR : ids[0];
     const friendIds = hasOdkl ? ids.filter(x => x !== POST_AUTHOR) : ids;
-    const badge = personVerified(authorId) ? ('\n                  ' + VERIFIED_SVG) : '';
-    // Сервисный пост: в шапке только имя+бейдж (без времени), и НЕ показываем
-    // твиттер-actions (comment/reshare/класс) — у карточки свой CTA «Поздравить».
+    // Сервисный пост: в шапке только имя (verified-бейдж добавит components/
+    // people-data.js по совпадению имени), без времени; твиттер-actions
+    // (comment/reshare/класс) НЕ показываем — у карточки свой CTA «Поздравить друга».
     return `        <article class="caf __twitter-like island">${activityBlock}${crumbsBlock}
           <div class="caf__stack">
             <div class="caf__row">
@@ -1419,7 +1418,7 @@ function renderTwitterCard(p, idx) {
               </div>
               <div class="caf__content">
                 <div class="caf__head">
-                  <span class="ds-title-s caf__name">${esc(personName(authorId))}</span>${badge}
+                  <span class="ds-title-s caf__name">${esc(personName(authorId))}</span>
                 </div>
                 <div class="text-feed__reshare-card __friendversary">
                   <div class="feed-birthday island">

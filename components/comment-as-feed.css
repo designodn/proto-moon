@@ -207,13 +207,6 @@
   white-space: nowrap;
 }
 
-/* Verified-бейдж (напр. Одноклассники) между именем и датой: не сжимается,
-   по центру строки (у .caf__head align-items:baseline иначе сажает svg высоко). */
-.caf__head .ll-badge-verified {
-  flex-shrink: 0;
-  align-self: center;
-}
-
 /* Текст коммента (body-m, тот же inline-«ещё» через feed-more) — 4 от шапки.
    Селектор с .caf__content, чтобы перебить .text-feed__body{margin:0}
    (text-feed.css импортируется позже). */
