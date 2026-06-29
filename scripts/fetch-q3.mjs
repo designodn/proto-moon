@@ -1728,7 +1728,11 @@ ${items}
       // Часть типов — самостоятельные карточки (не «твиттер-ряд»): даже в tw-табе
       // рендерим их полноценным q3-рендером (renderPost). Напр. friendversary —
       // карточка годовщины дружбы (2 авы + «Поздравить друга»).
-      cards = sel.map((p, i) => ((tab.tw && !FULL_CARD_TYPES.has(p.type)) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
+      // Реклама (ad) — всегда твиттер-ряд, в ЛЮБОМ табе (а не только tw): по
+      // задаче рекламные посты в активити-ленте едины в twitter-like-стиле,
+      // даже если лежат в не-tw-табе (Лента/Локальное).
+      const isTwitter = (p) => (tab.tw || p.type === 'ad') && !FULL_CARD_TYPES.has(p.type);
+      cards = sel.map((p, i) => (isTwitter(p) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
       if (!cards.length) cards = [tabStub('Пока пусто')];
     }
     // Вставляем таб-стрип первым ребёнком первого острова панели.
