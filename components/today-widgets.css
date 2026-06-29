@@ -299,24 +299,35 @@
   }
   .tg-card > :not(.tg-card__bg) { position: relative; z-index: 1; }
 
-  /* День рождения — карточка на всю ширину: светлый фон-шары, тёмный текст
-     слева (ава + поздравление + кнопка), радиус/паддинг как у tg-card. Высота
-     auto под контент (шары справа на фоне), без фикс. 220. */
+  /* День рождения — баннер на всю ширину: текст в левом верхнем углу, ава — в
+     правом верхнем, кнопка «Поздравить» прижата к низу (auto-зазор от текста).
+     Высота/паддинг — штатные из .tg-card (220), фон-шары справа. */
   .tg-card--bday {
-    height: auto;
     border-radius: 16px;
     background: #cfe1f7;                 /* фолбэк под фото-шарами (голубой) */
     color: var(--static-text-and-icons-base-primary, #000);
   }
   .tg-card--bday .tg-card__bg { object-position: right center; }
+  /* Тело на всю высоту карточки: верхний ряд прижат к верху, кнопка — к низу. */
   .tg-bday__body {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-3);                 /* 12 между авой/текстом/кнопкой */
-    max-width: 70%;                      /* шары справа остаются видны */
+    height: 100%;
   }
-  .tg-bday__title { color: var(--static-text-and-icons-base-primary, #000); }
+  /* Верхний ряд: текст в левом верхнем углу, ава — в правом верхнем. */
+  .tg-bday__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .tg-bday__ava { flex: 0 0 auto; }      /* ава держит правый край, не сжимается */
+  .tg-bday__title {
+    color: var(--static-text-and-icons-base-primary, #000);
+    max-width: 65%;                      /* текст слева, не залезает на шары справа */
+  }
+  /* Кнопка прижата к нижнему краю (auto-зазор от текста), своя ширина слева. */
+  .tg-bday__cta { margin-top: auto; align-self: flex-start; }
 
   /* Погода — radius 16, контент распределён: блок «Дождь+°» сверху, ветер снизу. */
   .tg-card--weather {
