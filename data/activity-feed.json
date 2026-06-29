@@ -9,6 +9,7 @@
       "type": "photo",
       "author": "3",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "id_2 поставил класс",
@@ -27,14 +28,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-2",
       "type": "ad",
       "author": "ad-1",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -53,14 +54,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-3",
       "type": "text",
       "author": "1",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -84,14 +85,14 @@
           "authorId": "6",
           "text": "руки потому что не из тго места"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-4",
       "type": "friendversary",
       "author": "my_profile, 1, odkl",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -106,14 +107,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-5",
       "type": "photo",
       "author": "group-7",
       "tab": "Друзья",
+      "tw": true,
       "tema": "Спорт",
       "rubrika": "Новости спорта",
       "header": "id_10 поставил класс",
@@ -137,14 +138,14 @@
           "authorId": "3",
           "text": "Я тоже уверен....что сейчас это произойдет.....она готова, если конечно наша Миррочка только не перегорит....психология, она такая штука....удачи Миррочка в финале....да и в будущих тоже )"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-6",
       "type": "marathon",
       "author": "group-2",
       "tab": "",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -167,14 +168,14 @@
       "marathon": "РадостьДетства",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-7",
       "type": "photo",
       "author": "5",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "id_3 поставил класс",
@@ -193,14 +194,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-8",
       "type": "ad",
       "author": "ad-2",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -219,14 +220,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-9",
       "type": "photo",
       "author": "8",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -254,14 +255,14 @@
           "authorId": "10",
           "text": "а я спокойная была, не знаю это хорошо или плохо 😂"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-10",
       "type": "photo",
       "author": "group-10",
       "tab": "Друзья",
+      "tw": true,
       "tema": "Сделай сам",
       "rubrika": "Цветы и сад",
       "header": "id_7 поставил класс",
@@ -289,14 +290,14 @@
           "authorId": "6",
           "text": "Ой, какая красота с мотоблоком, а не подскажите какой у вас, тоже хочу, выбираем не можем выбрать, может фото есть агрегата спасибо"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-2",
       "type": "text",
       "author": "3",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -316,14 +317,14 @@
           "authorId": "4",
           "text": "я люблю груши"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-12",
       "type": "photo",
       "author": "8",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -347,14 +348,14 @@
           "authorId": "5",
           "text": "ну красавицы!!!!!"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-13",
       "type": "ad",
       "author": "ad-4",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -373,14 +374,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "post-5",
       "type": "photo",
       "author": "9",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "id_11 поставил класс",
@@ -404,14 +405,14 @@
           "authorId": "7",
           "text": "Внученька, я тоже тебя люблю"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-13",
       "type": "reshare-post",
       "author": "4, 2",
       "tab": "Друзья",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "id_10 поставил класс",
@@ -447,14 +448,14 @@
           "authorId": "10",
           "text": "На платной и дурак впоймает"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-16",
       "type": "video",
       "author": "group-9",
       "tab": "Друзья",
+      "tw": true,
       "tema": "Еда",
       "rubrika": "Рецепты",
       "header": "id_5 поставил класс",
@@ -482,14 +483,14 @@
           "authorId": "2",
           "text": "Замечательное блюдо! И полезное."
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-17",
       "type": "memories-clip",
       "author": "my_profile",
       "tab": "",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -516,14 +517,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-18",
       "type": "photo",
       "author": "group-8",
       "tab": "",
+      "tw": true,
       "tema": "Политика",
       "rubrika": "Общество",
       "header": "",
@@ -551,14 +552,14 @@
           "authorId": "9",
           "text": "Просто у вас ум короток и с юмором туговато. Вспомните, что раньше выпускали в рулоне бумаги, было определенное количество метража и он был постоянный. А теперь упаковка туалетной бумаги стоит дороже, но бумаги в ней меньше, можно сказать на один раз."
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-19",
       "type": "ai-gift-received",
       "author": "7, 2",
       "tab": "Подарки",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -582,14 +583,14 @@
           "authorId": "10",
           "text": "вауууу"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-12",
       "type": "ad",
       "author": "ad-2",
       "tab": "Подарки",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -608,14 +609,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-21",
       "type": "gift-received",
       "author": "7, 4",
       "tab": "Подарки",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -639,14 +640,14 @@
           "authorId": "11",
           "text": "клас"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-17",
       "type": "gift-received",
       "author": "8, 1",
       "tab": "Подарки",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -665,14 +666,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-23",
       "type": "photo",
       "author": "group-11",
       "tab": "",
+      "tw": true,
       "tema": "Политика",
       "rubrika": "Общество",
       "header": "id_5 поставил класс",
@@ -696,14 +697,14 @@
           "authorId": "3",
           "text": "Посмотрите во что превратилась столица автомобиле строения Дейтрот в Америке, то же самое ждёт и Москву если не прекратится бессистемное наполнение толпами"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-7",
       "type": "comment-as-feed",
       "author": "4, group-9",
       "tab": "Лента",
+      "tw": true,
       "tema": "Еда",
       "rubrika": "Выпечка",
       "header": "",
@@ -731,14 +732,14 @@
           "authorId": "11",
           "text": "Когда переворачиваешь га другую сторону надо накрыть крышкой"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-25",
       "type": "comment-as-feed",
       "author": "2, group-12",
       "tab": "Лента",
+      "tw": true,
       "tema": "Политика",
       "rubrika": "Международная политика",
       "header": "",
@@ -766,14 +767,14 @@
           "authorId": "10",
           "text": "Согласен,всю жизнь жить пацаном не получиться."
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-26",
       "type": "ad",
       "author": "ad-1",
       "tab": "Лента",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -792,14 +793,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-27",
       "type": "comment-as-feed",
       "author": "8, group-9",
       "tab": "Лента",
+      "tw": true,
       "tema": "Еда",
       "rubrika": "Закуски",
       "header": "",
@@ -827,14 +828,14 @@
           "authorId": "9",
           "text": "Настоящие, по- белорусски!"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-8",
       "type": "comment-as-feed",
       "author": "4, group-12",
       "tab": "Лента",
+      "tw": true,
       "tema": "Политика",
       "rubrika": "Лидеры и заявления",
       "header": "",
@@ -862,14 +863,14 @@
           "authorId": "8",
           "text": "Конечно Путин готов к переговорам. Пускай найдут хоть кого то в своей власти, кто легитимен и приезжают в Москву. Обсудим условия их капитуляции и подпишем."
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-29",
       "type": "comment-as-feed",
       "author": "2, group-1",
       "tab": "Лента",
+      "tw": true,
       "tema": "Еда",
       "rubrika": "Блюда из рыбы",
       "header": "",
@@ -897,14 +898,14 @@
           "authorId": "vvz-3",
           "text": "Спасибо за рецепт полезного и вкусного ужина! Это ещё один рецепт для тех кто не равнодушен к кабачку и рыбе! Записала и обязательно приготовлю. Жду новых Ваших рецептов! 🥰"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-30",
       "type": "comment-as-feed",
       "author": "5, group-1",
       "tab": "Лента",
+      "tw": true,
       "tema": "Еда",
       "rubrika": "Идеи",
       "header": "",
@@ -932,14 +933,14 @@
           "authorId": "6",
           "text": "Клубничная клёвая😊"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-31",
       "type": "comment-as-feed",
       "author": "6, group-kudago",
       "tab": "Локальное",
+      "tw": true,
       "tema": "Санкт-Петербург",
       "rubrika": "Мероприятия",
       "header": "",
@@ -967,14 +968,14 @@
           "authorId": "vvz-1",
           "text": "В добрый путь, ребята!!! Пускай сбудутся все ваши мечты. Пускай во взрослой жизни будет больше радости, удачи, любви!!!"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "post-6",
       "type": "clip",
       "author": "group-6",
       "tab": "Локальное",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "Может быть интересно",
@@ -996,14 +997,14 @@
           "authorId": "11",
           "text": "Потрясающая выставка, была на ней уже два раза! Советую всем сходить, обязательно с экскурсией!!!"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-33",
       "type": "ad",
       "author": "ad-3",
       "tab": "Локальное",
+      "tw": true,
       "tema": "",
       "rubrika": "",
       "header": "",
@@ -1022,14 +1023,14 @@
       "marathon": "",
       "marathonJoined": "",
       "desc": "",
-      "threadComments": [],
-      "tw": true
+      "threadComments": []
     },
     {
       "id": "row-34",
       "type": "comment-as-feed",
       "author": "2, group-zenit",
       "tab": "Локальное",
+      "tw": true,
       "tema": "Санкт-Петербург",
       "rubrika": "Спорт",
       "header": "",
@@ -1057,19 +1058,19 @@
           "authorId": "10",
           "text": "с такой игрой и тренером в ЛЧ делать НЕЧЕГО кроме Малкома"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-35",
       "type": "photo",
       "author": "group-spb-news",
       "tab": "Локальное",
+      "tw": true,
       "tema": "Санкт-Петербург",
       "rubrika": "Новости",
       "header": "",
       "title": "",
-      "text": "",
+      "text": "К концу июня 2026 года топливный кризис в Петербурге и Ленобласти достиг пика: лимиты на заправках ужесточились до 20-30 литров на автомобиль, с заправок пропал бензин АИ-92 и АИ-95, а цены на бирже обновили исторические максимумы. Основная причина — внеплановые ремонты на НПЗ, вызванные внешними факторами, которые сократили производство и нарушили логистику",
       "photos": [
         "assets/activity/e3905a80f0eec975.webp"
       ],
@@ -1082,7 +1083,7 @@
       "link": "",
       "marathon": "",
       "marathonJoined": "",
-      "desc": "К концу июня 2026 года топливный кризис в Петербурге и Ленобласти достиг пика: лимиты на заправках ужесточились до 20-30 литров на автомобиль, с заправок пропал бензин АИ-92 и АИ-95, а цены на бирже обновили исторические максимумы. Основная причина — внеплановые ремонты на НПЗ, вызванные внешними факторами, которые сократили производство и нарушили логистику",
+      "desc": "",
       "threadComments": [
         {
           "authorId": "vvz-2",
@@ -1092,14 +1093,14 @@
           "authorId": "5",
           "text": "Это не хорошо но меньше будут ездить и травить воздух. Сейчас обычные дворовые дороги не возможно пройти из-за плотности машин"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-36",
       "type": "comment-as-feed",
       "author": "7, group-spb-news",
       "tab": "Локальное",
+      "tw": true,
       "tema": "Санкт-Петербург",
       "rubrika": "Пробки",
       "header": "",
@@ -1127,14 +1128,14 @@
           "authorId": "4",
           "text": "дак уж мы привыкли"
         }
-      ],
-      "tw": true
+      ]
     },
     {
       "id": "row-37",
       "type": "comment-as-feed",
       "author": "vvz-4, group-kudago",
       "tab": "Локальное",
+      "tw": true,
       "tema": "Санкт-Петербург",
       "rubrika": "Факты",
       "header": "",
@@ -1162,8 +1163,7 @@
           "authorId": "8",
           "text": "И Достоевский тоже родился в Москве.Чайковский- в Воткинске(нын.Удмуртия). Да,грамотеи ещё те..."
         }
-      ],
-      "tw": true
+      ]
     }
   ]
 }
