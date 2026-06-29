@@ -27,6 +27,7 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 > Порог переноса (его применяет `macket-rules-checker`): **hits ≥ 3 И ≥ 2 разных
 > файла И признак точный.**
 
+- twitter-карта НЕ должна иметь одновременно крошки и activity-строку → признак: `article.caf.__twitter-like` содержит И `.breadcrumbs/.caf__crumbs` И `> .text-feed__activity` → FAIL → hits:1 (файлы: activity-lenta/lenta.html). «Шапка важнее крошек»: ровно одно из двух. Ловится grep'ом/селектором по диффу.
 - CSS-маска с относительным `url()` в external stylesheet → признак: `mask`/`-webkit-mask`/`background`/`mask-image` со значением `url(assets/...)` (относительный путь БЕЗ ведущего `/` или `../`) внутри файла в `components/*.css`, либо через inline `--var: url(assets/...)`, который потребляется `mask:` в `components/*.css` → severity WARN → hits:1 (файлы: components/today-widgets.css). Причина: относительный url в CSS резолвится от расположения СТИЛЯ (`/components/`), а не от HTML → реальный путь `components/assets/...` = 404, маска пустая, иконка невидима. Фикс: `url(../assets/...)` или абсолютный `/assets/...`.
 
 ---
@@ -57,6 +58,23 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - Симптом «не словил гейт»: в live DOM один-единственный `[aria-label]` = "Закрыть",
   url = `…/add-friends-sheet.html`. Куча `ERR_ABORTED` на `components/*.js` — это
   просто прерванные запросы из-за `location.replace`, не сетевая поломка.
+
+### activity-lenta/lenta.html — таб «Подборки» + чипсы подборок
+- Гейт `afs-seen-al`: до загрузки `addInitScript(()=>sessionStorage.setItem('afs-seen-al','1'))`
+  → первый `goto` не редиректит на `add-friends-sheet.html`. На reload тоже держится
+  (init-script переустанавливает). Подтверждено.
+- Таб «Подборки»: `button.tabs-tab[data-tab="podborki"]`, панель
+  `[data-tab-panel="podborki"]` рендерится с атрибутом `hidden`. Клик по табу
+  (`.click({force:true})`) снимает `hidden` (стало `false`) — таб реально
+  переключается, без навигации. URL не меняется.
+- Чипсы подборок: `.collection-chips .chips-view__row .chip-container`. Дефолтный
+  невыбранный `__view-primary` bg = `rgba(131,102,86,0.12)`, color `rgb(0,0,0)`,
+  imgFilter `none`. Кастомный выбранный чип делается через
+  `__view-custom __selected-custom` + inline `--chip-background-selected-color`/
+  `--chip-selected-color` (НЕ отдельным классом-модификатором цвета).
+- Подтверждено: «Еда» выбран — bg `rgb(201,54,0)` (=#C93600), color `rgb(255,255,255)`,
+  иконка инвертирована в белый (`filter: brightness(0) invert(1)`). «Люди» —
+  обычный невыбранный `__view-primary`. Устойчиво к reload.
 
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
@@ -130,6 +148,48 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - Гейт онбординга activity-lenta: `sessionStorage['afs-seen-al']='1'` через addInitScript
   ДО goto — пропускает на первом заходе. (Подстраховался и `afs-seen` тоже выставил.)
 
+### Activity-лента: привязка постов к табам по колонке «Таб» (правка, uncommitted на 2026-06)
+- Структура: каждый таб = отдельный `.ll-tabpanel[data-tab-panel="<slot>"]`, у всех,
+  кроме активного, `hidden`. Внутри каждой панели СВОЙ продублированный таб-стрип
+  `.tabs.ll-feed-tabs` с `.tabs-tab[data-tab]` (поэтому `[data-tab="X"]` встречается
+  в 6 экземплярах — кликай только видимый, через evaluate по offsetParent!==null).
+- Переключение «на месте»: клик по табу делает видимой ровно ОДНУ панель
+  (visibleCount==1 в каждом табе подтверждено). Контент чисто статический HTML →
+  переживает любую навигацию; reload роли не играет (но reload всё равно роняет на
+  add-friends-sheet из-за гейта — это by design, см. ниже).
+- Замеренное наполнение (viewport 390×844, после addInitScript afs-seen-al=1):
+  lenta=6×caf (все с крошками, 0 activity); podarki=3×caf (gift/ai-gift);
+  druzya=12 article (11×caf + 1×`article.feed-birthday island` = «friendversary»,
+  «поздравляем с годовщиной дружбы», полноширинная); lokalnoe=РОВНО 1×`article.text-feed
+  island ll-clipc` (клип, подпись «Может быть интересно»); podborki/segodnya=1 island.
+- «Шапка важнее крошек» соблюдено: НИ одной caf-карты с одновременными `.caf__crumbs`
+  И `> .text-feed__activity` (offenders=[] во всех табах). В druzya у части постов
+  серая activity-строка, у части крошки — взаимоисключающе.
+- Визуально не разъехалось: таб-стрип «врос» в первый остров панели, активный таб
+  жирный, карточки/отступы ок. Подтверждено скринами всех 6 табов.
+
+### Activity-лента, таб «Подарки»: CTA-кнопки под карточками подарков (2026-06)
+- Карты подарков на табе podarki: `.text-feed__reshare-card.__gift` (обычный) и
+  `.__ai-gift` (ИИ). Под медиа-блоком карты добавлена CTA, обёрнута в `.actions-bar`
+  (СИБЛИНГ карты, не вложен в неё — ищи через `card.nextElementSibling`-обход).
+  Внутри `.button-container`:
+  - обычный gift → `.button-container.__style-primary`, текст «Сделать подарок»,
+    bg=none (сплошной оранж primary).
+  - ai-gift → `.button-container.__style-ai-gift`, текст «Создать подарок из фото»,
+    bg `linear-gradient(90deg, #ff7700→#ff9c40…)`, иконка `<img src="assets/icons/
+    sparkles_16_20.svg">` (НЕ DS-icon span — обычный img, красится filter brightness(0)
+    invert(1) для белого).
+- Порядок DOM в контентной колонке: карта подарка → `.actions-bar`(CTA) →
+  `.caf__actions`(счётчики комм·репост·класс). Подтверждено координатами:
+  cardTop<ctaTop<actionsTop.
+- Ширина CTA = ширина контентной колонки (302px при vp 390, колонка справа от авы
+  44px, left=72). Не обрезана, h=36. Переживает reload (статический HTML, MATCH=true
+  по cls/width/text до и после reload+пере-клик таба).
+- bday-карта DR (`.tg-card--bday`) в этой правке поменяла лейаут: ава `__size-72
+  __border` ушла в `.tg-bday__top` рядом с тайтлом (а не под ним) — это в табе
+  «Сегодня», который контекстно скрывает портлет (см. выше), но в standalone лейаут
+  новый.
+
 ### lenta.html (корневой) — сториз-ряд `#ll-stories-row`
 - Аватарки сториз грузятся с ВНЕШНИХ хостов `i.pravatar.cc` и `i.okcdn.ru` — в
   этом окружении они НЕ грузятся (naturalWidth остаётся 0 даже без route-блока).
@@ -194,28 +254,46 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   файла прежний совет «выставь afs-seen-al до goto» теперь НЕ нужен (гейта нет).
 - `#ll-stories-row` удалён из разметки (ряд «Моменты» больше не рендерится).
 
-### activity-lenta/okruzhenie.html — ВВЗ-галереи клипов/эфиров + «в эфире» (au-*)
-- НЕ редиректит на онбординг (нет afs-гейта). Скролл-контейнер = `.phone-frame__feed`
-  (как и lenta.html). CSS: `components/activity-widget.css` (au-gallery/au-tile/au-trans).
-- `.au-tile` computed = 120×164 (flex:0 0 120px). `.au-gallery__row` overflow-x:auto,
-  gap 8px. ЛОВУШКА: при 3 плитках в ряду scrollW≈408 vs clientW 390 → горизонт-скролл
-  РАБОТАЕт но всего ~18px (0→18). Заголовок «12 Клипов»/«5 эфиров» — это число-метка,
-  НЕ кол-во плиток (плиток по 3). Не путай: ряд не «обрезан», просто мало контента.
-- Бейджи = DS `.tag`: `__style-primary` (тёмная пилюля rgba(0,0,0,.56), клипы, pos-bl)
-  и `__style-live` (КРАСНАЯ rgb(255,85,85)=static-surface-status-negative, эфиры pos-tl
-  + au-trans). Текст/иконка белые. Кнопки «Все»/«Смотреть» = button-inline h=28.
-- ГРАБЛИ замера иконки-маски в бейдже: глиф рисуется на `el::before`
-  (`.icon[class*=__slot-]::before` в icon.css), НЕ на самом span. `getComputedStyle(el)`
-  даёт maskImage:none / bg transparent (ложно «пусто»!). Мерь `getComputedStyle(el,
-  '::before')` → там mask-image=url(...200) + background-color rgb(255,255,255). Иконки
-  `__slot-klass-outline`/`__slot-music-radio` используют `../assets/...` (корректно,
-  без 404-бага лунной карточки). Картинки плиток = ЛОКАЛЬНЫЕ `assets/around-you/*.jpg`
-  (есть в репе, грузятся). au-trans ава = `data-person-avatar` → people-data.js →
-  `assets/people/N.webp`. Битых нет. Всё переживает reload (titles/120×164/transText/
-  ава-src совпали до и после).
+### Бейдж верификации (people-data.js, `.ds-verified-row` + `.ds-badge-verified`)
+- Механизм (data-driven, PASS во всех 3 путях). `DS_PEOPLE.apply(document)` оборачивает
+  имя автора в `span.ds-verified-row` и добавляет `img.ds-badge-verified` СПРАВА, если
+  автор verified. Цели селекторов: `.feed-header__name`, `.fc-comment__author`,
+  `.caf__name`.
+- Два пути матча: (1) `[data-person-name]` (New Vision, id-путь) → по id из
+  `DS_PEOPLE.get(id).verified`; (2) без атрибута (Q3/Трибуна/Activity, имя литералом)
+  → по СОВПАДЕНИЮ textContent с verifiedNames из листа «Люди».
+- Verified сообщества (data/people.js): `group-zenit` = «ЗЕНИТ» Санкт-Петербург,
+  `group-spb-news` = Телеканал «Санкт-Петербург». Имя для name-матча должно быть БУКВА
+  В БУКВУ (кавычки-ёлочки «»).
+- Замеры (390×844): `.ds-verified-row` display:flex (inline-flex в CSS), gap=**4px**
+  (=var(--space-1)), бейдж **16×16**, badgeLeft−nameRight = 4px. Имя сохраняет
+  ellipsis: whiteSpace nowrap, overflow hidden, textOverflow ellipsis, и реально
+  усекается (scrollWidth−clientWidth = 67 в NV, 38 в Q3 при длинном имени).
+- src бейджа резолвится относительно каталога скрипта: на корне `assets/badges/...`,
+  в `new-vision/` → `../assets/badges/...` (resolveSrc). Оба → HTTP **200**.
+- ИДЕМПОТЕНТНОСТЬ: повторный `apply()` НЕ дублирует — guard `parent.classList
+  .contains('ds-verified-row')` ранний return. После apply×3 = ровно 1 бейдж.
+- Контроль: неверифицированные авторы бейджа НЕ получают (проверено — «Чемпионат…»
+  в Q3 и «Ольга Стрельникова» в твиттер-ряду без бейджа в том же кадре).
+- twitter-like (`.fc-comment.__twitter-like .fc-comment__author`): после обёртки дата
+  `span.ds-body-m.fc-comment__date` («· 12:48») остаётся СЛЕДУЮЩИМ сиблингом row →
+  порядок имя·бейдж·дата корректный.
+- lenta-q3.html ловит гейт онбординга (`afs-seen`); выставлял ОБА ключа
+  `afs-seen`/`afs-seen-al` через addInitScript до goto — пропускает.
 
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
   `el.click()` через `page.evaluate` — `locator.click({force})` всё равно ждёт
   attached/visible и таймаутит, если страница на самом деле на редиректе.
+
+### tribune.html — кастомный «выбранный» чипс (2026-06-29)
+- Чипсы Трибуны — `.ll-chips .chips-view__row .chip-container`. Выбранный делается
+  кастомом: `__view-custom __selected-custom` + inline-style CSS-перем:
+  `--chip-background-selected-color: #C93600; --chip-selected-color:#fff`.
+  Computed (live, mobile 390): bg=rgb(201,54,0)=#C93600, color=rgb(255,255,255). OK.
+- Невыбранные `__view-primary`: bg=rgba(131,102,86,0.12), color rgb(0,0,0).
+- Иконка выбранного чипса белая через inline `filter: brightness(0) invert(1)` на
+  `<img.ll-icon>` (SVG не имеет своего currentColor → красят фильтром). Это норма.
+- Статическая разметка → переживает reload/fresh goto без изменений (нет JS-гейта,
+  нет sessionStorage). Подтверждено reload: bg/color/sel идентичны.
