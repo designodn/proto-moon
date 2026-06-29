@@ -107,6 +107,24 @@ _(пока пусто — заполняется по мере прогонов)
 - Гейт онбординга activity-lenta: `sessionStorage['afs-seen-al']='1'` через addInitScript
   ДО goto — пропускает на первом заходе. (Подстраховался и `afs-seen` тоже выставил.)
 
+### lenta.html (корневой) — сториз-ряд `#ll-stories-row`
+- Аватарки сториз грузятся с ВНЕШНИХ хостов `i.pravatar.cc` и `i.okcdn.ru` — в
+  этом окружении они НЕ грузятся (naturalWidth остаётся 0 даже без route-блока).
+  Чтобы показать «загруженное» состояние — `page.route(...).fulfill()` локальной
+  картинкой (напр. `assets/embedded/*.jpg`).
+- ЛОВУШКА: при блокировке/слоу-сети `page.goto(url,{waitUntil:'load'})` таймаутит
+  (load-event ждёт изображения). Бери `waitUntil:'domcontentloaded'`.
+- Три состояния `<img>` для теста плейсхолдера: abort→`complete:true,naturalW:0`
+  (+ браузер рисует свой broken-image глиф в углу); fulfill→`naturalW>0`;
+  **route-handler без continue/abort/fulfill = pending** → `complete:false`,
+  это и есть чистое «медленно грузится» БЕЗ broken-глифа. Для скрина плейсхолдера
+  бери pending-режим, не abort.
+- Плейсхолдер серого фото (правка stories-row.css): `.stories-row .avatar.__type-image
+  > img` и `.stories-row__face` имеют `background-color: var(--dynamic-surface-base-primary)`
+  → computed `rgb(247,244,242)` (#F7F4F2, light). Подтверждено: фон есть и в
+  loading, и после загрузки (фото `object-fit:cover` перекрывает). lenta.html
+  гейтом онбординга НЕ редиректит (в отличие от lenta-q3 / activity-lenta).
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
