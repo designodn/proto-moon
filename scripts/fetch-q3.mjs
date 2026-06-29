@@ -1561,7 +1561,8 @@ function renderPin(p) {
 }
 
 /* Чипсы-категории «Подборок» — наполнение скопировано из Трибуны (те же темы и
-   иконки). Список статичный (не из пинов); «Люди» выбран, как в Трибуне. */
+   иконки). Список статичный (не из пинов); выбран «Еда» — вторым, после «Все»,
+   заливка #C93600 (брендовый цвет через --chip-* кастом-чипса). */
 function collectionChips(_list) {
   return `        <div class="collection-chips chips-view">
           <div class="chips-view__row __nowrap">
@@ -1569,14 +1570,14 @@ function collectionChips(_list) {
               <button class="chip-container __size-default __view-custom __selected-custom" style="
                 --chip-background-color: var(--dynamic-surface-contrast-low);
                 --chip-color-custom: var(--dynamic-text-and-icons-base-primary);
-                --chip-background-selected-color: var(--static-surface-status-accent);
+                --chip-background-selected-color: #C93600;
                 --chip-selected-color: #fff;">
-                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
-                Люди
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt="" style="filter: brightness(0) invert(1);"></span>
+                Еда
               </button>
               <button class="chip-container __size-default __view-primary">
-                <span class="left-icon"><img class="ll-icon" src="assets/icons/food_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
-                Еда
+                <span class="left-icon"><img class="ll-icon" src="assets/icons/users_16_20.svg" width="20" height="20" alt=""></span>
+                Люди
               </button>
               <button class="chip-container __size-default __view-primary">
                 <span class="left-icon"><img class="ll-icon" src="assets/icons/med_tag_fill_16_20.svg" width="20" height="20" alt=""></span>
