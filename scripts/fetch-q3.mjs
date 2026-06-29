@@ -1325,13 +1325,17 @@ function splice(cardsHtml) {
    .tabs-tab[data-tab] переключает панели — components/feed-tabs.js.
    ВВЗ-портлет рендерится ВЫШЕ панелей (общая шапка, вне табов).
 
-   Контент панелей:
-     Лента      — comment-as-feed из шита;
+   В каком табе показать пост — задаёт КОЛОНКА «Таб» листа (значение = лейбл таба;
+   пусто → пост не в табах). Тип карточки определяет только КАК пост рисуется
+   (twitter-ряд в tw-табах vs полная q3-карточка), а не В КАКОМ табе он лежит.
+
+   Контент панелей (типы — как в листе сейчас, но привязка — по колонке «Таб»):
+     Лента      — comment-as-feed;
      Подборки   — пинтерест-masonry (чипсы + грид .uni-card, тип «pin» из листа);
      Сегодня    — виджеты today.html (components/today-widgets.{css,js,partial.html});
      Подарки    — gift-received / ai-gift-received, модификатор twitter-like;
-     Друзья     — photo / text / video, модификатор twitter-like;
-     Локальное  — comment-as-feed (как Лента, пока). */
+     Друзья     — photo / text / video / reshare-post / friendversary, twitter-like;
+     Локальное  — что проставлено в колонке «Таб» (напр. clip). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
   { id: 'podborki', label: 'Подборки',  collection: true },
@@ -1340,6 +1344,14 @@ const ACTIVITY_TABS = [
   { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'friendversary'], tw: true },
   { id: 'lokalnoe', label: 'Локальное', types: ['comment-as-feed'] },
 ];
+
+/* Принадлежность поста табу задаёт КОЛОНКА «Таб» листа (её значение — лейбл таба,
+   напр. «Друзья»; пусто → пост не показывается ни в одном табе). Сверяем по лейблу
+   ИЛИ id таба, регистр/пробелы игнорируем. `types` в ACTIVITY_TABS остаётся фолбэком
+   для старого листа/json без колонки «Таб» (см. buildActivityTabs). */
+const normTab = s => String(s || '').trim().toLowerCase();
+const postInTab = (p, tab) =>
+  normTab(p.tab) === normTab(tab.label) || normTab(p.tab) === tab.id;
 
 /* Типы, которые даже в «твиттер-табе» рендерятся полной q3-карточкой, а не
    компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). */
@@ -1363,7 +1375,11 @@ function renderTwitterCard(p, idx) {
   const time = TIMES[idx % TIMES.length];
   const title = nbsp(resolveNames(p.title));
   const text = nbsp(resolveNames(p.text));
-  const crumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+  // Шапка (колонка «шапка», activityLine) важнее хлебных крошек: если шапка задана —
+  // показываем ТОЛЬКО её, а крошки (тема/рубрика) скрываем (docs/feeds-spec.md §8).
+  const activity = activityLine(p.header);
+  const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
+  const crumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
   const crumbsBlock = crumbs ? '\n' + crumbs : '';
 
   let inner = '';
@@ -1398,11 +1414,8 @@ function renderTwitterCard(p, idx) {
   const thread = renderCommentThread(p, { tw: true, replies: false });
   const threadBlock = thread ? '\n' + thread : '';
 
-  // Шапка 2-го круга друзей — «кто-то поставил класс / прокомментировал»
-  // (колонка «шапка», id_X → имя). Пусто (1-й круг — обычный пост) → не выводим.
-  const activity = activityLine(p.header);
-  const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
-
+  // activityBlock (шапка «кто поставил класс / прокомментировал», колонка «шапка»)
+  // и crumbsBlock вычислены выше: при наличии шапки крошки уже скрыты.
   return `        <article class="caf __twitter-like island">${activityBlock}${crumbsBlock}
           <div class="caf__stack">
             <div class="caf__row">
@@ -1585,6 +1598,10 @@ async function loadActivityPins(offline) {
 /* Собирает все панели табов. В первый остров каждой панели врастает таб-стрип.
    pins — пины Подборок из отдельного листа (см. loadActivityPins). */
 function buildActivityTabs(posts, pins) {
+  // Привязка постов к табам — по колонке «Таб» (если она есть в листе/json).
+  // Фолбэк для старого листа/json без колонки — прежний отбор по типу (tab.types),
+  // чтобы реген из устаревшего data/activity-feed.json не обнулил панели.
+  const byColumn = posts.some(p => p.tab);
   return ACTIVITY_TABS.map(tab => {
     const hidden = tab.id === 'lenta' ? '' : ' hidden';
 
@@ -1629,7 +1646,9 @@ ${items}
     if (tab.stub) {
       cards = [tabStub(tab.stub)];
     } else {
-      const sel = posts.filter(p => tab.types.includes(p.type));
+      const sel = byColumn
+        ? posts.filter(p => postInTab(p, tab))
+        : posts.filter(p => (tab.types || []).includes(p.type));
       // Часть типов — самостоятельные карточки (не «твиттер-ряд»): даже в tw-табе
       // рендерим их полноценным q3-рендером (renderPost). Напр. friendversary —
       // карточка годовщины дружбы (2 авы + «Поздравить друга»).
@@ -1698,6 +1717,7 @@ async function main() {
     };
     const I = {
       id: col('id'), type: col('тип'), author: col('автор'),
+      tab: col('таб'),   // в каком табе activity-ленты показывать (лейбл; пусто → ни в каком)
       tema: col('тема'), rubrika: col('рубрика'), header: col('шапка'),
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
@@ -1731,6 +1751,9 @@ async function main() {
       posts.push({
         id, type,
         author: cell(c, I.author),
+        // tab — только если в листе есть колонка «Таб» (activity-лента); без неё
+        // (Q3/Трибуна) поле не добавляем, чтобы не сорить пустыми tab в их json.
+        ...(I.tab >= 0 ? { tab: cell(c, I.tab) } : {}),   // лейбл таба; пусто → пост вне табов
         tema: cell(c, I.tema), rubrika: cell(c, I.rubrika),  // крошки (breadcrumbs)
         header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
