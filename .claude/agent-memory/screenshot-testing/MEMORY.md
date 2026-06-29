@@ -59,6 +59,23 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   url = `…/add-friends-sheet.html`. Куча `ERR_ABORTED` на `components/*.js` — это
   просто прерванные запросы из-за `location.replace`, не сетевая поломка.
 
+### activity-lenta/lenta.html — таб «Подборки» + чипсы подборок
+- Гейт `afs-seen-al`: до загрузки `addInitScript(()=>sessionStorage.setItem('afs-seen-al','1'))`
+  → первый `goto` не редиректит на `add-friends-sheet.html`. На reload тоже держится
+  (init-script переустанавливает). Подтверждено.
+- Таб «Подборки»: `button.tabs-tab[data-tab="podborki"]`, панель
+  `[data-tab-panel="podborki"]` рендерится с атрибутом `hidden`. Клик по табу
+  (`.click({force:true})`) снимает `hidden` (стало `false`) — таб реально
+  переключается, без навигации. URL не меняется.
+- Чипсы подборок: `.collection-chips .chips-view__row .chip-container`. Дефолтный
+  невыбранный `__view-primary` bg = `rgba(131,102,86,0.12)`, color `rgb(0,0,0)`,
+  imgFilter `none`. Кастомный выбранный чип делается через
+  `__view-custom __selected-custom` + inline `--chip-background-selected-color`/
+  `--chip-selected-color` (НЕ отдельным классом-модификатором цвета).
+- Подтверждено: «Еда» выбран — bg `rgb(201,54,0)` (=#C93600), color `rgb(255,255,255)`,
+  иконка инвертирована в белый (`filter: brightness(0) invert(1)`). «Люди» —
+  обычный невыбранный `__view-primary`. Устойчиво к reload.
+
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
@@ -237,8 +254,46 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   файла прежний совет «выставь afs-seen-al до goto» теперь НЕ нужен (гейта нет).
 - `#ll-stories-row` удалён из разметки (ряд «Моменты» больше не рендерится).
 
+### Бейдж верификации (people-data.js, `.ds-verified-row` + `.ds-badge-verified`)
+- Механизм (data-driven, PASS во всех 3 путях). `DS_PEOPLE.apply(document)` оборачивает
+  имя автора в `span.ds-verified-row` и добавляет `img.ds-badge-verified` СПРАВА, если
+  автор verified. Цели селекторов: `.feed-header__name`, `.fc-comment__author`,
+  `.caf__name`.
+- Два пути матча: (1) `[data-person-name]` (New Vision, id-путь) → по id из
+  `DS_PEOPLE.get(id).verified`; (2) без атрибута (Q3/Трибуна/Activity, имя литералом)
+  → по СОВПАДЕНИЮ textContent с verifiedNames из листа «Люди».
+- Verified сообщества (data/people.js): `group-zenit` = «ЗЕНИТ» Санкт-Петербург,
+  `group-spb-news` = Телеканал «Санкт-Петербург». Имя для name-матча должно быть БУКВА
+  В БУКВУ (кавычки-ёлочки «»).
+- Замеры (390×844): `.ds-verified-row` display:flex (inline-flex в CSS), gap=**4px**
+  (=var(--space-1)), бейдж **16×16**, badgeLeft−nameRight = 4px. Имя сохраняет
+  ellipsis: whiteSpace nowrap, overflow hidden, textOverflow ellipsis, и реально
+  усекается (scrollWidth−clientWidth = 67 в NV, 38 в Q3 при длинном имени).
+- src бейджа резолвится относительно каталога скрипта: на корне `assets/badges/...`,
+  в `new-vision/` → `../assets/badges/...` (resolveSrc). Оба → HTTP **200**.
+- ИДЕМПОТЕНТНОСТЬ: повторный `apply()` НЕ дублирует — guard `parent.classList
+  .contains('ds-verified-row')` ранний return. После apply×3 = ровно 1 бейдж.
+- Контроль: неверифицированные авторы бейджа НЕ получают (проверено — «Чемпионат…»
+  в Q3 и «Ольга Стрельникова» в твиттер-ряду без бейджа в том же кадре).
+- twitter-like (`.fc-comment.__twitter-like .fc-comment__author`): после обёртки дата
+  `span.ds-body-m.fc-comment__date` («· 12:48») остаётся СЛЕДУЮЩИМ сиблингом row →
+  порядок имя·бейдж·дата корректный.
+- lenta-q3.html ловит гейт онбординга (`afs-seen`); выставлял ОБА ключа
+  `afs-seen`/`afs-seen-al` через addInitScript до goto — пропускает.
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
   `el.click()` через `page.evaluate` — `locator.click({force})` всё равно ждёт
   attached/visible и таймаутит, если страница на самом деле на редиректе.
+
+### tribune.html — кастомный «выбранный» чипс (2026-06-29)
+- Чипсы Трибуны — `.ll-chips .chips-view__row .chip-container`. Выбранный делается
+  кастомом: `__view-custom __selected-custom` + inline-style CSS-перем:
+  `--chip-background-selected-color: #C93600; --chip-selected-color:#fff`.
+  Computed (live, mobile 390): bg=rgb(201,54,0)=#C93600, color=rgb(255,255,255). OK.
+- Невыбранные `__view-primary`: bg=rgba(131,102,86,0.12), color rgb(0,0,0).
+- Иконка выбранного чипса белая через inline `filter: brightness(0) invert(1)` на
+  `<img.ll-icon>` (SVG не имеет своего currentColor → красят фильтром). Это норма.
+- Статическая разметка → переживает reload/fresh goto без изменений (нет JS-гейта,
+  нет sessionStorage). Подтверждено reload: bg/color/sel идентичны.

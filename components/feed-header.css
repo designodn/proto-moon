@@ -178,3 +178,36 @@
 .feed-header.__caf .button-subscribe {
   display: none;
 }
+
+/* ============================================================
+   VERIFIED — бейдж верификации справа от имени автора (зазор 4px).
+   Вставляется components/people-data.js рядом с .feed-header__name /
+   .fc-comment__author / .caf__name, если автор verified (лист «Люди»,
+   колонка «Верификация»=да). Имя + бейдж кладутся в инлайн-флекс, чтобы
+   бейдж не попадал под ellipsis имени и держал зазор.
+   ============================================================ */
+.ds-verified-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);            /* 4px: имя ↔ бейдж */
+  min-width: 0;
+  max-width: 100%;
+}
+/* Имя внутри обёртки сохраняет свой ellipsis (white-space/overflow на самом
+   имени), обёртке и имени нужен min-width:0, чтобы сжиматься во флексе. */
+.ds-verified-row > :first-child {
+  min-width: 0;
+}
+/* Бейдж — фикс. 16px, не сжимается. */
+.ds-badge-verified {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+/* В строке с кнопкой «Подписаться» обёртка занимает место имени (flex:1),
+   кнопка прижата вправо — как делало правило для самого .feed-header__name. */
+.feed-header__line > .ds-verified-row {
+  flex: 1 1 0;
+  min-width: 0;
+}

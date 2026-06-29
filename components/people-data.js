@@ -30,6 +30,13 @@
 
   function get(id) { return byId[String(id)] || null; }
 
+  // Имена верифицированных авторов (лист «Люди», колонка «Верификация»=да) —
+  // для «запечённых» лент (Q3/Трибуна/Activity), где имя стоит в разметке
+  // литералом, а не через data-person-name. Гидратированные ленты (New Vision)
+  // матчим точнее — по id.
+  var verifiedNames = {};
+  list.forEach(function (p) { if (p && p.verified && p.name) verifiedNames[p.name] = true; });
+
   // База для локальных фото: каталог, из которого подключён этот скрипт
   // (на корневых страницах — "", в подпапках вроде new-vision/ — "../"),
   // чтобы пути вида "assets/people/1.webp" работали на любой глубине.
@@ -89,11 +96,44 @@
     if (p) el.style.backgroundImage = "url('" + srcFor(p) + "')";
   }
 
+  // ВЕРИФИКАЦИЯ — бейдж справа от имени автора (зазор 4px). Показываем, если
+  // автор verified: для [data-person-name] — по id, иначе — по совпадению текста
+  // имени с верифицированным из листа «Люди». Имя+бейдж кладём в инлайн-флекс
+  // .ds-verified-row, чтобы бейдж не попадал под ellipsis имени (см. feed-header.css).
+  var BADGE_SRC = 'assets/badges/badge_verified_16.svg';
+  function isAuthorVerified(el) {
+    var id = el.getAttribute('data-person-name');
+    if (id) { var p = get(id); return !!(p && p.verified); }
+    var t = (el.textContent || '').trim();
+    return !!t && verifiedNames[t] === true;
+  }
+  function applyVerified(el) {
+    if (!isAuthorVerified(el)) return;
+    var parent = el.parentNode;
+    if (!parent || (parent.classList && parent.classList.contains('ds-verified-row'))) return; // уже обёрнут
+    var wrap = document.createElement('span');
+    wrap.className = 'ds-verified-row';
+    var badge = document.createElement('img');
+    badge.className = 'ds-badge-verified';
+    badge.src = resolveSrc(BADGE_SRC);
+    badge.width = 16; badge.height = 16;
+    badge.alt = '';
+    badge.setAttribute('aria-label', 'Подтверждённый профиль');
+    badge.setAttribute('role', 'img');
+    parent.insertBefore(wrap, el);
+    wrap.appendChild(el);
+    wrap.appendChild(badge);
+  }
+
   function apply(root) {
     root = root || document;
     root.querySelectorAll('[data-person-name]').forEach(applyName);
     root.querySelectorAll('[data-person-bg]').forEach(applyBg);
     root.querySelectorAll('[data-person-avatar]').forEach(applyAvatar);
+    // Бейдж верификации — после имён (чтобы матч по тексту видел готовое имя).
+    ['.feed-header__name', '.fc-comment__author', '.caf__name'].forEach(function (sel) {
+      root.querySelectorAll(sel).forEach(applyVerified);
+    });
   }
 
   window.DS_PEOPLE = { list: list, get: get, apply: apply };

@@ -5,7 +5,7 @@
   },
   "activities": [
     {
-      "id": "cell-1",
+      "id": "a1",
       "lead": "person",
       "who": "1",
       "image": "",
@@ -15,7 +15,7 @@
       "category": ""
     },
     {
-      "id": "cell-2",
+      "id": "a2",
       "lead": "person",
       "who": "3",
       "image": "",
@@ -25,7 +25,7 @@
       "category": ""
     },
     {
-      "id": "cell-3",
+      "id": "a3",
       "lead": "person",
       "who": "6",
       "image": "",
@@ -35,7 +35,7 @@
       "category": ""
     },
     {
-      "id": "cell-4",
+      "id": "a4",
       "lead": "discussion",
       "who": "5, 7, 3",
       "image": "",
@@ -45,7 +45,17 @@
       "category": ""
     },
     {
-      "id": "cell-5",
+      "id": "a5",
+      "lead": "clip-gallery",
+      "who": "",
+      "image": "assets/around-you/d9ed83b00c4231d6.jpg, assets/around-you/2e9e99a78f9f53bb.jpg, assets/around-you/0a7a921f21654125.jpg",
+      "online": false,
+      "text": "12 Клипов из Санкт-Петербурга в топе",
+      "button": "Все",
+      "category": ""
+    },
+    {
+      "id": "a6",
       "lead": "section",
       "who": "",
       "image": "",
@@ -55,7 +65,7 @@
       "category": ""
     },
     {
-      "id": "cell-6",
+      "id": "a7",
       "lead": "section",
       "who": "",
       "image": "",
@@ -65,7 +75,17 @@
       "category": ""
     },
     {
-      "id": "cell-7",
+      "id": "a8",
+      "lead": "trans",
+      "who": "5",
+      "image": "",
+      "online": false,
+      "text": "в эфире 34 смотрят",
+      "button": "Смотреть",
+      "category": ""
+    },
+    {
+      "id": "a9",
       "lead": "section",
       "who": "",
       "image": "",
@@ -75,7 +95,7 @@
       "category": ""
     },
     {
-      "id": "cell-8",
+      "id": "a10",
       "lead": "photo",
       "who": "",
       "image": "assets/around-you/30ea6ae6a68667df.webp",
@@ -85,7 +105,7 @@
       "category": ""
     },
     {
-      "id": "cell-9",
+      "id": "a11",
       "lead": "section",
       "who": "",
       "image": "",
@@ -95,7 +115,7 @@
       "category": ""
     },
     {
-      "id": "cell-10",
+      "id": "a12",
       "lead": "person",
       "who": "7",
       "image": "",
@@ -105,7 +125,7 @@
       "category": ""
     },
     {
-      "id": "cell-11",
+      "id": "a13",
       "lead": "person",
       "who": "3",
       "image": "",
@@ -115,17 +135,27 @@
       "category": ""
     },
     {
-      "id": "cell-12",
+      "id": "a14",
       "lead": "photo-pair",
       "who": "",
-      "image": "assets/around-you/88a5b2f4e918b021.webp, assets/around-you/dfe6688cb5c919a6.webp",
+      "image": "assets/around-you/88a5b2f4e918b021.webp, assets/around-you/dfe6688cb5c919a6.jpg",
       "online": false,
       "text": "В Конкурсе «Лучший участок» добавили новые фото",
       "button": "Смотреть",
       "category": ""
     },
     {
-      "id": "cell-13",
+      "id": "a15",
+      "lead": "trans-gallery",
+      "who": "",
+      "image": "assets/around-you/c5cd82677532277d.jpg, assets/around-you/d836a182f8ec57cd.jpg, assets/around-you/a213a197af092031.jpg",
+      "online": false,
+      "text": "В Санкт-Петербурге 5 эфиров",
+      "button": "Все",
+      "category": ""
+    },
+    {
+      "id": "a16",
       "lead": "person",
       "who": "7",
       "image": "",
@@ -133,56 +163,6 @@
       "text": "ответила на ваш вопрос",
       "button": "Смотреть",
       "category": ""
-    },
-    {
-      "id": "cell-14",
-      "lead": "person",
-      "who": "4",
-      "image": "",
-      "online": false,
-      "text": "занял 1 место в конкурсе “Лучший участок”",
-      "button": "Смотреть",
-      "category": "win"
-    },
-    {
-      "id": "cell-15",
-      "lead": "person",
-      "who": "9",
-      "image": "",
-      "online": false,
-      "text": "превратила свою фотографию в подарок",
-      "button": "Смотреть",
-      "category": "neuro"
-    },
-    {
-      "id": "cell-16",
-      "lead": "person",
-      "who": "2",
-      "image": "",
-      "online": false,
-      "text": "вспомнила ваше старое фото",
-      "button": "Смотреть",
-      "category": ""
-    },
-    {
-      "id": "cell-17",
-      "lead": "photo",
-      "who": "",
-      "image": "",
-      "online": false,
-      "text": "возложите цветок победы",
-      "button": "Возложить",
-      "category": ""
-    },
-    {
-      "id": "cell-18",
-      "lead": "discussion",
-      "who": "6, 5, 7",
-      "image": "",
-      "online": false,
-      "text": "поздравили уже 12 друзей",
-      "button": "Поздравить",
-      "category": "holiday"
     }
   ]
 }

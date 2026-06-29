@@ -223,6 +223,15 @@
   background: #FFEFE5;
 }
 
+/* Годовщина дружбы (__friendversary) — внутрь reshare-card кладём целую карточку
+   feed-birthday. Гасим паддинг/гэп контейнера, чтобы деко-шапка доходила до
+   скруглённых краёв; радиус (12) + overflow:hidden + 2px-обводка (::after) —
+   как у обычной reshare-card: рамка очерчивает карточку на белом фоне. */
+.text-feed__reshare-card.__friendversary {
+  padding: 0;
+  gap: 0;
+}
+
 .text-feed__reshare-card-author {
   display: flex;
   align-items: center;

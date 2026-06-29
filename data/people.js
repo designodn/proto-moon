@@ -328,18 +328,20 @@ window.DS_PEOPLE_DATA = [
     "gender": "",
     "age": null,
     "city": "",
-    "bio": ""
+    "bio": "",
+    "verified": true
   },
   {
     "id": "group-zenit",
     "name": "«ЗЕНИТ» Санкт-Петербург",
     "subtitle": "",
-    "photo": null,
-    "media": null,
+    "photo": "assets/people/group-zenit.webp",
+    "media": "image",
     "gender": "",
     "age": null,
     "city": "",
-    "bio": ""
+    "bio": "",
+    "verified": true
   },
   {
     "id": "ad-1",
@@ -384,5 +386,17 @@ window.DS_PEOPLE_DATA = [
     "age": null,
     "city": "",
     "bio": ""
+  },
+  {
+    "id": "odkl",
+    "name": "Одноклассники",
+    "subtitle": "",
+    "photo": "assets/people/odkl.webp",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": "",
+    "verified": true
   }
 ];
