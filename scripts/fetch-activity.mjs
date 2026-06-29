@@ -223,7 +223,7 @@ ${row}
  *  Число зрителей берём из текста листа («…34 смотрят») и кладём в бейдж на
  *  превью, а не в подпись (по запросу: в строке пишем только имя). */
 function renderTrans(a) {
-  const name = nameOf(a.who);
+  const name = nameOf(a.who).split(/\s+/)[0];           // только имя, без фамилии
   const t = renderText(a.text, genderOf(a.who));        // «в эфире 34 смотрят» — источник числа зрителей
   const viewers = (t.match(/\d+/) || [String(seededCount(a.who + 'trans'))])[0];
   return `        <div class="uni-cell-wrapper __type-activity">
