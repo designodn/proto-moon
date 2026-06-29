@@ -1,33 +1,25 @@
 #!/usr/bin/env node
 /**
- * server.mjs — раздаёт статический прототип и сам обновляет ленту из гуглшита.
+ * server.mjs — раздаёт статический прототип OK DS.
  *
- * Зачем: сайт — чистая статика, но данные «запекаются» в файлы скриптами
- * scripts/fetch-*.mjs. Чтобы лента была свежей, этот сервер гоняет
- * scripts/fetch-all.mjs (перезаписывает data/*.json и HTML-страницы прямо в
- * контейнере) при старте и по кнопке на лендинге, и отдаёт свежие файлы.
+ * Сайт — чистая статика. Контент («запечённые» data/*.json|js и HTML-страницы)
+ * обновляет автор локально скриптами scripts/fetch-*.mjs (скилл fetch-all) и
+ * коммитит в репозиторий — сервер лишь раздаёт уже готовые файлы. Никакого
+ * синка из Google-таблицы и никакого облака на сервере нет.
  *
- * Запуск (Railway делает это сам через `npm start`):
+ * Запуск (контейнер делает это через `npm start`):
  *   node server.mjs
  *
  * Переменные окружения:
- *   PORT           — порт (Railway задаёт сам; локально по умолчанию 3000)
- *   SYNC_ON_START  — гонять синк при старте ("false" чтобы выключить)
- *
- * Требование: Google-таблица открыта «всем, у кого есть ссылка», иначе
- * gviz-CSV не отдаст данные и синк будет падать (сайт при этом раздаётся).
+ *   PORT — порт (контейнер задаёт сам; локально по умолчанию 3000)
  */
 import { createServer } from 'node:http';
-import { spawn } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, resolve, join, normalize, extname } from 'node:path';
-import { renderContentPage, handleUploadApi, isUploadConfigured } from './upload.mjs';
-import { uploadSnapshot, restoreSnapshot, snapshotUrl } from './scripts/lib/content-snapshot.mjs';
+import { dirname, join, normalize, extname } from 'node:path';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
-const SYNC_ON_START = String(process.env.SYNC_ON_START ?? 'true') !== 'false';
 
 /* ── Прототипы: красивый путь → реальная стартовая страница ───────────────── */
 /* Редиректим (а не отдаём контент по чужому URL), чтобы относительные ссылки
@@ -62,7 +54,8 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-/* Лендинг по «/»: выбор прототипа + ручное обновление ленты из таблицы. */
+/* Лендинг по «/»: только выбор прототипа. Контент обновляется офлайн (fetch-all
+ * + коммит), поэтому кнопок синка/загрузки и страницы дизайнера тут нет. */
 const LANDING = `<!DOCTYPE html>
 <html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -80,242 +73,13 @@ const LANDING = `<!DOCTYPE html>
     font-size:15px;font-weight:600;transition:.15s}
   a.proto:hover{border-color:#d0d0d0;background:#fafafa}
   a.proto span{font-size:12px;color:#999;font-weight:400}
-  .sync{margin-top:20px;padding-top:20px;border-top:1px solid #ececec}
-  button{width:100%;padding:14px 16px;border:0;border-radius:12px;background:#111;color:#fff;
-    font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
-  button:hover{background:#000}
-  button:disabled{background:#bdbdbd;cursor:default}
-  .status{font-size:12px;color:#777;margin:10px 2px 0;min-height:16px;text-align:center}
-  .status.ok{color:#1a8f3c}
-  .status.err{color:#d33}
 </style></head>
 <body><div class="card">
   <h1>Прототипы OK DS</h1>
-  <p class="sub">Выберите прототип или обновите ленту из Google-таблицы.</p>
+  <p class="sub">Выберите прототип.</p>
   <a class="proto" href="/q3">Q-3</a>
   <a class="proto" href="/activity">Активити</a>
-  <a class="proto" href="/content">Обновление контента <span>таблица + медиа</span></a>
-  <div class="sync">
-    <button id="syncBtn">Обновить ленту из таблицы</button>
-    <div class="status" id="status"></div>
-  </div>
-<script>
-  const btn = document.getElementById('syncBtn');
-  const status = document.getElementById('status');
-  const setStatus = (t, cls='') => { status.textContent = t; status.className = 'status ' + cls; };
-
-  function fmtTime(iso){ try { return new Date(iso).toLocaleTimeString('ru-RU'); } catch { return ''; } }
-
-  async function refreshLast(){
-    try {
-      const h = await (await fetch('/healthz')).json();
-      if (h.syncing){ startPolling(); return; }
-      if (h.lastSync){
-        const ls = h.lastSync;
-        if (ls.ok) setStatus('Обновлено в ' + fmtTime(ls.finishedAt), 'ok');
-        else setStatus('Прошлый прогон с ошибкой (код ' + (ls.code ?? '—') + ')', 'err');
-      }
-    } catch {}
-  }
-
-  let polling = false;
-  function startPolling(){
-    if (polling) return;
-    polling = true;
-    btn.disabled = true;
-    setStatus('Обновляю ленту из таблицы…');
-    const tick = async () => {
-      try {
-        const h = await (await fetch('/healthz')).json();
-        if (h.syncing){ setTimeout(tick, 2000); return; }
-        polling = false; btn.disabled = false;
-        const ls = h.lastSync;
-        const snap = ls && ls.snapshot;
-        if (ls && ls.ok) {
-          let suffix = '';
-          if (snap && snap.ok) suffix = ' и сохранено в облако';
-          else if (snap && snap.skipped === 'no-bucket') suffix = ' (облако не настроено)';
-          else if (snap && snap.error) suffix = ' (в облако не сохранилось)';
-          setStatus('Готово — обновлено' + suffix + ' в ' + fmtTime(ls.finishedAt), 'ok');
-        } else {
-          setStatus('Синк завершился с ошибкой (код ' + (ls && ls.code != null ? ls.code : '—') + ')', 'err');
-        }
-      } catch {
-        polling = false; btn.disabled = false;
-        setStatus('Не удалось получить статус', 'err');
-      }
-    };
-    setTimeout(tick, 2000);
-  }
-
-  btn.addEventListener('click', async () => {
-    btn.disabled = true;
-    setStatus('Запускаю…');
-    try {
-      const r = await fetch('/api/sync', { method: 'POST' });
-      startPolling();
-    } catch {
-      btn.disabled = false;
-      setStatus('Не удалось запустить обновление', 'err');
-    }
-  });
-
-  refreshLast();
-</script>
 </div></body></html>`;
-
-/* ── Синк ленты из гуглшита ───────────────────────────────────────────────── */
-let syncing = false;
-let lastSync = null; // { reason, startedAt, finishedAt, ok, code, git }
-
-/* Запуск git-команды (промис, не блокирует сервер). */
-function git(args) {
-  return new Promise((res) => {
-    const p = spawn('git', args, { cwd: ROOT });
-    let out = '', err = '';
-    p.stdout?.on('data', (d) => { out += d; });
-    p.stderr?.on('data', (d) => { err += d; });
-    p.on('close', (code) => res({ code, out, err }));
-    p.on('error', (e) => res({ code: -1, err: e.message }));
-  });
-}
-
-/* После успешного синка: коммитим изменённые данные/страницы и вливаем в base
- * (main) через PR, т.к. base защищён от прямого push. Поток: коммит → пуш во
- * временную ветку sync/* → создаём PR → мержим (squash) через GitHub API.
- * Нужен токен (GITHUB_TOKEN) с правами Contents: RW и Pull requests: RW.
- * Выключить целиком — SYNC_GIT_COMMIT=false. Ветка/идентичность/репо — через env. */
-async function commitAndPush(reason) {
-  if (process.env.SYNC_GIT_COMMIT === 'false') return { ok: true, skipped: true };
-
-  const status = await git(['status', '--porcelain']);
-  if (status.code !== 0) {
-    // В образе нет .git (исключён для лёгкости) → коммитить некуда. Синк при этом
-    // прошёл успешно: данные обновлены в контейнере, в git не сохраняем.
-    if (/not a git repository/i.test(status.err)) { console.log('[git] нет репозитория — пропускаю коммит'); return { ok: true, skipped: 'no-repo' }; }
-    return { ok: false, error: `git status: ${status.err.trim()}` };
-  }
-  if (!status.out.trim()) { console.log('[git] нечего коммитить'); return { ok: true, nochange: true }; }
-
-  await git(['add', '-A']);
-  const name = process.env.SYNC_GIT_NAME || 'proto-moon sync';
-  const email = process.env.SYNC_GIT_EMAIL || 'sync@proto-moon.local';
-  const msg = `sync: обновление из таблицы (${reason})`;
-  const commit = await git(['-c', `user.name=${name}`, '-c', `user.email=${email}`, 'commit', '-m', msg]);
-  if (commit.code !== 0) return { ok: false, error: `git commit: ${commit.err.trim()}` };
-
-  const token = process.env.GITHUB_TOKEN || process.env.GIT_PUSH_TOKEN || '';
-  const slug = process.env.GIT_REPO_SLUG || 'designodn/proto-moon';
-  const base = process.env.SYNC_GIT_BRANCH || 'main';
-  if (!token) return { ok: false, committed: true, error: 'нет токена (GITHUB_TOKEN)' };
-  const [owner, repo] = slug.split('/');
-  const mask = (s) => String(s == null ? '' : s).split(token).join('***');
-
-  // base (main) защищён — прямой push запрещён. Поэтому: пушим коммит во временную
-  // ветку → создаём PR → мержим его через GitHub API. Нужен токен с правами
-  // Contents: RW и Pull requests: RW.
-
-  // 1) Пуш во временную ветку. fine-grained PAT капризен к формату userinfo —
-  //    пробуем несколько, какой пройдёт.
-  const tempBranch = `sync/${Date.now().toString(36)}`;
-  const urls = [
-    `https://${token}@github.com/${slug}.git`,
-    `https://oauth2:${token}@github.com/${slug}.git`,
-    `https://x-access-token:${token}@github.com/${slug}.git`,
-  ];
-  let okUrl = null, lastErr = '';
-  for (const u of urls) {
-    const p = await git(['push', u, `HEAD:refs/heads/${tempBranch}`]);
-    if (p.code === 0) { okUrl = u; break; }
-    lastErr = p.err || '';
-  }
-  if (!okUrl) return { ok: false, committed: true, error: `git push: ${mask(lastErr).trim()}` };
-
-  // 2) GitHub API: создаём PR и мержим (squash).
-  const api = async (path, method, body) => {
-    const res = await fetch(`https://api.github.com${path}`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'proto-moon-sync',
-        ...(body ? { 'Content-Type': 'application/json' } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const text = await res.text();
-    let json = null; try { json = JSON.parse(text); } catch { /* not json */ }
-    return { status: res.status, json, text };
-  };
-  const cleanup = () => api(`/repos/${owner}/${repo}/git/refs/heads/${tempBranch}`, 'DELETE').catch(() => {});
-
-  const pr = await api(`/repos/${owner}/${repo}/pulls`, 'POST',
-    { title: msg, head: tempBranch, base, body: 'Автокоммит синка ленты из Google-таблицы.' });
-  if (pr.status >= 300 || !pr.json || !pr.json.number) {
-    await cleanup();
-    return { ok: false, committed: true, pushed: true, error: `PR ${pr.status}: ${mask(pr.text).slice(0, 200)}` };
-  }
-  const num = pr.json.number;
-
-  const merge = await api(`/repos/${owner}/${repo}/pulls/${num}/merge`, 'PUT', { merge_method: 'squash' });
-  if (merge.status >= 300 || !merge.json || !merge.json.merged) {
-    await cleanup();
-    return { ok: false, committed: true, pushed: true, pr: num, error: `merge ${merge.status}: ${mask(merge.text).slice(0, 200)}` };
-  }
-  await cleanup();
-
-  // 3) Подровнять локальный репо под смерженный base (на случай нескольких синков
-  //    между деплоями) — иначе следующий PR пойдёт от устаревшей базы. Best-effort.
-  await git(['fetch', okUrl, base]);
-  await git(['reset', '--hard', 'FETCH_HEAD']);
-
-  console.log(`[git] PR #${num} смержен в ${base}`);
-  return { ok: true, pushed: true, pr: num, branch: base };
-}
-
-function runSync(reason) {
-  if (syncing) {
-    console.log(`[sync] пропуск (${reason}): предыдущий прогон ещё идёт`);
-    return false;
-  }
-  syncing = true;
-  const startedAt = new Date().toISOString();
-  console.log(`[sync] старт (${reason}) ${startedAt}`);
-  const child = spawn(process.execPath, [resolve(ROOT, 'scripts/fetch-all.mjs')], {
-    cwd: ROOT,
-    stdio: 'inherit',
-  });
-  child.on('close', async (code) => {
-    let snap = null;
-    if (code === 0) {
-      // Состояние синка кладём в БАКЕТ (durable, без git — main не трогаем).
-      // Снапшот = data/*.json|js + перерисованные HTML, одним state/content.json.
-      snap = await uploadSnapshot(ROOT).catch((e) => ({ ok: false, error: e.message }));
-      if (snap && snap.ok) console.log(`[snapshot] залит ${snap.count} файлов → ${snap.url}`);
-      else if (snap && snap.skipped) console.log(`[snapshot] пропуск: ${snap.skipped}`);
-      else if (snap) console.error(`[snapshot] ошибка: ${snap.error}`);
-    }
-    syncing = false;
-    // ok = успешный синк; неудача заливки снапшота не «ломает» синк (лента живая),
-    // просто состояние не сохранилось в облако — видно в lastSync.snapshot.
-    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(),
-      ok: code === 0, code, snapshot: snap };
-    console.log(`[sync] финиш (${reason}), код ${code ?? '—'}`);
-  });
-  child.on('error', (err) => {
-    syncing = false;
-    lastSync = { reason, startedAt, finishedAt: new Date().toISOString(), ok: false, error: err.message };
-    console.error(`[sync] не удалось запустить fetch-all: ${err.message}`);
-  });
-  return true;
-}
-
-/* Возврат на разводящую — скрытый жест в меню прототипа (тройной тап по
- * гугл-серч-бару на домашнем экране после локскрина). Реализован в самих
- * лаунчер-страницах (q3-view.html, activity-lenta/view.html), поэтому сервер
- * ничего в HTML не подмешивает. Раньше здесь была видимая кнопка «☰ Меню» —
- * убрана, чтобы не мешать демо. */
 
 /* ── Статика ──────────────────────────────────────────────────────────────── */
 async function sendFile(res, filePath) {
@@ -330,8 +94,7 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     let pathname = decodeURIComponent(url.pathname);
 
-    // Прототип доступен только по ссылке — просим поисковики не индексировать
-    // его, чтобы он не всплыл в выдаче, даже если ссылка где-то засветится.
+    // Прототип доступен только по ссылке — просим поисковики не индексировать.
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
 
     // robots.txt — полный запрет обхода краулерами.
@@ -341,41 +104,10 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    // Здоровье + статус последнего синка (для Railway и кнопки на лендинге).
+    // Здоровье (для контейнера и деплой-диагностики).
     if (pathname === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, build: 'snapshot-1', uploads: isUploadConfigured(), snapshotUrl: snapshotUrl(), syncing, lastSync }));
-      return;
-    }
-
-    // Раздел «Обновление контента» — таблица + загрузка медиа для дизайнеров.
-    if (pathname === '/content') {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
-      res.end(renderContentPage());
-      return;
-    }
-
-    // Приём файла от страницы /content (по файлу на запрос).
-    if (pathname === '/api/upload') {
-      if (req.method !== 'POST') {
-        res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST' });
-        res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-        return;
-      }
-      await handleUploadApi(req, res);
-      return;
-    }
-
-    // Ручной запуск синка с лендинга.
-    if (pathname === '/api/sync') {
-      if (req.method !== 'POST') {
-        res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST' });
-        res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-        return;
-      }
-      const started = runSync('manual');
-      res.writeHead(started ? 202 : 409, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ started, syncing }));
+      res.end(JSON.stringify({ ok: true, build: 'static-1' }));
       return;
     }
 
@@ -422,15 +154,8 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, async () => {
+server.listen(PORT, () => {
   console.log(`Сервер слушает :${PORT}`);
   console.log(`Прототипы: /nv, /activity, /q3, /preview`);
-  console.log('Синк ленты: при старте и по кнопке на лендинге');
-  // Сначала восстанавливаем последнее состояние ленты из бакета (durable, не
-  // зависит от доступности таблицы), затем — обычный синк из таблицы (если включён).
-  const r = await restoreSnapshot(ROOT).catch((e) => ({ ok: false, error: e.message }));
-  if (r && r.ok) console.log(`[snapshot] восстановлено ${r.count} файлов из бакета (от ${r.createdAt})`);
-  else if (r && r.skipped) console.log(`[snapshot] восстановление пропущено: ${r.skipped}`);
-  else if (r && r.error) console.warn(`[snapshot] восстановление не удалось: ${r.error}`);
-  if (SYNC_ON_START) runSync('startup');
+  console.log('Статика: контент обновляется офлайн (scripts/fetch-all.mjs) и коммитится.');
 });

@@ -36,6 +36,23 @@ const STEPS = [
 // пропуск неизменённых листов (по умолчанию лист без правок пропускается).
 const FORCE = process.argv.includes('--force');
 
+// Картинки из таблицы складываются ОПТИМИЗИРОВАННЫМИ: media-cache (sharp) ресайзит
+// до ≤1600px и перекодирует в webp q80, на диск кладётся только webp. Без sharp
+// сжатие молча отключается и в репо уедут тяжёлые оригиналы — поэтому требуем его.
+// Обход (прогнать без сжатия): ALLOW_NO_SHARP=1 node scripts/fetch-all.mjs
+if (!process.env.ALLOW_NO_SHARP) {
+  try {
+    await import('sharp');
+  } catch {
+    console.error(
+      '\n✗ sharp не установлен — картинки не сожмутся в webp (уедут тяжёлые оригиналы).\n' +
+      '  Установи:            npm install   (или npm i sharp)\n' +
+      '  Прогнать без сжатия: ALLOW_NO_SHARP=1 node scripts/fetch-all.mjs\n'
+    );
+    process.exit(1);
+  }
+}
+
 const results = [];
 for (const [script, ...args] of STEPS) {
   const stepArgs = FORCE ? [...args, '--force'] : args;
