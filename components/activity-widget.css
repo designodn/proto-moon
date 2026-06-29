@@ -567,3 +567,4 @@
   object-fit: cover;
 }
 .au-trans__badge { top: var(--space-1); left: var(--space-1); }
+.au-trans__sub { color: var(--dynamic-text-and-icons-base-secondary); }
