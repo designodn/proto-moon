@@ -73,6 +73,40 @@ _(пока пусто — заполняется по мере прогонов)
   card.right−16, ринг +3px → до card.right−13, с запасом внутри. Устойчиво к reload
   (размер/boxShadow/классы совпали до и после).
 
+### today.html — скрытие портлета ДР при входе из Q3 (`?from=q3`)
+- В `<head>` `today.html` синхронный скрипт: `?from=q3` → класс `today-from-q3` на
+  `<html>`. CSS `.today-from-q3 .tg-island:has(> .tg-card--bday){display:none}`.
+- Замер `today.html?from=q3`: html-класс содержит `today-from-q3`, остров bday
+  `display:none, height 0`, `bdayHeight=0`, `offsetParent=null`. Первый видимый блок —
+  `.tg-news` («Сейчас в СМИ»), его island top=64 (сразу под навбаром, фантомного
+  зазора НЕТ). Без параметра: класса нет, bday h=220, offsetParent!=null, ава
+  `__size-72 __border`, news top=296.
+- Навигация из Q3: у `.calendar-date` в навбаре `lenta-q3.html` атрибут
+  `data-calendar-href="today.html?from=q3"`; `calendar-date.js` по тапу делает
+  `location.href`. Кнопка = `button[aria-label="Календарь событий"]`, клик ведёт ровно
+  на `today.html?from=q3`, портлет там скрыт.
+- ЛОВУШКА тайминга после клика-навигации: `waitForURL('**/today.html?from=q3')`
+  резолвится по URL, но DOM новой страницы ещё НЕ отрендерен (screen-transition) →
+  measure возвращает `NO-ISLAND/NO-BDAY/hasFromQ3:false`. Дожидайся контента:
+  `waitForFunction(()=>document.querySelector('.tg-feed')||'.tg-news')` + ~700ms, тогда
+  замеры корректны.
+
+### Activity-лента: таб «Сегодня» прячет портлет ДР (контекстное скрытие)
+- Правило в `today-widgets.css`:
+  `.ll-tabpanel[data-tab-panel="segodnya"] .tg-island:has(> .tg-card--bday){display:none}`.
+  Работает: остров с bday → `display:none, height 0, top 0` (полностью схлопнут,
+  фантомного зазора НЕТ). Первый видимый виджет панели — остров «Сейчас в СМИ»
+  (`.tg-news`). На standalone `today.html` правило НЕ применяется (нет
+  `.ll-tabpanel[...="segodnya"]`-обёртки) → bday виден, h=220, ава `__size-72 __border`.
+- ЛОВУШКА с селекторами на `activity-lenta/lenta.html`: таб `.tabs-tab[data-tab="segodnya"]`
+  присутствует в **6 экземплярах** (несколько таб-стрипов, в т.ч. дубль/sticky) →
+  `locator.click()` падает strict-mode violation. Кликай ВИДИМЫЙ через evaluate:
+  перебери все, возьми первый с `offsetParent!==null && height>0`.
+- Панель `.ll-tabpanel[data-tab-panel="segodnya"]` — в 1 экземпляре (panelCount=1),
+  но всё равно бери видимую через `getComputedStyle(p).display!=='none'`.
+- Гейт онбординга activity-lenta: `sessionStorage['afs-seen-al']='1'` через addInitScript
+  ДО goto — пропускает на первом заходе. (Подстраховался и `afs-seen` тоже выставил.)
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее

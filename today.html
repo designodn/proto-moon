@@ -11,6 +11,15 @@
 <link rel="stylesheet" href="components/today-widgets.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
+<script>
+  // Если в «Сегодня» зашли из ленты Q3 (?from=q3 — см. календарик в навбаре
+  // lenta-q3.html), помечаем документ: CSS ниже скрывает портлет ДР. Делаем в
+  // head синхронно — до рендера, без вспышки. Из других входов класс не ставим.
+  try {
+    if (new URLSearchParams(location.search).get('from') === 'q3')
+      document.documentElement.classList.add('today-from-q3');
+  } catch (e) {}
+</script>
 <style>
   * { -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
@@ -23,6 +32,10 @@
   /* Таб-бар внутри скролла: sticky снизу (прилипает при листании), встаёт в
      поток в конце доскролла. Перебиваем fixed из app-shell.css. */
   .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
+
+  /* Из ленты Q3 (?from=q3 → .today-from-q3 на <html>) портлет ДР скрыт вместе с
+     островом, чтобы не оставлять зазор ленты. Из других входов — портлет виден. */
+  .today-from-q3 .tg-island:has(> .tg-card--bday) { display: none; }
 
 </style>
 </head>
