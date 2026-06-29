@@ -328,20 +328,18 @@ window.DS_PEOPLE_DATA = [
     "gender": "",
     "age": null,
     "city": "",
-    "bio": "",
-    "verified": true
+    "bio": ""
   },
   {
     "id": "group-zenit",
     "name": "«ЗЕНИТ» Санкт-Петербург",
     "subtitle": "",
-    "photo": "assets/people/group-zenit.webp",
-    "media": "image",
+    "photo": null,
+    "media": null,
     "gender": "",
     "age": null,
     "city": "",
-    "bio": "",
-    "verified": true
+    "bio": ""
   },
   {
     "id": "ad-1",
