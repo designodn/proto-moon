@@ -492,6 +492,10 @@
   flex: 1 1 0;
   min-width: 0;
   margin: 0;
+  align-self: stretch;            /* высота 100% шапки */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;        /* текст — по центру по вертикали */
   color: var(--dynamic-text-and-icons-base-primary);
 }
 /* Ведущая часть тайтла — полужирная (база ds-title-s 600), хвост — regular. */
@@ -567,4 +571,3 @@
   object-fit: cover;
 }
 .au-trans__badge { top: var(--space-1); left: var(--space-1); }
-.au-trans__sub { color: var(--dynamic-text-and-icons-base-secondary); }

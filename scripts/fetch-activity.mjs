@@ -234,7 +234,7 @@ function renderTrans(a) {
                 <img class="au-trans__img" data-person-avatar="${esc(a.who)}" alt="">
                 <span class="tag __style-live __size-20 au-trans__badge"><span class="icon __size-16 __slot-music-radio"></span>${viewers}</span>
               </div>
-              <div class="uni-cell-additional-content ds-body-m"><b>${esc(name)}</b><br><span class="au-trans__sub">${t}</span></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>${esc(name)}</b> ${t}</div>
               ${cellButton(a.button || 'Смотреть')}
             </div>
           </div>
