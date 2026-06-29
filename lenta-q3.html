@@ -18,6 +18,14 @@
       if (isReload) sessionStorage.removeItem('afs-seen');
       if (!sessionStorage.getItem('afs-seen')) {
         sessionStorage.setItem('afs-seen', '1');
+        // Шторка показывается на «свежем» открытии приложения → лента после неё
+        // должна открыться СВЕРХУ. Редирект ниже уходит из <head> ещё до того,
+        // как внизу страницы отработает скрипт сохранения/восстановления скролла,
+        // поэтому сохранённая в прошлой сессии позиция (feedScroll) переживает
+        // reload и при возврате из шторки restore() отбрасывает ленту на неё
+        // («куда-то вниз, на первый пост»). Чистим стейл-ключ перед показом шторки —
+        // возврат из плеера клипа (back/bfcache, не reload) при этом не затрагивается.
+        sessionStorage.removeItem('feedScroll:' + location.pathname);
         location.replace('add-friends-sheet.html');
       }
     } catch (e) {}
