@@ -323,6 +323,17 @@ window.DS_PEOPLE_DATA = [
     "id": "group-spb-news",
     "name": "Телеканал «Санкт-Петербург»",
     "subtitle": "",
+    "photo": "assets/people/group-spb-news.webp",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-zenit",
+    "name": "«ЗЕНИТ» Санкт-Петербург",
+    "subtitle": "",
     "photo": null,
     "media": null,
     "gender": "",
