@@ -1751,7 +1751,9 @@ async function main() {
       posts.push({
         id, type,
         author: cell(c, I.author),
-        tab: cell(c, I.tab),   // таб activity-ленты (лейбл из колонки «Таб»); пусто → пост вне табов
+        // tab — только если в листе есть колонка «Таб» (activity-лента); без неё
+        // (Q3/Трибуна) поле не добавляем, чтобы не сорить пустыми tab в их json.
+        ...(I.tab >= 0 ? { tab: cell(c, I.tab) } : {}),   // лейбл таба; пусто → пост вне табов
         tema: cell(c, I.tema), rubrika: cell(c, I.rubrika),  // крошки (breadcrumbs)
         header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
