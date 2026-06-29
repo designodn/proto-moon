@@ -109,42 +109,21 @@ workflows:
                   echo "ENV: секреты не заданы — .env не трогаем (пропуск)"
                 fi
                 rm -f "$envf"
-              # ─── АТОМАРНЫЙ ДЕПЛОЙ: распаковка + build + recreate в ОДНОМ ssh ──────
-              # Почему «контейнер не пересоздаётся»: реальные build + up были ПОСЛЕДНИМ
-              # из череды отдельных ssh-шагов, а раннер SourceCraft (busybox sh)
-              # спотыкается на ВСТРОЕННЫХ «#»-комментариях внутри многострочных
-              # shell-конструкций — обрабатывает их без учёта кавычек и $(...). Из-за
-              # этого шаг падал ДО сборки и контейнер крутил старый образ:
-              #   - старый .env: env_body=$( ... «#»-коммент ... ) рвался с
-              #     «syntax error: ... (expecting close-paren)»;
-              #   - многострочный ssh '...' с «#»-комментами внутри рвался с
-              #     «syntax error: unterminated quoted string».
-              # Оттого логи замирали на REMOTE_TAR_EXIT / ENV_WRITTEN, секции BUILD/
-              # COMPOSE не было, healthz застывал на старом build, lastSync.reason — на
-              # manual (контейнер ни разу не рестартовал). Лечение — структурой + гигиеной:
-              #   1) распаковка → build → down → up --force-recreate → проверка healthz
-              #      идут в ОДНОМ ssh: нет границы шага, где ран мог бы молча оборваться;
-              #   2) ВСЕ пояснения — только на уровне YAML (вот эти строки), НИКАКИХ
-              #      inline-«#» внутри ssh '...' и $() — именно они и рвали раннер.
-              #      Эмпирика: шаги без inline-«#» (pre-diag, .env) проходят, с ним — нет.
-              # Падаем (red) только на реальной ошибке build/up (с хвостом build-лога);
-              # распаковка не удалась → старый контейнер остаётся жив, без простоя.
-              # Проверка просто печатает JSON healthz, не парсит его в шелле.
+              # ─── АТОМАРНЫЙ ДЕПЛОЙ ────────────────────────────────────────────────
+              # Историческая засада: build + up были ПОСЛЕДНИМ из череды ssh-шагов, а
+              # раннер SourceCraft (busybox sh) спотыкается на встроенных в YAML
+              # многострочных ssh-командах с «#»-комментами/кавычками — деплои #669–#671
+              # подряд рвались (сначала «unexpected end of file (expecting close-paren)»,
+              # потом «unterminated quoted string») ДО сборки, и контейнер крутил старый
+              # образ. Лечение радикальное: ВСЯ логика пересборки — в обычном файле
+              # scripts/vm-deploy.sh (не встроена в YAML), а ssh-команда тривиальна и
+              # повторяет ПРОВЕРЕННЫЙ паттерн старого untar-шага: распаковать tar в
+              # /opt/proto-moon и запустить ТОЛЬКО ЧТО распакованный vm-deploy.sh.
+              # Многострочных «#»/кавычек внутри ssh больше нет → раннеру нечего ломать.
+              # Шаг падает (red), только если внутри скрипта упал build или up; tar не
+              # распаковался → && не пустит дальше, старый контейнер остаётся жив.
               - |
                 tar --exclude='./node_modules' -C /sourcecraft/workspace -czf /tmp/code.tgz . \
                   && echo "LOCAL_TAR_OK ($(wc -c </tmp/code.tgz) bytes)" \
-                  || echo "LOCAL_TAR_WARN=$? (продолжаем, архив создан)"
-                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" '
-                  cd /opt/proto-moon || { echo "FATAL: no /opt/proto-moon dir"; exit 9; }
-                  if tar -xzf -; then echo "UNTAR_OK"; else echo "UNTAR_FAIL"; exit 11; fi
-                  echo "PS_BEFORE:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Status}}"
-                  docker compose build > /tmp/build.log 2>&1; b=$?; echo "BUILD_EXIT=$b"; tail -25 /tmp/build.log
-                  if [ "$b" -ne 0 ]; then echo "BUILD_FAILED keep-old-container"; exit "$b"; fi
-                  docker compose down --remove-orphans 2>&1 | tail -4
-                  docker ps -aq --filter "publish=80" | xargs -r docker rm -f 2>&1 || true
-                  docker compose up -d --force-recreate > /tmp/up.log 2>&1; u=$?; echo "UP_EXIT=$u"; cat /tmp/up.log
-                  echo "PS_AFTER:"; docker ps -a --format "{{.Names}} | {{.Image}} | {{.Status}}"
-                  docker image prune -f >/dev/null 2>&1 || true
-                  sleep 2; echo -n "SERVED_AFTER="; curl -s -m 5 localhost/healthz | head -c 220; echo
-                  exit "$u"
-                ' < /tmp/code.tgz
+                  || echo "LOCAL_TAR_WARN archive-made"
+                ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" 'tar -C /opt/proto-moon -xzf - && sh /opt/proto-moon/scripts/vm-deploy.sh' < /tmp/code.tgz
