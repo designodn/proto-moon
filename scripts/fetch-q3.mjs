@@ -1378,12 +1378,15 @@ const normTab = s => String(s || '').trim().toLowerCase();
 const postInTab = (p, tab) =>
   normTab(p.tab) === normTab(tab.label) || normTab(p.tab) === tab.id;
 
-/* Типы, которые даже в «твиттер-табе» рендерятся полной q3-карточкой, а не
-   компактным твиттер-рядом (самодостаточные блоки со своим лейаутом). Сейчас
-   пусто: friendversary раньше был исключением, теперь в tw-табе показывается
-   твиттер-рядом — праздничная карточка завёрнута в reshare-card, пост от
-   Одноклассников (см. renderTwitterCard). */
-const FULL_CARD_TYPES = new Set();
+/* Типы, которые УМЕЕТ нарисовать компактный твиттер-ряд (renderTwitterCard):
+   обычный контент + спец-обработка ad/gift/friendversary. Остальные типы рисуем
+   полным renderPost — либо они и так twitter-like (comment-as-feed), либо у них
+   свой полноширинный лейаут (clip, memories-clip, marathon и пр.). Флаг твиттера
+   (колонка «Твиттер-лайк?») применяется ТОЛЬКО к типам из этого списка. */
+const TW_TYPES = new Set([
+  'photo', 'text', 'video', 'reshare-post', 'group-post',
+  'ad', 'gift-received', 'ai-gift-received', 'friendversary',
+]);
 
 function tabStrip(activeId) {
   const btns = ACTIVITY_TABS.map(t =>
@@ -1725,13 +1728,14 @@ ${items}
       const sel = byColumn
         ? posts.filter(p => postInTab(p, tab))
         : posts.filter(p => (tab.types || []).includes(p.type));
-      // Часть типов — самостоятельные карточки (не «твиттер-ряд»): даже в tw-табе
-      // рендерим их полноценным q3-рендером (renderPost). Напр. friendversary —
-      // карточка годовщины дружбы (2 авы + «Поздравить друга»).
-      // Реклама (ad) — всегда твиттер-ряд, в ЛЮБОМ табе (а не только tw): по
-      // задаче рекламные посты в активити-ленте едины в twitter-like-стиле,
-      // даже если лежат в не-tw-табе (Лента/Локальное).
-      const isTwitter = (p) => (tab.tw || p.type === 'ad') && !FULL_CARD_TYPES.has(p.type);
+      // Формат поста (твиттер-ряд vs полная карточка) задаёт КОЛОНКА «Твиттер-лайк?»
+      // листа (поле p.tw). Если колонки нет (старый лист/json) — фолбэк на прежнее
+      // поведение: твиттер-ряд в tw-табах (Друзья/Подарки) + реклама везде.
+      // Применяем только к типам, которые умеет renderTwitterCard (TW_TYPES);
+      // comment-as-feed и спец-карточки (clip/memories-clip/marathon) рисует renderPost.
+      const hasTwCol = posts.some(p => 'tw' in p);
+      const wantTw = (p) => hasTwCol ? !!p.tw : (tab.tw || p.type === 'ad');
+      const isTwitter = (p) => wantTw(p) && TW_TYPES.has(p.type);
       cards = sel.map((p, i) => (isTwitter(p) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
       if (!cards.length) cards = [tabStub('Пока пусто')];
     }
@@ -1798,6 +1802,8 @@ async function main() {
     const I = {
       id: col('id'), type: col('тип'), author: col('автор'),
       tab: col('таб'),   // в каком табе activity-ленты показывать (лейбл; пусто → ни в каком)
+      tw: col('твиттер-лайк?', 'твиттер-лайк', 'твиттер'),  // да → пост рисуется компактным twitter-рядом
+
       tema: col('тема'), rubrika: col('рубрика'), header: col('шапка'),
       title: col('заголовок'), text: col('текст'), photos: col('фото'),
       likes: col('лайки'), comments: col('комменты'), reshares: col('репосты'),
@@ -1834,6 +1840,7 @@ async function main() {
         // tab — только если в листе есть колонка «Таб» (activity-лента); без неё
         // (Q3/Трибуна) поле не добавляем, чтобы не сорить пустыми tab в их json.
         ...(I.tab >= 0 ? { tab: cell(c, I.tab) } : {}),   // лейбл таба; пусто → пост вне табов
+        ...(I.tw  >= 0 ? { tw: isJoined(cell(c, I.tw)) } : {}),  // «Твиттер-лайк?» (да/нет) — формат поста
         tema: cell(c, I.tema), rubrika: cell(c, I.rubrika),  // крошки (breadcrumbs)
         header: cell(c, I.header),   // напр. «может быть интересно» (лейбл над клипом)
         title: cell(c, I.title),
