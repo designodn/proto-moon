@@ -117,6 +117,16 @@
                 border-color 600ms ease,
                 box-shadow 600ms ease;
   }
+  /* Улёт карточки (accept → вверх, accept-all → вниз) ведётся CSS-transition'ом
+     по transform из .friend-big-card.__flying-up/-down (friend-big-card.css).
+     Локальный .fp .friend-big-card выше задаёт transition ТОЛЬКО для хрома — у
+     него та же специфичность (0,2,0), но он позже в каскаде (инлайн <style> идёт
+     после index.css), поэтому перебивал transform → карточка пропадала мгновенно.
+     Поднимаем специфичность до (0,3,0), чтобы вернуть улёт. */
+  .fp .friend-big-card.__flying-up,
+  .fp .friend-big-card.__flying-down {
+    transition: transform 600ms cubic-bezier(.5, 0, .75, 0);
+  }
   .fp .friend-big-card .friend-big-card__info { opacity: 0; }
   .fp.__state-3 .friend-big-card,
   .fp.__state-4 .friend-big-card {
