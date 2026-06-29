@@ -4,25 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>Лента (light) — прототип</title>
-<!-- При первом заходе в приложение показываем шторку «Добавить друзей»
-     (add-friends-sheet.html, её крестик возвращает сюда). Гейт по sessionStorage,
-     чтобы не зацикливаться и показывать один раз за сессию. Синхронно в head —
-     до отрисовки ленты. -->
-<script>
-  (function () {
-    try {
-      // Обновление страницы (reload) сбрасывает гейт — шторка показывается снова.
-      var nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]);
-      var isReload = nav ? nav.type === 'reload'
-                         : (performance.navigation && performance.navigation.type === 1);
-      if (isReload) sessionStorage.removeItem('afs-seen');
-      if (!sessionStorage.getItem('afs-seen')) {
-        sessionStorage.setItem('afs-seen', '1');
-        location.replace('add-friends-sheet.html');
-      }
-    } catch (e) {}
-  })();
-</script>
+<!-- Шторка «Добавить друзей» при открытии ленты ОТКЛЮЧЕНА (по запросу):
+     больше не редиректим на add-friends-sheet.html на первом заходе. Сам файл
+     шторки оставлен в репозитории. -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
