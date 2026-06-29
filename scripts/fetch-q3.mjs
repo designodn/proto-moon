@@ -349,6 +349,12 @@ function cafHeader(commenter, to) {
  *  «м» и неизвестный пол оставляем как написано (муж. род по умолчанию). */
 function activityLine(header) {
   if (!header) return '';
+  // «Может быть интересно» — это лейбл-рекомендация (не «причина показа»):
+  // всегда Title S, основной цвет — как заголовок над постом/клипом, а не серая
+  // activity-строка ds-body-m. Остальные шапки («Борис поставил класс») — как ниже.
+  if (/^может быть интересно\.?$/i.test(String(header).trim())) {
+    return `          <div class="text-feed__activity ds-title-s">${esc(String(header).trim())}</div>\n`;
+  }
   // noWidow — чтобы последнее слово шапки не «улетало» одиночкой на новую строку.
   const parts = String(noWidow(header)).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
   let html = '';
