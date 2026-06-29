@@ -309,6 +309,28 @@ window.DS_PEOPLE_DATA = [
     "bio": ""
   },
   {
+    "id": "group-kudago",
+    "name": "KUDAGO: Санкт-Петербург",
+    "subtitle": "",
+    "photo": "assets/people/group-kudago.webp",
+    "media": "image",
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
+    "id": "group-spb-news",
+    "name": "Телеканал «Санкт-Петербург»",
+    "subtitle": "",
+    "photo": null,
+    "media": null,
+    "gender": "",
+    "age": null,
+    "city": "",
+    "bio": ""
+  },
+  {
     "id": "ad-1",
     "name": "Квартал бизнес-класса «Б15»",
     "subtitle": "Реклама 0+",
