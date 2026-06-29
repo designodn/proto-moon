@@ -125,6 +125,29 @@ _(пока пусто — заполняется по мере прогонов)
   loading, и после загрузки (фото `object-fit:cover` перекрывает). lenta.html
   гейтом онбординга НЕ редиректит (в отличие от lenta-q3 / activity-lenta).
 
+### ВВЗ-карточки — серый плейсхолдер под фото (vvz-card.css)
+- `.vvz-card__media` (контейнер фото, НЕ `<img>`) имеет
+  `background-color: var(--dynamic-surface-base-primary)` → computed
+  `rgb(247,244,242)` (#F7F4F2 light). Общий для всех вариантов (__default/__message/
+  __stories). Подтверждено в loading И loaded, переживает hard reload (статика CSS).
+- `friends.html` = `.vvz-card.__default`: квадрат 220×220, radius 0, blur-подложка
+  `.vvz-card__blur` (background-image webp). При route-pending фото И blur не
+  рисуются → ровный серый квадрат, без леттербокса/битой картинки. После fulfill:
+  фото object-fit:cover заполняет весь квадрат edge-to-edge (coversW/H == media box).
+  Серого канта по краям НЕТ.
+- `messages.html` = `.vvz-card.__message`: круг 96×96 radius 50%, БЕЗ blur. Loading —
+  сплошной серый круг; loaded — фото в круге cover, без внутреннего серого кольца.
+- Фото ВВЗ резолвятся people-data.js → ЛОКАЛЬНЫЕ `assets/people/vvz-*.webp` (есть в
+  репе, грузятся в окружении). Чтобы поймать loading — route на
+  `**/assets/people/vvz-*.webp` БЕЗ resolve (hold, НЕ abort: abort даёт broken-glyph).
+  Для loaded — `route.fulfill` локальной opaque-jpg.
+- НИ friends.html НИ messages.html НЕ редиректят на онбординг (нет afs-гейта).
+  image-skeleton.js тут НЕ подключён, и `.vvz-card__media` не `.media/.avatar/.picture`
+  → шиммера нет, плейсхолдер только через bg-color.
+- ЛОВУШКА: `locator.screenshot()` карточки в loading таймаутит на «waiting for fonts»
+  при pending-картинке. Бери `page.screenshot({clip, animations:'disabled'})` по
+  boundingBox.
+
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
   q3). После прохождения гейта присутствует в 1 экземпляре в live DOM. Клик удобнее
