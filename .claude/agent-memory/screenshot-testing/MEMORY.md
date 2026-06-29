@@ -63,9 +63,15 @@ _(пока пусто — заполняется по мере прогонов)
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
 - При viewport 390×844: карточка 374×220px, padding 16 со всех сторон. Лейаут
   (отступы относительно карты): title top16/left16 (лево-верх, max-width 65%),
-  ava 56×56 top16/right16 (право-верх), cta «Поздравить!» 116×36 left16/bottom16
+  ava top16/right16 (право-верх), cta «Поздравить!» 116×36 left16/bottom16
   (низ, своя ширина). Auto-зазор title↔cta ≈ 80px (`.tg-bday__cta margin-top:auto`,
   `.tg-bday__body` flex-column height:100%). Лейаут устойчив к reload.
+- v2 (коммит после 8528746): ава стала `__size-72` (было 56) + DS-модификатор
+  `__border`. Замер: 72×72, top16/rightGap16. Тайтл `ds-title-m` (font-size 17px).
+  `__border` даёт `box-shadow: rgb(255,255,255) 0 0 0 3px` (НЕ none) — белая обводка
+  3px. Несмотря на `overflow:hidden` карты, ринг не клипается: правый край авы =
+  card.right−16, ринг +3px → до card.right−13, с запасом внутри. Устойчиво к reload
+  (размер/boxShadow/классы совпали до и после).
 
 ### Селекторы
 - Навбар-«Поиск»: `[aria-label="Поиск"]` (top:18,left:350,24x24, flex/visible на
