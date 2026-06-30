@@ -1,0 +1,17 @@
+#!/bin/sh
+# Авто-расстановка неразрывных пробелов (U+00A0) в ИЗМЕНЁННЫХ HTML-макетах
+# перед коммитом. Правит только видимый текст (см. scripts/nbsp.mjs).
+#
+# Подключение (делается автоматически SessionStart-хуком .claude/settings.json,
+# либо вручную один раз):  git config core.hooksPath .githooks
+
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.html')
+[ -z "$staged" ] && exit 0
+
+# shellcheck disable=SC2086
+node scripts/nbsp.mjs $staged || exit 1
+
+# Пере-добавляем поправленные файлы, чтобы nbsp попал в этот же коммит.
+# shellcheck disable=SC2086
+printf '%s\n' $staged | xargs git add
+exit 0
