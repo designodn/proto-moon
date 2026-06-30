@@ -150,10 +150,16 @@
 .friend-big-card__accept .button-container { width: 100%; }
 
 /* ============================================================
+   ⚠️ АРХИВ (не используется). Старая анимация accept: .__accepting —
+   ОРАНЖЕВАЯ заливка + галочка, после неё карточка УЛЕТАЛА (__flying-up).
+   Заменена новым зелёным «успехом» (.__accepted, ниже). Разметку
+   .friend-big-card__accept-overlay/-check и JS-ветку сохраняем для отката:
+   вернуть class __accepting + flyOut в processCard — и старое поведение
+   оживёт. Сейчас JS этот класс не вешает, так что блок мёртв.
    .__accepting — нажали «Дружить»: ПОДЛОЖКА КНОПКИ расширяется и заливает
    карточку. Оранжевый слой стартует формой/местом кнопки (низ карточки,
    пилюля) и через clip-path разворачивается во всю карточку + галочка.
-   После заливки наружный JS добавляет .__flying-up.
+   После заливки наружный JS добавлял .__flying-up.
    ============================================================ */
 .friend-big-card__accept-overlay {
   position: absolute;
@@ -205,6 +211,92 @@
 }
 
 /* ============================================================
+   .__accepted — НОВАЯ анимация accept (нажали «Дружить»):
+   зелёный фон заливается СНИЗУ (clip-path из footprint кнопки во всю
+   карточку), затем проявляются иконка + тексты, через 500ms — две кнопки.
+   Карточка ОСТАЁТСЯ на месте (не улетает, ряд не сдвигается).
+   Слой .friend-big-card__success лежит поверх карточки (inset:0).
+   ============================================================ */
+.friend-big-card__success {
+  position: absolute;
+  inset: 0;
+  border-radius: 36px;
+  overflow: hidden;
+  /* Зелёный градиент из макета (Figma 5190:33850 / 5190:33893): база #4E7B44
+     + две светло-зелёные радиальные засветки. Бренд-градиент — CSS-аналог,
+     как оранжевый overlay-архив выше (это не «магический» цвет интерфейса). */
+  background:
+    radial-gradient(circle 360px at 12% 6%,  #6fa85a 0%, rgba(111, 168, 90, 0) 62%),
+    radial-gradient(circle 340px at 90% 52%, #5e9a4d 0%, rgba(94, 154, 77, 0) 60%),
+    #4e7b44;
+  /* старт — footprint кнопки «Дружить» (accept: низ 16, бока 16, высота 56). */
+  clip-path: inset(calc(100% - 72px) 16px 16px 16px round 28px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+  transition: clip-path 600ms cubic-bezier(.2, .8, .2, 1),
+              opacity 140ms ease-out;
+}
+.friend-big-card.__accepted .friend-big-card__success {
+  clip-path: inset(0px 0px 0px 0px round 36px);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Верхний блок: иконка + заголовок + текст. Прижат к верху карточки
+   (Figma: text-фрейм y≈73, ширина 260). Проявляется ПОСЛЕ старта заливки. */
+.friend-big-card__success-top {
+  position: absolute;
+  top: var(--space-18);
+  left: var(--space-5); right: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--static-text-and-icons-base-inverse-primary);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+.friend-big-card.__accepted .friend-big-card__success-top {
+  opacity: 1;
+  transform: none;
+  transition-delay: 240ms;  /* после того как зелёный фон начал заливаться */
+}
+.friend-big-card__success-icon {
+  width: 120px; height: 120px;
+  display: flex; align-items: center; justify-content: center;
+}
+.friend-big-card__success-icon img { width: 90px; height: 90px; display: block; }
+.friend-big-card__success-title {
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+.friend-big-card__success-text {
+  margin-top: var(--space-3);
+  color: var(--static-text-and-icons-base-inverse-secondary);
+}
+
+/* Кнопки — secondary-on-color (полупрозрачный белый на цвете). Прижаты к низу
+   (Figma: y=382 из 522 → ≈19px от низа), проявляются через 500ms после accept. */
+.friend-big-card__success-actions {
+  position: absolute;
+  left: var(--space-5); right: var(--space-5); bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 320ms ease-out, transform 320ms ease-out;
+}
+.friend-big-card.__accepted .friend-big-card__success-actions {
+  opacity: 1;
+  transform: none;
+  transition-delay: 500ms;  /* делей кнопок после иконки/текста */
+}
+.friend-big-card__success-actions .button-wrapper,
+.friend-big-card__success-actions .button-container { width: 100%; }
+
+/* ============================================================
    .__flying-up / .__flying-down — улёт после accept/dismiss.
    ============================================================ */
 .friend-big-card.__flying-up,
@@ -215,4 +307,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .friend-big-card { transition: none !important; animation: none !important; }
+  .friend-big-card__success,
+  .friend-big-card__success-top,
+  .friend-big-card__success-actions { transition: none !important; }
 }
