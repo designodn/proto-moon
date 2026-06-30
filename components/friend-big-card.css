@@ -270,7 +270,13 @@
   width: 120px; height: 120px;
   display: flex; align-items: center; justify-content: center;
 }
-.friend-big-card__success-icon .fbc-user-added { width: 90px; height: 90px; display: block; }
+/* Глиф визуально лево-тяжёлый (человечек слева, галочка справа-сверху). По макету
+   (Figma 5190:33897) глиф-бокс 90×90 стоит в контейнере 120 с отступами 21/9 —
+   т.е. сдвинут на +6px вправо от центра; вертикаль 15/15 даёт flex-центр. */
+.friend-big-card__success-icon .fbc-user-added {
+  width: 90px; height: 90px; display: block;
+  transform: translateX(6px);
+}
 /* Галочка «дочерчивается» штрихом: прячем линию через dashoffset, по .__accepted
    прогоняем offset → 0 (рисуется от начала к концу). Длина пути ≈ 37 → берём 40
    с запасом. Делей 520мс — чтобы человечек успел проявиться раньше галочки. */
