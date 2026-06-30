@@ -125,6 +125,11 @@
       return;
     }
     this.current = index;
+    // Заблокированный слайд (например ВВЗ-момент — последний в ряду): без
+    // авто-перелистывания таймером, без перехода вперёд по тапу и без
+    // авто-закрытия по досмотру. Закрыть можно только явно (✕/Esc).
+    this._locked = !!(this.slides && this.slides[index] && this.slides[index].lock);
+    this.root.classList.toggle('__locked', this._locked);
 
     // Обновляем сегменты прогресс-бара
     this.segments.forEach(function (seg, i) {
@@ -439,11 +444,12 @@
   };
 
   MomentViewer.prototype._onPrev = function () { this.go(this.current - 1); };
-  MomentViewer.prototype._onNext = function () { this.go(this.current + 1); };
+  MomentViewer.prototype._onNext = function () { if (this._locked) return; this.go(this.current + 1); };
 
   MomentViewer.prototype._onAnimEnd = function (e) {
     if (!e.target.classList || !e.target.classList.contains('moment__progress-segment')) return;
     if (!e.target.classList.contains('__state-active')) return;
+    if (this._locked) return; // заблокированный слайд не уходит на следующий
     this.go(this.current + 1);
   };
 
@@ -764,7 +770,10 @@
   //   MomentViewer.vvzSlide({
   //     title:  'Возможно вы знакомы',
   //     people: [{ name, sub, img, mutuals?, m? }, …],
-  //     cta:    { label: 'Показать всех', onClick? }   // опц.
+  //     cta:    { label: 'Показать всех', onClick? },  // опц.
+  //     lock:   true                                    // опц.: блокировать
+  //                                                     //   слайдер (без авто-
+  //                                                     //   перелистывания/закрытия)
   //   });
   // Карточки рендерятся через window.VvzCard.render — соответствующий модуль
   // должен быть подключён.
@@ -792,6 +801,9 @@
       duration: opts.duration || '6s'
     };
     if (opts.cta) slide.cta = opts.cta;
+    // Заблокировать слайдер: ВВЗ-момент стоит последним и не должен авто-
+    // перелистываться на следующий / закрываться сам (см. go() → this._locked).
+    if (opts.lock) slide.lock = true;
     return slide;
   }
 
