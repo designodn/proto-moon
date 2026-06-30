@@ -1353,8 +1353,8 @@
         if (!wasLocked) {
           // Тап без свайпа по карточке «принять всех» → массовое принятие.
           if (downAcceptAll) { runAcceptAll(); return; }
-          // Тап по НЕцентральной карточке → она едет в центр.
-          if (downCardI != null && downCardI !== centeredI()) centerCard(downCardI);
+          // Автоперемотка (тап по карточке → в центр) убрана — дёргала карусель.
+          // Навигация только свайпом; accept срабатывает по тапу «Дружить» на месте.
           return;
         }
         var raw = panOffset / STEP;
@@ -1494,8 +1494,7 @@
         var accBtn = el.querySelector('.friend-big-card__accept .button-container');
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
-          // Кнопка на НЕцентральной карточке → сначала ведём её в центр (не принимаем).
-          if (i !== centeredI()) { centerCard(i); return; }
+          // Тап «Дружить» → принимаем карточку НА МЕСТЕ (без автоперемотки в центр).
           processCard(i, 'accept');
         });
       });
