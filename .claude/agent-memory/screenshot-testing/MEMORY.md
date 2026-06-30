@@ -126,6 +126,33 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - ⚠️ Гейт: lenta-q3 редиректит по `afs-seen` (НЕ только `afs-seen-al`). Ставил ОБА в
   addInitScript до goto — пропускает (повтор находки выше, подтверждено снова).
 
+### add-friends-sheet.html — НОВАЯ accept-анимация (зелёный «успех» на месте, 2026-06-30)
+- Это сама онбординг-шторка → гейта `afs-seen`/`afs-seen-al` тут НЕТ, грузится сразу.
+- Интро ДЛИННОЕ: карточки слетаются ~3-4с И ПРОДОЛЖАЮТ снапиться в ряд ещё ~1.5с после
+  того, как кнопка «Дружить» уже видна. Замер без тапа: центр-карта left 109→45 за 1.5с
+  (delta −64px) — это снап ряда, НЕ accept. Жди по кнопке: `.friend-big-card[data-i="1"]
+  .friend-big-card__accept .button-container` width>0 И opacity accept-блока >0.9, ПЛЮС
+  доп. ~1.5с на снап, иначе замеры до/после accept «ползут» на остаточном пане.
+- Accept = `processCard(i)` → `el.classList.add('__accepted')` и ранний `return`. Старый
+  улёт (`__flying-up`/`flyOut`) — мёртвый код после return (АРХИВ в HTML: `.friend-big-card__
+  accept-overlay` оранж + `.friend-big-card__accept-check` галочка; оба остаются
+  display:block но opacity 0 — не видны). Карта НЕ улетает, ряд НЕ коллапсит.
+- Слой успеха `.friend-big-card__success` (inset:0, z-4). База градиента `#4e7b44` →
+  computed backgroundColor `rgb(78,123,68)` (ЗЕЛЁНЫЙ, не оранж). Заливка снизу через
+  clip-path: старт `inset(calc(100% - 72px) 16px 16px 16px round 28px)` (footprint кнопки)
+  → `__accepted` → `inset(0 round 36px)`, transition clip-path 600ms.
+- Тайминги проявления (CSS transition-delay на `.__accepted`): `.__success-top`
+  (иконка+заголовок+текст) delay 240ms; `.__success-actions` (2 кнопки) delay 500ms.
+  Замер на ~740ms после тапа: обе группы opacity 1.
+- Заголовок дополняется ИМЕНЕМ в твор. падеже из JS (`toInstrumental(firstName)`): статика
+  HTML = «Теперь вы друзья!», после `apply` стало «Теперь вы друзья с Александрой!»
+  (data-i=1 = Александра Бачурина (Душка), не Ольга — имена тянутся из people-data).
+- Иконка `assets/icons/user_added_24.svg` (человечек+галочка, naturalWidth 90, грузится),
+  белая. Кнопки `.button-container.__style-secondary-on-color` → bg
+  `rgba(255,255,255,0.16)` (полупрозр. белый на зелёном), тексты «Отправить подарок» /
+  «Написать сообщение». Только принятая карта зеленеет — у соседа справа кнопка
+  остаётся оранжевой в том же кадре.
+
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
