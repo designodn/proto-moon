@@ -2255,7 +2255,14 @@
 
         // Рендер ряда из листа «Сториз» (window.DS_STORIES). «Ваша история» (+)
         // остаётся первой — она в разметке и помечена data-skip-viewer.
-        var STORIES = (window.DS_STORIES || []);
+        var STORIES = (window.DS_STORIES || []).slice();
+        // ВВЗ-момент всегда последним в ряду: у него заблокирован слайдер
+        // (нельзя пролистнуть дальше и момент не закрывается сам), поэтому
+        // держим его в самом конце. Стабильная сортировка сохраняет порядок
+        // остальных моментов (ДР → обычные → ВВЗ).
+        STORIES.sort(function (a, b) {
+          return (a.type === 'vvz' ? 1 : 0) - (b.type === 'vvz' ? 1 : 0);
+        });
         var byId = {};
         STORIES.forEach(function (s) { byId[s.id] = s; });
         row.insertAdjacentHTML('beforeend', STORIES.map(avatarHTML).join(''));
@@ -2289,6 +2296,9 @@
               return [MomentViewer.vvzSlide({
                 title:  'Возможно, вы знакомы',
                 people: people,
+                // Слайдер заблокирован: ВВЗ-момент стоит последним и не должен
+                // авто-перелистываться на следующий / закрываться сам.
+                lock:   true,
                 cta:    { label: 'Показать всех', onClick: function () { location.href = 'vvz.html'; } }
               })];
             }

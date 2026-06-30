@@ -26,11 +26,5 @@ window.DS_STORIES = [
       "vvz-1",
       "8"
     ]
-  },
-  {
-    "id": "story-5",
-    "type": "regular",
-    "author": "11",
-    "image": "assets/stories/bb710bffc570f6fc.webp"
   }
 ];

@@ -95,6 +95,37 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - Несвязанная мелочь: у НЕ-ad поста «Виктор Бондарев» битые `<img>` плейсхолдеры
   медиа — отсутствующий ассет на обычной карте, не на рекламной.
 
+### lenta-q3.html — Моменты (сториз) + ВВЗ-момент с заблокированным слайдером (2026-06-30)
+- Ряд сториз: `#ll-stories-row` → прямые дети. Первый — «Ваша история» с `data-skip-viewer`
+  (img `assets/people/my_profile.webp`, НЕ открывает viewer). Дальше из `window.DS_STORIES`.
+- Порядок гарантируется СТАБИЛЬНОЙ сортировкой в lenta-q3.html (`type==='vvz'?1:0`):
+  ВВЗ всегда последним, остальные — в порядке листа. Подтверждено live: Ваша история →
+  bday(story-1, бейдж `.stories-row__bday-badge` 🎂, Ольга) → regular(story-2 Сергей) →
+  regular(story-3 Зинаида) → vvz(story-4, `[data-vvz]`, img `assets/icons/vvz_stories.png`).
+  Всего 5 детей (4 момента + статичная «Ваша история»).
+- Тап по ВВЗ: `#ll-stories-row [data-vvz]` (бокс ~x370,y102 на 390×844). Открывает
+  `.moment.__fullscreen.__view-body`. Заголовок «Возможно, вы знакомы».
+- **Прогресс-бар у `__locked` СКРЫТ, но место сохранено** (правка moment.css, коммит
+  53f57a5): `.moment.__locked .moment__progress {visibility:hidden}`. Замер live: computed
+  visibility=hidden, **display ОСТАЁТСЯ flex** → бокс прогресса top:0 h:26px на месте,
+  поэтому шапка (заголовок/✕) начинается с top:26 (НЕ подпрыгивает к top:0). ✕ top:33.
+  Полоски сегментов не видны вообще. Статика CSS → переживает reload. (Не путать со
+  старым `::after {animation:none;transform:translateX(0)}` — он тоже есть, но это про
+  заливку, а скрытие даёт visibility:hidden на контейнере `.moment__progress`.)
+- **Lock**: `MomentViewer.vvzSlide({lock:true})` → `slide.lock` → `go()` ставит
+  `this._locked` и `root.classList.toggle('__locked')`. Проверено live: корень получает
+  класс `__locked`. CSS `.moment.__locked .moment__progress-segment.__state-active::after`
+  → `animation:none; transform:translateX(0)` (computed `::after`: animationName `none`,
+  transform identity matrix). У ВВЗ ровно 1 сегмент (`segTotal=1`).
+- **Не авто-перелистывается / не закрывается**: ждал 8s (duration строки 4s в этой
+  сборке — `MomentViewer.create({duration:'4s'})`, не 6s; lock всё равно главный).
+  После 8s: `__locked` держится, display block, opacity 1, segActiveCount=1, segDoneCount=0,
+  ВВЗ-карточка на экране. `_onNext`/`_onAnimEnd` ранний return при `_locked`. PASS.
+- **✕ закрывает**: кнопка `.moment [aria-label="Закрыть"]` (бокс ~x366,y48). После клика
+  `.moment` → display:none + атрибут `hidden`. Lock закрытие через ✕ не блокирует. PASS.
+- ⚠️ Гейт: lenta-q3 редиректит по `afs-seen` (НЕ только `afs-seen-al`). Ставил ОБА в
+  addInitScript до goto — пропускает (повтор находки выше, подтверждено снова).
+
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
