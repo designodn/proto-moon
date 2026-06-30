@@ -353,7 +353,12 @@
       <div class="friend-big-card__success" aria-hidden="true">
         <div class="friend-big-card__success-top">
           <div class="friend-big-card__success-icon">
-            <img src="assets/icons/user_added_24.svg" alt="" width="90" height="90">
+            <!-- Человечек — статичная заливка; галочка — штрих, дочерчивается
+                 по .__accepted (см. .fbc-user-added__check в friend-big-card.css). -->
+            <svg class="fbc-user-added" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path class="fbc-user-added__person" fill-rule="evenodd" clip-rule="evenodd" d="M22.624 46.7578C10.684 46.7578 1.00146 56.4703 1.00146 68.3953C1.00146 71.1328 2.09271 73.7578 4.03147 75.7078C5.97021 77.6578 8.60271 78.7453 11.344 78.7453C21.7802 78.7453 41.9815 78.7453 52.414 78.7453C55.159 78.7453 57.7877 77.6578 59.7302 75.7078C61.669 73.7578 62.7565 71.1328 62.7565 68.3953C62.7565 56.4703 53.0777 46.7578 41.134 46.7578C35.1902 46.7578 28.5715 46.7578 22.624 46.7578ZM22.624 54.2578H41.134C48.934 54.2578 55.2565 60.5953 55.2565 68.3953C55.2565 69.1453 54.9565 69.8953 54.424 70.4203C53.8915 70.9453 53.1677 71.2453 52.414 71.2453H11.344C10.5902 71.2453 9.87022 70.9453 9.33397 70.4203C8.80147 69.8953 8.50146 69.1453 8.50146 68.3953C8.50521 60.5953 14.8277 54.2578 22.624 54.2578ZM31.9127 11.3203C23.674 11.3203 16.9802 18.0328 16.9802 26.2828C16.9802 34.5328 23.674 41.2453 31.9127 41.2453C40.1552 41.2453 46.849 34.5328 46.849 26.2828C46.849 18.0328 40.1552 11.3203 31.9127 11.3203ZM31.9127 18.8203C36.019 18.8203 39.349 22.1578 39.349 26.2828C39.349 30.4078 36.019 33.7453 31.9127 33.7453C27.8102 33.7453 24.4802 30.4078 24.4802 26.2828C24.4802 22.1578 27.8102 18.8203 31.9127 18.8203Z" fill="#fff"/>
+              <path class="fbc-user-added__check" d="M59.14 39.75L67.9 48.5L85.7 31" stroke="#fff" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
           </div>
           <div class="friend-big-card__success-title ds-title-l">Теперь вы друзья</div>
           <div class="friend-big-card__success-text ds-body-l">Не забудьте поздороваться или порадовать подарком</div>
@@ -400,7 +405,12 @@
       <div class="friend-big-card__success" aria-hidden="true">
         <div class="friend-big-card__success-top">
           <div class="friend-big-card__success-icon">
-            <img src="assets/icons/user_added_24.svg" alt="" width="90" height="90">
+            <!-- Человечек — статичная заливка; галочка — штрих, дочерчивается
+                 по .__accepted (см. .fbc-user-added__check в friend-big-card.css). -->
+            <svg class="fbc-user-added" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path class="fbc-user-added__person" fill-rule="evenodd" clip-rule="evenodd" d="M22.624 46.7578C10.684 46.7578 1.00146 56.4703 1.00146 68.3953C1.00146 71.1328 2.09271 73.7578 4.03147 75.7078C5.97021 77.6578 8.60271 78.7453 11.344 78.7453C21.7802 78.7453 41.9815 78.7453 52.414 78.7453C55.159 78.7453 57.7877 77.6578 59.7302 75.7078C61.669 73.7578 62.7565 71.1328 62.7565 68.3953C62.7565 56.4703 53.0777 46.7578 41.134 46.7578C35.1902 46.7578 28.5715 46.7578 22.624 46.7578ZM22.624 54.2578H41.134C48.934 54.2578 55.2565 60.5953 55.2565 68.3953C55.2565 69.1453 54.9565 69.8953 54.424 70.4203C53.8915 70.9453 53.1677 71.2453 52.414 71.2453H11.344C10.5902 71.2453 9.87022 70.9453 9.33397 70.4203C8.80147 69.8953 8.50146 69.1453 8.50146 68.3953C8.50521 60.5953 14.8277 54.2578 22.624 54.2578ZM31.9127 11.3203C23.674 11.3203 16.9802 18.0328 16.9802 26.2828C16.9802 34.5328 23.674 41.2453 31.9127 41.2453C40.1552 41.2453 46.849 34.5328 46.849 26.2828C46.849 18.0328 40.1552 11.3203 31.9127 11.3203ZM31.9127 18.8203C36.019 18.8203 39.349 22.1578 39.349 26.2828C39.349 30.4078 36.019 33.7453 31.9127 33.7453C27.8102 33.7453 24.4802 30.4078 24.4802 26.2828C24.4802 22.1578 27.8102 18.8203 31.9127 18.8203Z" fill="#fff"/>
+              <path class="fbc-user-added__check" d="M59.14 39.75L67.9 48.5L85.7 31" stroke="#fff" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
           </div>
           <div class="friend-big-card__success-title ds-title-l">Теперь вы друзья</div>
           <div class="friend-big-card__success-text ds-body-l">Не забудьте поздороваться или порадовать подарком</div>
@@ -447,7 +457,12 @@
       <div class="friend-big-card__success" aria-hidden="true">
         <div class="friend-big-card__success-top">
           <div class="friend-big-card__success-icon">
-            <img src="assets/icons/user_added_24.svg" alt="" width="90" height="90">
+            <!-- Человечек — статичная заливка; галочка — штрих, дочерчивается
+                 по .__accepted (см. .fbc-user-added__check в friend-big-card.css). -->
+            <svg class="fbc-user-added" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path class="fbc-user-added__person" fill-rule="evenodd" clip-rule="evenodd" d="M22.624 46.7578C10.684 46.7578 1.00146 56.4703 1.00146 68.3953C1.00146 71.1328 2.09271 73.7578 4.03147 75.7078C5.97021 77.6578 8.60271 78.7453 11.344 78.7453C21.7802 78.7453 41.9815 78.7453 52.414 78.7453C55.159 78.7453 57.7877 77.6578 59.7302 75.7078C61.669 73.7578 62.7565 71.1328 62.7565 68.3953C62.7565 56.4703 53.0777 46.7578 41.134 46.7578C35.1902 46.7578 28.5715 46.7578 22.624 46.7578ZM22.624 54.2578H41.134C48.934 54.2578 55.2565 60.5953 55.2565 68.3953C55.2565 69.1453 54.9565 69.8953 54.424 70.4203C53.8915 70.9453 53.1677 71.2453 52.414 71.2453H11.344C10.5902 71.2453 9.87022 70.9453 9.33397 70.4203C8.80147 69.8953 8.50146 69.1453 8.50146 68.3953C8.50521 60.5953 14.8277 54.2578 22.624 54.2578ZM31.9127 11.3203C23.674 11.3203 16.9802 18.0328 16.9802 26.2828C16.9802 34.5328 23.674 41.2453 31.9127 41.2453C40.1552 41.2453 46.849 34.5328 46.849 26.2828C46.849 18.0328 40.1552 11.3203 31.9127 11.3203ZM31.9127 18.8203C36.019 18.8203 39.349 22.1578 39.349 26.2828C39.349 30.4078 36.019 33.7453 31.9127 33.7453C27.8102 33.7453 24.4802 30.4078 24.4802 26.2828C24.4802 22.1578 27.8102 18.8203 31.9127 18.8203Z" fill="#fff"/>
+              <path class="fbc-user-added__check" d="M59.14 39.75L67.9 48.5L85.7 31" stroke="#fff" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
           </div>
           <div class="friend-big-card__success-title ds-title-l">Теперь вы друзья</div>
           <div class="friend-big-card__success-text ds-body-l">Не забудьте поздороваться или порадовать подарком</div>
@@ -494,7 +509,12 @@
       <div class="friend-big-card__success" aria-hidden="true">
         <div class="friend-big-card__success-top">
           <div class="friend-big-card__success-icon">
-            <img src="assets/icons/user_added_24.svg" alt="" width="90" height="90">
+            <!-- Человечек — статичная заливка; галочка — штрих, дочерчивается
+                 по .__accepted (см. .fbc-user-added__check в friend-big-card.css). -->
+            <svg class="fbc-user-added" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path class="fbc-user-added__person" fill-rule="evenodd" clip-rule="evenodd" d="M22.624 46.7578C10.684 46.7578 1.00146 56.4703 1.00146 68.3953C1.00146 71.1328 2.09271 73.7578 4.03147 75.7078C5.97021 77.6578 8.60271 78.7453 11.344 78.7453C21.7802 78.7453 41.9815 78.7453 52.414 78.7453C55.159 78.7453 57.7877 77.6578 59.7302 75.7078C61.669 73.7578 62.7565 71.1328 62.7565 68.3953C62.7565 56.4703 53.0777 46.7578 41.134 46.7578C35.1902 46.7578 28.5715 46.7578 22.624 46.7578ZM22.624 54.2578H41.134C48.934 54.2578 55.2565 60.5953 55.2565 68.3953C55.2565 69.1453 54.9565 69.8953 54.424 70.4203C53.8915 70.9453 53.1677 71.2453 52.414 71.2453H11.344C10.5902 71.2453 9.87022 70.9453 9.33397 70.4203C8.80147 69.8953 8.50146 69.1453 8.50146 68.3953C8.50521 60.5953 14.8277 54.2578 22.624 54.2578ZM31.9127 11.3203C23.674 11.3203 16.9802 18.0328 16.9802 26.2828C16.9802 34.5328 23.674 41.2453 31.9127 41.2453C40.1552 41.2453 46.849 34.5328 46.849 26.2828C46.849 18.0328 40.1552 11.3203 31.9127 11.3203ZM31.9127 18.8203C36.019 18.8203 39.349 22.1578 39.349 26.2828C39.349 30.4078 36.019 33.7453 31.9127 33.7453C27.8102 33.7453 24.4802 30.4078 24.4802 26.2828C24.4802 22.1578 27.8102 18.8203 31.9127 18.8203Z" fill="#fff"/>
+              <path class="fbc-user-added__check" d="M59.14 39.75L67.9 48.5L85.7 31" stroke="#fff" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
           </div>
           <div class="friend-big-card__success-title ds-title-l">Теперь вы друзья</div>
           <div class="friend-big-card__success-text ds-body-l">Не забудьте поздороваться или порадовать подарком</div>
@@ -541,7 +561,12 @@
       <div class="friend-big-card__success" aria-hidden="true">
         <div class="friend-big-card__success-top">
           <div class="friend-big-card__success-icon">
-            <img src="assets/icons/user_added_24.svg" alt="" width="90" height="90">
+            <!-- Человечек — статичная заливка; галочка — штрих, дочерчивается
+                 по .__accepted (см. .fbc-user-added__check в friend-big-card.css). -->
+            <svg class="fbc-user-added" width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path class="fbc-user-added__person" fill-rule="evenodd" clip-rule="evenodd" d="M22.624 46.7578C10.684 46.7578 1.00146 56.4703 1.00146 68.3953C1.00146 71.1328 2.09271 73.7578 4.03147 75.7078C5.97021 77.6578 8.60271 78.7453 11.344 78.7453C21.7802 78.7453 41.9815 78.7453 52.414 78.7453C55.159 78.7453 57.7877 77.6578 59.7302 75.7078C61.669 73.7578 62.7565 71.1328 62.7565 68.3953C62.7565 56.4703 53.0777 46.7578 41.134 46.7578C35.1902 46.7578 28.5715 46.7578 22.624 46.7578ZM22.624 54.2578H41.134C48.934 54.2578 55.2565 60.5953 55.2565 68.3953C55.2565 69.1453 54.9565 69.8953 54.424 70.4203C53.8915 70.9453 53.1677 71.2453 52.414 71.2453H11.344C10.5902 71.2453 9.87022 70.9453 9.33397 70.4203C8.80147 69.8953 8.50146 69.1453 8.50146 68.3953C8.50521 60.5953 14.8277 54.2578 22.624 54.2578ZM31.9127 11.3203C23.674 11.3203 16.9802 18.0328 16.9802 26.2828C16.9802 34.5328 23.674 41.2453 31.9127 41.2453C40.1552 41.2453 46.849 34.5328 46.849 26.2828C46.849 18.0328 40.1552 11.3203 31.9127 11.3203ZM31.9127 18.8203C36.019 18.8203 39.349 22.1578 39.349 26.2828C39.349 30.4078 36.019 33.7453 31.9127 33.7453C27.8102 33.7453 24.4802 30.4078 24.4802 26.2828C24.4802 22.1578 27.8102 18.8203 31.9127 18.8203Z" fill="#fff"/>
+              <path class="fbc-user-added__check" d="M59.14 39.75L67.9 48.5L85.7 31" stroke="#fff" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
           </div>
           <div class="friend-big-card__success-title ds-title-l">Теперь вы друзья</div>
           <div class="friend-big-card__success-text ds-body-l">Не забудьте поздороваться или порадовать подарком</div>
@@ -627,10 +652,12 @@
       if ('жшчщц'.indexOf(last) >= 0) return n + 'ем';        // после шипящих
       return n;                                               // гласная/иное — как есть
     }
-    // Только люди (не сообщества) — у групп id-строка вида "group-N". Общие
-    // друзья должны быть людьми, поэтому группы из пула исключаем.
-    function isGroup(p) { return typeof p.id === 'string' && p.id.indexOf('group-') === 0; }
-    var withPhoto = people.filter(function (p) { return p && p.photo && !isGroup(p); });
+    // Пул «общих друзей» — ТОЛЬКО люди с числовым id 1..11 (первые карточки
+    // листа «Люди»). Раньше брали всех подряд из реестра (вкл. ВВЗ/группы) —
+    // получалась какофония. Теперь аватарки консистентные и предсказуемые.
+    var withPhoto = people.filter(function (p) {
+      return p && p.photo && typeof p.id === 'number' && p.id >= 1 && p.id <= 11;
+    });
     // N РАЗНЫХ случайных фото (без повторов внутри одной карточки): тасуем копию
     // реестра и берём первые n. exclude — фото самого человека карточки.
     function distinctPhotos(n, exclude) {
@@ -651,7 +678,7 @@
       var nameEl = card.querySelector('.friend-big-card__name');
       if (nameEl) nameEl.textContent = p.name;
       var successTitle = card.querySelector('.friend-big-card__success-title');
-      if (successTitle) successTitle.textContent = 'Теперь вы друзья с ' + toInstrumental(firstName(p.name));
+      if (successTitle) successTitle.textContent = 'Теперь вы друзья с ' + toInstrumental(firstName(p.name));
       var capEl = card.querySelector('.friend-big-card__caption');
       if (capEl) capEl.textContent = caption(p);
       var img = card.querySelector('.friend-big-card__photo img');
@@ -1196,8 +1223,27 @@
       // Скорость пальца (px/мс) для флик-снапа — сглаженная по последним сэмплам.
       var velocity = 0, lastMoveX = 0, lastMoveT = 0;
       var downAcceptAll = false;  // тап начат на карточке «принять всех»?
+      var downCardI = null;       // data-i карточки, на которой начат тап (для центрирования)
       var acceptAllI = ACCEPT_ALL ? IDX[IDX.length - 1] : null;  // data-i карточки «принять всех» (8)
       var finishing = false;      // идёт авто-финиш (приняли всё по одной)
+
+      // После accept двигаем следующую (непринятую) карточку в центр; когда
+      // приняты все заявки — снизу выезжает кнопка «Закрыть» (как у подарков).
+      var acceptedCount = 0;
+      var TOTAL_TO_ACCEPT = ACCEPT_ALL ? (IDX.length - 1) : IDX.length;
+      var ADVANCE_DELAY = 700;    // пауза после accept до сдвига/финала
+      function showFinishClose() {
+        var finish = document.getElementById('fpFinish');
+        var btn = document.getElementById('fpFinishClose');
+        if (btn && !btn.dataset.bound) {
+          btn.dataset.bound = '1';
+          btn.addEventListener('click', function () {
+            var closeBtn = document.querySelector('.fp__close');
+            if (closeBtn) closeBtn.click();
+          });
+        }
+        if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+      }
 
       // Авто-финиш: приняли все карточки по одной → карточка «принять всех» сама
       // улетает вниз, затем конфетти + финальный заголовок.
@@ -1233,6 +1279,8 @@
         // По карточке «принять всех» drag РАЗРЕШАЕМ (чтобы листать назад с конца),
         // а тап по ней ловим в onUp (без свайпа) — см. downAcceptAll.
         downAcceptAll = !!(e.target && e.target.closest && e.target.closest('.friend-big-card.__accept-all'));
+        var _card = e.target && e.target.closest && e.target.closest('.friend-big-card');
+        downCardI = _card ? parseInt(_card.getAttribute('data-i'), 10) : null;
 
         startX = e.clientX;
         startY = e.clientY;
@@ -1295,7 +1343,9 @@
         endDrag();
         if (!wasLocked) {
           // Тап без свайпа по карточке «принять всех» → массовое принятие.
-          if (downAcceptAll) runAcceptAll();
+          if (downAcceptAll) { runAcceptAll(); return; }
+          // Тап по НЕцентральной карточке → она едет в центр.
+          if (downCardI != null && downCardI !== centeredI()) centerCard(downCardI);
           return;
         }
         var raw = panOffset / STEP;
@@ -1341,16 +1391,30 @@
         snapRaf = requestAnimationFrame(frame);
       }
 
+      // Какая карточка сейчас по центру (snapped=0 → liveCards[0], -1 → [1] …).
+      function centeredI() { return liveCards[-snapped]; }
+      // Центрируем карточку i (тап по соседней / её кнопке). true — если сдвинули.
+      function centerCard(i) {
+        var idx = liveCards.indexOf(i);
+        if (idx < 0) return false;
+        var s = -idx;
+        if (s === snapped) return false;   // уже по центру
+        snapped = s;
+        animateSnap(panForSnap(s));
+        return true;
+      }
+
       // ── ACCEPT («Дружить» на карточке) ─────────────────────
-      // Тап «Дружить» → зелёный «успех» на МЕСТЕ (класс __accepted):
-      // фон заливается снизу → иконка/текст → (делей 500мс) кнопки.
-      // Карточка НЕ улетает и ряд НЕ сдвигается — листаем свайпом сами.
+      // Тап «Дружить» (по ЦЕНТРАЛЬНОЙ карточке) → зелёный «успех» на МЕСТЕ
+      // (класс __accepted): фон снизу → иконка/текст → (делей 500мс) кнопки.
+      // Карточка НЕ улетает и НЕ сдвигается сама. Когда приняты ВСЕ заявки —
+      // снизу выезжает кнопка «Закрыть» (как у подарков).
       function processCard(i) {
         if (processing[i]) return;
         processing[i] = true;
-        var el = els[i];
-
-        el.classList.add('__accepted');
+        els[i].classList.add('__accepted');
+        acceptedCount++;
+        if (acceptedCount >= TOTAL_TO_ACCEPT) setTimeout(showFinishClose, ADVANCE_DELAY);
         return;
 
         // ── АРХИВ (старое поведение: оранжевая заливка + улёт вверх) ──────
@@ -1420,6 +1484,8 @@
         var accBtn = el.querySelector('.friend-big-card__accept .button-container');
         if (accBtn) accBtn.addEventListener('click', function (e) {
           e.stopPropagation();
+          // Кнопка на НЕцентральной карточке → сначала ведём её в центр (не принимаем).
+          if (i !== centeredI()) { centerCard(i); return; }
           processCard(i, 'accept');
         });
       });
