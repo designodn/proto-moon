@@ -105,6 +105,13 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   Всего 5 детей (4 момента + статичная «Ваша история»).
 - Тап по ВВЗ: `#ll-stories-row [data-vvz]` (бокс ~x370,y102 на 390×844). Открывает
   `.moment.__fullscreen.__view-body`. Заголовок «Возможно, вы знакомы».
+- **Прогресс-бар у `__locked` СКРЫТ, но место сохранено** (правка moment.css, коммит
+  53f57a5): `.moment.__locked .moment__progress {visibility:hidden}`. Замер live: computed
+  visibility=hidden, **display ОСТАЁТСЯ flex** → бокс прогресса top:0 h:26px на месте,
+  поэтому шапка (заголовок/✕) начинается с top:26 (НЕ подпрыгивает к top:0). ✕ top:33.
+  Полоски сегментов не видны вообще. Статика CSS → переживает reload. (Не путать со
+  старым `::after {animation:none;transform:translateX(0)}` — он тоже есть, но это про
+  заливку, а скрытие даёт visibility:hidden на контейнере `.moment__progress`.)
 - **Lock**: `MomentViewer.vvzSlide({lock:true})` → `slide.lock` → `go()` ставит
   `this._locked` и `root.classList.toggle('__locked')`. Проверено live: корень получает
   класс `__locked`. CSS `.moment.__locked .moment__progress-segment.__state-active::after`
