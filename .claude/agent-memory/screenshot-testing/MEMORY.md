@@ -151,6 +151,13 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   `.fbc-user-added__person` (статичный человечек, bbox user-space x1 y11 w62 h67) и
   `.fbc-user-added__check` (галочка, bbox x59 y31 w27 h18 — правый-верх у головы, не
   съезжает). СТАРОГО `assets/icons/user_added_24.svg` уже нет.
+- ПОЗИЦИЯ ИКОНКИ (PASS, 2026-06-30): глиф-бокс 90×90 в контейнере `.friend-big-card__
+  success-icon` 120×120. CSS: flex-центр + `transform: translateX(6px)` на `.fbc-user-added`.
+  Замер getBoundingClientRect на ВИДИМОЙ принятой карте: leftGap=21, rightGap=9,
+  topGap=15, bottomGap=15 (ровно по комменту CSS «отступы 21/9»). Визуально человечек+
+  галочка читаются по центру блока (сдвиг +6px компенсирует лево-тяжёлый глиф). НЕ влево/
+  вправо. ⚠️ при замере иконки бери ВИДИМУЮ карту (centeredI, cx≈195): остальные принятые
+  карты ушли за вьюпорт (left ≈ −1100), их contRect отрицательный — кроп промахнётся.
 - Галочка ДОЧЕРЧИВАЕТСЯ штрихом (stroke-dasharray:40, dashoffset 40→0). CSS на
   `.__accepted .fbc-user-added__check`: `transition: stroke-dashoffset 420ms
   cubic-bezier(.65,0,.35,1) 520ms`. ПОДТВЕРЖДЕНО замером computed strokeDashoffset
@@ -190,6 +197,12 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   aria-hidden=false, opacity 1. Кнопка `#fpFinishClose` = `.button-container
   .__style-secondary` текст «Закрыть», rect left16/right374 (insets 16px), bottom 24px,
   rTop≈764 (низ экрана). Клик → `.fp__close` (data-href lenta-q3.html).
+- БАГ 5-Й КАРТЫ «скачет и не принимается» — НЕ воспроизводится (PASS, повтор 2026-06-30):
+  приняты все 5 по очереди (центр→тап «Дружить»→центрируй следующую тапом соседа).
+  По 5-й: centered before=5 cx195 (accepted:false) → тап → card5 `__accepted=true`,
+  centeredI остаётся 5 cx195 и в +300ms, и после; карусель НЕ дёрнулась. accepted-set
+  стал [1,2,3,4,5], «Закрыть» появилась. Фикс из `onDown` (сброс downCardI ДО раннего
+  выхода по кнопке) держится.
 - ОБЩИЕ ДРУЗЬЯ (PASS): 3 аватарки `.friend-big-card__mutual .avatar img` на карту,
   src из `distinctPhotos()` (shuffle пула people id 1..11, без фото самого человека,
   slice(0,3)) → внутри ОДНОЙ карты 3 РАЗНЫХ src (проверено по всем 5 картам в 2
