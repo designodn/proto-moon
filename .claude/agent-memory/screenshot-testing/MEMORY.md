@@ -147,11 +147,59 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 - Заголовок дополняется ИМЕНЕМ в твор. падеже из JS (`toInstrumental(firstName)`): статика
   HTML = «Теперь вы друзья!», после `apply` стало «Теперь вы друзья с Александрой!»
   (data-i=1 = Александра Бачурина (Душка), не Ольга — имена тянутся из people-data).
-- Иконка `assets/icons/user_added_24.svg` (человечек+галочка, naturalWidth 90, грузится),
-  белая. Кнопки `.button-container.__style-secondary-on-color` → bg
+- Иконка успеха теперь INLINE svg `.fbc-user-added` (90×90), белая. Два path:
+  `.fbc-user-added__person` (статичный человечек, bbox user-space x1 y11 w62 h67) и
+  `.fbc-user-added__check` (галочка, bbox x59 y31 w27 h18 — правый-верх у головы, не
+  съезжает). СТАРОГО `assets/icons/user_added_24.svg` уже нет.
+- Галочка ДОЧЕРЧИВАЕТСЯ штрихом (stroke-dasharray:40, dashoffset 40→0). CSS на
+  `.__accepted .fbc-user-added__check`: `transition: stroke-dashoffset 420ms
+  cubic-bezier(.65,0,.35,1) 520ms`. ПОДТВЕРЖДЕНО замером computed strokeDashoffset
+  после тапа: t≤520ms off=40px (скрыта, виден только человечек); t≈700ms off≈27px;
+  t≈725ms off≈23px (~41% — чистый mid-кадр для скрина); t≈900ms off≈0.3px; t≥1100ms
+  off=0 (дорисована). cubic кривая КРУТАЯ в середине → для «половинного» кадра целься
+  ~720–730ms, не 680 (там ещё ~23% нарисовано). Делей 520ms и длит. 420ms = по коду.
+- Кнопки `.button-container.__style-secondary-on-color` → bg
   `rgba(255,255,255,0.16)` (полупрозр. белый на зелёном), тексты «Отправить подарок» /
   «Написать сообщение». Только принятая карта зеленеет — у соседа справа кнопка
   остаётся оранжевой в том же кадре.
+
+### add-friends-sheet.html — КАРУСЕЛЬ: центрирование тапом + финал «Закрыть» (коммит f91df3c, 2026-06-30)
+- ⚠️ ИНТРО = ДВЕ фазы, settle ~4с (раньше думал ~3.5с — НЕДОоценка): (1) до t≈2500ms
+  карты в «облачной» позе — scaled, перекрываются, центр-карта cx≈244 при w≈196
+  (НЕ центрирована на 195!); (2) при t≈3000ms ряд ВЗРЫВАЕТСЯ в row-mode (все w=300,
+  шаг 316px), снап доезжает к t≈4000ms → card-1 ровно cx195. После 4000ms стабильно.
+  Ловушка: `waitForFunction` по «transform не меняется» срабатывает на фазе 1 (мнимая
+  стабильность 1500-2500ms) ДО взрыва. Правильный gate: ждать `r.width>280 &&
+  |cx-195|<8` стабильно ≥6 поллов. Без этого все замеры до/после «ползут».
+- В row-mode карты 300px, шаг 316px. **Соседи почти ЗА вьюпортом** (390 шир.):
+  card-2 cx511 → видна только левая полоска x≈360-389; левый сосед — правая полоска
+  x≈1-30. ❗Тап `mouse.click` по геом-центру соседа промахивается (там `.fp-scene`
+  или ничего). Тапай по ВИДИМОЙ полоске: `elementFromPoint` скан x∈[375..355]∪[15..35]
+  при y=300, найди колонку, где `closest('.friend-big-card')`==нужный data-i, туда клик.
+- ЦЕНТРИРОВАНИЕ ТАПОМ работает (PASS): тап по нецентральной карте (или её кнопке
+  «Дружить») → `centerCard(i)` → `animateSnap` 280ms → карта едет в центр (cx→195),
+  ряд сдвигается. Логика: `onUp` при !locked `if(downCardI!=null && downCardI!==
+  centeredI()) centerCard(downCardI)`; кнопка accept на нецентр. карте тоже сначала
+  только центрирует (`if(i!==centeredI()){centerCard(i);return;}`), НЕ принимает.
+- ACCEPT центральной (PASS): `processCard` → `el.classList.add('__accepted')`; ранний
+  return — НЕ улетает, ряд НЕ сдвигается сам (card-1 cx195→195 до/после, centeredI
+  не меняется). `__flying-up`/`flyOut`/коллапс ряда — мёртвый АРХИВ за return.
+- ФИНАЛ (PASS): `ACCEPT_ALL=false` → IDX=[1,2,3,4,5] (карта «принять всех» data-i=8
+  удалена из STATES). `TOTAL_TO_ACCEPT=5`; каждый accept `acceptedCount++`; при ==5 →
+  `setTimeout(showFinishClose, ADVANCE_DELAY=700ms)`. `#fpFinish` получает `.__shown`,
+  aria-hidden=false, opacity 1. Кнопка `#fpFinishClose` = `.button-container
+  .__style-secondary` текст «Закрыть», rect left16/right374 (insets 16px), bottom 24px,
+  rTop≈764 (низ экрана). Клик → `.fp__close` (data-href lenta-q3.html).
+- ОБЩИЕ ДРУЗЬЯ (PASS): 3 аватарки `.friend-big-card__mutual .avatar img` на карту,
+  src из `distinctPhotos()` (shuffle пула people id 1..11, без фото самого человека,
+  slice(0,3)) → внутри ОДНОЙ карты 3 РАЗНЫХ src (проверено по всем 5 картам в 2
+  прогонах, allUnique=true; пул рандомится → между прогонами составы разные, это норма).
+- Заголовок: `successTitle.textContent='Теперь вы друзья с '+toInstrumental(firstName)`.
+  Замеры live: card-1 «с Александрой», card-5 «с Антонидой» (твор. падеж из эвристики).
+- `.friend-big-card__success` фон (подтверждён снова): backgroundColor `rgb(78,123,68)`
+  (#4e7b44), backgroundImage radial-gradient `337px at 100% 44%, rgb(52,153,67) 0%…`.
+  success-top opacity→1 (delay 240ms), success-actions opacity→1 (delay 500ms): на
+  ~1000ms после тапа обе =1.
 
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от

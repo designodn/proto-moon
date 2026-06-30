@@ -222,12 +222,15 @@
   inset: 0;
   border-radius: 36px;
   overflow: hidden;
-  /* Зелёный градиент из макета (Figma 5190:33850 / 5190:33893): база #4E7B44
-     + две светло-зелёные радиальные засветки. Бренд-градиент — CSS-аналог,
-     как оранжевый overlay-архив выше (это не «магический» цвет интерфейса). */
+  /* Зелёный градиент из макета (Figma 5190:33850): база #4E7B44 + две
+     радиальные засветки — насыщенная зелёная центр-справа и светлая верх-слева.
+     Значения подобраны под реальные пиксели рендера ноды (≤5 ед./канал),
+     цвет «один в один» с макетом. Бренд-градиент — CSS-аналог, как оранжевый
+     overlay-архив выше (это не «магический» цвет интерфейса).
+     Порядок слоёв: первый = верхний (центр-право поверх верх-лево поверх базы). */
   background:
-    radial-gradient(circle 360px at 12% 6%,  #6fa85a 0%, rgba(111, 168, 90, 0) 62%),
-    radial-gradient(circle 340px at 90% 52%, #5e9a4d 0%, rgba(94, 154, 77, 0) 60%),
+    radial-gradient(circle 337px at 100% 44%, #349943 0%, rgba(52, 153, 67, 0) 100%),
+    radial-gradient(circle 340px at 38% 14%,  #82b663 0%, rgba(130, 182, 99, 0) 100%),
     #4e7b44;
   /* старт — footprint кнопки «Дружить» (accept: низ 16, бока 16, высота 56). */
   clip-path: inset(calc(100% - 72px) 16px 16px 16px round 28px);
@@ -267,7 +270,18 @@
   width: 120px; height: 120px;
   display: flex; align-items: center; justify-content: center;
 }
-.friend-big-card__success-icon img { width: 90px; height: 90px; display: block; }
+.friend-big-card__success-icon .fbc-user-added { width: 90px; height: 90px; display: block; }
+/* Галочка «дочерчивается» штрихом: прячем линию через dashoffset, по .__accepted
+   прогоняем offset → 0 (рисуется от начала к концу). Длина пути ≈ 37 → берём 40
+   с запасом. Делей 520мс — чтобы человечек успел проявиться раньше галочки. */
+.fbc-user-added__check {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+.friend-big-card.__accepted .fbc-user-added__check {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 420ms cubic-bezier(.65, 0, .35, 1) 520ms;
+}
 .friend-big-card__success-title {
   color: var(--static-text-and-icons-base-inverse-primary);
 }
@@ -309,5 +323,6 @@
   .friend-big-card { transition: none !important; animation: none !important; }
   .friend-big-card__success,
   .friend-big-card__success-top,
-  .friend-big-card__success-actions { transition: none !important; }
+  .friend-big-card__success-actions,
+  .fbc-user-added__check { transition: none !important; }
 }
