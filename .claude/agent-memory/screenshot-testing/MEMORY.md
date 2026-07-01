@@ -222,6 +222,33 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
   success-top opacity→1 (delay 240ms), success-actions opacity→1 (delay 500ms): на
   ~1000ms после тапа обе =1.
 
+### add-friends-sheet.html — УЖИМАНИЕ ряда под кнопку «Закрыть» (ветка claude/add-friends-card-collapse, uncommitted 2026-07-01)
+- Правка: флаг `finishActive` в `recenterRow()`. Когда все 5 приняты и появляется
+  `#fpFinish` — ряд перецентрируется с `s = (desiredBottom−cardTop)/ROW_CARD_H`,
+  `desiredBottom = pageH − (24+56) − 16` (отступ кнопки + высота кнопки + зазор 16px),
+  `s` зажат `Math.max(0.4, Math.min(s, 1, widthCap))` → **s ≤ 1, только ужимает**.
+  Тайминги в `showFinishClose`: `+300ms` finishActive+recenter (transition
+  `transform 500ms ease`), `+500ms` `#fpFinish.__shown`. `ADVANCE_DELAY=700ms` до
+  `showFinishClose`.
+- ПРОВЕРЕНО В ДВУХ ВИЮПОРТАХ (PASS):
+  - **390×844 (high)**: карточки ВЛЕЗАЮТ → s остаётся **1.0** (scaleVar 1→1, rectH
+    550→550, rectBottom 743→743). Кнопка top 764, gap card.bottom→finish.top = **21px**
+    (≥16). Ветка `s≤1` матчит: (748−193)/548=1.01 → cap 1. Норма — не баг.
+  - **390×640 (short)**: shrink РЕАЛЬНО срабатывает → scaleVar **0.75636 → 0.71273**
+    (уменьшился), rectH 416→392, rectBottom 568→544 (карта уехала вверх), finish top
+    568→560, gap = **ровно 16px**, НЕ перекрывает. Заметь: базовый 0.756 — это уже
+    шринк от `MIN_GAP` (else-if ветка, низкий экран), finishActive добавляет сверху.
+  - ⚠️ ПОБОЧКА (не FAIL, косметика): при shrink горизонт. шаг стягивается к grid-центру
+    180 → центрированная card-5 уехала cx 195→139.8 (лево-крен), но карта целиком в
+    экране (left 32.9, right 246.7 < 390) и не налезает на кнопку. На high-vp (s=1)
+    сдвига нет.
+- ДРАЙВ карусели в тесте: свайп — синтетические PointerEvent на `.fp-scene`, y=150
+  (ВЫШЕ ряда карт, чтобы success-overlay/кнопки accept не перехватили pointerdown).
+  Ключ против двойного прыжка: тащить МЕДЛЕННО (45ms/move, дист ≈1.05·STEP) — иначе
+  velocity>FLICK_VELO(0.4 px/ms) → `onUp` делает floor(raw) и листает на 2 карты.
+  Accept — DOM `.click()` по `.friend-big-card__accept .button-container` ЦЕНТРИРОВАННОЙ
+  карты (тап «Дружить» принимает на месте, автоперемотки нет).
+
 ### today.html — портлет «День рождения» (`.tg-card--bday`)
 - `today.html` НЕ редиректит на онбординг, рендерится сразу (в отличие от
   `lenta-q3.html`/`activity-lenta`). Карточка bday — самый первый блок ленты сверху.
