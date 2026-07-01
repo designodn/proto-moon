@@ -879,6 +879,9 @@
     var ROW_CARD_H = 548, ROW_HALF = 230, MIN_GAP = 48;  // ROW_CARD_H уточняется по факту в attachSwipe
     var TITLE_GAP = 24;  // зазор «заголовок → карусель»
     var BASE = null;  // базовые {cx,cy,s} стейтов 1(разлёт),2(вход),3(ряд) — снимаем один раз
+    // Когда все заявки приняты и снизу появилась кнопка «Закрыть» — ряд
+    // масштабируем так, чтобы кнопка не налезала на карточки (как в подарках).
+    var finishActive = false;
     function recenterRow() {
       if (!BASE) {
         BASE = {};
@@ -901,7 +904,19 @@
       var titleBottom = STATES[3].title + titleH;
       var avail = pageH - titleBottom;
       var s = 1;
-      if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
+      if (finishActive) {
+        // Появилась кнопка «Закрыть» — следим, чтобы она НЕ налезала на карточки:
+        // минимум 16px от низа карточки до кнопки. Карточки НЕ увеличиваем сверх
+        // натурального размера (s ≤ 1) — только ужимаем, если иначе налезает.
+        var pageW = window.innerWidth || document.documentElement.clientWidth;
+        var BTN_RESERVE = 24 + 56;        // fp__finish: отступ снизу + высота кнопки
+        var FINISH_GAP = 16;              // зазор карточка → кнопка
+        var desiredBottom = pageH - BTN_RESERVE - FINISH_GAP;
+        var cardTop = titleBottom + TITLE_GAP;
+        s = (desiredBottom - cardTop) / ROW_CARD_H;
+        var widthCap = (pageW - 32) / 300;  // карточка не шире экрана (16px по краям)
+        s = Math.max(0.4, Math.min(s, 1, widthCap));
+      } else if ((avail - ROW_CARD_H) / 2 < MIN_GAP) {
         s = Math.max(0.4, Math.min(1, (avail - 2 * MIN_GAP) / ROW_CARD_H));
       }
       // Верх карточки = titleBottom + TITLE_GAP. Визуальный верх карточки в ряду =
@@ -1242,7 +1257,24 @@
             if (closeBtn) closeBtn.click();
           });
         }
-        if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+        // Через 300мс ряд перецентрируется и ужимается под появляющуюся кнопку
+        // «Закрыть» (finishActive, cap s≤1) — так же, как в подарках. Высоту
+        // карточек не меняем.
+        setTimeout(function () {
+          finishActive = true;
+          IDX.forEach(function (j) { els[j].style.transition = 'transform 500ms ease'; });
+          recenterRow();
+          requestAnimationFrame(function () {
+            IDX.forEach(function (j) { applyCard(els[j], rowState[j], panOffset); });
+          });
+          setTimeout(function () {
+            IDX.forEach(function (j) { els[j].style.transition = ''; });
+          }, 540);
+        }, 300);
+        // Кнопка «Закрыть» — через 500мс (ряд уже поехал ужиматься).
+        setTimeout(function () {
+          if (finish) { finish.classList.add('__shown'); finish.setAttribute('aria-hidden', 'false'); }
+        }, 500);
       }
 
       // Авто-финиш: приняли все карточки по одной → карточка «принять всех» сама
