@@ -79,6 +79,9 @@ const IS_ACTIVITY = process.argv.includes('--activity');
 const CHECK_ONLY = process.argv.includes('--check');
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_ACTIVITY ? 'activity' : 'q3')];
+// Имя автора в caf-карточках (комментарий-как-пост): в Activity-ленте — крупнее
+// (ds-title-l), в остальных лентах — штатный ds-title-s.
+const cafNameCls = IS_ACTIVITY ? 'ds-title-l' : 'ds-title-s';
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
 
@@ -1308,7 +1311,7 @@ ${mediaInner}
               </div>
               <div class="caf__content">
                 <div class="caf__head">
-                  <span class="ds-title-s caf__name">${esc(personName(commenter))}</span>
+                  <span class="${cafNameCls} caf__name">${esc(personName(commenter))}</span>
                   <span class="ds-body-m caf__date">· ${esc(time)}</span>
                 </div>
 ${cafTextTw(title)}
@@ -1446,7 +1449,7 @@ function renderTwitterCard(p, idx) {
               </div>
               <div class="caf__content">
                 <div class="caf__head">
-                  <span class="ds-title-s caf__name">${esc(personName(authorId))}</span>
+                  <span class="${cafNameCls} caf__name">${esc(personName(authorId))}</span>
                 </div>
                 <div class="text-feed__reshare-card __friendversary">
                   <div class="feed-birthday island">
@@ -1522,7 +1525,7 @@ ${birthdayInner(title, text, friendIds)}
               </div>
               <div class="caf__content">
                 <div class="caf__head">
-                  <span class="ds-title-s caf__name">${esc(personName(aid))}</span>
+                  <span class="${cafNameCls} caf__name">${esc(personName(aid))}</span>
                   <span class="ds-body-m caf__date">· ${esc(isAd ? adMeta : time)}</span>
                 </div>${inner}
 ${isAd ? adActions() : cafActions(comments, reshares, likes)}
