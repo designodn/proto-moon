@@ -79,6 +79,9 @@ const IS_ACTIVITY = process.argv.includes('--activity');
 const CHECK_ONLY = process.argv.includes('--check');
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_ACTIVITY ? 'activity' : 'q3')];
+// Имя автора/группы в репост-карточке: в Activity-ленте — ds-title-s (крупнее),
+// в Q3/Трибуне оставляем ds-body-m как было.
+const RESHARE_NAME_CLS = IS_ACTIVITY ? 'ds-title-s' : 'ds-body-m';
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
 
@@ -507,7 +510,7 @@ function twMedia(ids, photos = [], { origText = '' } = {}) {
   const author = `
               <div class="text-feed__reshare-card-author">
                 <div class="avatar __size-24 __type-image">${img(personPhoto(to))}</div>
-                <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(to))}</div>
+                <div class="${RESHARE_NAME_CLS} text-feed__reshare-card-author-name">${esc(personName(to))}</div>
               </div>`;
   const body = origText ? `
               <p class="ds-body-m text-feed__body">${esc(origText)}</p>` : '';
@@ -987,7 +990,7 @@ ${activityLine(p.header)}${authorHeaderFn(aid, time)}
           <div class="text-feed__reshare-card">
             <div class="text-feed__reshare-card-author">
               <div class="avatar __size-24 __type-image">${img(personPhoto(inner))}</div>
-              <div class="ds-body-m text-feed__reshare-card-author-name">${esc(personName(inner))}</div>
+              <div class="${RESHARE_NAME_CLS} text-feed__reshare-card-author-name">${esc(personName(inner))}</div>
             </div>
 
 ${feedText(text)}${mediaBlock}
