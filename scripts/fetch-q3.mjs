@@ -68,6 +68,17 @@ const FEEDS = {
     // Пути assets/activity/… корректны под <base href="../"> страницы.
     mediaDir: 'assets/activity', mediaManifest: 'data/activity-feed-media.json',
   },
+  events: {
+    // События-лента — независимая копия Activity с тем же источником данных.
+    // В интерфейсе вкладка «Подборки» называется «Темы», значение «Подборки»
+    // в колонке «Таб» исходного листа продолжает работать.
+    name: 'lenta-activity', gid: '2116709014',
+    json: 'data/events-feed.json', html: 'events-lenta/lenta.html',
+    cmd: 'scripts/fetch-q3.mjs --events',
+    tabs: true,
+    collectionLabel: 'Темы',
+    mediaDir: 'assets/activity', mediaManifest: 'data/activity-feed-media.json',
+  },
 };
 // Подборки (Pinterest-таб activity-ленты) — отдельный лист той же таблицы
 // (колонки: id, автор=group-*, текст=подпись, фото=URL картинки). Кэш-выгрузка —
@@ -76,9 +87,10 @@ const ACTIVITY_PINS = { gid: '802612828', json: 'data/activity-pins.json' };
 
 const IS_TRIBUNE = process.argv.includes('--tribune');
 const IS_ACTIVITY = process.argv.includes('--activity');
+const IS_EVENTS = process.argv.includes('--events');
 const CHECK_ONLY = process.argv.includes('--check');
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
-const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_ACTIVITY ? 'activity' : 'q3')];
+const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_EVENTS ? 'events' : (IS_ACTIVITY ? 'activity' : 'q3'))];
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
 
@@ -1372,7 +1384,7 @@ function splice(cardsHtml) {
      Локальное  — что проставлено в колонке «Таб» (напр. clip). */
 const ACTIVITY_TABS = [
   { id: 'lenta',    label: 'Лента',     types: ['comment-as-feed'] },
-  { id: 'podborki', label: 'Подборки',  collection: true },
+  { id: 'podborki', label: FEED.collectionLabel || 'Подборки', sourceLabel: 'Подборки', collection: true },
   { id: 'segodnya', label: 'Сегодня',   widgets: true },
   { id: 'podarki',  label: 'Подарки',   types: ['gift-received', 'ai-gift-received'], tw: true },
   { id: 'druzya',   label: 'Друзья',    types: ['photo', 'text', 'video', 'ad', 'friendversary'], tw: true },
@@ -1385,7 +1397,7 @@ const ACTIVITY_TABS = [
    для старого листа/json без колонки «Таб» (см. buildActivityTabs). */
 const normTab = s => String(s || '').trim().toLowerCase();
 const postInTab = (p, tab) =>
-  normTab(p.tab) === normTab(tab.label) || normTab(p.tab) === tab.id;
+  normTab(p.tab) === normTab(tab.sourceLabel || tab.label) || normTab(p.tab) === tab.id;
 
 /* Типы, которые УМЕЕТ нарисовать компактный твиттер-ряд (renderTwitterCard):
    обычный контент + спец-обработка ad/gift/friendversary. Остальные типы рисуем
@@ -1788,11 +1800,11 @@ async function main() {
     // менялся и код тот же — пропускаем пересборку целиком.
     // people.json в зависимостях: имена/аватары авторов и комментаторов
     // запекаются из него → правка листа «Люди» пересобирает и ленту.
-    gate = createSyncGate({ root: ROOT, key: `q3:${IS_TRIBUNE ? 'tribune' : IS_ACTIVITY ? 'activity' : 'q3'}`,
+    gate = createSyncGate({ root: ROOT, key: `q3:${IS_TRIBUNE ? 'tribune' : IS_EVENTS ? 'events' : IS_ACTIVITY ? 'activity' : 'q3'}`,
       codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
                  resolve(ROOT, 'data/people.json')] });
     const gateInputs = [csvText];
-    if (IS_ACTIVITY) {
+    if (IS_ACTIVITY || IS_EVENTS) {
       try {
         const pinsCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
           `?tqx=out:csv&gid=${ACTIVITY_PINS.gid}&headers=1`;
@@ -1934,7 +1946,7 @@ async function main() {
     // Activity-лента: ВВЗ-портлет(ы) сверху (общая шапка), ниже — панели табов.
     const vvz = posts.filter(p => p.type === 'vvz-portlet')
       .map((p, i) => renderPost(p, i)).filter(Boolean);
-    const pins = IS_ACTIVITY ? await loadActivityPins(offline) : [];
+    const pins = (IS_ACTIVITY || IS_EVENTS) ? await loadActivityPins(offline) : [];
     const panels = buildActivityTabs(posts, pins);
     if (!panels) throw new Error('панели табов пусты — лента НЕ тронута (проверь лист/типы).');
     cards = [...vvz, panels].join('\n\n');
