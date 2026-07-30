@@ -381,7 +381,7 @@ async function main() {
   const eventsWidgetCells = widgetCellsBase.replace(
     new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
     (_, open, text, close, button) =>
-      `${open.replace('ds-body-m', 'ds-body-l')}${text.replace(/<b>/g, '<b class="ds-title-m">')}\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
+      `${open.replace('ds-body-m', 'ds-body-l')}\\n                <div class="uni-cell-text">${text.replace(/<b>/g, '<b class="ds-title-m">')}</div>\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
   );
   const eventsPageCells = pageCellsBase.replace(
     new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
