@@ -10,6 +10,8 @@
  *
  * Container is a horizontally scrollable row. A trailing slot
  * (.tabs__adjust) can host an icon-button (settings, etc).
+ * MODIFIERS: .__size-l — Title L;
+ *            .__padding-bottom-none — без нижнего внутреннего отступа.
  */
 
 .tabs {
@@ -22,6 +24,8 @@
   scrollbar-width: none;
 }
 .tabs::-webkit-scrollbar { display: none; }
+
+.tabs.__padding-bottom-none { padding-bottom: 0; }
 
 /* Размер типографики задаётся модификатором контейнера Tabs. Без модификатора
    сохраняется legacy-вариант, где helper-класс находится на самом label. */
