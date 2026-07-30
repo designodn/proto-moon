@@ -1410,10 +1410,12 @@ const TW_TYPES = new Set([
 ]);
 
 function tabStrip(activeId) {
+  const sizeClass = IS_EVENTS ? ' __size-l' : '';
+  const labelClass = IS_EVENTS ? '' : ' ds-title-xl';
   const btns = ACTIVITY_TABS.map(t =>
-    `            <button class="tabs-tab ds-title-xl${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
+    `            <button class="tabs-tab${labelClass}${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
   ).join('\n');
-  return `          <div class="tabs ll-feed-tabs">\n${btns}\n          </div>`;
+  return `          <div class="tabs${sizeClass} ll-feed-tabs">\n${btns}\n          </div>`;
 }
 
 /* twitter-like ряд для НЕ-comment-as-feed типов (photo/text/video/gift): та же
