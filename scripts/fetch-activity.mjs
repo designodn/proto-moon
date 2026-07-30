@@ -376,6 +376,13 @@ async function main() {
   // нет → там нужен «../» (как есть).
   const pageCellsBase = pageCells.replace(/\.\.\/assets\//g, 'assets/');
   const widgetCellsBase = widgetCells.replace(/\.\.\/assets\//g, 'assets/');
+  // В События-ленте CTA живёт в нижнем слоте buttons и использует размер 36.
+  // Базовый рендер Activity не меняем.
+  const eventsWidgetCells = widgetCellsBase.replace(
+    new RegExp('(<div class="uni-cell-additional-content ds-body-m">[^\\n]*<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
+    (_, text, button) =>
+      `${text}\\n              <div class="uni-cell-buttons">\\n                ${button.replace('__size-28', '__size-36')}\\n              </div>`,
+  );
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
   spliceFile(
@@ -426,7 +433,7 @@ async function main() {
     resolve(ROOT, 'events-lenta/lenta.html'),
     '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY-WIDGET:END -->',
-    widgetCellsBase,
+    eventsWidgetCells,
     '          <div class="uni-cell-wrapper __type-activity __cat-win">',
     '\n          </div>\n        </div>\n      </div>',
   );
