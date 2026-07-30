@@ -1,0 +1,25 @@
+/**
+ * OK Design System — Divider
+ *
+ * Разделитель с опциональным вертикальным пространством вокруг линии.
+ *
+ *   <div class="divider __padding-v-12" role="separator"></div>
+ */
+
+.divider {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.divider::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--dynamic-surface-contrast-low);
+}
+
+.divider.__padding-v-12 {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
