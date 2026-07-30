@@ -23,7 +23,8 @@
 }
 .tabs::-webkit-scrollbar { display: none; }
 
-/* Типографика приходит из класса .ds-title-xl на самом элементе */
+/* Размер типографики задаётся модификатором контейнера Tabs. Без модификатора
+   сохраняется legacy-вариант, где helper-класс находится на самом label. */
 .tabs-tab {
   background: none;
   border: 0;
@@ -34,6 +35,15 @@
   opacity: 0.3;
   cursor: pointer;
   transition: var(--ds-transition-opacity), var(--ds-transition-transform);
+}
+
+/* Title L — размерный вариант табов 21/28/600. */
+.tabs.__size-l .tabs-tab {
+  font-family: var(--font-family);
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .tabs-tab.__state-on { opacity: 1; }
