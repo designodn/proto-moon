@@ -77,6 +77,15 @@
   justify-content: center;     /* центрируем появление внутри ячейки */
   overflow: visible;           /* в покое НЕ клипаем — трофей-бейдж выходит в зазор */
 }
+/* Режим замера: JS временно снимает фиксированную высоту со всех строк,
+   находит самую высокую и записывает её обратно в --conv-row-h. */
+.ds-activity-conveyor.__conv-measuring {
+  height: auto;
+  overflow: visible;
+}
+.ds-activity-conveyor.__conv-measuring .ds-activity-conveyor__track > .uni-cell-wrapper {
+  height: auto;
+}
 /* Клип нужен только во время анимации высоты (вход/уход), иначе контент
    торчал бы при height:0. В покое ряд open, чтобы трофей не обрезался. */
 .ds-activity-conveyor__track > .__conv-enter,
