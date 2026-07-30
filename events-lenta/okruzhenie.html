@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
+<head>
+<meta charset="UTF-8">
+<!-- Дубль страницы «Вокруг вас» в q3-стиле для events-lenta. Лежит в подпапке,
+     <base href="../"> резолвит общие ассеты от корня (см. events-lenta/lenta.html).
+     Иконки — не-NV (status/back — img из assets/icons). -->
+<base href="../">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Вокруг вас сейчас — события-лента</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="components/activity-widget.css">
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
+  .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
+                 background: var(--dynamic-surface-base-secondary); }
+  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone-frame__feed::-webkit-scrollbar { display: none; }
+  .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
+  .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
+</style>
+</head>
+<body>
+
+  <div class="phone-frame __fullscreen" data-screen>
+    <div class="phone-frame__feed">
+
+      <!-- Шапка: status-bar (img-иконки, как в events-lenta) + nav-bar «назад» + заголовок -->
+      <div class="meshok-up">
+        <div class="status-bar">
+          <span class="status-bar__time">9:41</span>
+          <span class="status-bar__indicators">
+            <img class="ll-icon" src="assets/icons/status-wifi.svg"    width="16" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-signal.svg"  width="17" height="12" alt="">
+            <img class="ll-icon" src="assets/icons/status-battery.svg" width="25" height="12" alt="">
+          </span>
+        </div>
+        <div class="nav-bar __type-feed">
+          <div class="nav-bar__leading">
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" id="navBack" aria-label="Назад"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/arrow_left_24.svg" width="24" height="24" alt=""></span></button></span>
+            <span class="ds-title-l">Вокруг вас</span>
+          </div>
+          <div class="nav-bar__trailing">
+            <!-- Индикатор «новых»: пульс → счётчик → «N новых» (сценарий — скрипт ниже). -->
+            <span class="activity-indicator" data-state="pulse" aria-live="polite" aria-label="Новые события вокруг вас">
+              <span class="pulse-dot __view-custom"></span>
+              <span class="activity-indicator__badge">
+                <span class="activity-indicator__count"><span class="activity-indicator__digit">1</span></span><span class="activity-indicator__word">новых</span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Все типы ячеек «Вокруг вас сейчас» (наполняет scripts/fetch-activity.mjs) -->
+      <div class="activity-list" id="activityList">
+
+        <!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="1" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Александра Бачурина</b> распаковала ваш подарок</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Ответить</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="3" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Зинаида Халина</b> поздравила вас с праздником</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Спасибо</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="6" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Александр Кириевич</b> задает вопрос про счётчики воды в Санкт-Петербурге</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Помочь</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="ava-cluster">
+                <div class="avatar __size-24 __type-image"><img data-person-avatar="5" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img data-person-avatar="7" alt=""></div>
+                <div class="avatar __size-24 __type-image"><img data-person-avatar="3" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">В Санкт-Петербурге обсуждают новую остановку</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Обсудить</span></button></div>
+            </div>
+          </div>
+        </div>
+        <section class="au-gallery">
+          <header class="au-gallery__header">
+            <div class="picture __size-44 __type-image au-gallery__ava"><img src="assets/around-you/d9ed83b00c4231d6.jpg" alt=""></div>
+            <p class="au-gallery__title ds-title-s">12 Клипов<span class="au-gallery__title-tail"> из Санкт-Петербурга в топе</span></p>
+            <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Все</span></button></div>
+          </header>
+          <div class="au-gallery__row">
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/d9ed83b00c4231d6.jpg" alt="" loading="lazy">
+                <span class="tag __style-primary __size-20 au-tile__badge __pos-br"><span class="icon __size-16 __slot-klass-outline"></span>52</span>
+              </div>
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/2e9e99a78f9f53bb.jpg" alt="" loading="lazy">
+                <span class="tag __style-primary __size-20 au-tile__badge __pos-br"><span class="icon __size-16 __slot-klass-outline"></span>18</span>
+              </div>
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/0a7a921f21654125.jpg" alt="" loading="lazy">
+                <span class="tag __style-primary __size-20 au-tile__badge __pos-br"><span class="icon __size-16 __slot-klass-outline"></span>45</span>
+              </div>
+          </div>
+        </section>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="assets/sections/rybalka.png" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">В Рыбалке добавили 12 новых уловов</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="assets/sections/gotovka.png" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">В Готовке популярный рецепт набрал 280 классов</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="au-trans">
+                <img class="au-trans__bg" data-person-avatar="5" alt="">
+                <img class="au-trans__img" data-person-avatar="5" alt="">
+                <span class="tag __style-live __size-20 au-trans__badge"><span class="icon __size-16 __slot-music-radio"></span>34</span>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Антонида</b> в эфире, 34 смотрят</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="assets/sections/rybalka.png" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">В Рыбалке 3 друга обсуждают улов</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Обсудить</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="picture __size-44 __type-image"><img src="assets/around-you/30ea6ae6a68667df.webp" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">Фото Тамары популярно и набрало 120 классов</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img src="assets/sections/zagotovki.png" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m">В Заготовках популярный рецепт набрал 80 классов</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Галина Гаджикулиева</b> участвует в конкурсе «Урожай осени»</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Участвовать</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="2" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Сергей Чернышов</b> показал свой улов в Санкт-Петербурге</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="photo-pair">
+                <div class="picture __type-image"><img src="assets/around-you/88a5b2f4e918b021.webp" alt=""></div>
+                <div class="picture __type-image"><img src="assets/around-you/dfe6688cb5c919a6.jpg" alt=""></div>
+              </div>
+              <div class="uni-cell-additional-content ds-body-m">В Конкурсе «Лучший участок» добавили новые фото</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <section class="au-gallery">
+          <header class="au-gallery__header">
+            <div class="picture __size-44 __type-image au-gallery__ava"><img src="assets/around-you/c5cd82677532277d.jpg" alt=""></div>
+            <p class="au-gallery__title ds-title-s">В Санкт-Петербурге<span class="au-gallery__title-tail"> 5 эфиров</span></p>
+            <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Все</span></button></div>
+          </header>
+          <div class="au-gallery__row">
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/c5cd82677532277d.jpg" alt="" loading="lazy">
+                <span class="tag __style-live __size-20 au-tile__badge __pos-tl"><span class="icon __size-16 __slot-music-radio"></span>42</span>
+              </div>
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/d836a182f8ec57cd.jpg" alt="" loading="lazy">
+                <span class="tag __style-live __size-20 au-tile__badge __pos-tl"><span class="icon __size-16 __slot-music-radio"></span>33</span>
+              </div>
+              <div class="au-tile">
+                <img class="au-tile__img" src="assets/around-you/a213a197af092031.jpg" alt="" loading="lazy">
+                <span class="tag __style-live __size-20 au-tile__badge __pos-tl"><span class="icon __size-16 __slot-music-radio"></span>24</span>
+              </div>
+          </div>
+        </section>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-44 __type-image"><img data-person-avatar="7" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Галина Гаджикулиева</b> ответила на ваш вопрос</div>
+              <div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">Смотреть</span></button></div>
+            </div>
+          </div>
+        </div>
+        <!-- ACTIVITY:END -->
+      </div>
+
+      <!-- Таб-бар (q3) -->
+      <div class="ll-tabbar">
+        <div class="tabbar __platform-android">
+          <div class="tabbar__row">
+            <button class="tabbar-icon __slot-feed __state-on" aria-label="Лента" data-href="events-lenta/lenta.html"></button>
+            <button class="tabbar-icon __slot-book" aria-label="Книга"></button>
+            <button class="tabbar-icon __slot-message" aria-label="Сообщения"></button>
+            <button class="tabbar-icon __slot-discussion" aria-label="Обсуждения"></button>
+            <button class="tabbar-icon __slot-clip" aria-label="Клипы" data-href="klipy.html"></button>
+            <button class="tabbar-icon __slot-menu" aria-label="Меню"></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- «Назад» → в ленту (история сохраняет таб/скролл; фолбэк — прямой переход). -->
+  <script>
+    (function () {
+      var back = document.getElementById('navBack');
+      if (!back) return;
+      back.addEventListener('click', function () {
+        if (history.length > 1) history.back();
+        else location.href = 'events-lenta/lenta.html';
+      });
+    })();
+  </script>
+
+  <!-- Трофей «1 место» — Lottie (CDN, graceful: нет сети → пустой контейнер). -->
+  <script>
+  (function () {
+    var hosts = document.querySelectorAll('.lead-trophy[data-lottie]');
+    if (!hosts.length) return;
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var loading = null;
+    function ensureLottie() {
+      if (window.lottie) return Promise.resolve(window.lottie);
+      if (loading) return loading;
+      loading = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js';
+        s.async = true; s.onload = function () { resolve(window.lottie); }; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return loading;
+    }
+    hosts.forEach(function (host) {
+      ensureLottie().then(function (lottie) {
+        var anim = lottie.loadAnimation({ container: host, renderer: 'svg', loop: !still, autoplay: !still, path: host.getAttribute('data-lottie') });
+        if (still) anim.addEventListener('DOMLoaded', function () { anim.goToAndStop(anim.totalFrames - 1, true); });
+      }).catch(function () {});
+    });
+  })();
+  </script>
+
+  <!-- Индикатор «новых» — общий компонент (один источник для обеих okruzhenie). -->
+  <script src="components/activity-indicator.js"></script>
+
+  <script src="data/people.js"></script>
+  <script src="components/people-data.js"></script>
+  <script src="components/tab-bar.js"></script>
+  <!-- «Контейнер» прототипа: гасит переходы за пределы папки events-lenta. -->
+  <script src="components/proto-contain.js"></script>
+
+</body>
+</html>
