@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 63293)
-Total output lines: 3577
+Warning: truncated output (original token count: 63383)
+Total output lines: 3587
 
 <!DOCTYPE html>
 <html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
@@ -429,7 +429,7 @@ Total output lines: 3577
     flex-shrink: 0;
   }
   .ds-activity-conveyor {
-    --conv-row-h: 92px;
+    --conv-row-h: 88px;
     --conv-gap: 0px;
   }
   .ds-activity-conveyor__track > .uni-cell-wrapper {
@@ -1461,17 +1461,7 @@ Total output lines: 3577
           </article>
         </section>
 
-        <!-- Заголовок «Какой сегодня день» …13293 tokens truncated…"><span class="icon __size-24 __slot-send"></span></button>
-            </div>
-          </div>
-          </div>
-        </article>
-
-        <article class="caf __twitter-like island">
-          <div class="caf__stack">
-            <div class="caf__row">
-              <div class="caf__aside">
-                <div class="avatar __size-44 __type-image"><img src="assets/people/8.webp" alt=""></div>
+        <!-- Заголовок «Какой сегодня день» …13383 tokens truncated…c="assets/people/8.webp" alt=""></div>
                 <span class="caf__line" aria-hidden="true"></span>
               </div>
               <div class="caf__content">
@@ -2516,7 +2506,17 @@ Total output lines: 3577
   <script src="components/people-data.js"></script>
   <script>
     document.querySelectorAll('.ll-feed-tabs').forEach(function (tabs) {
-      if (tabs.nextElementSibling && tabs.nextElementSibling.classList.contains('divider')) return;
+      var attachedToFeed = tabs.closest('.island').classList.contains('caf') &&
+        tabs.closest('.island').classList.contains('__twitter-like');
+      var currentDivider = tabs.nextElementSibling &&
+        tabs.nextElementSibling.classList.contains('divider')
+          ? tabs.nextElementSibling
+          : null;
+      if (!attachedToFeed) {
+        if (currentDivider) currentDivider.remove();
+        return;
+      }
+      if (currentDivider) return;
       var divider = document.createElement('div');
       divider.className = 'divider __padding-v-12';
       divider.setAttribute('role', 'separator');
