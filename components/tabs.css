@@ -12,7 +12,8 @@
  * (.tabs__adjust) can host an icon-button (settings, etc).
  * MODIFIERS: .__size-l — Title L;
  *            .__padding-bottom-none — без нижнего внутреннего отступа;
- *            .__padding-bottom-12 — нижний отступ 12.
+ *            .__padding-bottom-12 — нижний отступ 12;
+ *            .tabs-tab.__counter — индикатор обновлений у таба.
  */
 
 .tabs {
@@ -32,6 +33,7 @@
 /* Размер типографики задаётся модификатором контейнера Tabs. Без модификатора
    сохраняется legacy-вариант, где helper-класс находится на самом label. */
 .tabs-tab {
+  position: relative;
   background: none;
   border: 0;
   padding: 0;
@@ -41,6 +43,21 @@
   opacity: 0.3;
   cursor: pointer;
   transition: var(--ds-transition-opacity), var(--ds-transition-transform);
+}
+
+.tabs-tab.__counter::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 2px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border: 2px solid var(--dynamic-surface-base-secondary);
+  border-radius: 50%;
+  background: var(--static-surface-status-positive);
+  pointer-events: none;
 }
 
 /* Title L — размерный вариант табов 21/28/600. */
