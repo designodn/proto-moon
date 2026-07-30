@@ -56,7 +56,7 @@
   --conv-rows: 2;
   --conv-dur: 0.5s;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   height: calc(var(--conv-row-h) * var(--conv-rows) + var(--conv-gap) * (var(--conv-rows) - 1));
 }
 .ds-activity-conveyor__track {
@@ -76,6 +76,10 @@
   flex-direction: column;
   justify-content: center;     /* центрируем появление внутри ячейки */
   overflow: visible;           /* в покое НЕ клипаем — трофей-бейдж выходит в зазор */
+}
+.ds-activity-conveyor__track > .__conv-pool-hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 /* Режим замера: JS временно снимает фиксированную высоту со всех строк,
    находит самую высокую и записывает её обратно в --conv-row-h. */
