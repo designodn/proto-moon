@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 63107)
-Total output lines: 3563
+Warning: truncated output (original token count: 63293)
+Total output lines: 3577
 
 <!DOCTYPE html>
 <html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
@@ -412,7 +412,7 @@ Total output lines: 3563
      (генерит scripts/fetch-q3.mjs --events). Верх табов = 0 — отступ 16 сверху
      даёт padding-top:16 самого острова (.island). Бока 16 — из DS .tabs.
      Низ табов — 16. */
-  .ll-feed-tabs { padding-bottom: var(--space-4); }
+  .ll-feed-tabs { padding-bottom: 0; }
 
   /* Шеврон у заголовка «Вокруг вас сейчас» — DS chevron-right в боксе 12×12
      (page-scoped, new-vision не трогаем). */
@@ -429,8 +429,8 @@ Total output lines: 3563
     flex-shrink: 0;
   }
   .ds-activity-conveyor {
-    --conv-row-h: 64px;
-    --conv-gap: 0;
+    --conv-row-h: 92px;
+    --conv-gap: 0px;
   }
   .ds-activity-conveyor__track > .uni-cell-wrapper {
     --uni-cell-padding-top: 0;
@@ -687,7 +687,7 @@ Total output lines: 3563
 <!-- FEED:START (генерится scripts/fetch-q3.mjs --events — не редактировать вручную) -->
         <div class="ll-tabpanel" data-tab-panel="lenta">
         <article class="caf __twitter-like island">
-          <div class="tabs __size-l ll-feed-tabs">
+          <div class="tabs __size-l __padding-bottom-none ll-feed-tabs">
             <button class="tabs-tab ds-title-xl __state-on" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
@@ -1224,7 +1224,7 @@ Total output lines: 3563
 
         <div class="ll-tabpanel" data-tab-panel="podborki" hidden>
         <div class="island">
-          <div class="tabs __size-l ll-feed-tabs">
+          <div class="tabs __size-l __padding-bottom-none ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
@@ -1376,7 +1376,7 @@ Total output lines: 3563
 
         <div class="ll-tabpanel" data-tab-panel="segodnya" hidden>
         <div class="island ll-tabs-island">
-          <div class="tabs __size-l ll-feed-tabs">
+          <div class="tabs __size-l __padding-bottom-none ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="segodnya">Сегодня</button>
@@ -1461,16 +1461,7 @@ Total output lines: 3563
           </article>
         </section>
 
-        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до банне…13107 tokens truncated…_view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="fc-input">
-            <div class="avatar __size-44 __type-image"><img src="assets/people/my_profile.webp" alt=""></div>
-            <div class="fc-input__field">
-              <input class="fc-input__text" placeholder="Написать комментарий…">
-              <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
+        <!-- Заголовок «Какой сегодня день» …13293 tokens truncated…"><span class="icon __size-24 __slot-send"></span></button>
             </div>
           </div>
           </div>
@@ -1754,7 +1745,7 @@ Total output lines: 3563
 
         <div class="ll-tabpanel" data-tab-panel="lokalnoe" hidden>
         <article class="caf __twitter-like island">
-          <div class="tabs __size-l ll-feed-tabs">
+          <div class="tabs __size-l __padding-bottom-none ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
@@ -2524,13 +2515,27 @@ Total output lines: 3563
   </script>
   <script src="components/people-data.js"></script>
   <script>
+    document.querySelectorAll('.ll-feed-tabs').forEach(function (tabs) {
+      if (tabs.nextElementSibling && tabs.nextElementSibling.classList.contains('divider')) return;
+      var divider = document.createElement('div');
+      divider.className = 'divider __padding-v-12';
+      divider.setAttribute('role', 'separator');
+      tabs.insertAdjacentElement('afterend', divider);
+    });
+
     // События друзей: CTA — нижний слот текстовой колонки, не правый слот cell.
     // Нормализует уже сгенерированную разметку; fetch-activity создаёт ту же
     // структуру при следующих синхронизациях Google-таблицы.
     document.querySelectorAll('#activityConveyor .uni-cell').forEach(function (cell) {
       var slot = cell.querySelector(':scope > .uni-cell-buttons');
       var content = cell.querySelector(':scope > .uni-cell-additional-content');
-      if (slot && content) content.appendChild(slot);
+      if (!content) return;
+      content.classList.remove('ds-body-m', 'ds-title-l');
+      content.classList.add('ds-body-l');
+      content.querySelectorAll('b, a').forEach(function (link) {
+        link.classList.add('ds-title-m');
+      });
+      if (slot) content.appendChild(slot);
     });
   </script>
   <script src="components/image-skeleton.js" defer></script>
