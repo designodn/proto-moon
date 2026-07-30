@@ -91,9 +91,9 @@ function seededCount(seed) {
   return 10 + (Math.abs(h) % 71);   // 10..80
 }
 
-/** Кнопка-действие справа в ячейке — DS secondary, размер 28 (по макету). */
-function cellButton(label) {
-  return `<div class="button-wrapper __size-28"><button class="button-container __style-secondary"><span class="button-content">${esc(label)}</span></button></div>`;
+/** Кнопка-действие справа — DS secondary; базовый размер ячейки 28. */
+function cellButton(label, size = 28) {
+  return `<div class="button-wrapper __size-${size}"><button class="button-container __style-secondary"><span class="button-content">${esc(label)}</span></button></div>`;
 }
 
 /** Подставляет иконки/род и **жирный**. gender — 'м'|'ж'|'' (для токена {муж/жен}). */
@@ -211,7 +211,7 @@ function renderGallery(a, kind) {
           <header class="au-gallery__header">
             <div class="picture __size-44 __type-image au-gallery__ava"><img src="${esc(ava)}" alt=""></div>
             <p class="au-gallery__title ds-title-s">${galleryTitle(a.lead, a.text)}</p>
-            ${cellButton(a.button || 'Все')}
+            ${cellButton(a.button || 'Все', 36)}
           </header>
           <div class="au-gallery__row">
 ${row}
