@@ -1416,7 +1416,7 @@ function tabStrip(activeId) {
     : '';
   const labelClass = IS_EVENTS ? '' : ' ds-title-xl';
   const btns = ACTIVITY_TABS.map(t =>
-    `            <button class="tabs-tab${labelClass}${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
+    `            <button class="tabs-tab${labelClass}${IS_EVENTS && t.id === 'segodnya' ? ' __counter' : ''}${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
   ).join('\n');
   const hasAttachedFeed = !hasDetachedFeed;
   const divider = IS_EVENTS && hasAttachedFeed
