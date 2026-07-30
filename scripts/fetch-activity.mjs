@@ -420,8 +420,27 @@ async function main() {
     '<!-- ACTIVITY:END -->',
   );
 
+
+  // Та же подборка активностей для независимой «События-ленты».
+  spliceFile(
+    resolve(ROOT, 'events-lenta/lenta.html'),
+    '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY-WIDGET:END -->',
+    widgetCellsBase,
+    '          <div class="uni-cell-wrapper __type-activity __cat-win">',
+    '\n          </div>\n        </div>\n      </div>',
+  );
+  spliceFile(
+    resolve(ROOT, 'events-lenta/okruzhenie.html'),
+    '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY:END -->',
+    pageCellsBase,
+    '<!-- ACTIVITY:START',
+    '<!-- ACTIVITY:END -->',
+  );
+
   gate.commit();
-  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta (виджеты)`);
+  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta + events-lenta/lenta (виджеты)`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
 }
 
