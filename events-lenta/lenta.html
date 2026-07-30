@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 63708)
-Total output lines: 3631
+Warning: truncated output (original token count: 63776)
+Total output lines: 3639
 
 <!DOCTYPE html>
 <html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
@@ -1480,10 +1480,7 @@ Total output lines: 3631
         </section>
 
         <!-- 3. Колесо призов -->
-        <section class="tg-isl…13708 tokens truncated…              <span class="ds-body-m caf__date">· 20:10</span>
-                </div>
-          <p class="ds-body-m text-feed__body caf__text feed-more__text">Мои любимые и родные!!!!Обожаю вас</p>
-          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/3abe97f3293e8cdc.webp" alt=""></div>
+        <section class="tg-isl…13776 tokens truncated…e"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/3abe97f3293e8cdc.webp" alt=""></div>
               <div class="caf__actions">
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>1</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
@@ -2518,6 +2515,14 @@ Total output lines: 3631
   </script>
   <script src="components/people-data.js"></script>
   <script>
+    var activityPublishIcon = document.querySelector('.activity-header__publish-icon');
+    if (activityPublishIcon) {
+      activityPublishIcon.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    }
+
     document.querySelectorAll('.ll-feed-tabs').forEach(function (tabs) {
       var attachedToFeed = tabs.closest('.island').classList.contains('caf') &&
         tabs.closest('.island').classList.contains('__twitter-like');
