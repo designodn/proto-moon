@@ -48,7 +48,10 @@
       conv.classList.add('__conv-measuring');
       var max = 0;
       Array.prototype.forEach.call(track.children, function (cell) {
-        max = Math.max(max, cell.scrollHeight, cell.getBoundingClientRect().height);
+        // Измеряем только содержимое строки. scrollHeight wrapper включает
+        // декоративный overlay с inset:-8px и завышает высоту на 8px.
+        var content = cell.querySelector('.uni-cell') || cell;
+        max = Math.max(max, content.scrollHeight, content.getBoundingClientRect().height);
       });
       conv.classList.remove('__conv-measuring');
       var next = Math.ceil(max);
