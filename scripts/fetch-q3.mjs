@@ -1410,12 +1410,15 @@ const TW_TYPES = new Set([
 ]);
 
 function tabStrip(activeId) {
-  const sizeClass = IS_EVENTS ? ' __size-l __padding-bottom-none' : '';
+  const hasDetachedFeed = ['podborki', 'segodnya'].includes(activeId);
+  const sizeClass = IS_EVENTS
+    ? ` __size-l ${hasDetachedFeed ? '__padding-bottom-12' : '__padding-bottom-none'}`
+    : '';
   const labelClass = IS_EVENTS ? '' : ' ds-title-xl';
   const btns = ACTIVITY_TABS.map(t =>
     `            <button class="tabs-tab${labelClass}${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
   ).join('\n');
-  const hasAttachedFeed = ['lenta', 'podarki', 'druzya', 'lokalnoe'].includes(activeId);
+  const hasAttachedFeed = !hasDetachedFeed;
   const divider = IS_EVENTS && hasAttachedFeed
     ? '\n          <div class="divider __padding-v-12" role="separator"></div>'
     : '';
