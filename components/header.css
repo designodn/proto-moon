@@ -19,6 +19,16 @@
  *     <div class="header__text"><div class="header__title">…</div></div>
  *   </header>
  *
+ * COUNTER (опц., boolean): модификатор __counter включает счётчик 20 рядом
+ * с title. Значение передаётся через .header__counter:
+ *
+ *   <header class="header __size-l __counter">
+ *     <div class="header__title-row">
+ *       <div class="header__title">Заголовок</div>
+ *       <span class="header__counter">12</span>
+ *     </div>
+ *   </header>
+ *
  * SIZE PAIRS (title / subtitle, см. tokens.css):
  *   xl → ds-title-xl + ds-body-l
  *   l  → ds-title-l  + ds-body-l
@@ -73,6 +83,7 @@
   display: none;
 }
 .header.__counter .header__counter {
+  display: inline-flex;
   min-width: 20px;
   height: 20px;
   padding: 0 var(--space-1);
