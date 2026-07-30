@@ -15,20 +15,25 @@
 <link rel="stylesheet" href="components/activity-widget.css">
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
+  html, body { margin: 0; padding: 0; height: 100%; background: #fff; }
   .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
-                 background: var(--dynamic-surface-base-secondary); }
-  .phone-frame__feed { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+                 background: #fff; }
+  .phone-frame__feed {
+    min-height: 0;
+    overflow-y: auto;
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+  }
   .phone-frame__feed::-webkit-scrollbar { display: none; }
   .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
   .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
   .events-publish {
     padding: 4px 12px;
-    background: var(--dynamic-surface-base-primary);
+    background: #fff;
   }
   .events-publish .button-container { width: 100%; }
   .events-stories {
-    background: var(--dynamic-surface-base-primary);
+    background: #fff;
     padding-bottom: 4px;
   }
   .events-stories .stories-row {
@@ -52,7 +57,7 @@
     white-space: nowrap;
   }
   .activity-list {
-    background: var(--dynamic-surface-base-primary);
+    background: #fff;
   }
   .activity-list > .uni-cell-wrapper {
     --uni-cell-padding-top: 8px;
@@ -62,6 +67,9 @@
   }
   .activity-list .uni-cell {
     align-items: flex-start;
+  }
+  .activity-list .uni-cell > :first-child {
+    align-self: flex-start;
   }
   .activity-list .uni-cell-additional-content {
     min-width: 0;
@@ -99,7 +107,7 @@
         <div class="button-wrapper __size-56 __full-width">
           <button class="button-container __style-secondary">
             <span class="button-content">
-              <img class="ll-icon" src="assets/icons/add_square_24.svg" width="20" height="20" alt="">
+              <img class="ll-icon" src="assets/icons/add_square_24.svg" width="24" height="24" alt="">
               Опубликовать
             </span>
           </button>
@@ -109,27 +117,27 @@
       <div class="events-stories">
         <div class="stories-row" id="eventsStories" aria-label="Истории друзей">
           <div class="events-story">
-            <div class="avatar __size-56 __type-image __ring-active __has-addon">
+            <div class="avatar __size-56 __type-image __has-addon">
               <img data-person-avatar="my_profile" alt="">
               <div class="avatar__addon __pos-br stories-row__add"><img src="assets/icons/add_24.svg" width="20" height="20" alt=""></div>
             </div>
-            <span class="events-story__name ds-caption-m">Добавить</span>
+            <span class="events-story__name ds-title-s">Добавить</span>
           </div>
           <div class="events-story">
             <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="11" alt=""></div>
-            <span class="events-story__name ds-caption-m">Ольга</span>
+            <span class="events-story__name ds-title-s">Ольга</span>
           </div>
           <div class="events-story">
             <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="2" alt=""></div>
-            <span class="events-story__name ds-caption-m">Сергей</span>
+            <span class="events-story__name ds-title-s">Сергей</span>
           </div>
           <div class="events-story">
             <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="3" alt=""></div>
-            <span class="events-story__name ds-caption-m">Зинаида</span>
+            <span class="events-story__name ds-title-s">Зинаида</span>
           </div>
           <div class="events-story">
             <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="4" alt=""></div>
-            <span class="events-story__name ds-caption-m">Виктор</span>
+            <span class="events-story__name ds-title-s">Виктор</span>
           </div>
         </div>
       </div>
@@ -375,9 +383,6 @@
     });
   })();
   </script>
-
-  <!-- Индикатор «новых» — общий компонент (один источник для обеих okruzhenie). -->
-  <script src="components/activity-indicator.js"></script>
 
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
