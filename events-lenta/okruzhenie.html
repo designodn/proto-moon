@@ -15,13 +15,13 @@
 <link rel="stylesheet" href="components/activity-widget.css">
 <style>
   * { -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; height: 100%; background: #fff; }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--dynamic-surface-base-secondary); }
   .phone-frame { width: 100%; max-width: none; height: 100dvh; min-height: 100dvh; overflow: hidden;
-                 background: #fff; }
+                 background: var(--dynamic-surface-base-secondary); }
   .phone-frame__feed {
     min-height: 0;
     overflow-y: auto;
-    background: #fff;
+    background: var(--dynamic-surface-base-secondary);
     -webkit-overflow-scrolling: touch;
   }
   .phone-frame__feed::-webkit-scrollbar { display: none; }
@@ -29,11 +29,11 @@
   .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
   .events-publish {
     padding: 4px 12px;
-    background: #fff;
+    background: var(--dynamic-surface-base-secondary);
   }
   .events-publish .button-container { width: 100%; }
   .events-stories {
-    background: #fff;
+    background: var(--dynamic-surface-base-secondary);
     padding-bottom: 4px;
   }
   .events-stories .stories-row {
@@ -57,7 +57,7 @@
     white-space: nowrap;
   }
   .activity-list {
-    background: #fff;
+    background: var(--dynamic-surface-base-secondary);
   }
   .activity-list > .uni-cell-wrapper {
     --uni-cell-padding-top: 8px;
@@ -105,9 +105,9 @@
 
       <div class="events-publish">
         <div class="button-wrapper __size-56 __full-width">
-          <button class="button-container __style-secondary">
+          <button class="button-container __style-secondary __icon">
             <span class="button-content">
-              <img class="ll-icon" src="assets/icons/add_square_24.svg" width="24" height="24" alt="">
+              <span class="icon __slot-add-square" aria-hidden="true"></span>
               Опубликовать
             </span>
           </button>
