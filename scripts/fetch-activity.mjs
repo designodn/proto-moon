@@ -379,9 +379,9 @@ async function main() {
   // В События-ленте CTA живёт в нижнем слоте buttons и использует размер 36.
   // Базовый рендер Activity не меняем.
   const eventsWidgetCells = widgetCellsBase.replace(
-    new RegExp('(<div class="uni-cell-additional-content ds-body-m">[^\\n]*<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
-    (_, text, button) =>
-      `${text}\\n              <div class="uni-cell-buttons">\\n                ${button.replace('__size-28', '__size-36')}\\n              </div>`,
+    new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
+    (_, open, text, close, button) =>
+      `${open}${text}\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
   );
   const eventsPageCells = pageCellsBase.replace(
     new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
