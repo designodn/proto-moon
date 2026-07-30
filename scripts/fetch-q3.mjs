@@ -1415,7 +1415,10 @@ function tabStrip(activeId) {
   const btns = ACTIVITY_TABS.map(t =>
     `            <button class="tabs-tab${labelClass}${t.id === activeId ? ' __state-on' : ''}" data-tab="${t.id}">${esc(t.label)}</button>`
   ).join('\n');
-  const divider = IS_EVENTS ? '\n          <div class="divider __padding-v-12" role="separator"></div>' : '';
+  const hasAttachedFeed = ['lenta', 'podarki', 'druzya', 'lokalnoe'].includes(activeId);
+  const divider = IS_EVENTS && hasAttachedFeed
+    ? '\n          <div class="divider __padding-v-12" role="separator"></div>'
+    : '';
   return `          <div class="tabs${sizeClass} ll-feed-tabs">\n${btns}\n          </div>${divider}`;
 }
 
