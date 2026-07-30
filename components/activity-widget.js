@@ -34,10 +34,32 @@
   function initConveyor(conv) {
     var track = conv.querySelector('.ds-activity-conveyor__track');
     if (!track) return;
+    var measureFrame = 0;
 
     function cssNum(name, dflt) {
       var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
       return isNaN(v) ? dflt : v;
+    }
+
+    // Все строки конвейера имеют одну высоту — максимальную естественную
+    // высоту среди заложенных ячеек при текущей ширине контейнера.
+    function measureRows() {
+      if (animating) return;
+      conv.classList.add('__conv-measuring');
+      var max = 0;
+      Array.prototype.forEach.call(track.children, function (cell) {
+        max = Math.max(max, cell.scrollHeight, cell.getBoundingClientRect().height);
+      });
+      conv.classList.remove('__conv-measuring');
+      var next = Math.ceil(max);
+      if (next > 0 && Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
+        conv.style.setProperty('--conv-row-h', next + 'px');
+      }
+    }
+
+    function scheduleMeasure() {
+      cancelAnimationFrame(measureFrame);
+      measureFrame = requestAnimationFrame(measureRows);
     }
 
     var confettiSrc = conv.getAttribute('data-confetti-src') || 'assets/lottie/confetti.json';
@@ -60,6 +82,17 @@
     }
 
     var animating = false;
+
+    measureRows();
+    if ('ResizeObserver' in window) {
+      var resizeObserver = new ResizeObserver(scheduleMeasure);
+      resizeObserver.observe(conv);
+    } else {
+      window.addEventListener('resize', scheduleMeasure, { passive: true });
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(scheduleMeasure);
+    }
 
     function step() {
       var rows = Math.round(cssNum('--conv-rows', 3));
@@ -88,19 +121,20 @@
 
     // Первый показ: видимые ряды тоже «приходят к дефолту» из цветной подложки —
     // иначе категории видны только на сменяемой верхней ячейке.
-    var rows0 = Math.round(cssNum('--conv-rows', 3));
-    for (var i = 0; i < rows0 && i < track.children.length; i++) {
-      var cell = track.children[i];
-      appear(cell);
-      requestAnimationFrame(playCellLottie.bind(null, cell)); // ряды статичны → rect готов
-    }
+    if (!reduce) {
+      var rows0 = Math.round(cssNum('--conv-rows', 3));
+      for (var i = 0; i < rows0 && i < track.children.length; i++) {
+        var cell = track.children[i];
+        appear(cell);
+        requestAnimationFrame(playCellLottie.bind(null, cell)); // ряды статичны → rect готов
+      }
 
-    var stepMs = parseInt(conv.getAttribute('data-step-ms'), 10) || STEP_MS_DEFAULT;
-    setInterval(step, stepMs);
+      var stepMs = parseInt(conv.getAttribute('data-step-ms'), 10) || STEP_MS_DEFAULT;
+      setInterval(step, stepMs);
+    }
   }
 
   function init() {
-    if (reduce) return;   // без анимаций конвейер не крутим (ячейки видны статично)
     document.querySelectorAll('.ds-activity-conveyor').forEach(initConveyor);
   }
 
