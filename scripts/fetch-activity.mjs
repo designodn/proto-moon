@@ -383,6 +383,11 @@ async function main() {
     (_, text, button) =>
       `${text}\\n              <div class="uni-cell-buttons">\\n                ${button.replace('__size-28', '__size-36')}\\n              </div>`,
   );
+  const eventsPageCells = pageCellsBase.replace(
+    new RegExp('(<div class="uni-cell-additional-content ds-body-m">[^\\n]*<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
+    (_, text, button) =>
+      `${text}\\n              <div class="uni-cell-buttons">\\n                ${button.replace('__size-28', '__size-36')}\\n              </div>`,
+  );
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
   spliceFile(
@@ -441,7 +446,7 @@ async function main() {
     resolve(ROOT, 'events-lenta/okruzhenie.html'),
     '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
     '<!-- ACTIVITY:END -->',
-    pageCellsBase,
+    eventsPageCells,
     '<!-- ACTIVITY:START',
     '<!-- ACTIVITY:END -->',
   );
