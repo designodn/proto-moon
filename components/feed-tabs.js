@@ -112,10 +112,7 @@
   // встаёт по центру; по свайпу — мягкий доезд в ближайший край.
   // Вертикальный скролл НЕ трогаем — страница не «скачет» вверх при смене таба.
   function switchTo(id, center) {
-    if (!id || !panelById(id)) {
-      clearPressed();
-      return;
-    }
+    if (!id) return;
     var fromStrip = $(SEL.panel + ':not([hidden]) ' + SEL.strip);
     var scrollLeft = fromStrip ? fromStrip.scrollLeft : 0;
     activate(id);
