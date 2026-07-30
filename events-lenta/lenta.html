@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 63069)
-Total output lines: 3560
+Warning: truncated output (original token count: 63107)
+Total output lines: 3563
 
 <!DOCTYPE html>
 <html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
@@ -456,6 +456,9 @@ Total output lines: 3560
      Видна одна панель (остальные [hidden]); переключает components/feed-tabs.js. */
   .ll-tabpanel { display: flex; flex-direction: column; gap: var(--space-1); }
   .ll-tabpanel[hidden] { display: none; }
+  .ll-tabpanel > .island:first-child:has(> .ll-feed-tabs) {
+    padding-top: var(--space-3);
+  }
 
   /* Заглушка пустого/будущего таба (Темы, Сегодня — пока). */
   .ll-tab-stub__text { color: var(--dynamic-text-and-icons-base-secondary); }
@@ -684,7 +687,7 @@ Total output lines: 3560
 <!-- FEED:START (генерится scripts/fetch-q3.mjs --events — не редактировать вручную) -->
         <div class="ll-tabpanel" data-tab-panel="lenta">
         <article class="caf __twitter-like island">
-          <div class="tabs ll-feed-tabs">
+          <div class="tabs __size-l ll-feed-tabs">
             <button class="tabs-tab ds-title-xl __state-on" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
@@ -1221,7 +1224,7 @@ Total output lines: 3560
 
         <div class="ll-tabpanel" data-tab-panel="podborki" hidden>
         <div class="island">
-          <div class="tabs ll-feed-tabs">
+          <div class="tabs __size-l ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
@@ -1373,7 +1376,7 @@ Total output lines: 3560
 
         <div class="ll-tabpanel" data-tab-panel="segodnya" hidden>
         <div class="island ll-tabs-island">
-          <div class="tabs ll-feed-tabs">
+          <div class="tabs __size-l ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl __state-on" data-tab="segodnya">Сегодня</button>
@@ -1458,9 +1461,7 @@ Total output lines: 3560
           </article>
         </section>
 
-        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до баннера ровно
-             12px через gap .tg-feed) -->
-        <div class="tg-sec-head" style="padding: 0 var(--space…13069 tokens truncated…size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
+        <!-- Заголовок «Какой сегодня день» (без верт. паддинга → до банне…13107 tokens truncated…_view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span>
                 </div>
               </div>
             </div>
@@ -1753,7 +1754,7 @@ Total output lines: 3560
 
         <div class="ll-tabpanel" data-tab-panel="lokalnoe" hidden>
         <article class="caf __twitter-like island">
-          <div class="tabs ll-feed-tabs">
+          <div class="tabs __size-l ll-feed-tabs">
             <button class="tabs-tab ds-title-xl" data-tab="lenta">Лента</button>
             <button class="tabs-tab ds-title-xl" data-tab="podborki">Темы</button>
             <button class="tabs-tab ds-title-xl" data-tab="segodnya">Сегодня</button>
