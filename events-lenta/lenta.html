@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 63432)
-Total output lines: 3598
+Warning: truncated output (original token count: 63777)
+Total output lines: 3637
 
 <!DOCTYPE html>
 <html lang="ru" class="__ui-theme_enabled __ui-theme_light __font-roboto">
@@ -443,12 +443,24 @@ Total output lines: 3598
   }
   .ds-activity-conveyor__track > .uni-cell-wrapper {
     margin: 0;
-    padding: 0;
+    padding: 0 var(--dynamic-cell-view-horizontal-default, 16px);
     --uni-cell-padding-top: 0;
     --uni-cell-padding-bottom: 0;
+    --uni-cell-padding-left: var(--dynamic-cell-view-horizontal-default, 16px);
+    --uni-cell-padding-right: var(--dynamic-cell-view-horizontal-default, 16px);
   }
   .ds-activity-conveyor .uni-cell { align-items: flex-start; }
-  .ds-activity-conveyor .uni-cell-additional-content { gap: var(--space-2); }
+  .ds-activity-conveyor .uni-cell-additional-content {
+    display: flex;
+    gap: var(--space-2);
+    overflow: visible;
+    -webkit-box-orient: initial;
+    -webkit-line-clamp: initial;
+  }
+  .ds-activity-conveyor .uni-cell-text {
+    overflow: visible;
+    white-space: normal;
+  }
   .ds-activity-conveyor .uni-cell-buttons {
     display: flex;
     align-items: center;
@@ -1461,22 +1473,7 @@ Total output lines: 3598
           <article class="cover-card __size-220 __fill" id="rouletteWidget"
                    role="button" tabindex="0" aria-label="Колесо призов — открыть рулетку"
                    style="cursor: pointer; color: var(--static-text-and-icons-base-inverse-primary);">
-            <video class="tg-roulette__video" src="assets/koleso/prize-wheel_opt.mp4" poster="assets/today/ruletka-segodnya-fon.png" autoplay muted loop playsinline></video>
-            <div class="cover-card__body">
-              <div class="cover-card__bottom cover-card__cta">
-                <span class="button-wrapper __size-44 __style-primary-on-color __full-width">
-                  <button class="button-container __style-primary-on-color"><span class="button-content">Крут…13432 tokens truncated…c="assets/people/8.webp" alt=""></div>
-                <span class="caf__line" aria-hidden="true"></span>
-              </div>
-              <div class="caf__content">
-                <div class="caf__head">
-                  <span class="ds-title-s caf__name">Александр Мещеряков</span>
-                  <span class="ds-body-m caf__date">· 20:10</span>
-                </div>
-          <p class="ds-body-m text-feed__body caf__text feed-more__text">Мои любимые и родные!!!!Обожаю вас</p>
-          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/3abe97f3293e8cdc.webp" alt=""></div>
-              <div class="caf__actions">
-              <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-comment"></span>1</span></button></span>
+            <video class="tg-roulette__video" src="assets/koleso/prize…13777 tokens truncated…-comment"></span>1</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-reshare"></span>1</span></button></span>
               <span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>3</span></button></span>
               </div>
@@ -2536,11 +2533,38 @@ Total output lines: 3598
       if (!content) return;
       content.classList.remove('ds-body-m', 'ds-title-l');
       content.classList.add('ds-body-l');
-      content.querySelectorAll('b, a').forEach(function (link) {
+      var text = content.querySelector(':scope > .uni-cell-text');
+      if (!text) {
+        text = document.createElement('div');
+        text.className = 'uni-cell-text';
+        while (content.firstChild && content.firstChild !== slot) {
+          text.appendChild(content.firstChild);
+        }
+        content.insertBefore(text, slot || null);
+      }
+      text.querySelectorAll('b, a').forEach(function (link) {
         link.classList.add('ds-title-m');
       });
       if (slot) content.appendChild(slot);
     });
+
+    (function () {
+      var conv = document.getElementById('activityConveyor');
+      if (!conv) return;
+      var raf = 0;
+      function syncRowHeight() {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+          var max = 88;
+          conv.querySelectorAll('.uni-cell').forEach(function (cell) {
+            max = Math.max(max, Math.ceil(cell.scrollHeight));
+          });
+          conv.style.setProperty('--conv-row-h', max + 'px');
+        });
+      }
+      syncRowHeight();
+      window.addEventListener('resize', syncRowHeight, { passive: true });
+    })();
   </script>
   <script src="components/image-skeleton.js" defer></script>
   <script src="components/activity-widget.js"></script>
