@@ -27,6 +27,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const PROTOTYPES = {
   '/nv':       '/new-vision/lenta.html',      // New Vision — основная лента
   '/activity': '/activity-lenta/view.html',   // Activity-лента — локскрин-старт (как q3-view)
+  '/events':   '/events-lenta/view.html',     // События-лента — отдельная копия Activity
   '/q3':       '/q3-view.html',               // Q3 — локскрин-старт
   '/preview':  '/preview.html',              // витрина дизайн-системы
 };
@@ -79,6 +80,7 @@ const LANDING = `<!DOCTYPE html>
   <p class="sub">Выберите прототип.</p>
   <a class="proto" href="/q3">Q-3</a>
   <a class="proto" href="/activity">Активити</a>
+  <a class="proto" href="/events">События-лента</a>
 </div></body></html>`;
 
 /* ── Статика ──────────────────────────────────────────────────────────────── */
@@ -156,6 +158,6 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Сервер слушает :${PORT}`);
-  console.log(`Прототипы: /nv, /activity, /q3, /preview`);
+  console.log(`Прототипы: /nv, /activity, /events, /q3, /preview`);
   console.log('Статика: контент обновляется офлайн (scripts/fetch-all.mjs) и коммитится.');
 });
