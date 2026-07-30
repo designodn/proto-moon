@@ -94,6 +94,16 @@
       document.fonts.ready.then(scheduleMeasure);
     }
 
+    function syncPoolVisibility() {
+      var rows = Math.round(cssNum('--conv-rows', 3));
+      Array.prototype.forEach.call(track.children, function (cell, index) {
+        cell.classList.toggle('__conv-pool-hidden',
+          index >= rows && !cell.classList.contains('__conv-leave'));
+      });
+    }
+
+    syncPoolVisibility();
+
     function step() {
       var rows = Math.round(cssNum('--conv-rows', 3));
       if (animating || track.children.length < rows + 1) return;
@@ -102,18 +112,21 @@
       // следующую скрытую (первую под видимой зоной) поднимаем наверх
       var entering = track.children[rows];
       track.insertBefore(entering, track.firstElementChild);
+      entering.classList.remove('__conv-pool-hidden');
       void entering.offsetWidth;                 // reflow → enter стартует с height:0
       entering.classList.add('__conv-enter');    // возникает из точки (animations.css)
       appear(entering);                          // + вспышка категорийной подложки
 
       // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
       var leaving = track.children[rows];
+      leaving.classList.remove('__conv-pool-hidden');
       leaving.classList.add('__conv-leave');
 
       setTimeout(function () {
         leaving.classList.remove('__conv-leave');
         entering.classList.remove('__conv-enter');
         track.appendChild(leaving);             // ушедшую — в конец пула (станет скрытой)
+        syncPoolVisibility();
         animating = false;
         playCellLottie(entering);               // эффект — после раскрытия (rect стабилен)
       }, cssNum('--conv-dur', 0.5) * 1000 + 60);
