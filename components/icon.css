@@ -77,6 +77,7 @@
    В HTML: <span class="icon __size-20 __slot-reshare"></span>
    ============================================================ */
 .icon.__slot-arrow-left    { --icon-src: url('../assets/icons/arrow-left.svg'); }
+.icon.__slot-add-square    { --icon-src: url('../assets/icons/add_square_24.svg'); }
 .icon.__slot-attach        { --icon-src: url('../assets/icons/attach_24.svg'); }
 .icon.__slot-back          { --icon-src: url('../assets/icons/arrow_left_24.svg'); }
 .icon.__slot-bell          { --icon-src: url('../assets/icons/bell.svg'); }

@@ -23,6 +23,7 @@ const STEPS = [
   ['fetch-q3.mjs'],                  // лист «Q3-посты» → lenta-q3.html
   ['fetch-q3.mjs', '--tribune'],     // лист «Трибуна» (gid 803749593) → tribune.html
   ['fetch-q3.mjs', '--activity'],    // лист «lenta-activity» (Q3-схема) → activity-lenta/lenta.html
+  ['fetch-q3.mjs', '--events'],      // тот же лист → events-lenta/lenta.html («Подборки» показываем как «Темы»)
   ['fetch-profile.mjs'],             // лист «Профили» (gid 877262163) → profile.html
   ['fetch-clips.mjs'],               // лист «Клипы» → data/clips.*
   ['fetch-activity.mjs'],            // лист «Активности» (Вокруг вас)

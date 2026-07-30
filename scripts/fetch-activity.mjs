@@ -376,6 +376,18 @@ async function main() {
   // нет → там нужен «../» (как есть).
   const pageCellsBase = pageCells.replace(/\.\.\/assets\//g, 'assets/');
   const widgetCellsBase = widgetCells.replace(/\.\.\/assets\//g, 'assets/');
+  // В События-ленте CTA живёт в нижнем слоте buttons и использует размер 36.
+  // Базовый рендер Activity не меняем.
+  const eventsWidgetCells = widgetCellsBase.replace(
+    new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
+    (_, open, text, close, button) =>
+      `${open.replace('ds-body-m', 'ds-body-l')}\\n                <div class="uni-cell-text">${text.replace(/<b>/g, '<b class="ds-title-m">')}</div>\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
+  );
+  const eventsPageCells = pageCellsBase.replace(
+    new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
+    (_, open, text, close, button) =>
+      `${open}${text}\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
+  );
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
   spliceFile(
@@ -420,8 +432,27 @@ async function main() {
     '<!-- ACTIVITY:END -->',
   );
 
+
+  // Та же подборка активностей для независимой «События-ленты».
+  spliceFile(
+    resolve(ROOT, 'events-lenta/lenta.html'),
+    '<!-- ACTIVITY-WIDGET:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY-WIDGET:END -->',
+    eventsWidgetCells,
+    '          <div class="uni-cell-wrapper __type-activity __cat-win">',
+    '\n          </div>\n        </div>\n      </div>',
+  );
+  spliceFile(
+    resolve(ROOT, 'events-lenta/okruzhenie.html'),
+    '<!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->',
+    '<!-- ACTIVITY:END -->',
+    eventsPageCells,
+    '<!-- ACTIVITY:START',
+    '<!-- ACTIVITY:END -->',
+  );
+
   gate.commit();
-  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta (виджеты)`);
+  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta + events-lenta/lenta (виджеты)`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
 }
 
