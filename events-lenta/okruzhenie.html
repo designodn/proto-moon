@@ -7,7 +7,7 @@
      Иконки — не-NV (status/back — img из assets/icons). -->
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Вокруг вас сейчас — события-лента</title>
+<title>События друзей — события-лента</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
@@ -22,6 +22,54 @@
   .phone-frame__feed::-webkit-scrollbar { display: none; }
   .ll-icon { display: inline-block; flex-shrink: 0; vertical-align: middle; }
   .ll-tabbar { position: sticky; bottom: 0; z-index: 50; }
+  .events-publish {
+    padding: 4px 12px;
+    background: var(--dynamic-surface-base-primary);
+  }
+  .events-publish .button-container { width: 100%; }
+  .events-stories {
+    background: var(--dynamic-surface-base-primary);
+    padding-bottom: 4px;
+  }
+  .events-stories .stories-row {
+    min-height: 92px;
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+  .events-story {
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 62px;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .events-story__name {
+    max-width: 70px;
+    overflow: hidden;
+    color: var(--dynamic-text-and-icons-base-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .activity-list {
+    background: var(--dynamic-surface-base-primary);
+  }
+  .activity-list > .uni-cell-wrapper {
+    --uni-cell-padding-top: 8px;
+    --uni-cell-padding-bottom: 8px;
+    --uni-cell-padding-left: 12px;
+    --uni-cell-padding-right: 12px;
+  }
+  .activity-list .uni-cell {
+    align-items: flex-start;
+  }
+  .activity-list .uni-cell-additional-content {
+    min-width: 0;
+  }
+  .activity-list .uni-cell-buttons {
+    width: 100%;
+    margin-top: 8px;
+  }
 </style>
 </head>
 <body>
@@ -42,21 +90,51 @@
         <div class="nav-bar __type-feed">
           <div class="nav-bar__leading">
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" id="navBack" aria-label="Назад"><span class="button-inline__content"><img class="ll-icon button-inline__icon" src="assets/icons/arrow_left_24.svg" width="24" height="24" alt=""></span></button></span>
-            <span class="ds-title-l">Вокруг вас</span>
-          </div>
-          <div class="nav-bar__trailing">
-            <!-- Индикатор «новых»: пульс → счётчик → «N новых» (сценарий — скрипт ниже). -->
-            <span class="activity-indicator" data-state="pulse" aria-live="polite" aria-label="Новые события вокруг вас">
-              <span class="pulse-dot __view-custom"></span>
-              <span class="activity-indicator__badge">
-                <span class="activity-indicator__count"><span class="activity-indicator__digit">1</span></span><span class="activity-indicator__word">новых</span>
-              </span>
-            </span>
+            <span class="ds-title-l">События друзей</span>
           </div>
         </div>
       </div>
 
-      <!-- Все типы ячеек «Вокруг вас сейчас» (наполняет scripts/fetch-activity.mjs) -->
+      <div class="events-publish">
+        <div class="button-wrapper __size-56 __full-width">
+          <button class="button-container __style-secondary">
+            <span class="button-content">
+              <img class="ll-icon" src="assets/icons/add_square_24.svg" width="20" height="20" alt="">
+              Опубликовать
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="events-stories">
+        <div class="stories-row" id="eventsStories" aria-label="Истории друзей">
+          <div class="events-story">
+            <div class="avatar __size-56 __type-image __ring-active __has-addon">
+              <img data-person-avatar="my_profile" alt="">
+              <div class="avatar__addon __pos-br stories-row__add"><img src="assets/icons/add_24.svg" width="20" height="20" alt=""></div>
+            </div>
+            <span class="events-story__name ds-caption-m">Добавить</span>
+          </div>
+          <div class="events-story">
+            <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="11" alt=""></div>
+            <span class="events-story__name ds-caption-m">Ольга</span>
+          </div>
+          <div class="events-story">
+            <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="2" alt=""></div>
+            <span class="events-story__name ds-caption-m">Сергей</span>
+          </div>
+          <div class="events-story">
+            <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="3" alt=""></div>
+            <span class="events-story__name ds-caption-m">Зинаида</span>
+          </div>
+          <div class="events-story">
+            <div class="avatar __size-56 __type-image __ring-active"><img data-person-avatar="4" alt=""></div>
+            <span class="events-story__name ds-caption-m">Виктор</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Все типы ячеек «События друзей» (наполняет scripts/fetch-activity.mjs) -->
       <div class="activity-list" id="activityList">
 
         <!-- ACTIVITY:START (генерится scripts/fetch-activity.mjs — не редактировать) -->
@@ -303,6 +381,19 @@
 
   <script src="data/people.js"></script>
   <script src="components/people-data.js"></script>
+  <script>
+    // События друзей: CTA идёт второй строкой в слот buttons и имеет высоту 36.
+    document.querySelectorAll('#activityList .uni-cell').forEach(function (cell) {
+      var button = cell.querySelector(':scope > .button-wrapper');
+      if (!button) return;
+      button.classList.remove('__size-28');
+      button.classList.add('__size-36');
+      var slot = document.createElement('div');
+      slot.className = 'uni-cell-buttons';
+      slot.appendChild(button);
+      cell.querySelector('.uni-cell-additional-content').appendChild(slot);
+    });
+  </script>
   <script src="components/tab-bar.js"></script>
   <!-- «Контейнер» прототипа: гасит переходы за пределы папки events-lenta. -->
   <script src="components/proto-contain.js"></script>
