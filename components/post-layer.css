@@ -11,7 +11,7 @@
 }
 
 .ll-post {
-  padding-top: var(--space-3);
+  padding-top: 0;
   padding-bottom: var(--space-4);
   border-radius: 0 0 20px 20px;
 }
@@ -27,6 +27,31 @@
 
 .ll-post__source > .text-feed__media {
   width: 100%;
+}
+
+.ll-post__source > .feed-header .uni-cell-wrapper {
+  --uni-cell-padding-left: var(--space-4);
+  --uni-cell-padding-right: var(--space-4);
+}
+
+.ll-post__rich-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-inline: var(--space-4);
+  color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.ll-post__rich-text p {
+  margin: 0;
+}
+
+.ll-post__rich-text em {
+  font-style: italic;
+}
+
+.ll-post__rich-text strong {
+  font-weight: 500;
 }
 
 /* В детальном посте строка автора цитируемой записи получает собственные
@@ -117,6 +142,13 @@
   font-weight: var(--scaled-caption-m-font-weight, 400);
   line-height: var(--scaled-caption-m-line-height, 16px);
   letter-spacing: var(--scaled-caption-m-letter-spacing, 0);
+}
+
+.ll-answer .fc-input__smile {
+  display: block;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
 }
 
 .ll-post__action .ll-icon {

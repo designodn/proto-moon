@@ -35,6 +35,8 @@
     var track = conv.querySelector('.ds-activity-conveyor__track');
     if (!track) return;
     var measureFrame = 0;
+    var measuredViewportWidth = -1;
+    var cachedRowHeight = 0;
 
     function cssNum(name, dflt) {
       var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
@@ -47,9 +49,16 @@
     conv.style.setProperty('--conv-rows', Math.max(0, Math.min(configuredRows, track.children.length)));
 
     // Все строки конвейера имеют одну высоту — максимальную естественную
-    // высоту среди заложенных ячеек при текущей ширине контейнера.
+    // высоту среди заложенных ячеек при текущей ширине viewport. Результат
+    // запоминаем: скрытие/показ фида и анимации не должны повторно менять
+    // высоту. Новый замер нужен только после изменения ширины viewport.
     function measureRows() {
       if (animating) return;
+      var viewportWidth = Math.round(document.documentElement.clientWidth || window.innerWidth || 0);
+      if (cachedRowHeight > 0 && viewportWidth === measuredViewportWidth) {
+        conv.style.setProperty('--conv-row-h', cachedRowHeight + 'px');
+        return;
+      }
       conv.classList.add('__conv-measuring');
       var max = 0;
       Array.prototype.forEach.call(track.children, function (cell) {
@@ -60,8 +69,12 @@
       });
       conv.classList.remove('__conv-measuring');
       var next = Math.ceil(max);
-      if (next > 0 && Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
-        conv.style.setProperty('--conv-row-h', next + 'px');
+      if (next > 0) {
+        measuredViewportWidth = viewportWidth;
+        cachedRowHeight = next;
+        if (Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
+          conv.style.setProperty('--conv-row-h', next + 'px');
+        }
       }
     }
 

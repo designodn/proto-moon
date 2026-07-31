@@ -30,7 +30,7 @@
   .ll-post-feed {
     display: flex;
     flex-direction: column;
-    padding-bottom: var(--space-8);
+    padding-bottom: 0;
   }
 
   /* Прибитый снизу инпут ответа (новый fc-input) */
@@ -66,7 +66,7 @@
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
           </div>
           <div class="nav-bar__trailing">
-            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><span class="icon __size-24 __slot-more"></span></span></button></span>
+            <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><img class="ll-icon" src="assets/icons/more_vertical_24.svg" width="24" height="24" alt=""></span></button></span>
           </div>
         </div>
       </div>
@@ -155,7 +155,6 @@
               <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/2.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
               <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Сергей Чернышов</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">Ну только если ты страдалец по сексу.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span></div></div>
             </div>
-            <div class="fc-more __twitter-like twitterlike-thread__more"><span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span></div>
           </div>
           </div>
           <div class="twitterlike-thread">
@@ -187,17 +186,17 @@
               <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Екатерина )))))</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">А какие ещё бывают драники, кроме картофельных?</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>1</span></button></span></div></div>
             </div>
           </div>
-          <div class="fc-list __twitter-like post-comments__single">
-            <div class="fc-comment __twitter-like">
-              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/10.webp" alt=""></div></div>
+          <div class="twitterlike-thread">
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __root">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/10.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
               <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Александр Попов</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">Настоящие драники — это тёртый картофель и соль. А то, куда вы добавляете всё остальное, — картофельные оладьи. Спросите у настоящего белоруса.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>5</span></button></span></div></div>
             </div>
-          </div>
-          <div class="fc-list __twitter-like post-comments__single">
-            <div class="fc-comment __twitter-like">
-              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/11.webp" alt=""></div></div>
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __reply">
+              <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/11.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
               <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Ольга Стрельникова</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">Точно!!!</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span></div></div>
             </div>
+          </div>
           </div>
           <div class="fc-list __twitter-like post-comments__single">
             <div class="fc-comment __twitter-like">
@@ -216,11 +215,11 @@
 
       </div>
 
-      <!-- ПРИБИТЫЙ ИНПУТ КОММЕНТА (новый fc-input: ава 44 + send) -->
+      <!-- ПРИБИТЫЙ ИНПУТ КОММЕНТА: smile + текст + send -->
       <div class="fc-input ll-answer">
-        <div class="avatar __size-44 __type-image"><img data-user-avatar src="https://i.pravatar.cc/96?img=15" alt=""></div>
         <div class="fc-input__field">
-          <input class="fc-input__text" placeholder="Написать комментарий…">
+          <img class="ll-icon fc-input__smile" src="assets/icons/smile_24.svg" width="24" height="24" alt="">
+          <input class="fc-input__text" placeholder="Комментировать…">
           <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
         </div>
       </div>
@@ -248,6 +247,25 @@
     });
   </script>
 
+  <template id="ll-belyashi-content">
+    <div class="ll-post__rich-text ds-body-m">
+      <p><em>Когда-то на рынке возле нашего дома продавали беляши. Очередь к этому месту была всегда. Люди специально приходили именно туда, потому что знали: беляши будут свежие, горячие и очень ароматные. Но сколько бы я их ни пробовал, домашние всё равно нравятся больше.</em></p>
+      <p><strong>Для теста:</strong><br>— Вода тёплая — 500 мл<br>— Соль — 1 ч. л. с горкой<br>— Сахар — 2 ч. л.<br>— Дрожжи сухие — 7 г<br>— Мука пшеничная — 700–750 г<br>— Растительное масло — 2–3 ст. л.</p>
+      <p><strong>Для начинки:</strong><br>— Свинина — 500 г<br>— Говядина — 500 г<br>— Лук репчатый — 2 крупные шт.<br>— Вода ледяная — 150 мл<br>— Соль — по вкусу<br>— Перец чёрный молотый — по вкусу</p>
+      <p><strong>Для жарки:</strong><br>— Растительное масло — по необходимости</p>
+      <p><strong>Приготовление:</strong></p>
+      <p><strong>1.</strong> Сначала приготовим тесто. Берём пол-литра тёплой воды примерно 35–38 градусов. Добавляем одну чайную ложку с горкой соли, 2 чайные ложки сахара. 7 граммов сухих дрожжей. Всё это хорошенько перемешиваем и постепенно добавляем 700–750 граммов муки. Тесто должно у нас получиться очень мягкое, но нужно его обязательно хорошо вымесить. В конце замеса нужно добавить 2–3 столовые ложки растительного масла. Тесто замесили и поставили подходить в тёплое место. Подходить оно будет минут 40, а то и час. Тесто, повторяю, должно быть очень-очень мягкое. Теперь приготовим фарш.</p>
+      <p><strong>2.</strong> Я обычно беру два вида мяса — свинину и говядину пополам. Перекручиваю их. Добавляю 2 крупные луковицы. Лук можно порезать, но в моей семье не любят, когда лук кусочками попадается, поэтому я его обязательно перекручиваю. Добавляю соль, перец по вкусу. Хорошенько вымешиваю и добавляю 150 мл ледяной воды. Хорошенько-хорошенько нужно вымесить фарш. Такой, чтобы он стал прямо вязким, но не жидким. И фарш обязательно должен быть жирным. Фарш готов.</p>
+      <p><strong>3.</strong> Тесто подошло. Делим тесто на такие кусочки, какими вы хотели бы видеть беляши. Я очень люблю крупные беляши. Очень часто жарю такие, что один помещается на всю сковородку. Но это на любителя. Обычно делают беляши среднего размера. Около 80–100 граммов теста берут для каждого беляша. Тесто делим на нужное количество шариков. По этому количеству делим начинку. Тесто накрываем, даём ему немного подойти.</p>
+      <p><strong>4.</strong> После этого руками разминаем каждый кусочек теста. Если тесто липковатое, значит, руки можно смазать растительным маслом. В центр кладём начинку и защипываем тесто, как на хинкали. Очень часто в беляшах оставляют в середине дырочку. Но это можно делать, а можно и нет.</p>
+      <p><strong>5.</strong> У меня соседка татарка, она пекла беляши, но у них они назывались перемячи. Так вот, она никогда дырочку не делала. Но если вы делаете дырочку, в этом случае беляши нужно жарить сначала стороной с дырочкой вниз. И жарить беляши нужно в большом количестве растительного масла на среднем огне. Тогда они хорошо поднимаются, становятся пышными, воздушными, корочка получается зажаристой, а внутри течёт сок.</p>
+      <p><strong>6.</strong> Разламываешь такой беляш, а по рукам бежит мясной сок. Очень вкусно. Беляши получаются бесподобные. А попробуйте когда-нибудь испечь беляши, такие, как пекут на всю сковородку. Как же это вкусно! Заваривайте вкусный чай и пейте!</p>
+      <p><strong>Возможные нюансы рецепта:</strong><br>— Используйте муку постепенно, потому что её влажность бывает разной, и тесто может взять чуть больше или чуть меньше указанного количества.<br>— Выбирайте для фарша мясо с умеренным количеством жира, тогда начинка получится особенно сочной.<br>— Давайте тесту время подойти по своему состоянию, а не только по часам, потому что температура в доме у всех разная.<br>— Смазывайте руки маслом, если тесто получается слишком нежным, тогда работать с ним будет гораздо удобнее.<br>— Следите за температурой масла во время жарки, чтобы беляши успели приготовиться внутри и красиво зарумянились снаружи.<br>— Оставляйте готовые беляши на несколько минут после жарки, тогда сок внутри распределится равномернее.<br>— Пробуйте первую партию на соль и перец, чтобы при необходимости сразу подкорректировать вкус начинки.</p>
+      <p><strong>А у вас в семье беляши делают с дырочкой или полностью закрытые? Кстати, новые рецепты я публикую ещё и в МАКС — подписывайтесь на мой канал «Папа на кухне», чтобы всегда быть в курсе вкусных новинок.</strong></p>
+      <p>#беляш #фарш #тесто #выпечка #ужин</p>
+    </div>
+  </template>
+
   <!-- Контент поста приходит из ленты: тап по .text-feed кладёт его
        innerHTML в sessionStorage('openPost'), здесь подставляем в #ll-post.
        Без записи (прямое открытие) остаётся демо-пост из разметки. -->
@@ -259,6 +277,7 @@
         var el = document.getElementById('ll-post-source');
         if (el) {
           el.innerHTML = html;
+          var isBelyashi = /Домашние\s+беляши\s+с\s+мясом/i.test(el.textContent);
           // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
           // прибитый (ll-answer). Убираем дубль.
           el.querySelectorAll('.fc-input, .actions-bar').forEach(function (n) { n.remove(); });
@@ -270,12 +289,48 @@
             media.classList.remove('text-feed__reshare-card-media');
             media.classList.add('text-feed__media', '__single');
           });
+          if (isBelyashi && !el.querySelector('.ll-post__rich-text')) {
+            var belyashiTemplate = document.getElementById('ll-belyashi-content');
+            var belyashiMedia = el.querySelector(':scope > .text-feed__media');
+            if (belyashiTemplate && belyashiMedia) {
+              el.insertBefore(belyashiTemplate.content.cloneNode(true), belyashiMedia);
+            }
+          }
           // Нормализуем шапку тем же feed-header/uni-cell-паттерном, который
           // используется у обычного поста в Q3-ленте.
           var existingHeader = el.querySelector(':scope > .feed-header');
           var author = existingHeader
             ? existingHeader.querySelector(':scope > .uni-cell-wrapper')
             : el.querySelector(':scope > .uni-cell-wrapper');
+          var reshareAuthor = el.querySelector(':scope > .text-feed__reshare-card-author');
+          if (!author && reshareAuthor) {
+            var sourceAvatar = reshareAuthor.querySelector('.avatar');
+            var sourceName = reshareAuthor.querySelector('.text-feed__reshare-card-author-name');
+            existingHeader = document.createElement('header');
+            existingHeader.className = 'feed-header';
+            author = document.createElement('div');
+            author.className = 'uni-cell-wrapper';
+            var cellContainer = document.createElement('div');
+            cellContainer.className = 'uni-cell-container';
+            var cell = document.createElement('div');
+            cell.className = 'uni-cell';
+            var additionalContent = document.createElement('div');
+            additionalContent.className = 'uni-cell-additional-content';
+            if (sourceAvatar) cell.appendChild(sourceAvatar);
+            if (sourceName) {
+              sourceName.classList.remove('ds-body-m', 'ds-title-m');
+              sourceName.classList.add('ds-title-s', 'feed-header__name');
+              var sourceNameLine = document.createElement('div');
+              sourceNameLine.className = 'feed-header__line';
+              sourceNameLine.appendChild(sourceName);
+              additionalContent.appendChild(sourceNameLine);
+            }
+            cell.appendChild(additionalContent);
+            cellContainer.appendChild(cell);
+            author.appendChild(cellContainer);
+            existingHeader.appendChild(author);
+            reshareAuthor.replaceWith(existingHeader);
+          }
           if (author) {
             var header = existingHeader;
             if (!header) {
@@ -301,6 +356,14 @@
                 name.parentNode.insertBefore(line, name);
                 line.appendChild(name);
               }
+            }
+            var time = author.querySelector('.text-feed__time, .feed-header__time');
+            if (!time && isBelyashi) {
+              time = document.createElement('div');
+              time.className = 'ds-caption-s text-feed__time';
+              time.textContent = '18 июня';
+              var additional = author.querySelector('.uni-cell-additional-content');
+              if (additional) additional.appendChild(time);
             }
           }
         }
