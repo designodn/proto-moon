@@ -21,10 +21,10 @@
 .badge.__type-birthday > .icon { width: 14px; height: 14px; }
 
 .badge.__type-comment  { --badge-background: var(--static-surface-status-info); }
-.badge.__type-klass,
 .badge.__type-mention,
 .badge.__type-add,
-.badge.__type-share    { --badge-background: var(--static-surface-status-accent); }
+.badge.__type-share    { --badge-background: var(--base-orange-saturated-56); }
+.badge.__type-klass    { --badge-background: var(--static-surface-status-attention); }
 .badge.__type-favourite { --badge-background: var(--static-surface-status-positive); }
 .badge.__type-radio     { --badge-background: var(--static-surface-status-negative); }
 .badge.__type-birthday  { --badge-background: var(--static-surface-violet, #AE7ECE); }
