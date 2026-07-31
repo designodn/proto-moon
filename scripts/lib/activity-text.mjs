@@ -9,6 +9,13 @@ const PREPOSITION_CASES = new Map([
   ['за', 'accusative'], ['про', 'accusative'],
 ]);
 
+// Контексты без предлога, где падеж N задаётся управляющим словом.
+// Более специфичные фразы обрабатываются до общего nominative fallback.
+const CONTEXT_CASES = [
+  { pattern: /(^|[\s ])(Заметка)([\s ]+)N(?=$|[\s ,.!?—–-])/gi, grammaticalCase: 'genitive' },
+  { pattern: /(^|[\s ])(Поздравьте)([\s ]+)N(?=$|[\s ,.!?—–-])/gi, grammaticalCase: 'accusative' },
+];
+
 const GENDER_PAIRS = [
   ['активен', 'активна'], ['добавил', 'добавила'], ['опубликовал', 'опубликовала'],
   ['подружился', 'подружилась'], ['поставил', 'поставила'], ['оценил', 'оценила'],
@@ -122,6 +129,10 @@ export function isDativeRecipientText(raw) {
 
 export function replacePersonToken(html, name, gender) {
   let result = String(html || '');
+  for (const { pattern, grammaticalCase } of CONTEXT_CASES) {
+    result = result.replace(pattern, (_, before, governor, gap) =>
+      `${before}${governor}${gap}<b>${inflectPersonName(name, gender, grammaticalCase)}</b>`);
+  }
   for (const [preposition, grammaticalCase] of PREPOSITION_CASES) {
     const re = new RegExp(`(^|[\\s ])(${preposition})([\\s ]+)N(?=$|[\\s ,.!?—–-])`, 'gi');
     result = result.replace(re, (_, before, prep, gap) =>

@@ -153,16 +153,9 @@
       }, cssNum('--conv-dur', 0.5) * 1000 + 60);
     }
 
-    // Первый показ: видимые ряды тоже «приходят к дефолту» из цветной подложки —
-    // иначе категории видны только на сменяемой верхней ячейке.
+    // Вспышка запускается только на реально входящей ячейке внутри step().
+    // При первоначальном открытии страницы видимые строки остаются статичными.
     if (!reduce) {
-      var rows0 = Math.round(cssNum('--conv-rows', 3));
-      for (var i = 0; i < rows0 && i < track.children.length; i++) {
-        var cell = track.children[i];
-        appear(cell);
-        requestAnimationFrame(playCellLottie.bind(null, cell)); // ряды статичны → rect готов
-      }
-
       var stepMs = parseInt(conv.getAttribute('data-step-ms'), 10) || STEP_MS_DEFAULT;
       setInterval(step, stepMs);
     }

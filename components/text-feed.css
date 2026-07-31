@@ -423,6 +423,36 @@
 }
 .text-feed__media.__row::-webkit-scrollbar { display: none; }
 
+/* Events photo-gallery — горизонтальная карусель по Figma 3178:271668.
+   Все изображения имеют общую высоту, но сохраняют собственный aspect ratio. */
+.text-feed__media.__events-carousel {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  height: 220px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.text-feed__media.__events-carousel::-webkit-scrollbar { display: none; }
+.text-feed__media-carousel-cell {
+  flex: 0 0 auto;
+  height: 220px;
+  overflow: hidden;
+  border: 1px solid var(--dynamic-stroke-contrast-low);
+  border-radius: 20px;
+  box-sizing: border-box;
+  background-color: var(--dynamic-surface-contrast-low);
+}
+.text-feed__media-carousel-cell img {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+}
+
 .text-feed__media-cell {
   flex: 0 0 auto;
   height: 100%;

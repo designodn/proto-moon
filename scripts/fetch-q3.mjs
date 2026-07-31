@@ -91,6 +91,12 @@ const IS_EVENTS = process.argv.includes('--events');
 const CHECK_ONLY = process.argv.includes('--check');
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 const FEED = FEEDS[IS_TRIBUNE ? 'tribune' : (IS_EVENTS ? 'events' : (IS_ACTIVITY ? 'activity' : 'q3'))];
+// Эти две новые строки принадлежат только «События-ленте». Источник у двух
+// прототипов общий, поэтому старая activity-lenta исключает их при сборке.
+const EVENTS_ONLY_POST_IDS = new Set(['row-36', 'row-37']);
+const scopePosts = posts => IS_ACTIVITY
+  ? posts.filter(post => !EVENTS_ONLY_POST_IDS.has(post.id))
+  : posts;
 const SHEET_NAME = FEED.name;                 // человекочитаемое имя листа (для логов)
 const SHEET_GID = FEED.gid;                   // стабильный gid листа (или null → тянем по имени)
 
@@ -466,10 +472,17 @@ ${inlineCount('klass-outline', likes)}
 }
 
 /** Медиа базового feed-text: 1 фото → __single, N фото → __row (квадратные ячейки). */
-function media(photos) {
+function media(photos, { carousel = false } = {}) {
   if (!photos.length) return '';
   if (photos.length === 1) {
     return `          <div class="text-feed__media __single">${img(photos[0], 'style="width:100%; height:100%; object-fit:cover; display:block" ')}</div>`;
+  }
+  if (carousel) {
+    const cells = photos.map(u =>
+      `            <div class="text-feed__media-carousel-cell">${img(u)}</div>`).join('\n');
+    return `          <div class="text-feed__media __events-carousel">
+${cells}
+          </div>`;
   }
   // Галерея — как в NV-ленте: 2-колоночный грид .media.__type-gallery (DS, components/media.css),
   // максимум 4 ячейки, на 4-й — плашка «Ещё N», если фото больше четырёх.
@@ -838,7 +851,7 @@ ${feedText(text)}
 ${activityLine(p.header)}${header}
 
 ${body}
-${media(photos)}
+${media(photos, { carousel: IS_EVENTS && type === 'photo-gallery' })}
 ${actionsBar(likes, comments, reshares)}${marathonBlock(p.marathon, isJoined(p.marathonJoined))}
         </article>`.replace(/\n\n+/g, '\n\n');
     }
@@ -1798,7 +1811,7 @@ async function main() {
 
   if (offline) {
     console.log(`→ Офлайн-реген из ${FEED.json} (таблицу не тяну)…`);
-    posts = JSON.parse(readFileSync(resolve(ROOT, FEED.json), 'utf8')).posts || [];
+    posts = scopePosts(JSON.parse(readFileSync(resolve(ROOT, FEED.json), 'utf8')).posts || []);
   } else {
     console.log(`→ Тяну «${SHEET_NAME}» из таблицы…`);
     const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
@@ -1908,6 +1921,8 @@ async function main() {
         ].filter(x => x.text),
       });
     }
+
+    posts = scopePosts(posts);
 
     // shared-link: если ни «заголовок», ни «описание» не вписаны вручную —
     // пробуем вытянуть og:-мету со страницы. Если текст уже есть в таблице —

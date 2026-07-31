@@ -14,8 +14,10 @@
   color: var(--static-text-and-icons-base-inverse-primary);
 }
 
+.badge.__size-20 { --badge-size: 20px; }
 .badge.__size-24 { --badge-size: 24px; }
 .badge.__border { box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary); }
+.badge > .badge__asset { display: block; width: 100%; height: 100%; }
 .badge > .icon { width: 16px; height: 16px; }
 .badge.__type-radio > .icon,
 .badge.__type-share > .icon,

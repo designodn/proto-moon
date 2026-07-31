@@ -140,23 +140,26 @@ const SECTION_AVATARS = [
 const sectionAvatar = (text) => (SECTION_AVATARS.find(([re]) => re.test(text || '')) || [, ''])[1];
 
 const BADGES = [
-  { type: 'comment',   icon: 'comment-16',      names: ['comment', 'комментарий', 'коммент'] },
-  { type: 'klass',     icon: 'klass-filled',    names: ['klass', 'klasses', 'class', 'класс', 'лайк'] },
+  { type: 'comment',   asset: 'badge_comment_20.svg',  names: ['comment', 'комментарий', 'коммент'] },
+  { type: 'klass',     asset: 'badge_klass_20.svg',    names: ['klass', 'class', 'класс', 'лайк'] },
+  { type: 'klasses',   asset: 'badge_klasses_20.svg',  names: ['klasses'] },
   { type: 'favourite', icon: 'favourite-filled', names: ['favourite', 'favorite', 'избранное', 'звезда'] },
-  { type: 'mention',   icon: 'mention',         names: ['mention', 'упоминание'] },
-  { type: 'add',       icon: 'add',             names: ['add', 'добавить', 'плюс'] },
-  { type: 'radio',     icon: 'music-radio',     names: ['radio', 'live', 'эфир', 'радио'] },
-  { type: 'share',     icon: 'share',           names: ['share', 'reshare', 'поделиться', 'репост'] },
-  { type: 'birthday',  icon: 'cake',            names: ['birthday', 'день рождения', 'др'] },
+  { type: 'mention',   asset: 'badge_mention_20.svg',  names: ['mention', 'упоминание'] },
+  { type: 'add',       asset: 'badge_add_20.svg',      names: ['add', 'добавить', 'плюс'] },
+  { type: 'radio',     asset: 'badge_live_20.svg',     names: ['radio', 'live', 'эфир', 'радио'] },
+  { type: 'share',     asset: 'badge_reshare_20.svg',  names: ['share', 'reshare', 'поделиться', 'репост'] },
+  { type: 'birthday',  asset: 'badge_birthday_20.svg', names: ['birthday', 'день рождения', 'др'] },
 ];
 
 function badgeElement(raw, extraClass = '') {
   const value = (raw || '').trim().toLowerCase();
   if (!value || value === 'нет бейджа' || value === 'нет') return '';
   const badge = BADGES.find(item => item.names.includes(value));
-  return badge
-    ? `<span class="badge __size-24 __type-${badge.type}${extraClass ? ` ${extraClass}` : ''}"><span class="icon __slot-${badge.icon}"></span></span>`
-    : '';
+  if (!badge) return '';
+  const content = badge.asset
+    ? `<img class="badge__asset" src="assets/badges/${badge.asset}" alt="">`
+    : `<span class="icon __slot-${badge.icon}"></span>`;
+  return `<span class="badge __size-20 __type-${badge.type}${extraClass ? ` ${extraClass}` : ''}">${content}</span>`;
 }
 
 const personIds = who => (who || '').split(',').map(id => id.trim()).filter(Boolean);

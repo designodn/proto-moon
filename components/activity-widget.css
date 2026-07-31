@@ -191,10 +191,9 @@
 }
 .ds-activity-conveyor .activity-cell__media-badge {
   position: absolute;
-  right: -4px;
-  bottom: -4px;
+  right: -2px;
+  bottom: -2px;
   z-index: 1;
-  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
 }
 
 /* ============================================================
