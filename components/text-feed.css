@@ -436,13 +436,19 @@
   padding-left: 16px;
   box-sizing: border-box;
   overflow-x: auto;
-  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .text-feed__media.__events-carousel::-webkit-scrollbar { display: none; }
 .caf__content .text-feed__media.__events-carousel {
   padding-left: 0;
+  padding-right: var(--space-4);
+  width: calc(100% + var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  border-radius: 0;
+}
+.caf.__twitter-like:has(.text-feed__media.__events-carousel) {
+  overflow: visible;
 }
 .text-feed__media-carousel-cell {
   flex: 0 0 auto;

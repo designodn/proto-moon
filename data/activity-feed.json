@@ -911,7 +911,7 @@
     },
     {
       "id": "row-30",
-      "type": "photo-gallery",
+      "type": "photo",
       "author": "group-9",
       "tab": "Лента",
       "tw": true,
@@ -921,14 +921,10 @@
       "title": "",
       "text": "Какие кабачки выбрать для посева: белые или цукини. У них есть отличия, которые важно знать. Белые кабачки. У них шкурка более грубая, а вкус пресный. Плоды быстро перерас",
       "photos": [
-        "assets/activity/7897e5a6dc4d802a.webp",
-        "assets/activity/e45f47558150d1fa.webp",
-        "assets/activity/95e053eaf0b0ccc9.webp"
+        "assets/activity/7897e5a6dc4d802a.webp"
       ],
       "photosRaw": [
-        "assets/activity/7897e5a6dc4d802a.webp",
-        "assets/activity/e45f47558150d1fa.webp",
-        "assets/activity/95e053eaf0b0ccc9.webp"
+        "assets/activity/7897e5a6dc4d802a.webp"
       ],
       "likes": "3",
       "comments": "8",

@@ -165,6 +165,10 @@
   var tx = 0, ty = 0, tActive = false, tLock = 0;  // tLock: 0 undecided, 1 horiz, -1 vert
 
   document.addEventListener('touchstart', function (e) {
+    if (document.body && document.body.hasAttribute('data-disable-tab-swipe')) {
+      tActive = false;
+      return;
+    }
     if (e.touches.length !== 1 || onHScroller(e.target)) { tActive = false; return; }
     var t = e.touches[0];
     tActive = true; tLock = 0; tx = t.clientX; ty = t.clientY;
