@@ -25,6 +25,18 @@
 <link rel="stylesheet" href="components/activity-widget.css">
 <link rel="stylesheet" href="components/today-widgets.css">
 <link rel="stylesheet" href="components/masonry.css">
+<!-- Только в «События-ленте»: тап по вложенной карточке открывает её как
+     отдельную запись. Capture-регистрация должна идти раньше общего роутера. -->
+<script>
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('.text-feed__reshare-card');
+    if (!card) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    try { sessionStorage.setItem('openPost', card.innerHTML); } catch (_) {}
+    location.href = 'post.html';
+  }, true);
+</script>
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <!-- Онбординг фотомарафона: перехват на window(capture) → раньше навигации в screen-transition.js -->
@@ -33,6 +45,7 @@
   /* Убираем системный синий/серый оверлей при тапе по интерактивным
      элементам (кнопки, лейблы, ссылки) на мобильных. */
   * { -webkit-tap-highlight-color: transparent; }
+  .text-feed__reshare-card { cursor: pointer; }
 
   html, body {
     margin: 0;
