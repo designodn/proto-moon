@@ -847,12 +847,15 @@ ${authorHeaderFn(aid, time, { subscribe })}
 ${feedText(text)}
           </div>`
         : feedText(text);
+      const actions = type === 'photo-gallery' && p.tw
+        ? cafActions(comments, reshares, likes)
+        : actionsBar(likes, comments, reshares);
       return `        <article class="text-feed island">
 ${activityLine(p.header)}${header}
 
 ${body}
 ${media(photos, { carousel: IS_EVENTS && type === 'photo-gallery' })}
-${actionsBar(likes, comments, reshares)}${marathonBlock(p.marathon, isJoined(p.marathonJoined))}
+${actions}${marathonBlock(p.marathon, isJoined(p.marathonJoined))}
         </article>`.replace(/\n\n+/g, '\n\n');
     }
 
@@ -1318,14 +1321,18 @@ ${mediaInner}
       // Медиа/цитата — по единому правилу twMedia (2 автора → reshare-контейнер
       // с оригиналом; 1 автор → фото обычным медиа под текстом).
       const preview = twMedia(ids, photos, { origText: orig });
+      // «Шапка» из таблицы имеет приоритет над хлебными крошками, как и в
+      // остальных twitter-like карточках.
+      const activity = activityLine(p.header);
+      const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
       // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
       // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
-      const cafCrumbs = breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+      const cafCrumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
       const crumbs = cafCrumbs ? '\n' + cafCrumbs : '';
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
       // comment-as-feed ничего не добавляет — см. его guard).
-      return `        <article class="caf __twitter-like island">${crumbs}
+      return `        <article class="caf __twitter-like island">${activityBlock}${crumbs}
           <div class="caf__stack">
             <div class="caf__row">
               <div class="caf__aside">
@@ -1790,7 +1797,11 @@ ${items}
       const hasTwCol = posts.some(p => 'tw' in p);
       const wantTw = (p) => hasTwCol ? !!p.tw : (tab.tw || p.type === 'ad');
       const isTwitter = (p) => wantTw(p) && TW_TYPES.has(p.type);
-      cards = sel.map((p, i) => (isTwitter(p) ? renderTwitterCard(p, i) : renderPost(p, i))).filter(Boolean);
+      cards = sel.map((p, i) => {
+        if (isTwitter(p)) return renderTwitterCard(p, i);
+        const card = renderPost(p, i);
+        return card ? attachComments(card, p) : card;
+      }).filter(Boolean);
       if (!cards.length) cards = [tabStub('Пока пусто')];
     }
     // Вставляем таб-стрип первым ребёнком первого острова панели.

@@ -430,6 +430,8 @@
   align-items: flex-start;
   gap: 8px;
   height: 220px;
+  padding-left: 16px;
+  box-sizing: border-box;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -438,7 +440,9 @@
 .text-feed__media.__events-carousel::-webkit-scrollbar { display: none; }
 .text-feed__media-carousel-cell {
   flex: 0 0 auto;
+  width: 220px;
   height: 220px;
+  aspect-ratio: 1;
   overflow: hidden;
   border: 1px solid var(--dynamic-stroke-contrast-low);
   border-radius: 20px;
@@ -447,10 +451,10 @@
 }
 .text-feed__media-carousel-cell img {
   display: block;
-  width: auto;
+  width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .text-feed__media-cell {
