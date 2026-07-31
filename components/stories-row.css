@@ -98,7 +98,7 @@
   align-items: center;
   justify-content: center;
 }
-.stories-row__add img { width: 15px; height: 15px; filter: brightness(0) invert(1); }
+.stories-row__add img { width: 16px; height: 16px; filter: brightness(0) invert(1); }
 
 /* Аватар-бейдж: мини-аватарка друга в той же позиции и геометрии, что «+».
    Круг 32px в белой обводке 3px, фото заполняет по object-fit:cover. */
@@ -127,8 +127,8 @@
    торчит на 3px за правую границу кольца, снизу — заподлицо с кольцом. */
 .stories-row .avatar.__size-56 .avatar__addon.__pos-br.stories-row__add {
   top: auto;
-  bottom: -6px;
-  right: -9px;
+  bottom: -2px;
+  right: -2px;
 }
 
 /* ============================================================

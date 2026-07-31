@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="components/post-layer.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
 <style>
@@ -18,10 +19,6 @@
     background: var(--dynamic-surface-base-secondary);
   }
   .phone-frame { background: var(--dynamic-surface-base-secondary); }
-
-  /* Пост-остров в детальной странице — без вертикальных паддингов острова
-     (шапка/контент прижаты к краям карточки). */
-  .ll-post-feed .text-feed.island { padding-top: 0; padding-bottom: 0; }
 
   /* Инпут коммента прижат к низу экрана даже при коротком контенте: область
      поста растягивается (flex:1), толкая sticky-инпут вниз. */
@@ -67,7 +64,6 @@
         <div class="nav-bar __type-feed">
           <div class="nav-bar__leading">
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24 nav-bar__back" aria-label="Назад"><span class="button-inline__content"><span class="icon __size-24 __slot-back"></span></span></button></span>
-            <span class="ds-title-l">Запись</span>
           </div>
           <div class="nav-bar__trailing">
             <span class="button-inline-wrapper __size-24 __view-secondary"><button class="button-inline __size-24" aria-label="Ещё"><span class="button-inline__content"><span class="icon __size-24 __slot-more"></span></span></button></span>
@@ -79,31 +75,66 @@
 
         <!-- ПОСТ — контент подставляется из ленты (sessionStorage 'openPost'),
              иначе показывается демо-пост ниже как fallback. -->
-        <article class="text-feed island" id="ll-post">
-          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
-            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+        <article class="text-feed island ll-post" id="ll-post">
+          <div class="ll-post__source" id="ll-post-source">
+          <div class="uni-cell-wrapper ll-post__author"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
+            <div class="avatar __size-36 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">Всё ОК!</div>
-              <div class="ds-caption-s text-feed__time">27 апреля</div>
+              <div class="ds-title-s">РАКОВЫЙ край | Рецепты и вкусная еда</div>
+              <div class="ds-caption-m text-feed__time">30 июня</div>
             </div>
           </div></div></div>
 
-          <p class="ds-title-s text-feed__body" style="font-weight:600">Народный труд: расскажите о своей профессии</p>
+          <p class="ds-title-m text-feed__body">Народный труд: расскажите о своей профессии</p>
 
           <p class="ds-body-m text-feed__body">Приближаются майские праздники — время отдыха, тёплых встреч и, конечно, приятных хлопот. Но перед этим нас ждёт ещё немного рабочих дней — а значит, есть повод поговорить о самом важном: о наше…</p>
 
           <div class="text-feed__media __single" style="aspect-ratio: 343/200">
             <img src="https://i.pravatar.cc/600?img=32" alt="" style="width:100%; height:100%; object-fit:cover; display:block">
           </div>
+          </div>
 
-          <div class="actions-bar">
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/comment_16_20.svg" width="20" height="20" alt="">2,9к</span></button></div>
-            <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="20" height="20" alt="">12</span></button></div>
-            <label class="button-wrapper __size-36 button-klass" style="--button-klass-count: 190;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="20" height="20" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="20" height="20" alt=""><span class="button-klass__count"></span></span></span></label>
-            <div class="button-wrapper __size-36 __pinned-end"><button class="button-container __style-secondary" aria-label="Ещё"><span class="button-content"><img class="ll-icon" src="assets/icons/more_16_20.svg" width="20" height="20" alt=""></span></button></div>
+          <div class="ll-post__reactions">
+            <div class="ll-post__counters">
+              <span class="ll-post__reaction-dots" aria-hidden="true"><span>❤</span><span>😍</span><span>😮</span></span>
+              <span class="ds-caption-m">112 · Поделились: 6</span>
+            </div>
+            <!-- Те же action/button-компоненты, что используются в ленте. -->
+            <div class="actions-bar">
+              <div class="button-wrapper __size-36 ll-post__action"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="16" height="16" alt="">Поделиться</span></button></div>
+              <label class="button-wrapper __size-36 button-klass ll-post__action" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="16" height="16" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="16" height="16" alt="">Класс</span></span></label>
+              <div class="button-wrapper __size-36 ll-post__action"><button class="button-container __style-secondary" aria-label="Сохранить"><span class="button-content"><img class="ll-icon" src="assets/icons/bookmark_16_20.svg" width="16" height="16" alt=""></span></button></div>
+            </div>
           </div>
         </article>
 
+        <!-- Отдельный рекламный остров: существующий ad-feed из ленты. -->
+        <article class="caf __twitter-like island ll-post-ad">
+          <div class="caf__stack">
+            <div class="caf__row">
+              <div class="caf__aside">
+                <div class="avatar __size-44 __type-image"><img src="assets/people/ad-1.webp" alt=""></div>
+              </div>
+              <div class="caf__content">
+                <div class="caf__head">
+                  <span class="ds-title-s caf__name">Квартал бизнес-класса «Б15»</span>
+                  <span class="ds-body-m caf__date">· Реклама 0+</span>
+                </div>
+                <p class="ds-body-m text-feed__body caf__text feed-more__text">От 7,6 млн ₽! 15 минут до исторического центра города. Два варианта отделки.</p>
+                <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/1e4af6873e0723e6.webp" alt=""></div>
+                <div class="actions-bar"><div class="button-wrapper __size-36 __full-width"><button class="button-container __style-primary"><span class="button-content">Перейти</span></button></div></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Пока только оболочка острова. Готовый comment-thread сюда подходит,
+             но сами ветки добавим отдельным этапом. -->
+        <section class="island ll-comments" aria-labelledby="ll-comments-title">
+          <h2 class="ds-title-l" id="ll-comments-title">Комментарии 23</h2>
+          <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">По популярности</span></button></span>
+          <div class="ll-comments__mount" id="ll-comments-mount"></div>
+        </section>
 
       </div>
 
@@ -146,12 +177,37 @@
       try {
         var html = sessionStorage.getItem('openPost');
         if (!html) return;
-        var el = document.getElementById('ll-post');
+        var el = document.getElementById('ll-post-source');
         if (el) {
           el.innerHTML = html;
           // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
           // прибитый (ll-answer). Убираем дубль.
-          el.querySelectorAll('.fc-input').forEach(function (n) { n.remove(); });
+          el.querySelectorAll('.fc-input, .actions-bar').forEach(function (n) { n.remove(); });
+          // В ленте источник открывается из reshare-card, но в леере его медиа
+          // уже является основным медиа поста. Меняем только прямых детей,
+          // чтобы настоящие вложенные репосты сохранили свою семантику.
+          el.querySelectorAll(':scope > .text-feed__reshare-card-media').forEach(function (media) {
+            media.classList.remove('text-feed__reshare-card-media');
+            media.classList.add('text-feed__media', '__single');
+          });
+          // В леере шапка поста всегда использует вариант uniCell из макета:
+          // без внутренних паддингов, с avatar 36 и Caption M для метаданных.
+          var author = el.querySelector(':scope > .uni-cell-wrapper');
+          if (author) {
+            author.classList.add('ll-post__author');
+            var avatar = author.querySelector('.avatar');
+            if (avatar) {
+              Array.prototype.slice.call(avatar.classList).forEach(function (name) {
+                if (/^__size-/.test(name)) avatar.classList.remove(name);
+              });
+              avatar.classList.add('__size-36');
+            }
+            var meta = author.querySelector('.text-feed__time');
+            if (meta) {
+              meta.classList.remove('ds-caption-s');
+              meta.classList.add('ds-caption-m');
+            }
+          }
         }
         // openPost НЕ удаляем: при обновлении страницы пост должен остаться тем же
         // (иначе показывался бы дефолтный «Народный труд»).

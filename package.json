@@ -6,7 +6,8 @@
   "description": "Статический прототип OK DS + сервер с автообновлением ленты из Google-таблицы",
   "scripts": {
     "start": "node server.mjs",
-    "sync": "node scripts/fetch-all.mjs"
+    "sync": "node scripts/fetch-all.mjs",
+    "test": "node --test scripts/lib/*.test.mjs"
   },
   "engines": {
     "node": ">=20"
