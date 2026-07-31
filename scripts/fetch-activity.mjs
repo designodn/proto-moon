@@ -110,6 +110,22 @@ function renderText(raw, gender) {
   return t;
 }
 
+/** Согласует первый глагол прошедшего времени с полом первого человека.
+ *  Явные токены {муж/жен} по-прежнему доступны для нестандартных форм. */
+function agreeLeadingVerb(raw, gender) {
+  if (gender !== 'м' && gender !== 'ж') return raw;
+  return raw.replace(/^(\s*)([А-Яа-яЁё-]+)/, (_, space, word) => {
+    if (gender === 'ж') {
+      if (/лся$/i.test(word)) return space + word.replace(/лся$/i, 'лась');
+      if (/л$/i.test(word)) return space + word + 'а';
+    } else {
+      if (/лась$/i.test(word)) return space + word.replace(/лась$/i, 'лся');
+      if (/ла$/i.test(word)) return space + word.slice(0, -1);
+    }
+    return space + word;
+  });
+}
+
 const avatarImg = (id, size) => `<div class="avatar __size-${size} __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`;
 const avatarOnline = (id, size = 44) => `<div class="avatar __size-${size} __type-image __has-addon">
                   <img data-person-avatar="${esc(id)}" alt="">
@@ -317,9 +333,12 @@ function renderCell(a, options = {}) {
     const ids = personIds(a.who);
     const primaryId = ids[0] || a.who;
     const name = nameOf(primaryId);
-    let action = renderText(a.text, genderOf(primaryId));
-    if (ids[1]) action = action.replace(/\bN\b/g, `<b>${esc(nameOf(ids[1]))}</b>`);
-    text = `<b>${esc(name)}</b> ${action}`;
+    const gender = genderOf(primaryId);
+    let action = renderText(agreeLeadingVerb(a.text, gender), gender);
+    const addressedToUser = /(?:^|\s)(?:у|для)\s+вас(?=\s|$|[,.!?])/i.test(a.text);
+    const referencedId = ids[1] || (addressedToUser ? primaryId : '');
+    if (referencedId) action = action.replace(/\bN\b/g, `<b>${esc(nameOf(referencedId))}</b>`);
+    text = addressedToUser ? action : `<b>${esc(name)}</b> ${action}`;
   } else {
     text = renderText(a.text, '');
   }
