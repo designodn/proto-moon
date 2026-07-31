@@ -27,6 +27,7 @@ const STEPS = [
   ['fetch-profile.mjs'],             // лист «Профили» (gid 877262163) → profile.html
   ['fetch-clips.mjs'],               // лист «Клипы» → data/clips.*
   ['fetch-activity.mjs'],            // лист «Активности» (Вокруг вас)
+  ['verify-activity-text.mjs'],      // N/падежи, род и ссылки на людей в «Событиях друзей»
   ['fetch-stories.mjs'],             // лист «Сториз» (Моменты) → data/stories.*
   ['fetch-marathon.mjs'],            // лист «Марафон» → marathon.html
   ['fetch-gifts.mjs'],               // лист «Подарки» → data/gifts.*

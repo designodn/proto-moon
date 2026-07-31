@@ -35,6 +35,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { createMediaCache } from './lib/media-cache.mjs';
 import { createSyncGate } from './lib/sheet-cache.mjs';
+import {
+  agreeGenderText,
+  inflectPersonName,
+  isDativeRecipientText,
+  replacePersonToken,
+} from './lib/activity-text.mjs';
 
 const SPREADSHEET_ID = '1Ctwjp2J0HSmvb6kL4NoDqaB9W4QfdAXXDnzyBDLYZ7Y';
 const SHEET_NAME = 'Вокруг нас';
@@ -110,48 +116,6 @@ function renderText(raw, gender) {
   return t;
 }
 
-/** Согласует первый глагол прошедшего времени с полом первого человека.
- *  Явные токены {муж/жен} по-прежнему доступны для нестандартных форм. */
-function agreeLeadingVerb(raw, gender) {
-  if (gender !== 'м' && gender !== 'ж') return raw;
-  return raw.replace(/^(\s*)([А-Яа-яЁё-]+)/, (_, space, word) => {
-    if (gender === 'ж') {
-      if (/лся$/i.test(word)) return space + word.replace(/лся$/i, 'лась');
-      if (/л$/i.test(word)) return space + word + 'а';
-    } else {
-      if (/лась$/i.test(word)) return space + word.replace(/лась$/i, 'лся');
-      if (/ла$/i.test(word)) return space + word.slice(0, -1);
-    }
-    return space + word;
-  });
-}
-
-/** Склоняет русское имя и фамилию в дательный падеж для шаблонов,
- *  где человек из «кто» — получатель действия: «Сергею понравился…». */
-function dativeName(name, gender) {
-  const words = String(name || '').trim().split(/\s+/);
-  return words.map((word, index) => {
-    if (!word || /(?:ко|их|ых|о|е|и|у)$/i.test(word)) return word;
-    if (gender === 'ж') {
-      if (index > 0 && /(?:ова|ева|ина)$/i.test(word)) return word.slice(0, -1) + 'ой';
-      if (/ая$/i.test(word)) return word.slice(0, -2) + 'ой';
-      if (/яя$/i.test(word)) return word.slice(0, -2) + 'ей';
-      if (/ия$/i.test(word)) return word.slice(0, -2) + 'ии';
-      if (/а$/i.test(word)) return word.slice(0, -1) + 'е';
-      if (/я$/i.test(word)) return word.slice(0, -1) + 'е';
-      if (/ь$/i.test(word)) return word.slice(0, -1) + 'и';
-      return word;
-    }
-    if (/(?:ский|цкий)$/i.test(word)) return word.slice(0, -2) + 'ому';
-    if (/ий$/i.test(word)) return word.slice(0, -2) + 'ию';
-    if (/[йь]$/i.test(word)) return word.slice(0, -1) + 'ю';
-    if (/а$/i.test(word)) return word.slice(0, -1) + 'е';
-    if (/я$/i.test(word)) return word.slice(0, -1) + 'е';
-    if (/[бвгджзклмнпрстфхцчшщ]$/i.test(word)) return word + 'у';
-    return word;
-  }).join(' ');
-}
-
 const avatarImg = (id, size) => `<div class="avatar __size-${size} __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`;
 const avatarOnline = (id, size = 44) => `<div class="avatar __size-${size} __type-image __has-addon">
                   <img data-person-avatar="${esc(id)}" alt="">
@@ -177,12 +141,12 @@ const sectionAvatar = (text) => (SECTION_AVATARS.find(([re]) => re.test(text || 
 
 const BADGES = [
   { type: 'comment',   icon: 'comment-16',      names: ['comment', 'комментарий', 'коммент'] },
-  { type: 'klass',     icon: 'klass-filled',    names: ['klass', 'class', 'класс', 'лайк'] },
+  { type: 'klass',     icon: 'klass-filled',    names: ['klass', 'klasses', 'class', 'класс', 'лайк'] },
   { type: 'favourite', icon: 'favourite-filled', names: ['favourite', 'favorite', 'избранное', 'звезда'] },
   { type: 'mention',   icon: 'mention',         names: ['mention', 'упоминание'] },
   { type: 'add',       icon: 'add',             names: ['add', 'добавить', 'плюс'] },
   { type: 'radio',     icon: 'music-radio',     names: ['radio', 'live', 'эфир', 'радио'] },
-  { type: 'share',     icon: 'share',           names: ['share', 'поделиться', 'репост'] },
+  { type: 'share',     icon: 'share',           names: ['share', 'reshare', 'поделиться', 'репост'] },
   { type: 'birthday',  icon: 'cake',            names: ['birthday', 'день рождения', 'др'] },
 ];
 
@@ -196,6 +160,12 @@ function badgeElement(raw, extraClass = '') {
 }
 
 const personIds = who => (who || '').split(',').map(id => id.trim()).filter(Boolean);
+
+// Безопасная нормализация известных опечаток в контентном листе. Источник
+// остаётся таблицей, но прототип не публикует заведомо неверные формы.
+const normalizeActivityText = text => String(text || '')
+  .replace(/вашей дружбе в ОК/gi, 'вашей дружбы в ОК')
+  .replace(/\bКдип\b/gi, 'Клип');
 
 function leadFor(a, size = 44) {
   switch (a.lead) {
@@ -360,14 +330,15 @@ function renderCell(a, options = {}) {
     const primaryId = ids[0] || a.who;
     const name = nameOf(primaryId);
     const gender = genderOf(primaryId);
-    const dativeActor = /понравил(?:ся|ась|ось|ись)\s+(?:ваш|ваша|ваше|ваши)(?=\s|$|[,.!?])/i.test(a.text);
-    const actionSource = dativeActor ? a.text : agreeLeadingVerb(a.text, gender);
+    const dativeActor = isDativeRecipientText(a.text);
+    const actionSource = agreeGenderText(a.text, gender);
     let action = renderText(actionSource, gender);
     const addressedToUser = /(?:^|\s)(?:у|для)\s+вас(?=\s|$|[,.!?])/i.test(a.text);
-    const referencedId = ids[1] || (addressedToUser ? primaryId : '');
-    if (referencedId) action = action.replace(/\bN\b/g, `<b>${esc(nameOf(referencedId))}</b>`);
-    const actorName = dativeActor ? dativeName(name, gender) : name;
-    text = addressedToUser ? action : `<b>${esc(actorName)}</b> ${action}`;
+    const primaryIsPlaceholder = ids.length === 1 && /\bN\b/.test(a.text);
+    const referencedId = ids[1] || ((addressedToUser || primaryIsPlaceholder) ? primaryId : '');
+    if (referencedId) action = replacePersonToken(action, esc(nameOf(referencedId)), genderOf(referencedId));
+    const actorName = dativeActor ? inflectPersonName(name, gender, 'dative') : name;
+    text = (addressedToUser || primaryIsPlaceholder) ? action : `<b>${esc(actorName)}</b> ${action}`;
   } else {
     text = renderText(a.text, '');
   }
@@ -449,7 +420,7 @@ function parseActivities(csvText, sheetName, options = {}) {
       online: ['онлайн', 'показываем', 'да'].includes(
         at(r, idx.online >= 0 ? idx.online : idx.badge).toLowerCase(),
       ),
-      text: at(r, idx.text),
+      text: normalizeActivityText(at(r, idx.text)),
       button: at(r, idx.button),
       category,
     };
@@ -487,7 +458,7 @@ async function main() {
   // правка листа «Люди» пересобирает и виджет «Вокруг вас».
   const gate = createSyncGate({ root: ROOT, key: 'activity-around-and-events',
     codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
-               resolve(ROOT, 'data/people.json')] });
+               resolve(__dirname, 'lib/activity-text.mjs'), resolve(ROOT, 'data/people.json')] });
   if (gate.unchanged(csvText + '\n--EVENTS--\n' + eventsCsvText) && !FORCE) {
     console.log(`✓ Оба листа без изменений — пропускаю (--force чтобы пересобрать).`);
     return;
@@ -528,7 +499,12 @@ async function main() {
   const pageCells = acts.map(renderCell).join('\n');
   const widgetCells = acts.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
   const eventsPageCellsRaw = eventsActs.map(a => renderCell(a, { leadSize: 56, withRight: true })).join('\n');
-  const eventsWidgetCellsRaw = eventsActs.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
+  // Виджет использует ровно тот же UI ячейки, что и страница «События друзей»:
+  // лид 56 и опциональный слот right. Отличаются только контейнер/конвейер.
+  const eventsWidgetCellsRaw = eventsActs
+    .filter(a => !NEW_TYPES.has(a.lead))
+    .map(a => renderCell(a, { leadSize: 56, withRight: true }))
+    .join('\n');
   // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
   // от корня, поэтому БЕЗ «../» (иначе ушли бы выше корня). В new-vision/* base
   // нет → там нужен «../» (как есть).
