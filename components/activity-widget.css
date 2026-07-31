@@ -102,22 +102,21 @@
 }
 
 /* ============================================================
-   ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 44×44
+   ЛИД-ВИЗУАЛ #3 — КЛАСТЕР из 3 аватарок в боксе 56×56
    ============================================================ */
 .ava-cluster {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
 }
 .ava-cluster > .avatar {
   position: absolute;
-  border: 1.8px solid var(--dynamic-surface-base-secondary);
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
-.ava-cluster > .avatar:nth-child(1) { width: 22px; height: 22px; left: 0;    top: 13px;   z-index: 3; }
-.ava-cluster > .avatar:nth-child(2) { width: 22px; height: 22px; left: 22px; top: 1.5px;  z-index: 1; }
-.ava-cluster > .avatar:nth-child(3) { width: 16px; height: 16px; left: 21px; top: 27.5px; z-index: 2; }
+.ava-cluster > .avatar:nth-child(1) { width: 24px; height: 24px; right: 0; top: 0; z-index: 1; }
+.ava-cluster > .avatar:nth-child(2) { width: 20px; height: 20px; right: 0; bottom: 0; z-index: 2; }
+.ava-cluster > .avatar:nth-child(3) { width: 36px; height: 36px; left: 0; top: 14px; z-index: 3; }
 
 /* ============================================================
    ЛИД-ВИЗУАЛ #4 — ПАРА НАКЛОНЁННЫХ ФОТО в боксе 44×44
