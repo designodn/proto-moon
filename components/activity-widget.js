@@ -37,6 +37,7 @@
     var measureFrame = 0;
     var measuredViewportWidth = -1;
     var cachedRowHeight = 0;
+    var cachedStackHeight = 0;
 
     function cssNum(name, dflt) {
       var v = parseFloat(getComputedStyle(conv).getPropertyValue(name));
@@ -57,23 +58,43 @@
       var viewportWidth = Math.round(document.documentElement.clientWidth || window.innerWidth || 0);
       if (cachedRowHeight > 0 && viewportWidth === measuredViewportWidth) {
         conv.style.setProperty('--conv-row-h', cachedRowHeight + 'px');
+        if (cachedStackHeight > 0) conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
         return;
       }
       conv.classList.add('__conv-measuring');
       var max = 0;
+      var heights = [];
       Array.prototype.forEach.call(track.children, function (cell) {
         // Измеряем только содержимое строки. scrollHeight wrapper включает
         // декоративный overlay с inset:-8px и завышает высоту на 8px.
         var content = cell.querySelector('.uni-cell') || cell;
-        max = Math.max(max, content.scrollHeight, content.getBoundingClientRect().height);
+        var height = Math.ceil(Math.max(content.scrollHeight, content.getBoundingClientRect().height));
+        heights.push(height);
+        max = Math.max(max, height);
       });
       conv.classList.remove('__conv-measuring');
       var next = Math.ceil(max);
       if (next > 0) {
         measuredViewportWidth = viewportWidth;
         cachedRowHeight = next;
-        if (Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
-          conv.style.setProperty('--conv-row-h', next + 'px');
+        if (viewportWidth <= 390) {
+          Array.prototype.forEach.call(track.children, function (cell, index) {
+            cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
+          });
+          var rows = Math.round(cssNum('--conv-rows', 2));
+          var tallest = heights.slice().sort(function (a, b) { return b - a; }).slice(0, rows);
+          cachedStackHeight = tallest.reduce(function (sum, height) { return sum + height; }, 0)
+            + cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
+          conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
+        } else {
+          Array.prototype.forEach.call(track.children, function (cell) {
+            cell.style.removeProperty('--conv-cell-h');
+          });
+          cachedStackHeight = 0;
+          conv.style.removeProperty('--conv-stack-h');
+          if (Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
+            conv.style.setProperty('--conv-row-h', next + 'px');
+          }
         }
       }
     }

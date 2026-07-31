@@ -57,7 +57,7 @@
   --conv-dur: 0.5s;
   position: relative;
   overflow: visible;
-  height: calc(var(--conv-row-h) * var(--conv-rows) + var(--conv-gap) * (var(--conv-rows) - 1));
+  height: var(--conv-stack-h, calc(var(--conv-row-h) * var(--conv-rows) + var(--conv-gap) * (var(--conv-rows) - 1)));
 }
 .ds-activity-conveyor__track {
   display: flex;
@@ -70,7 +70,7 @@
   --uni-cell-padding-top: 0;
   --uni-cell-padding-bottom: 0;
   flex: 0 0 auto;
-  height: var(--conv-row-h);
+  height: var(--conv-cell-h, var(--conv-row-h));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -126,7 +126,7 @@
 }
 @keyframes ds-conv-enter {
   from { height: 0; opacity: 0; transform: scale(0.2); }
-  to   { height: var(--conv-row-h); opacity: 1; transform: scale(1); }
+  to   { height: var(--conv-cell-h, var(--conv-row-h)); opacity: 1; transform: scale(1); }
 }
 /* Нижняя ячейка НЕ уходит под таббар — сжимается к центру и исчезает на месте */
 .ds-activity-conveyor__track > .__conv-leave {
@@ -134,7 +134,7 @@
   animation: ds-conv-leave var(--conv-dur) cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 @keyframes ds-conv-leave {
-  from { height: var(--conv-row-h); opacity: 1; transform: scale(1); }
+  from { height: var(--conv-cell-h, var(--conv-row-h)); opacity: 1; transform: scale(1); }
   to   { height: 0; opacity: 0; transform: scale(0.2); }
 }
 

@@ -767,7 +767,8 @@ function renderCommentThread(p, opts = {}) {
 function attachComments(card, p) {
   // comment-as-feed сам встраивает ветку ответов внутрь .caf__stack (см. case).
   if (p.type === 'comment-as-feed') return card;
-  const block = renderCommentThread(p);
+  const twitterGallery = p.type === 'photo-gallery' && p.tw;
+  const block = renderCommentThread(p, twitterGallery ? { tw: true, replies: false } : {});
   if (!block) return card;
   const i = card.lastIndexOf('</article>');
   if (i < 0) return card;
