@@ -38,3 +38,11 @@
   flex-direction: column;
   gap: 0;
 }
+
+.post-comments__single {
+  width: 100%;
+}
+
+.post-comments__single .fc-comment.__twitter-like {
+  padding-bottom: var(--space-4);
+}
