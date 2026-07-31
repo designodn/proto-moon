@@ -28,3 +28,22 @@
 .badge.__type-favourite { --badge-background: var(--static-surface-status-positive); }
 .badge.__type-radio     { --badge-background: var(--static-surface-status-negative); }
 .badge.__type-birthday  { --badge-background: var(--static-surface-violet, #AE7ECE); }
+
+/* Badge Picture — мини-фото человека поверх AvaPicture 56 (Figma: 20px,
+   cutout 2px, offset -2px справа/снизу). */
+.badge-picture {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  z-index: 1;
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
+
+.badge-picture > .avatar {
+  width: 20px;
+  height: 20px;
+}

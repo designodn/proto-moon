@@ -68,12 +68,24 @@
       "id": "a6",
       "lead": "person",
       "who": "10",
-      "image": "",
+      "image": "assets/around-you/c05d7149284a2b8f.webp, assets/around-you/9b365803e98d0613.jpg",
       "online": false,
       "text": "опубликовал заметку впервые с мая",
       "button": "Посмотреть",
       "category": "",
       "badge": "",
+      "right": "photo-pair"
+    },
+    {
+      "id": "a7",
+      "lead": "person",
+      "who": "2",
+      "image": "",
+      "online": false,
+      "text": "поставил оценил ту же заметку, что и вы",
+      "button": "Обсудить",
+      "category": "",
+      "badge": "klass",
       "right": "photo"
     }
   ]
