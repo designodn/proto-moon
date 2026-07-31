@@ -49,10 +49,9 @@
     var configuredRows = Math.round(cssNum('--conv-rows', 2));
     conv.style.setProperty('--conv-rows', Math.max(0, Math.min(configuredRows, track.children.length)));
 
-    // Все строки конвейера имеют одну высоту — максимальную естественную
-    // высоту среди заложенных ячеек при текущей ширине viewport. Результат
-    // запоминаем: скрытие/показ фида и анимации не должны повторно менять
-    // высоту. Новый замер нужен только после изменения ширины viewport.
+    // Каждая строка сохраняет естественную высоту. Высота всего конвейера —
+    // максимум + медиана + gap, поэтому единичная высокая строка не создаёт
+    // пустоту внутри каждой ячейки. Замер кешируется до изменения viewport.
     function measureRows() {
       if (animating) return;
       var viewportWidth = Math.round(document.documentElement.clientWidth || window.innerWidth || 0);
@@ -77,25 +76,20 @@
       if (next > 0) {
         measuredViewportWidth = viewportWidth;
         cachedRowHeight = next;
-        if (viewportWidth <= 390) {
-          Array.prototype.forEach.call(track.children, function (cell, index) {
-            cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
-          });
-          var rows = Math.round(cssNum('--conv-rows', 2));
-          var tallest = heights.slice().sort(function (a, b) { return b - a; }).slice(0, rows);
-          cachedStackHeight = tallest.reduce(function (sum, height) { return sum + height; }, 0)
-            + cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
-          conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
-        } else {
-          Array.prototype.forEach.call(track.children, function (cell) {
-            cell.style.removeProperty('--conv-cell-h');
-          });
-          cachedStackHeight = 0;
-          conv.style.removeProperty('--conv-stack-h');
-          if (Math.abs(cssNum('--conv-row-h', 0) - next) >= 1) {
-            conv.style.setProperty('--conv-row-h', next + 'px');
-          }
-        }
+        Array.prototype.forEach.call(track.children, function (cell, index) {
+          cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
+        });
+        var rows = Math.round(cssNum('--conv-rows', 2));
+        var sorted = heights.slice().sort(function (a, b) { return a - b; });
+        var middle = Math.floor(sorted.length / 2);
+        var median = sorted.length % 2
+          ? sorted[middle]
+          : Math.ceil((sorted[middle - 1] + sorted[middle]) / 2);
+        // На любой ширине не умножаем аномально высокую строку на число рядов:
+        // резервируем максимум + типичную (медианную) строку + межстрочный gap.
+        cachedStackHeight = (sorted[sorted.length - 1] || 0) + (median || 0)
+          + cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
+        conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
       }
     }
 
