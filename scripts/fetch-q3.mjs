@@ -367,11 +367,17 @@ function cafHeader(commenter, to) {
  *  «м» и неизвестный пол оставляем как написано (муж. род по умолчанию). */
 function activityLine(header) {
   if (!header) return '';
+  const activityClass = IS_EVENTS
+    ? 'text-feed__activity ds-title-s __events-header'
+    : 'text-feed__activity ds-body-m';
   // «Может быть интересно» — это лейбл-рекомендация (не «причина показа»):
   // всегда Title S, основной цвет — как заголовок над постом/клипом, а не серая
   // activity-строка ds-body-m. Остальные шапки («Борис поставил класс») — как ниже.
   if (/^может быть интересно\.?$/i.test(String(header).trim())) {
-    return `          <div class="text-feed__activity ds-title-s">${esc(String(header).trim())}</div>\n`;
+    const recommendationClass = IS_EVENTS
+      ? activityClass
+      : 'text-feed__activity ds-title-s';
+    return `          <div class="${recommendationClass}">${esc(String(header).trim())}</div>\n`;
   }
   // noWidow — чтобы последнее слово шапки не «улетало» одиночкой на новую строку.
   const parts = String(noWidow(header)).split(/id_([\w-]+)/);   // [текст, id, текст, id, …]
@@ -396,7 +402,7 @@ function activityLine(header) {
     }
   }
   // ds-body-m — как текст обычного поста в ленте, рядом с которым стоит шапка.
-  return `          <div class="text-feed__activity ds-body-m">${html}</div>\n`;
+  return `          <div class="${activityClass}">${html}</div>\n`;
 }
 
 /** Centralized «…ещё / Скрыть» — единый inline-механизм для тела поста, caf-text
@@ -1321,13 +1327,15 @@ ${mediaInner}
       // Медиа/цитата — по единому правилу twMedia (2 автора → reshare-контейнер
       // с оригиналом; 1 автор → фото обычным медиа под текстом).
       const preview = twMedia(ids, photos, { origText: orig });
-      // «Шапка» из таблицы имеет приоритет над хлебными крошками, как и в
-      // остальных twitter-like карточках.
+      // «Шапка» и хлебные крошки — независимые слоты: шапка идёт первой,
+      // тема/рубрика остаются под ней.
       const activity = activityLine(p.header);
       const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
       // Хлебные крошки (тема/рубрика) над комментом — отдельным .caf__crumbs,
       // сиблингом перед .caf__stack (отступ до ряда даёт padding самих крошек 4).
-      const cafCrumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+      const cafCrumbs = activity && !IS_EVENTS
+        ? ''
+        : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
       const crumbs = cafCrumbs ? '\n' + cafCrumbs : '';
       // Всё содержимое (ряд-коммент + ветка ответов + поле) — в одном контейнере
       // .caf__stack (padding 0, gap 8). Ветку рисуем тут же (attachComments для
@@ -1456,11 +1464,12 @@ function renderTwitterCard(p, idx) {
   const time = TIMES[idx % TIMES.length];
   const title = nbsp(resolveNames(p.title));
   const text = nbsp(resolveNames(p.text));
-  // Шапка (колонка «шапка», activityLine) важнее хлебных крошек: если шапка задана —
-  // показываем ТОЛЬКО её, а крошки (тема/рубрика) скрываем (docs/feeds-spec.md §8).
+  // Шапка и хлебные крошки — независимые слоты: шапка идёт над крошками.
   const activity = activityLine(p.header);
   const activityBlock = activity ? '\n' + activity.replace(/\n+$/, '') : '';
-  const crumbs = activity ? '' : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
+  const crumbs = activity && !IS_EVENTS
+    ? ''
+    : breadcrumbs(p.tema, p.rubrika, 'caf__crumbs');
   const crumbsBlock = crumbs ? '\n' + crumbs : '';
   // Реклама: в date-слот вместо времени идёт дисклеймер «Реклама 0+» (subtitle
   // рекламодателя из «Люди»), а вместо счётчиков — CTA «Перейти» (статистики нет).

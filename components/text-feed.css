@@ -89,6 +89,9 @@
 .text-feed__activity {
   color: var(--dynamic-text-and-icons-base-primary);
 }
+.text-feed__activity.__events-header {
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
 .text-feed__activity b {
   font-weight: 700;
 }
