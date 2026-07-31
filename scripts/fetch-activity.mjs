@@ -126,6 +126,32 @@ function agreeLeadingVerb(raw, gender) {
   });
 }
 
+/** Склоняет русское имя и фамилию в дательный падеж для шаблонов,
+ *  где человек из «кто» — получатель действия: «Сергею понравился…». */
+function dativeName(name, gender) {
+  const words = String(name || '').trim().split(/\s+/);
+  return words.map((word, index) => {
+    if (!word || /(?:ко|их|ых|о|е|и|у)$/i.test(word)) return word;
+    if (gender === 'ж') {
+      if (index > 0 && /(?:ова|ева|ина)$/i.test(word)) return word.slice(0, -1) + 'ой';
+      if (/ая$/i.test(word)) return word.slice(0, -2) + 'ой';
+      if (/яя$/i.test(word)) return word.slice(0, -2) + 'ей';
+      if (/ия$/i.test(word)) return word.slice(0, -2) + 'ии';
+      if (/а$/i.test(word)) return word.slice(0, -1) + 'е';
+      if (/я$/i.test(word)) return word.slice(0, -1) + 'е';
+      if (/ь$/i.test(word)) return word.slice(0, -1) + 'и';
+      return word;
+    }
+    if (/(?:ский|цкий)$/i.test(word)) return word.slice(0, -2) + 'ому';
+    if (/ий$/i.test(word)) return word.slice(0, -2) + 'ию';
+    if (/[йь]$/i.test(word)) return word.slice(0, -1) + 'ю';
+    if (/а$/i.test(word)) return word.slice(0, -1) + 'е';
+    if (/я$/i.test(word)) return word.slice(0, -1) + 'е';
+    if (/[бвгджзклмнпрстфхцчшщ]$/i.test(word)) return word + 'у';
+    return word;
+  }).join(' ');
+}
+
 const avatarImg = (id, size) => `<div class="avatar __size-${size} __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`;
 const avatarOnline = (id, size = 44) => `<div class="avatar __size-${size} __type-image __has-addon">
                   <img data-person-avatar="${esc(id)}" alt="">
@@ -334,11 +360,14 @@ function renderCell(a, options = {}) {
     const primaryId = ids[0] || a.who;
     const name = nameOf(primaryId);
     const gender = genderOf(primaryId);
-    let action = renderText(agreeLeadingVerb(a.text, gender), gender);
+    const dativeActor = /понравил(?:ся|ась|ось|ись)\s+(?:ваш|ваша|ваше|ваши)(?=\s|$|[,.!?])/i.test(a.text);
+    const actionSource = dativeActor ? a.text : agreeLeadingVerb(a.text, gender);
+    let action = renderText(actionSource, gender);
     const addressedToUser = /(?:^|\s)(?:у|для)\s+вас(?=\s|$|[,.!?])/i.test(a.text);
     const referencedId = ids[1] || (addressedToUser ? primaryId : '');
     if (referencedId) action = action.replace(/\bN\b/g, `<b>${esc(nameOf(referencedId))}</b>`);
-    text = addressedToUser ? action : `<b>${esc(name)}</b> ${action}`;
+    const actorName = dativeActor ? dativeName(name, gender) : name;
+    text = addressedToUser ? action : `<b>${esc(actorName)}</b> ${action}`;
   } else {
     text = renderText(a.text, '');
   }
