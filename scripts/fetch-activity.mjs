@@ -144,28 +144,27 @@ const BADGES = [
   { type: 'birthday',  icon: 'cake',            names: ['birthday', 'день рождения', 'др'] },
 ];
 
-function badgeFor(raw, position = 'br') {
+function badgeElement(raw, extraClass = '') {
   const value = (raw || '').trim().toLowerCase();
   if (!value || value === 'нет бейджа' || value === 'нет') return '';
   const badge = BADGES.find(item => item.names.includes(value));
   return badge
-    ? `<span class="avatar__addon __pos-${position} badge __size-24 __type-${badge.type}"><span class="icon __slot-${badge.icon}"></span></span>`
+    ? `<span class="badge __size-24 __type-${badge.type}${extraClass ? ` ${extraClass}` : ''}"><span class="icon __slot-${badge.icon}"></span></span>`
     : '';
 }
 
 const personIds = who => (who || '').split(',').map(id => id.trim()).filter(Boolean);
 
-function leadFor(a, size = 44, withBadge = false) {
+function leadFor(a, size = 44) {
   switch (a.lead) {
     case 'person': {
       // «онлайн» — уже существующий status-dot, остальные значения — badge 24.
       if (a.online) return avatarOnline(a.who, size);
       const ids = personIds(a.who);
       const secondAvatar = ids[1]
-        ? `<span class="avatar__addon __pos-br"><span class="avatar __size-24 __type-image __border" style="--avatar-border-width:2px"><img data-person-avatar="${esc(ids[1])}" alt=""></span></span>`
+        ? `<span class="badge-picture"><span class="avatar __size-20 __type-image"><img data-person-avatar="${esc(ids[1])}" alt=""></span></span>`
         : '';
-      const badge = withBadge ? badgeFor(a.badge, secondAvatar ? 'bl' : 'br') : '';
-      const addons = secondAvatar + badge;
+      const addons = secondAvatar;
       return `<div class="avatar __size-${size} __type-image${addons ? ' __has-addon' : ''}"><img data-person-avatar="${esc(ids[0] || a.who)}" alt="">${addons}</div>`;
     }
     case 'discussion': {
@@ -203,12 +202,23 @@ function rightFor(a) {
       : `<img data-person-avatar="${esc(personIds(a.who)[0] || a.who)}" alt="">`;
     return `<div class="activity-cell__right"><div class="avatar __size-56 __type-image">${img}</div></div>`;
   }
+  if (a.right === 'photo-pair' && a.image) {
+    const images = a.image.split(',').map(s => s.trim()).filter(Boolean).slice(0, 2);
+    if (images.length < 2) {
+      console.warn(`⚠ events:${a.id}: для photo-pair нужны 2 ссылки в колонке изображения`);
+      return '';
+    }
+    const badge = badgeElement(a.badge, 'activity-cell__media-badge');
+    const pictures = images.map(image => `<div class="picture __type-image"><img src="${esc(image)}" alt=""></div>`).join('');
+    return `<div class="activity-cell__right activity-cell__media"><div class="photo-pair activity-cell__photo-pair">${pictures}</div>${badge}</div>`;
+  }
   if ((a.right === 'photo' || a.right === 'clip') && a.image) {
     const image = esc(a.image.split(',')[0].trim());
+    const badge = badgeElement(a.badge, 'activity-cell__media-badge');
     const className = a.right === 'clip'
       ? 'picture __type-image activity-cell__clip'
       : 'picture __size-56 __type-image';
-    return `<div class="activity-cell__right"><div class="${className}"><img src="${image}" alt=""></div></div>`;
+    return `<div class="activity-cell__right activity-cell__media"><div class="${className}"><img src="${image}" alt=""></div>${badge}</div>`;
   }
   return '';
 }
@@ -318,7 +328,7 @@ function renderCell(a, options = {}) {
   return `        <div class="uni-cell-wrapper __type-activity${catClass}">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              ${leadFor(a, options.leadSize || 44, options.withBadge)}
+              ${leadFor(a, options.leadSize || 44)}
               <div class="uni-cell-additional-content ds-body-m">${text}</div>
               ${cellButton(a.button)}${right ? `\n              ${right}` : ''}
             </div>
@@ -407,7 +417,7 @@ function parseActivities(csvText, sheetName, options = {}) {
 function validateEventsActivities(acts) {
   const badgeNames = new Set(BADGES.flatMap(item => item.names));
   const emptyBadges = new Set(['', 'нет', 'нет бейджа', 'онлайн']);
-  const rightTypes = new Set(['', 'photo', 'clip', 'avatar']);
+  const rightTypes = new Set(['', 'photo', 'photo-pair', 'clip', 'avatar']);
   const specialTypes = new Set(['trans-gallery', 'clip-gallery', 'trans']);
   for (const a of acts) {
     if (!emptyBadges.has(a.badge) && !badgeNames.has(a.badge))
@@ -469,7 +479,7 @@ async function main() {
   const NEW_TYPES = new Set(['trans-gallery', 'clip-gallery', 'trans']);
   const pageCells = acts.map(renderCell).join('\n');
   const widgetCells = acts.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
-  const eventsPageCellsRaw = eventsActs.map(a => renderCell(a, { leadSize: 56, withBadge: true, withRight: true })).join('\n');
+  const eventsPageCellsRaw = eventsActs.map(a => renderCell(a, { leadSize: 56, withRight: true })).join('\n');
   const eventsWidgetCellsRaw = eventsActs.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
   // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
   // от корня, поэтому БЕЗ «../» (иначе ушли бы выше корня). В new-vision/* base

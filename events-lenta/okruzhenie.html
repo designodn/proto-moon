@@ -84,10 +84,36 @@
     align-self: flex-start;
     margin-left: 12px;
   }
+  .activity-list .activity-cell__media {
+    position: relative;
+  }
+  .activity-list .activity-cell__media-badge {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    z-index: 1;
+    box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+  }
   .activity-list .activity-cell__clip {
     width: 42px;
     height: 56px;
     border-radius: 12px;
+  }
+  .activity-list .activity-cell__photo-pair {
+    width: 56px;
+    height: 56px;
+  }
+  .activity-list .activity-cell__photo-pair > .picture:nth-child(1) {
+    width: 39px;
+    height: 37px;
+    top: 4px;
+    left: 1px;
+  }
+  .activity-list .activity-cell__photo-pair > .picture:nth-child(2) {
+    width: 37px;
+    height: 35px;
+    top: 15px;
+    left: 15px;
   }
 </style>
 </head>
@@ -184,7 +210,7 @@
         <div class="uni-cell-wrapper __type-activity">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              <div class="avatar __size-56 __type-image __has-addon"><img data-person-avatar="4" alt=""><span class="avatar__addon __pos-br"><span class="avatar __size-24 __type-image __border" style="--avatar-border-width:2px"><img data-person-avatar="5" alt=""></span></span></div>
+              <div class="avatar __size-56 __type-image __has-addon"><img data-person-avatar="4" alt=""><span class="badge-picture"><span class="avatar __size-20 __type-image"><img data-person-avatar="5" alt=""></span></span></div>
               <div class="uni-cell-additional-content ds-body-m"><b>Виктор Бондарев</b> подружилась с <b>Антонида Чекалова</b>
                 <div class="uni-cell-buttons">
                   <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Посмотреть</span></button></div>
@@ -228,6 +254,19 @@
               <div class="uni-cell-additional-content ds-body-m"><b>Александр Попов</b> опубликовал заметку впервые с мая
                 <div class="uni-cell-buttons">
                   <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Посмотреть</span></button></div>
+                </div>
+              </div>
+              <div class="activity-cell__right activity-cell__media"><div class="photo-pair activity-cell__photo-pair"><div class="picture __type-image"><img src="assets/around-you/c05d7149284a2b8f.webp" alt=""></div><div class="picture __type-image"><img src="assets/around-you/9b365803e98d0613.jpg" alt=""></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="uni-cell-wrapper __type-activity">
+          <div class="uni-cell-container __state-enabled">
+            <div class="uni-cell">
+              <div class="avatar __size-56 __type-image"><img data-person-avatar="2" alt=""></div>
+              <div class="uni-cell-additional-content ds-body-m"><b>Сергей Чернышов</b> поставил оценил ту же заметку, что и вы
+                <div class="uni-cell-buttons">
+                  <div class="button-wrapper __size-36"><button class="button-container __style-secondary"><span class="button-content">Обсудить</span></button></div>
                 </div>
               </div>
             </div>
