@@ -144,22 +144,29 @@ const BADGES = [
   { type: 'birthday',  icon: 'cake',            names: ['birthday', 'день рождения', 'др'] },
 ];
 
-function badgeFor(raw) {
+function badgeFor(raw, position = 'br') {
   const value = (raw || '').trim().toLowerCase();
   if (!value || value === 'нет бейджа' || value === 'нет') return '';
   const badge = BADGES.find(item => item.names.includes(value));
   return badge
-    ? `<span class="avatar__addon __pos-br badge __size-24 __type-${badge.type}"><span class="icon __slot-${badge.icon}"></span></span>`
+    ? `<span class="avatar__addon __pos-${position} badge __size-24 __type-${badge.type}"><span class="icon __slot-${badge.icon}"></span></span>`
     : '';
 }
+
+const personIds = who => (who || '').split(',').map(id => id.trim()).filter(Boolean);
 
 function leadFor(a, size = 44, withBadge = false) {
   switch (a.lead) {
     case 'person': {
       // «онлайн» — уже существующий status-dot, остальные значения — badge 24.
       if (a.online) return avatarOnline(a.who, size);
-      const badge = withBadge ? badgeFor(a.badge) : '';
-      return `<div class="avatar __size-${size} __type-image${badge ? ' __has-addon' : ''}"><img data-person-avatar="${esc(a.who)}" alt="">${badge}</div>`;
+      const ids = personIds(a.who);
+      const secondAvatar = ids[1]
+        ? `<span class="avatar__addon __pos-br"><span class="avatar __size-24 __type-image __border" style="--avatar-border-width:2px"><img data-person-avatar="${esc(ids[1])}" alt=""></span></span>`
+        : '';
+      const badge = withBadge ? badgeFor(a.badge, secondAvatar ? 'bl' : 'br') : '';
+      const addons = secondAvatar + badge;
+      return `<div class="avatar __size-${size} __type-image${addons ? ' __has-addon' : ''}"><img data-person-avatar="${esc(ids[0] || a.who)}" alt="">${addons}</div>`;
     }
     case 'discussion': {
       const ids = a.who.split(',').map(s => s.trim()).filter(Boolean);
@@ -193,7 +200,7 @@ function rightFor(a) {
   if (a.right === 'avatar') {
     const img = a.image
       ? `<img src="${esc(a.image.split(',')[0].trim())}" alt="">`
-      : `<img data-person-avatar="${esc(a.who)}" alt="">`;
+      : `<img data-person-avatar="${esc(personIds(a.who)[0] || a.who)}" alt="">`;
     return `<div class="activity-cell__right"><div class="avatar __size-56 __type-image">${img}</div></div>`;
   }
   if ((a.right === 'photo' || a.right === 'clip') && a.image) {
@@ -297,8 +304,12 @@ function renderCell(a, options = {}) {
   const catClass = a.category ? ` __cat-${a.category}` : '';
   let text;
   if (a.lead === 'person') {
-    const name = nameOf(a.who);
-    text = `<b>${esc(name)}</b> ${renderText(a.text, genderOf(a.who))}`;
+    const ids = personIds(a.who);
+    const primaryId = ids[0] || a.who;
+    const name = nameOf(primaryId);
+    let action = renderText(a.text, genderOf(primaryId));
+    if (ids[1]) action = action.replace(/\bN\b/g, `<b>${esc(nameOf(ids[1]))}</b>`);
+    text = `<b>${esc(name)}</b> ${action}`;
   } else {
     text = renderText(a.text, '');
   }
@@ -345,10 +356,11 @@ async function getCsv(gid, sheetName, envFile) {
 function colIndex(header, sheetName) {
   const norm = header.map(h => h.trim().toLowerCase());
   const find = kw => norm.findIndex(h => h.includes(kw));
+  const leadIndex = find('лид');
   const idx = {
-    id: find('id'), lead: find('лид'), who: find('кто'), image: find('изображ'),
+    id: find('id'), lead: leadIndex >= 0 ? leadIndex : find('слева'), who: find('кто'), image: find('изображ'),
     badge: find('бейдж'), text: find('текст'), button: find('кнопк'), category: find('категори'),
-    right: find('дополн'),
+    right: find('дополн'), online: find('онлайн'),
   };
   if (idx.lead < 0)
     throw new Error(`В листе «${sheetName}» нет колонки «лид». Это точно лист активностей?`);
@@ -363,8 +375,11 @@ function parseActivities(csvText, sheetName, options = {}) {
   const acts = [];
   let n = 0;
   for (const r of body) {
-    const lead = at(r, idx.lead);
-    if (!lead) continue;
+    const leadRaw = at(r, idx.lead);
+    if (!leadRaw) continue;
+    // Человеческое название вариации в Google Sheets → внутренний тип рендера.
+    const leadAliases = { '3 avatars': 'discussion', avatar: 'person' };
+    const lead = leadAliases[leadRaw.toLowerCase()] || leadRaw;
     n++;
     let category = at(r, idx.category).toLowerCase();
     if (category === 'пусто') category = '';
@@ -373,7 +388,9 @@ function parseActivities(csvText, sheetName, options = {}) {
       lead,
       who: at(r, idx.who),
       image: at(r, idx.image),
-      online: at(r, idx.badge).toLowerCase() === 'онлайн',
+      online: ['онлайн', 'показываем', 'да'].includes(
+        at(r, idx.online >= 0 ? idx.online : idx.badge).toLowerCase(),
+      ),
       text: at(r, idx.text),
       button: at(r, idx.button),
       category,

@@ -10,11 +10,71 @@
       "who": "1",
       "image": "",
       "online": false,
-      "text": "распаковала ваш подарок",
-      "button": "Ответить",
+      "text": "ждёт вашего ответа на заявку в друзья",
+      "button": "Дружить",
       "category": "",
       "badge": "",
       "right": ""
+    },
+    {
+      "id": "a2",
+      "lead": "person",
+      "who": "2",
+      "image": "",
+      "online": false,
+      "text": "теперь ваш друг — самое время написать",
+      "button": "Написать",
+      "category": "",
+      "badge": "",
+      "right": ""
+    },
+    {
+      "id": "a3",
+      "lead": "person",
+      "who": "4, 5",
+      "image": "",
+      "online": false,
+      "text": "подружилась с N",
+      "button": "Посмотреть",
+      "category": "",
+      "badge": "",
+      "right": ""
+    },
+    {
+      "id": "a4",
+      "lead": "person",
+      "who": "8",
+      "image": "",
+      "online": false,
+      "text": "Возможно знакомы, у вас с N 3 общих друга",
+      "button": "Дружить",
+      "category": "",
+      "badge": "",
+      "right": ""
+    },
+    {
+      "id": "a5",
+      "lead": "discussion",
+      "who": "7, 3, 4",
+      "image": "",
+      "online": false,
+      "text": "К вам в гости заходили 3 человека",
+      "button": "Посмотреть",
+      "category": "",
+      "badge": "",
+      "right": ""
+    },
+    {
+      "id": "a6",
+      "lead": "person",
+      "who": "10",
+      "image": "",
+      "online": false,
+      "text": "опубликовал заметку впервые с мая",
+      "button": "Посмотреть",
+      "category": "",
+      "badge": "",
+      "right": "photo"
     }
   ]
 }
