@@ -68,7 +68,7 @@
       "id": "a6",
       "lead": "person",
       "who": "10",
-      "image": "assets/around-you/c05d7149284a2b8f.webp, assets/around-you/9b365803e98d0613.jpg",
+      "image": "assets/around-you/c05d7149284a2b8f.webp, assets/around-you/9b365803e98d0613.webp",
       "online": false,
       "text": "опубликовал заметку впервые с мая",
       "button": "Посмотреть",
@@ -80,13 +80,49 @@
       "id": "a7",
       "lead": "person",
       "who": "2",
-      "image": "assets/around-you/67f79168241cb0d1.jpg",
+      "image": "assets/around-you/67f79168241cb0d1.webp",
       "online": false,
       "text": "поставил оценил ту же заметку, что и вы",
       "button": "Обсудить",
       "category": "",
       "badge": "klass",
       "right": "photo"
+    },
+    {
+      "id": "a8",
+      "lead": "person",
+      "who": "5",
+      "image": "assets/around-you/67f79168241cb0d1.webp",
+      "online": false,
+      "text": "снова пишет после долгого перерыва",
+      "button": "Посмотреть",
+      "category": "",
+      "badge": "",
+      "right": "photo"
+    },
+    {
+      "id": "a9",
+      "lead": "person",
+      "who": "13",
+      "image": "assets/around-you/be24462f1b1ea63c.webp",
+      "online": false,
+      "text": "понравился ваш момент",
+      "button": "Поблагодарить",
+      "category": "",
+      "badge": "klass",
+      "right": "clip"
+    },
+    {
+      "id": "a10",
+      "lead": "person",
+      "who": "vvz-1",
+      "image": "assets/around-you/be24462f1b1ea63c.webp",
+      "online": false,
+      "text": "снова активна — добавила момент",
+      "button": "Посмотреть",
+      "category": "",
+      "badge": "",
+      "right": "clip"
     }
   ]
 }
