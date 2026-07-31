@@ -33,6 +33,34 @@
   --tag-color: var(--static-text-and-icons-base-inverse-primary);
 }
 
+/* Рекламный пресет из Figma: dynamic/surface/contrast-low +
+   dynamic/text-and-icons/base/primary. */
+.tag.__style-ad {
+  --tag-bg: var(--dynamic-surface-contrast-low);
+  --tag-color: var(--dynamic-text-and-icons-base-primary);
+}
+
+.tag__action.button-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 16px;
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+
+.tag__action > img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
 .tag.__size-20 {
   padding: 2px 6px;
   font-size: var(--font-size-50);

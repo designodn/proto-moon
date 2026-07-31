@@ -41,7 +41,7 @@
 @import url('./components/picture.css');
 @import url('./components/pulse-dot.css');
 @import url('./components/breadcrumbs.css');
-@import url('./components/tag.css');
+@import url('./components/tag.css?v=20260731-2');
 @import url('./components/media.css');
 @import url('./components/actions-bar.css');
 @import url('./components/island.css');
@@ -51,7 +51,7 @@
 @import url('./components/comment-thread.css');
 @import url('./components/feed-comment.css');
 @import url('./components/twitterlike-thread.css');
-@import url('./components/post-comments.css');
+@import url('./components/post-comments.css?v=20260731-2');
 @import url('./components/comment-as-feed.css');
 @import url('./components/feed-base.css');
 @import url('./components/feed-header.css');
