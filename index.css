@@ -49,7 +49,7 @@
 @import url('./components/feed-text.css');
 @import url('./components/comment.css');
 @import url('./components/comment-thread.css');
-@import url('./components/feed-comment.css');
+@import url('./components/feed-comment.css?v=20260731-4');
 @import url('./components/twitterlike-thread.css');
 @import url('./components/post-comments.css?v=20260731-2');
 @import url('./components/comment-as-feed.css');

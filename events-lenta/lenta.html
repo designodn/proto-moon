@@ -33,7 +33,12 @@
     if (!card) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    try { sessionStorage.setItem('openPost', card.innerHTML); } catch (_) {}
+    try {
+      var host = card.closest('.text-feed, .caf');
+      var time = host && host.querySelector('.caf__date, .text-feed__time, .feed-header__time');
+      sessionStorage.setItem('openPost', card.innerHTML);
+      sessionStorage.setItem('openPostTime', time ? time.textContent.replace(/^\s*[·•]\s*/, '').trim() : '');
+    } catch (_) {}
     location.href = 'post.html';
   }, true);
 </script>

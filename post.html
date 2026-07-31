@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="index.css?v=20260731-3">
+<link rel="stylesheet" href="index.css?v=20260731-4">
 <link rel="stylesheet" href="components/post-layer.css">
 <!-- В head синхронно: listener pagereveal должен зарегистрироваться до события -->
 <script src="components/screen-transition.js"></script>
@@ -210,6 +210,24 @@
               <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Татьяна Докунихина</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">А как же шкварочки?</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>1</span></button></span></div></div>
             </div>
           </div>
+          <div class="fc-list __twitter-like post-comments__single">
+            <div class="fc-comment __twitter-like __picture __no-text">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/11.webp" alt=""></div></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Ольга Стрельникова</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><div class="fc-comment__picture"><img src="assets/comments/comment1.png" alt=""></div><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span></div></div>
+            </div>
+          </div>
+          <div class="fc-list __twitter-like post-comments__single">
+            <div class="fc-comment __twitter-like __picture __no-text">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/12.webp" alt=""></div></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Валентина Крижановская</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><div class="fc-comment__picture"><img src="assets/comments/comment2.png" alt=""></div><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>1</span></button></span></div></div>
+            </div>
+          </div>
+          <div class="fc-list __twitter-like post-comments__single">
+            <div class="fc-comment __twitter-like __picture __no-text">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/13.webp" alt=""></div></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Татьяна Докунихина</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><div class="fc-comment__picture"><img src="assets/comments/comment3.png" alt=""></div><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>1</span></button></span></div></div>
+            </div>
+          </div>
           </div>
         </section>
 
@@ -274,6 +292,7 @@
       try {
         var html = sessionStorage.getItem('openPost');
         if (!html) return;
+        var storedTime = sessionStorage.getItem('openPostTime') || '';
         var el = document.getElementById('ll-post-source');
         if (el) {
           el.innerHTML = html;
@@ -358,10 +377,10 @@
               }
             }
             var time = author.querySelector('.text-feed__time, .feed-header__time');
-            if (!time && isBelyashi) {
+            if (!time && (storedTime || isBelyashi)) {
               time = document.createElement('div');
               time.className = 'ds-caption-s text-feed__time';
-              time.textContent = '18 июня';
+              time.textContent = isBelyashi ? '18 июня' : storedTime;
               var additional = author.querySelector('.uni-cell-additional-content');
               if (additional) additional.appendChild(time);
             }

@@ -291,6 +291,44 @@
   white-space: nowrap;
 }
 
+/* Модификатор комментария с одной картинкой:
+   <div class="fc-comment __twitter-like __picture">
+     …
+     <div class="fc-comment__body">
+       <div class="fc-comment__head">…</div>
+       <div class="fc-comment__picture"><img …></div>
+       <div class="fc-comment__actions">…</div>
+     </div>
+   </div>
+   Картинка фиксированная 144×144, 4px после заголовка и 8px до действий. */
+.fc-comment.__twitter-like.__picture .fc-comment__body {
+  gap: 0;
+}
+
+.fc-comment.__twitter-like.__picture .fc-comment__picture {
+  flex: 0 0 144px;
+  width: 144px;
+  height: 144px;
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+}
+
+.fc-comment.__twitter-like.__picture .fc-comment__picture > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Контентный флаг для image-only комментария. Разметка может вовсе не
+   содержать текст; если общий рендерер всё же создал текстовый узел, флаг
+   гарантированно исключает его из раскладки. */
+.fc-comment.__twitter-like.__no-text .fc-comment__text,
+.fc-comment.__twitter-like.__no-text .fc-comment__text-wrap {
+  display: none;
+}
+
 /* «Посмотреть все ответы» в comment-as-feed — отдельный модификатор fc-more.
    Выравниваем под колонку текста ответа (16 паддинг + ава 44 + gap 12).
    padding-top гасим (база .fc-more даёт 12): отступ сверху уже задаёт gap 8
