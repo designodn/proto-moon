@@ -1,0 +1,30 @@
+/** OK Design System — Badge: круглый статусный глиф из макета активностей. */
+.badge {
+  --badge-size: 24px;
+  --badge-background: var(--static-surface-status-info);
+
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--badge-size);
+  height: var(--badge-size);
+  border-radius: 50%;
+  background: var(--badge-background);
+  color: var(--static-text-and-icons-base-inverse-primary);
+}
+
+.badge.__size-24 { --badge-size: 24px; }
+.badge > .icon { width: 16px; height: 16px; }
+.badge.__type-radio > .icon,
+.badge.__type-share > .icon,
+.badge.__type-birthday > .icon { width: 14px; height: 14px; }
+
+.badge.__type-comment  { --badge-background: var(--static-surface-status-info); }
+.badge.__type-klass,
+.badge.__type-mention,
+.badge.__type-add,
+.badge.__type-share    { --badge-background: var(--static-surface-status-accent); }
+.badge.__type-favourite { --badge-background: var(--static-surface-status-positive); }
+.badge.__type-radio     { --badge-background: var(--static-surface-status-negative); }
+.badge.__type-birthday  { --badge-background: var(--static-surface-violet, #AE7ECE); }

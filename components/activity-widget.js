@@ -41,6 +41,11 @@
       return isNaN(v) ? dflt : v;
     }
 
+    // Если источник пока содержит меньше строк, чем рассчитан виджет,
+    // не резервируем пустые ряды. При добавлении данных максимум останется 2.
+    var configuredRows = Math.round(cssNum('--conv-rows', 2));
+    conv.style.setProperty('--conv-rows', Math.max(0, Math.min(configuredRows, track.children.length)));
+
     // Все строки конвейера имеют одну высоту — максимальную естественную
     // высоту среди заложенных ячеек при текущей ширине контейнера.
     function measureRows() {

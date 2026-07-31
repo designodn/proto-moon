@@ -43,14 +43,16 @@ const SHEET_NAME = 'Вокруг нас';
 // переживает переименования и гарантирует, что читаем именно тот таб, где
 // заведены новые ячейки (trans / trans-gallery / clip-gallery).
 const SHEET_GID = '502211906';
+const EVENTS_SHEET_NAME = 'События друзей';
+const EVENTS_SHEET_GID = '426723569';
 const FORCE = process.argv.includes('--force');   // пересобрать, даже если лист не менялся
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
-const csvUrl =
+const csvUrl = gid =>
   `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-  `?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
+  `?tqx=out:csv&gid=${gid}&headers=1`;
 
 /* ── CSV ──────────────────────────────────────────────────────────────────── */
 function parseCsv(text) {
@@ -109,7 +111,7 @@ function renderText(raw, gender) {
 }
 
 const avatarImg = (id, size) => `<div class="avatar __size-${size} __type-image"><img data-person-avatar="${esc(id)}" alt=""></div>`;
-const avatarOnline = id => `<div class="avatar __size-44 __type-image __has-addon">
+const avatarOnline = (id, size = 44) => `<div class="avatar __size-${size} __type-image __has-addon">
                   <img data-person-avatar="${esc(id)}" alt="">
                   <span class="avatar__addon __pos-bl"><span class="status-dot"></span></span>
                 </div>`;
@@ -131,10 +133,34 @@ const SECTION_AVATARS = [
 ];
 const sectionAvatar = (text) => (SECTION_AVATARS.find(([re]) => re.test(text || '')) || [, ''])[1];
 
-function leadFor(a) {
+const BADGES = [
+  { type: 'comment',   icon: 'comment-16',      names: ['comment', 'комментарий', 'коммент'] },
+  { type: 'klass',     icon: 'klass-filled',    names: ['klass', 'class', 'класс', 'лайк'] },
+  { type: 'favourite', icon: 'favourite-filled', names: ['favourite', 'favorite', 'избранное', 'звезда'] },
+  { type: 'mention',   icon: 'mention',         names: ['mention', 'упоминание'] },
+  { type: 'add',       icon: 'add',             names: ['add', 'добавить', 'плюс'] },
+  { type: 'radio',     icon: 'music-radio',     names: ['radio', 'live', 'эфир', 'радио'] },
+  { type: 'share',     icon: 'share',           names: ['share', 'поделиться', 'репост'] },
+  { type: 'birthday',  icon: 'cake',            names: ['birthday', 'день рождения', 'др'] },
+];
+
+function badgeFor(raw) {
+  const value = (raw || '').trim().toLowerCase();
+  if (!value || value === 'нет бейджа' || value === 'нет') return '';
+  const badge = BADGES.find(item => item.names.includes(value));
+  return badge
+    ? `<span class="avatar__addon __pos-br badge __size-24 __type-${badge.type}"><span class="icon __slot-${badge.icon}"></span></span>`
+    : '';
+}
+
+function leadFor(a, size = 44, withBadge = false) {
   switch (a.lead) {
-    case 'person':
-      return a.online ? avatarOnline(a.who) : avatarImg(a.who, 44);
+    case 'person': {
+      // «онлайн» — уже существующий status-dot, остальные значения — badge 24.
+      if (a.online) return avatarOnline(a.who, size);
+      const badge = withBadge ? badgeFor(a.badge) : '';
+      return `<div class="avatar __size-${size} __type-image${badge ? ' __has-addon' : ''}"><img data-person-avatar="${esc(a.who)}" alt="">${badge}</div>`;
+    }
     case 'discussion': {
       const ids = a.who.split(',').map(s => s.trim()).filter(Boolean);
       return `<div class="ava-cluster">
@@ -144,19 +170,40 @@ function leadFor(a) {
     case 'section': {
       const sImg = a.image || pageUrl(sectionAvatar(a.text));
       return sImg
-        ? `<div class="avatar __size-44 __type-image"><img src="${esc(sImg)}" alt=""></div>`
-        : `<div class="avatar __size-44 __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">${esc(a.who || '👥')}</div>`;
+        ? `<div class="avatar __size-${size} __type-image"><img src="${esc(sImg)}" alt=""></div>`
+        : `<div class="avatar __size-${size} __type-emoji" style="--avatar-bg: var(--dynamic-surface-tint-indigo);">${esc(a.who || '👥')}</div>`;
     }
     case 'photo':
-      return `<div class="picture __size-44 __type-image"><img src="${esc(a.image)}" alt=""></div>`;
+      return `<div class="picture __size-${size} __type-image"><img src="${esc(a.image)}" alt=""></div>`;
     case 'photo-pair': {
       const urls = a.image.split(',').map(s => s.trim()).filter(Boolean).slice(0, 2);
       return `<div class="photo-pair">
                 ${urls.map(u => `<div class="picture __type-image"><img src="${esc(u)}" alt=""></div>`).join('\n                ')}
               </div>`;
     }
-    default: return avatarImg(a.who, 44);
+    default: return avatarImg(a.who, size);
   }
+}
+
+/** Опциональный слот right на странице «События друзей».
+ *  Тип берётся из «дополнение справа», источник — из «изображение (если есть)».
+ *  Для avatar без отдельной картинки используем того же человека из «кто». */
+function rightFor(a) {
+  if (!a.right) return '';
+  if (a.right === 'avatar') {
+    const img = a.image
+      ? `<img src="${esc(a.image.split(',')[0].trim())}" alt="">`
+      : `<img data-person-avatar="${esc(a.who)}" alt="">`;
+    return `<div class="activity-cell__right"><div class="avatar __size-56 __type-image">${img}</div></div>`;
+  }
+  if ((a.right === 'photo' || a.right === 'clip') && a.image) {
+    const image = esc(a.image.split(',')[0].trim());
+    const className = a.right === 'clip'
+      ? 'picture __type-image activity-cell__clip'
+      : 'picture __size-56 __type-image';
+    return `<div class="activity-cell__right"><div class="${className}"><img src="${image}" alt=""></div></div>`;
+  }
+  return '';
 }
 
 const CONFETTI = `        <span class="confetti" aria-hidden="true">
@@ -242,7 +289,7 @@ function renderTrans(a) {
 }
 
 /** Рендер одной activity-ячейки. */
-function renderCell(a) {
+function renderCell(a, options = {}) {
   if (a.lead === 'trans-gallery') return renderGallery(a, 'live');
   if (a.lead === 'clip-gallery')  return renderGallery(a, 'clip');
   if (a.lead === 'trans')         return renderTrans(a);
@@ -256,12 +303,13 @@ function renderCell(a) {
     text = renderText(a.text, '');
   }
   const confetti = a.category === 'holiday' ? '\n' + CONFETTI : '';
+  const right = options.withRight ? rightFor(a) : '';
   return `        <div class="uni-cell-wrapper __type-activity${catClass}">
           <div class="uni-cell-container __state-enabled">
             <div class="uni-cell">
-              ${leadFor(a)}
+              ${leadFor(a, options.leadSize || 44, options.withBadge)}
               <div class="uni-cell-additional-content ds-body-m">${text}</div>
-              ${cellButton(a.button)}
+              ${cellButton(a.button)}${right ? `\n              ${right}` : ''}
             </div>
           </div>${confetti}
         </div>`;
@@ -285,53 +333,42 @@ function spliceFile(file, startMark, endMark, content, firstStartAnchor, firstEn
 }
 
 /* ── main ─────────────────────────────────────────────────────────────────── */
-async function getCsv() {
-  if (process.env.ACTIVITY_CSV_FILE) return readFileSync(process.env.ACTIVITY_CSV_FILE, 'utf8');
-  const res = await fetch(csvUrl, { signal: AbortSignal.timeout(20000) });
-  if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице и имя листа «${SHEET_NAME}».`);
+async function getCsv(gid, sheetName, envFile) {
+  if (envFile) return readFileSync(envFile, 'utf8');
+  const res = await fetch(csvUrl(gid), { signal: AbortSignal.timeout(20000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status} — проверь доступ к таблице и лист «${sheetName}».`);
   return res.text();
 }
 
 // Колонки ищем ПО КЛЮЧЕВОМУ СЛОВУ (заголовки в листе бывают с уточнениями,
 // напр. «изображение (если есть)»; id может отсутствовать — тогда генерим).
-function colIndex(header) {
+function colIndex(header, sheetName) {
   const norm = header.map(h => h.trim().toLowerCase());
   const find = kw => norm.findIndex(h => h.includes(kw));
   const idx = {
     id: find('id'), lead: find('лид'), who: find('кто'), image: find('изображ'),
     badge: find('бейдж'), text: find('текст'), button: find('кнопк'), category: find('категори'),
+    right: find('дополн'),
   };
   if (idx.lead < 0)
-    throw new Error(`В листе «${SHEET_NAME}» нет колонки «лид». Это точно лист активностей?`);
+    throw new Error(`В листе «${sheetName}» нет колонки «лид». Это точно лист активностей?`);
   return idx;
 }
 
-async function main() {
-  console.log(`→ Тяну «${SHEET_NAME}»…`);
-  const csvText = await getCsv();
-  // people.json в зависимостях: жирное имя в person-ячейках запекается из него →
-  // правка листа «Люди» пересобирает и виджет «Вокруг вас».
-  const gate = createSyncGate({ root: ROOT, key: 'activity-around',
-    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
-               resolve(ROOT, 'data/people.json')] });
-  if (gate.unchanged(csvText) && !FORCE) {
-    console.log(`✓ «${SHEET_NAME}» без изменений — пропускаю (--force чтобы пересобрать).`);
-    return;
-  }
+function parseActivities(csvText, sheetName, options = {}) {
   const rows = parseCsv(csvText);
   const [header, ...body] = rows;
-  const idx = colIndex(header);
+  const idx = colIndex(header, sheetName);
   const at = (r, i) => (i >= 0 ? (r[i] || '').trim() : '');
-
   const acts = [];
   let n = 0;
   for (const r of body) {
     const lead = at(r, idx.lead);
-    if (!lead) continue;            // пустой/мусорный ряд
+    if (!lead) continue;
     n++;
     let category = at(r, idx.category).toLowerCase();
-    if (category === 'пусто') category = '';   // в листе пусто помечают словом «пусто»
-    acts.push({
+    if (category === 'пусто') category = '';
+    const activity = {
       id: at(r, idx.id) || `a${n}`,
       lead,
       who: at(r, idx.who),
@@ -340,15 +377,56 @@ async function main() {
       text: at(r, idx.text),
       button: at(r, idx.button),
       category,
-    });
+    };
+    if (options.extended) {
+      activity.badge = at(r, idx.badge).toLowerCase();
+      activity.right = at(r, idx.right).toLowerCase();
+    }
+    acts.push(activity);
   }
+  return acts;
+}
+
+function validateEventsActivities(acts) {
+  const badgeNames = new Set(BADGES.flatMap(item => item.names));
+  const emptyBadges = new Set(['', 'нет', 'нет бейджа', 'онлайн']);
+  const rightTypes = new Set(['', 'photo', 'clip', 'avatar']);
+  const specialTypes = new Set(['trans-gallery', 'clip-gallery', 'trans']);
+  for (const a of acts) {
+    if (!emptyBadges.has(a.badge) && !badgeNames.has(a.badge))
+      console.warn(`⚠ events:${a.id}: неизвестный бейдж «${a.badge}» — скрыт`);
+    if (!rightTypes.has(a.right))
+      console.warn(`⚠ events:${a.id}: неизвестное дополнение справа «${a.right}» — скрыто`);
+    if (specialTypes.has(a.lead) && (a.right || (!emptyBadges.has(a.badge))))
+      console.warn(`⚠ events:${a.id}: badge/right применяются только к uni-cell, не к ${a.lead}`);
+  }
+}
+
+async function main() {
+  console.log(`→ Тяну «${SHEET_NAME}» и «${EVENTS_SHEET_NAME}»…`);
+  const [csvText, eventsCsvText] = await Promise.all([
+    getCsv(SHEET_GID, SHEET_NAME, process.env.ACTIVITY_CSV_FILE),
+    getCsv(EVENTS_SHEET_GID, EVENTS_SHEET_NAME, process.env.EVENTS_ACTIVITY_CSV_FILE),
+  ]);
+  // people.json в зависимостях: жирное имя в person-ячейках запекается из него →
+  // правка листа «Люди» пересобирает и виджет «Вокруг вас».
+  const gate = createSyncGate({ root: ROOT, key: 'activity-around-and-events',
+    codeDeps: [fileURLToPath(import.meta.url), resolve(__dirname, 'lib/media-cache.mjs'),
+               resolve(ROOT, 'data/people.json')] });
+  if (gate.unchanged(csvText + '\n--EVENTS--\n' + eventsCsvText) && !FORCE) {
+    console.log(`✓ Оба листа без изменений — пропускаю (--force чтобы пересобрать).`);
+    return;
+  }
+  const acts = parseActivities(csvText, SHEET_NAME);
+  const eventsActs = parseActivities(eventsCsvText, EVENTS_SHEET_NAME, { extended: true });
+  validateEventsActivities(eventsActs);
 
   // Картинки активностей (section/photo/photo-pair) — в репо: качаем локально
   // (хэш-проверка «изменилось ли», старое чистится при prune). В json кладём
   // репо-относительный путь assets/around-you/… (для рендера добавим «../» ниже).
   const cache = createMediaCache({ root: ROOT, dirRel: 'assets/around-you',
     manifestPath: resolve(ROOT, 'data/around-you-media.json') });
-  for (const a of acts) {
+  for (const a of [...acts, ...eventsActs]) {
     if (!a.image) continue;
     const parts = a.image.split(',').map(s => s.trim()).filter(Boolean);
     const resolved = await Promise.all(parts.map(u => cache.resolveUrl(u)));
@@ -359,9 +437,12 @@ async function main() {
 
   writeFileSync(resolve(ROOT, 'data/activity.json'),
     JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${SHEET_NAME}»`, 'как_обновить': 'node scripts/fetch-activity.mjs (или скилл fetch-activity)' }, activities: acts }, null, 2) + '\n');
+  writeFileSync(resolve(ROOT, 'data/events-activity.json'),
+    JSON.stringify({ _readme: { 'источник': `Google-таблица, лист «${EVENTS_SHEET_NAME}» (gid ${EVENTS_SHEET_GID})`, 'как_обновить': 'node scripts/fetch-activity.mjs' }, activities: eventsActs }, null, 2) + '\n');
 
   // Локальные пути → страничные («../assets/…») для рендера; http-ссылки не трогаем.
   for (const a of acts) if (a.image) a.image = pageImages(a.image);
+  for (const a of eventsActs) if (a.image) a.image = pageImages(a.image);
 
   // Два потока ячеек:
   //  • pageCells — ВСЕ типы (включая галереи эфиров/клипов и trans) → полноэкранная
@@ -371,6 +452,8 @@ async function main() {
   const NEW_TYPES = new Set(['trans-gallery', 'clip-gallery', 'trans']);
   const pageCells = acts.map(renderCell).join('\n');
   const widgetCells = acts.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
+  const eventsPageCellsRaw = eventsActs.map(a => renderCell(a, { leadSize: 56, withBadge: true, withRight: true })).join('\n');
+  const eventsWidgetCellsRaw = eventsActs.filter(a => !NEW_TYPES.has(a.lead)).map(renderCell).join('\n');
   // Вариант для страниц с <base href="../"> (activity-lenta/): ассеты резолвятся
   // от корня, поэтому БЕЗ «../» (иначе ушли бы выше корня). В new-vision/* base
   // нет → там нужен «../» (как есть).
@@ -378,15 +461,15 @@ async function main() {
   const widgetCellsBase = widgetCells.replace(/\.\.\/assets\//g, 'assets/');
   // В События-ленте CTA живёт в нижнем слоте buttons и использует размер 36.
   // Базовый рендер Activity не меняем.
-  const eventsWidgetCells = widgetCellsBase.replace(
+  const eventsWidgetCells = eventsWidgetCellsRaw.replace(/\.\.\/assets\//g, 'assets/').replace(
     new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
     (_, open, text, close, button) =>
-      `${open.replace('ds-body-m', 'ds-body-l')}\\n                <div class="uni-cell-text">${text.replace(/<b>/g, '<b class="ds-title-m">')}</div>\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
+      `${open.replace('ds-body-m', 'ds-body-l')}\n                <div class="uni-cell-text">${text.replace(/<b>/g, '<b class="ds-title-m">')}</div>\n                <div class="uni-cell-buttons">\n                  ${button.replace('__size-28', '__size-36')}\n                </div>\n              ${close}`,
   );
-  const eventsPageCells = pageCellsBase.replace(
+  const eventsPageCells = eventsPageCellsRaw.replace(/\.\.\/assets\//g, 'assets/').replace(
     new RegExp('(<div class="uni-cell-additional-content ds-body-m">)([^\\n]*)(<\\/div>)\\n\\s*(<div class="button-wrapper __size-28">[^\\n]*<\\/div>)', 'g'),
     (_, open, text, close, button) =>
-      `${open}${text}\\n                <div class="uni-cell-buttons">\\n                  ${button.replace('__size-28', '__size-36')}\\n                </div>\\n              ${close}`,
+      `${open}${text}\n                <div class="uni-cell-buttons">\n                  ${button.replace('__size-28', '__size-36')}\n                </div>\n              ${close}`,
   );
 
   // Страница «Вокруг вас» — список #activityList (после промо-баннера, до закрытия списка)
@@ -452,8 +535,10 @@ async function main() {
   );
 
   gate.commit();
-  console.log(`✓ ${acts.length} активностей → data/activity.json + okruzhenie ×2 + nv/lenta + activity-lenta/lenta + events-lenta/lenta (виджеты)`);
+  console.log(`✓ ${acts.length} активностей «${SHEET_NAME}» → старые прототипы`);
+  console.log(`✓ ${eventsActs.length} активностей «${EVENTS_SHEET_NAME}» → data/events-activity.json + events-lenta`);
   acts.forEach(a => console.log(`  • ${a.id.padEnd(4)} ${a.lead}`));
+  eventsActs.forEach(a => console.log(`  • events:${a.id.padEnd(4)} ${a.lead}`));
 }
 
 main().catch(err => { console.error('✗', err.message); process.exit(1); });

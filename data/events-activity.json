@@ -1,0 +1,20 @@
+{
+  "_readme": {
+    "источник": "Google-таблица, лист «События друзей» (gid 426723569)",
+    "как_обновить": "node scripts/fetch-activity.mjs"
+  },
+  "activities": [
+    {
+      "id": "a1",
+      "lead": "person",
+      "who": "1",
+      "image": "",
+      "online": false,
+      "text": "распаковала ваш подарок",
+      "button": "Ответить",
+      "category": "",
+      "badge": "",
+      "right": ""
+    }
+  ]
+}
