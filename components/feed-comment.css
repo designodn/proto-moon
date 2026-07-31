@@ -208,7 +208,7 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-  color: var(--dynamic-text-and-icons-base-primary);
+  color: var(--dynamic-text-and-icons-base-secondary);
 }
 
 /* ============================================================

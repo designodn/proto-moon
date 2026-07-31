@@ -5,7 +5,7 @@
     "type": "image",
     "hash": "b0cf650cb26419594b9d1024817cf964308037066f67aa8da015b2603ed78d0e",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "d9ed83b00c4231d6": {
     "src": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/52/90/2b/outra-vista-das-escadarias.jpg?w=500&h=500&s=1",
@@ -13,7 +13,7 @@
     "type": "image",
     "hash": "254faffa76a48214730caec3dc4cafcf11236123023e1cae49acbcd2af0befe8",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "0a7a921f21654125": {
     "src": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/10/38/dc/3b/na-vina.jpg?w=500&h=500&s=1",
@@ -21,7 +21,7 @@
     "type": "image",
     "hash": "43c8858840a4c8167d262c775950c3d363415dd007552a874775d6c4434c452f",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "30ea6ae6a68667df": {
     "src": "https://vki9.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1L8OexlrbVSsmNNWc72XeOn_Opeei0ASKn0y2biS-J7yzOKtXZsVy_k7ttqaJJjmYzxo62sj4527VBcuje0WDXvJ2U9fbuCzA-spbdIsD0AAAAp&dpr=2",
@@ -29,7 +29,7 @@
     "type": "image",
     "hash": "b28df77bda7b166375a9f42f2294e480ebfcfd7147332f1bdbf1f7f38258cfbf",
     "status": "stale",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "88a5b2f4e918b021": {
     "src": "https://konturland.ru/img/land-diz/1585766833Wx7eYzgaSa.webp",
@@ -37,7 +37,7 @@
     "type": "image",
     "hash": "465fdc507fb0d608fec09163d684797c5b3d18b9d58573ca9e9159533f6bfba8",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "dfe6688cb5c919a6": {
     "src": "https://design-homes.ru/images/galery/2335/krasivye-dachi-prostykh-lyudej_5f1d331262197.jpg",
@@ -45,23 +45,7 @@
     "type": "image",
     "hash": "876824890a5365154db95d4c453ce54337246157f3fff391be6096ff25c37cb2",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
-  },
-  "a213a197af092031": {
-    "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzSx6UQaiAsHmfVSwYfW9rBW-FDCLnuJ9MQ5zLuhizkwnF1ROKRH6nEBCY&s=10",
-    "file": "a213a197af092031.webp",
-    "type": "image",
-    "hash": "73aaf5f079c53d3f3e5796e4346a24559c992a8b08df05b3134a605736b5ef87",
-    "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
-  },
-  "c5cd82677532277d": {
-    "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs4Ooj7ELbjH7BA0Y8fP1mOAyHPEFc1zuQaYR1wx2ezrZKe5xwpg4yYyYk&s=10",
-    "file": "c5cd82677532277d.webp",
-    "type": "image",
-    "hash": "5375a6beffb0b83d706c1ebfcbcc225d812d7be59c58c1d42ff5a9af672cdcc6",
-    "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "d836a182f8ec57cd": {
     "src": "https://ibirzha.kz/wp-content/uploads/2024/04/image3.jpg",
@@ -69,7 +53,23 @@
     "type": "image",
     "hash": "1dcb5770796b8a401bd8e205ec59b22aa1be3b70c7f11db6dd741e04120353de",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
+  },
+  "a213a197af092031": {
+    "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzSx6UQaiAsHmfVSwYfW9rBW-FDCLnuJ9MQ5zLuhizkwnF1ROKRH6nEBCY&s=10",
+    "file": "a213a197af092031.webp",
+    "type": "image",
+    "hash": "73aaf5f079c53d3f3e5796e4346a24559c992a8b08df05b3134a605736b5ef87",
+    "status": "ok",
+    "checkedAt": "2026-07-31T14:50:52.967Z"
+  },
+  "c5cd82677532277d": {
+    "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs4Ooj7ELbjH7BA0Y8fP1mOAyHPEFc1zuQaYR1wx2ezrZKe5xwpg4yYyYk&s=10",
+    "file": "c5cd82677532277d.webp",
+    "type": "image",
+    "hash": "5375a6beffb0b83d706c1ebfcbcc225d812d7be59c58c1d42ff5a9af672cdcc6",
+    "status": "ok",
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "67f79168241cb0d1": {
     "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVG6BEB6fhlW-QnZFRZl5N3dIAGtsvNxfpKZ172XPPtQ&s=10",
@@ -77,7 +77,7 @@
     "type": "image",
     "hash": "3c4b3c95251ddf7ad943c4343092499ea60019c839285d0ae904baf05411a84a",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "9b365803e98d0613": {
     "src": "https://cdn2.botanichka.ru/wp-content/uploads/2019/08/6-pravil-malouhodnogo-sada-01.jpg",
@@ -85,7 +85,7 @@
     "type": "image",
     "hash": "5e75708ab0e5e4ff4255f4189fb30bbbfcf5db7defe04c8e0b704dd22780252d",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "c05d7149284a2b8f": {
     "src": "https://7d9e88a8-f178-4098-bea5-48d960920605.selcdn.net/acdab861-9821-4af8-9d55-c69fe70956da/-/format/webp/-/resize/1300x/",
@@ -93,7 +93,7 @@
     "type": "image",
     "hash": "d7e62e41cf7334a9bd895c9364f2d810927bf0bec0acbc99a43386fc17bff91c",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "4205471b4fb7f878": {
     "src": "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1JsVkqt4gI_WOZu66YDfU993FZsyUYt38Tc7wCdXngCZqqosmpmNGw2wO6VybX-aTD_AC2QICvgeqBUGEPe_HPd_zyzsNBfAAAAKQ&fn=h_768",
@@ -101,7 +101,7 @@
     "type": "image",
     "hash": "1a77ebf51eb1e2f68700cc11113f15d21208b344ebce6d8299218af5f65b6e75",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "10b114f5f12efb41": {
     "src": "https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1Juzj1hsZs_ns0a4bidSbPMo9rxcZ8qVDX0PEu8TeF5veNQN3gNS1q4p_1o0ae2CcPgSacbQAG7nFvdyCPr84ZwOV9WaMv_tveRgPxC5YIAAAAp&fn=h_768",
@@ -109,7 +109,7 @@
     "type": "image",
     "hash": "51e2888d97b8a31c1db103c015ad0bf0dc3cbd6225eaceb062187b1cd3faad9b",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "a14d560043b92f0c": {
     "src": "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1LrlokHVG5VjnPehzq597nX3Lxg62XrzokTiJQCaT6Tr7Q-WP9-ks90TKBQPW54FZb7XP4IvN_mpdrVRGaTgMGyziYInFQwAAAAKQ",
@@ -117,7 +117,7 @@
     "type": "image",
     "hash": "a4e16cd3a9c80d8669f4281213aee256c146180aeeac72ba117613cb571e6600",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "be24462f1b1ea63c": {
     "src": "https://opis-cdn.tinkoffjournal.ru/mercury/27-landscape-nature-garden.jpg",
@@ -125,7 +125,7 @@
     "type": "image",
     "hash": "c481bf7285142f6e8fe50c57cf63c4757d434fe53f6cf5db1572a41291a5404f",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
   "bfea11caa37c04a4": {
     "src": "https://iv.okcdn.ru/i?r=BDFSTM1h2o92P_v-s8DgGlgYGrKaZOUS0dPU-Cm39ZLLzxL6u822Yaip2vXE6E8HZrw&fn=external_8",
@@ -133,14 +133,30 @@
     "type": "image",
     "hash": "4f0d1668891400fd25bbcfff5b072b8e5786078da7600487384cf96dcba70170",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   },
-  "df8524c173305984": {
-    "src": "https://i.okcdn.ru/i?r=CFNAm_VFBkioSGBqh1KTz4tfsGtO-sMFADBcckGq7T7Klom3SX3Uuam24cCBe6DDQL8lCthQD3H1JNjkJFudTqO2se9czlbr6RynTw-NMwxjqMAOAAAAKQ&fn=h_768",
-    "file": "df8524c173305984.webp",
+  "a854baea016ef172": {
+    "src": "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_68947015a844a560afdc90d6_6894715441d6616489db9c92/scale_1200",
+    "file": "a854baea016ef172.webp",
     "type": "image",
-    "hash": "61ea34674b0058f2820c16719909f18a53fb0a29e1061d1db1dd7d50abb2fb92",
+    "hash": "f3a935131e4766d65aca378c50739391528f1a26e2af743749ef1eda05771f0d",
     "status": "ok",
-    "checkedAt": "2026-07-31T14:37:52.303Z"
+    "checkedAt": "2026-07-31T14:50:52.967Z"
+  },
+  "8eb9e51cb207b961": {
+    "src": "https://i.okcdn.ru/i?r=CFRAm_VFBkioSGBqh1IDtDMh1gJfTTDDU8Krms2xhtbaAGvVLRVEAWlvIMj5NY_-Xo411SyTLFMI389uC7Wrg70eYB51PB53N92cpTb7a7Xu-ueWxwAAACk",
+    "file": "8eb9e51cb207b961.webp",
+    "type": "image",
+    "hash": "568a402319b78fa79eca24a580f9233734f6c846fa91dbfbba816f4c2657dc27",
+    "status": "ok",
+    "checkedAt": "2026-07-31T14:50:52.967Z"
+  },
+  "94d08bbef426b084": {
+    "src": "https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_6a6892cd6b5b404eaa479370_6a6892ced85c010185e715e4/post_crop_small_1080",
+    "file": "94d08bbef426b084.webp",
+    "type": "image",
+    "hash": "3e9481f98f5c3b5fa7b829ec9d8434594aabdd2fe01cc695949a2cd4e152c336",
+    "status": "ok",
+    "checkedAt": "2026-07-31T14:50:52.967Z"
   }
 }

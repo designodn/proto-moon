@@ -236,7 +236,7 @@
       <!-- ПРИБИТЫЙ ИНПУТ КОММЕНТА: smile + текст + send -->
       <div class="fc-input ll-answer">
         <div class="fc-input__field">
-          <img class="ll-icon fc-input__smile" src="assets/icons/smile_24.svg" width="24" height="24" alt="">
+          <span class="icon __size-24 __slot-smile fc-input__smile" aria-hidden="true"></span>
           <input class="fc-input__text" placeholder="Комментировать…">
           <button class="fc-input__send" aria-label="Отправить"><span class="icon __size-24 __slot-send"></span></button>
         </div>
@@ -250,6 +250,54 @@
   <script src="components/user-data.js"></script>
   <script src="components/actions-bar.js?v=2"></script>
   <script src="components/twitterlike-thread.js"></script>
+
+  <script>
+    (function () {
+      var input = document.querySelector('.ll-answer .fc-input__text');
+      var send = document.querySelector('.ll-answer .fc-input__send');
+      var mount = document.getElementById('ll-comments-mount');
+      if (!input || !send || !mount) return;
+
+      function submitComment() {
+        var value = input.value.trim();
+        if (!value) return;
+        var profile = (window.DS_PEOPLE_DATA || []).find(function (person) {
+          return String(person.id) === 'my_profile';
+        }) || {
+          name: 'Анфиса Тимирбаева (Абдуллина)',
+          photo: 'assets/people/my_profile.webp'
+        };
+
+        var list = document.createElement('div');
+        list.className = 'fc-list __twitter-like post-comments__single __just-added';
+        list.innerHTML = '<div class="fc-comment __twitter-like">' +
+          '<div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img alt=""></div></div>' +
+          '<div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author"></span><span class="ds-body-m fc-comment__date">· сейчас</span></div>' +
+          '<p class="fc-comment__text ds-body-m feed-more__text"></p>' +
+          '<div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span>' +
+          '<span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span></div></div></div>';
+        list.querySelector('.fc-comment__author').textContent = profile.name;
+        list.querySelector('.fc-comment__text').textContent = value;
+        list.querySelector('.avatar img').src = profile.photo;
+        mount.insertBefore(list, mount.firstChild);
+
+        var counter = document.querySelector('.post-comments__header .header__counter');
+        if (counter) {
+          var count = parseInt(counter.textContent, 10);
+          if (!isNaN(count)) counter.textContent = String(count + 1);
+        }
+        input.value = '';
+      }
+
+      send.addEventListener('click', submitComment);
+      input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitComment();
+        }
+      });
+    })();
+  </script>
 
   <!-- Навигация по кнопкам/ссылкам с data-href (напр. «Перейти к фотомарафону»
        в инжектированном посте). screen-transition.js в обычном post.html не
@@ -291,12 +339,18 @@
     (function () {
       try {
         var html = sessionStorage.getItem('openPost');
+        var isBelyashi = !!html && /Домашние\s+беляши\s+с\s+мясом/i.test(html.replace(/&nbsp;/g, ' '));
+        if (!isBelyashi) {
+          var commentsMount = document.getElementById('ll-comments-mount');
+          var commentsCounter = document.querySelector('.post-comments__header .header__counter');
+          if (commentsMount) commentsMount.replaceChildren();
+          if (commentsCounter) commentsCounter.textContent = '0';
+        }
         if (!html) return;
         var storedTime = sessionStorage.getItem('openPostTime') || '';
         var el = document.getElementById('ll-post-source');
         if (el) {
           el.innerHTML = html;
-          var isBelyashi = /Домашние\s+беляши\s+с\s+мясом/i.test(el.textContent);
           // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
           // прибитый (ll-answer). Убираем дубль.
           el.querySelectorAll('.fc-input, .actions-bar').forEach(function (n) { n.remove(); });

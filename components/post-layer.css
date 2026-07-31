@@ -149,6 +149,7 @@
   flex: 0 0 24px;
   width: 24px;
   height: 24px;
+  color: var(--dynamic-text-and-icons-base-secondary);
 }
 
 .ll-post__action .ll-icon {
