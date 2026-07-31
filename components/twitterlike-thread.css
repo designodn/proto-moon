@@ -1,0 +1,130 @@
+/**
+ * OK Design System — TwitterLikeThread
+ *
+ * Независимая ветка комментариев. Переиспользует fc-list и
+ * fc-comment.__twitter-like без изменения их геометрии. Отдельная обёртка
+ * нужна, чтобы вертикальная линия не соединяла соседние ветки.
+ *
+ * <div class="twitterlike-thread">
+ *   <div class="fc-list __twitter-like">
+ *     <div class="fc-comment __twitter-like">корневой комментарий</div>
+ *     <div class="fc-comment __twitter-like">ответ</div>
+ *   </div>
+ * </div>
+ */
+
+.twitterlike-thread {
+  --twitterlike-thread-line: var(--dynamic-surface-contrast-mid);
+  --twitterlike-thread-root-avatar: 36px;
+  --twitterlike-thread-reply-avatar: 24px;
+  --twitterlike-thread-indent: 44px;
+}
+
+.twitterlike-thread > .fc-list.__twitter-like {
+  width: 100%;
+  gap: 0;
+}
+
+.twitterlike-thread .twitterlike-thread__comment {
+  position: relative;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+}
+
+.twitterlike-thread .twitterlike-thread__comment .fc-comment__body {
+  gap: var(--space-1);
+}
+
+.twitterlike-thread .twitterlike-thread__comment.__root .fc-comment__aside {
+  width: var(--twitterlike-thread-root-avatar);
+}
+
+.twitterlike-thread .twitterlike-thread__comment.__reply {
+  padding-left: calc(var(--space-4) + var(--twitterlike-thread-indent));
+}
+
+.twitterlike-thread .twitterlike-thread__comment.__reply .fc-comment__aside {
+  width: var(--twitterlike-thread-reply-avatar);
+}
+
+/* Палка не касается ни аватара, ни конца своего левого блока: по 8px. */
+.twitterlike-thread .twitterlike-thread__comment.__root .fc-comment__line {
+  display: block;
+  position: absolute;
+  left: calc(var(--space-4) + 17px);
+  top: 44px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--twitterlike-thread-line);
+}
+
+/* Первый ответ: плечо 18×18 выходит вверх на 8px. Оно заканчивается на 36px,
+   после него остаётся 8px до начала reply-avatar на 44px. */
+.twitterlike-thread .twitterlike-thread__comment.__root + .twitterlike-thread__comment.__reply::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: calc(var(--space-4) + 17px);
+  top: -8px;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border-left: 2px solid var(--twitterlike-thread-line);
+  border-bottom: 2px solid var(--twitterlike-thread-line);
+  border-bottom-left-radius: 18px;
+}
+
+/* Следующие ответы уже стоят на одной оси: палка приходит в центр авы. */
+.twitterlike-thread .twitterlike-thread__comment.__reply + .twitterlike-thread__comment.__reply::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: calc(var(--space-4) + var(--twitterlike-thread-indent) + 11px);
+  top: -8px;
+  height: 20px;
+  background: transparent;
+  border-left: 2px solid var(--twitterlike-thread-line);
+}
+
+.twitterlike-thread .twitterlike-thread__comment.__reply .fc-comment__line {
+  display: block;
+  position: absolute;
+  left: calc(var(--space-4) + var(--twitterlike-thread-indent) + 11px);
+  top: 32px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--twitterlike-thread-line);
+}
+
+/* Последняя вертикаль перед видимым more заканчивается за 2px до края,
+   а плечо more начинается на -2px — штрихи сходятся в одной точке. */
+.twitterlike-thread .twitterlike-thread__comment.__reply:has(+ .twitterlike-thread__more:not([hidden])) .fc-comment__line {
+  bottom: 2px;
+}
+
+.twitterlike-thread .twitterlike-thread__comment.__reply:not(:has(~ .twitterlike-thread__comment.__reply)):not(:has(+ .twitterlike-thread__more)) .fc-comment__line {
+  display: none;
+}
+
+/* More продолжает последнюю палку и загибается к началу текста. */
+.twitterlike-thread .twitterlike-thread__more {
+  position: relative;
+  padding-left: calc(var(--space-4) + 76px);
+  padding-bottom: var(--space-6);
+}
+
+.twitterlike-thread .twitterlike-thread__more::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-4) + var(--twitterlike-thread-indent) + 11px);
+  top: -2px;
+  width: 12px;
+  height: 12px;
+  border-left: 2px solid var(--twitterlike-thread-line);
+  border-bottom: 2px solid var(--twitterlike-thread-line);
+  border-bottom-left-radius: 12px;
+}
+
+.twitterlike-thread__more[hidden] {
+  display: none;
+}

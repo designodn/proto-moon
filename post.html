@@ -77,13 +77,15 @@
              иначе показывается демо-пост ниже как fallback. -->
         <article class="text-feed island ll-post" id="ll-post">
           <div class="ll-post__source" id="ll-post-source">
-          <div class="uni-cell-wrapper ll-post__author"><div class="uni-cell-container __state-enabled"><div class="uni-cell">
-            <div class="avatar __size-36 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
+          <header class="feed-header">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="https://i.okcdn.ru/i?r=CFtAm_VFBkioSGBqh1I9HGCfW9fo2EXMv2U4ikeSP2MeOu4OuzjP4S9UEMYj0m1njyr6jFg6ca9umJuV5wq30hV1dtmwUVVLttsWQYn38GuTLO2jof_m9WN7KlsAAAAp&dpr=2" alt=""></div>
             <div class="uni-cell-additional-content">
-              <div class="ds-title-s">РАКОВЫЙ край | Рецепты и вкусная еда</div>
-              <div class="ds-caption-m text-feed__time">30 июня</div>
+              <div class="feed-header__line"><div class="ds-title-s feed-header__name">РАКОВЫЙ край | Рецепты и вкусная еда</div></div>
+              <div class="ds-caption-s text-feed__time">30 июня</div>
             </div>
           </div></div></div>
+          </header>
 
           <p class="ds-title-m text-feed__body">Народный труд: расскажите о своей профессии</p>
 
@@ -96,44 +98,82 @@
 
           <div class="ll-post__reactions">
             <div class="ll-post__counters">
-              <span class="ll-post__reaction-dots" aria-hidden="true"><span>❤</span><span>😍</span><span>😮</span></span>
+              <span class="ll-post__reaction-dots" aria-label="Реакции: сердце, любовь, удивление">
+                <img src="assets/reaction-badges/heart.svg" width="20" height="20" alt="">
+                <img src="assets/reaction-badges/love.svg" width="20" height="20" alt="">
+                <img src="assets/reaction-badges/scare.svg" width="20" height="20" alt="">
+              </span>
               <span class="ds-caption-m">112 · Поделились: 6</span>
             </div>
             <!-- Те же action/button-компоненты, что используются в ленте. -->
             <div class="actions-bar">
-              <div class="button-wrapper __size-36 ll-post__action"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="16" height="16" alt="">Поделиться</span></button></div>
-              <label class="button-wrapper __size-36 button-klass ll-post__action" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-outline" src="assets/icons/klass_16_20.svg" width="16" height="16" alt=""><img class="ll-icon button-klass__icon-filled" src="assets/badges/ico_klass_colored_16_20.svg" width="16" height="16" alt="">Класс</span></span></label>
-              <div class="button-wrapper __size-36 ll-post__action"><button class="button-container __style-secondary" aria-label="Сохранить"><span class="button-content"><img class="ll-icon" src="assets/icons/bookmark_16_20.svg" width="16" height="16" alt=""></span></button></div>
+              <div class="button-wrapper ll-post__action"><button class="button-container __style-secondary"><span class="button-content"><img class="ll-icon" src="assets/icons/reshare_16_20.svg" width="16" height="16" alt="">Поделиться</span></button></div>
+              <label class="button-wrapper button-klass ll-post__action" style="--button-klass-count: 0;"><input type="checkbox" hidden><span class="button-container __style-secondary"><span class="button-content"><img class="ll-icon button-klass__icon-swap" src="assets/icons/klass_16_20.svg" data-src-outline="assets/icons/klass_16_20.svg" data-src-filled="assets/badges/ico_klass_colored_16_20.svg" width="16" height="16" alt="">Класс</span></span></label>
+              <div class="button-wrapper ll-post__action"><button class="button-container __style-secondary" aria-label="Сохранить"><span class="button-content"><img class="ll-icon" src="assets/icons/bookmark_16_20.svg" width="16" height="16" alt=""></span></button></div>
             </div>
           </div>
         </article>
 
         <!-- Отдельный рекламный остров: существующий ad-feed из ленты. -->
-        <article class="caf __twitter-like island ll-post-ad">
-          <div class="caf__stack">
-            <div class="caf__row">
-              <div class="caf__aside">
-                <div class="avatar __size-44 __type-image"><img src="assets/people/ad-1.webp" alt=""></div>
-              </div>
-              <div class="caf__content">
-                <div class="caf__head">
-                  <span class="ds-title-s caf__name">Квартал бизнес-класса «Б15»</span>
-                  <span class="ds-body-m caf__date">· Реклама 0+</span>
-                </div>
-                <p class="ds-body-m text-feed__body caf__text feed-more__text">От 7,6 млн ₽! 15 минут до исторического центра города. Два варианта отделки.</p>
-                <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/1e4af6873e0723e6.webp" alt=""></div>
-                <div class="actions-bar"><div class="button-wrapper __size-36 __full-width"><button class="button-container __style-primary"><span class="button-content">Перейти</span></button></div></div>
-              </div>
+        <article class="text-feed island ll-ad">
+          <div class="uni-cell-wrapper"><div class="uni-cell-container"><div class="uni-cell">
+            <div class="avatar __size-44 __type-image"><img src="assets/people/ad-1.webp" alt=""></div>
+            <div class="uni-cell-additional-content">
+              <div class="ds-title-s">Квартал бизнес-класса «Б15»</div>
+              <div class="ds-caption-s text-feed__time">Реклама 0+</div>
             </div>
-          </div>
+          </div></div></div>
+          <p class="ds-body-m text-feed__body feed-more__text">От 7,6 млн ₽! 15 минут до исторического центра города. Два варианта отделки.</p>
+          <div class="text-feed__media __single"><img style="width:100%; height:100%; object-fit:cover; display:block" src="assets/activity/1e4af6873e0723e6.webp" alt=""></div>
+          <div class="actions-bar"><div class="button-wrapper __size-36 __full-width" style="display:block"><button class="button-container __style-primary" style="width:100%"><span class="button-content">Перейти</span></button></div></div>
         </article>
 
-        <!-- Пока только оболочка острова. Готовый comment-thread сюда подходит,
-             но сами ветки добавим отдельным этапом. -->
-        <section class="island ll-comments" aria-labelledby="ll-comments-title">
-          <h2 class="ds-title-l" id="ll-comments-title">Комментарии 23</h2>
-          <span class="button-inline-wrapper __size-24 __view-primary"><button class="button-inline __size-24"><span class="button-inline__content">По популярности</span></button></span>
-          <div class="ll-comments__mount" id="ll-comments-mount"></div>
+        <section class="post-comments island" aria-labelledby="ll-comments-title">
+          <header class="header __size-l __counter post-comments__header">
+            <div class="header__title-row">
+              <h2 class="header__title" id="ll-comments-title">Комментарии</h2>
+              <span class="header__counter ds-title-l">23</span>
+            </div>
+          </header>
+          <div class="post-comments__sort">
+            <span class="button-inline-wrapper __size-20 __view-secondary"><button class="button-inline __size-20"><span class="button-inline__content">По популярности<img class="button-inline__icon __right" src="assets/icons/down_16_20.svg" width="16" height="16" alt=""></span></button></span>
+          </div>
+          <div class="post-comments__threads" id="ll-comments-mount">
+          <div class="twitterlike-thread">
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __root">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/4.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Виктор Бондарев</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">В драниках всегда слышится сексуальный подтекст.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span></div></div>
+            </div>
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __reply">
+              <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/5.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Антонида Чекалова (Гахова)</span><span class="ds-body-m fc-comment__date">· 15 июня</span></div><p class="fc-comment__text ds-body-m feed-more__text">Кому как! Каждый рассуждает по мере своей испорченности!</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>6</span></button></span></div></div>
+            </div>
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __reply">
+              <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/2.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Сергей Чернышов</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">Ну только если ты страдалец по сексу.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span></div></div>
+            </div>
+            <div class="fc-more __twitter-like twitterlike-thread__more"><span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span></div>
+          </div>
+          </div>
+          <div class="twitterlike-thread">
+          <div class="fc-list __twitter-like">
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __root">
+              <div class="fc-comment__aside"><div class="avatar __size-36 __type-image"><img src="assets/people/1.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Александра Бачурина (Душка)</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">В драники ещё добавляют тыкву и кабачки. Я делаю так: картошку на крупную тёрку, сырые яйца, лук репчатый, соль. Кушает моя семья со сметанкой или томатной подливкой. У каждого свой рецепт. Кто что хочет и добавляет, на своё усмотрение.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span></div></div>
+            </div>
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __reply">
+              <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/3.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Зинаида Халина (Стребкова)</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">… 😄 мы сами с усами.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>2</span></button></span></div></div>
+            </div>
+            <div class="fc-comment __twitter-like twitterlike-thread__comment __reply">
+              <div class="fc-comment__aside"><div class="avatar __size-24 __type-image"><img src="assets/people/7.webp" alt=""></div><span class="fc-comment__line" aria-hidden="true"></span></div>
+              <div class="fc-comment__body"><div class="fc-comment__head"><span class="ds-title-s fc-comment__author">Галина Гаджикулиева</span><span class="ds-body-m fc-comment__date">· 12:13</span></div><p class="fc-comment__text ds-body-m feed-more__text">Никогда не добавляю ни муку, ни яйцо, только крахмал из осадка с натёртого картофеля.</p><div class="fc-comment__actions"><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content">Ответить</span></button></span><span class="button-inline-wrapper __size-20 __view-tertiary"><button class="button-inline __size-20"><span class="button-inline__content"><span class="button-inline__icon icon __size-16 __slot-klass-outline"></span>Класс</span></button></span></div></div>
+            </div>
+            <div class="fc-more __twitter-like twitterlike-thread__more"><span class="button-inline-wrapper __size-20 __view-primary"><button class="button-inline __size-20"><span class="button-inline__content">Посмотреть все ответы</span></button></span></div>
+          </div>
+          </div>
+          </div>
         </section>
 
       </div>
@@ -153,7 +193,8 @@
   <!-- Моя ава (data-user-avatar) в инпуте коммента + лотти «Класс!» на лайк. -->
   <script src="data/people.js"></script>
   <script src="components/user-data.js"></script>
-  <script src="components/actions-bar.js"></script>
+  <script src="components/actions-bar.js?v=2"></script>
+  <script src="components/twitterlike-thread.js"></script>
 
   <!-- Навигация по кнопкам/ссылкам с data-href (напр. «Перейти к фотомарафону»
        в инжектированном посте). screen-transition.js в обычном post.html не
@@ -183,6 +224,7 @@
           // Инлайновый инпут из карточки ленты на детали не нужен — снизу есть
           // прибитый (ll-answer). Убираем дубль.
           el.querySelectorAll('.fc-input, .actions-bar').forEach(function (n) { n.remove(); });
+          el.querySelectorAll(':scope > .breadcrumbs, :scope > .feed-header > .breadcrumbs, .button-subscribe').forEach(function (n) { n.remove(); });
           // В ленте источник открывается из reshare-card, но в леере его медиа
           // уже является основным медиа поста. Меняем только прямых детей,
           // чтобы настоящие вложенные репосты сохранили свою семантику.
@@ -190,22 +232,37 @@
             media.classList.remove('text-feed__reshare-card-media');
             media.classList.add('text-feed__media', '__single');
           });
-          // В леере шапка поста всегда использует вариант uniCell из макета:
-          // без внутренних паддингов, с avatar 36 и Caption M для метаданных.
-          var author = el.querySelector(':scope > .uni-cell-wrapper');
+          // Нормализуем шапку тем же feed-header/uni-cell-паттерном, который
+          // используется у обычного поста в Q3-ленте.
+          var existingHeader = el.querySelector(':scope > .feed-header');
+          var author = existingHeader
+            ? existingHeader.querySelector(':scope > .uni-cell-wrapper')
+            : el.querySelector(':scope > .uni-cell-wrapper');
           if (author) {
-            author.classList.add('ll-post__author');
+            var header = existingHeader;
+            if (!header) {
+              header = document.createElement('header');
+              header.className = 'feed-header';
+              author.parentNode.insertBefore(header, author);
+              header.appendChild(author);
+            }
             var avatar = author.querySelector('.avatar');
             if (avatar) {
               Array.prototype.slice.call(avatar.classList).forEach(function (name) {
                 if (/^__size-/.test(name)) avatar.classList.remove(name);
               });
-              avatar.classList.add('__size-36');
+              avatar.classList.add('__size-44');
             }
-            var meta = author.querySelector('.text-feed__time');
-            if (meta) {
-              meta.classList.remove('ds-caption-s');
-              meta.classList.add('ds-caption-m');
+            var name = author.querySelector('.feed-header__name, .uni-cell-additional-content > .ds-title-s, .uni-cell-additional-content > .ds-title-m');
+            if (name) {
+              name.classList.remove('ds-title-m');
+              name.classList.add('ds-title-s', 'feed-header__name');
+              if (!name.parentElement.classList.contains('feed-header__line')) {
+                var line = document.createElement('div');
+                line.className = 'feed-header__line';
+                name.parentNode.insertBefore(line, name);
+                line.appendChild(name);
+              }
             }
           }
         }

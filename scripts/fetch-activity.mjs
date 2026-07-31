@@ -193,6 +193,8 @@ function leadFor(a, size = 44) {
     }
     case 'photo':
       return `<div class="picture __size-${size} __type-image"><img src="${esc(a.image)}" alt=""></div>`;
+    case 'clip':
+      return `<div class="picture __type-image activity-cell__clip"><img src="${esc(a.image)}" alt=""></div>`;
     case 'photo-pair': {
       const urls = a.image.split(',').map(s => s.trim()).filter(Boolean).slice(0, 2);
       return `<div class="photo-pair">
@@ -220,13 +222,13 @@ function rightFor(a) {
       console.warn(`⚠ events:${a.id}: для photo-pair нужны 2 ссылки в колонке изображения`);
       return '';
     }
-    const badge = badgeElement(a.badge, 'activity-cell__media-badge');
+    const badge = badgeElement(a.badge, 'activity-cell__media-badge __border');
     const pictures = images.map(image => `<div class="picture __type-image"><img src="${esc(image)}" alt=""></div>`).join('');
     return `<div class="activity-cell__right activity-cell__media"><div class="photo-pair activity-cell__photo-pair">${pictures}</div>${badge}</div>`;
   }
   if ((a.right === 'photo' || a.right === 'clip') && a.image) {
     const image = esc(a.image.split(',')[0].trim());
-    const badge = badgeElement(a.badge, 'activity-cell__media-badge');
+    const badge = badgeElement(a.badge, 'activity-cell__media-badge __border');
     const className = a.right === 'clip'
       ? 'picture __type-image activity-cell__clip'
       : 'picture __size-56 __type-image';

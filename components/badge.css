@@ -15,6 +15,7 @@
 }
 
 .badge.__size-24 { --badge-size: 24px; }
+.badge.__border { box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary); }
 .badge > .icon { width: 16px; height: 16px; }
 .badge.__type-radio > .icon,
 .badge.__type-share > .icon,

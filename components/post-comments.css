@@ -1,0 +1,40 @@
+/**
+ * OK Design System — PostComments
+ *
+ * Композиционный компонент комментариев под открытым постом. Не создаёт
+ * собственных вариантов примитивов: заголовок — Header с __counter,
+ * сортировка — ButtonInline 20, строки — fc-comment.__twitter-like.
+ *
+ * <section class="post-comments island" aria-labelledby="comments-title">
+ *   <header class="header __size-l __counter post-comments__header">…</header>
+ *   <div class="post-comments__sort">…ButtonInline 20…</div>
+ *   <div class="fc-list __twitter-like">…</div>
+ * </section>
+ */
+
+.post-comments {
+  padding: 0;
+}
+
+.post-comments__header {
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.post-comments__header.header.__counter .header__counter {
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dynamic-text-and-icons-base-secondary);
+}
+
+.post-comments__sort {
+  padding: var(--space-1) var(--space-4) var(--space-4);
+}
+
+.post-comments__threads {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}

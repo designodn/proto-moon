@@ -25,39 +25,18 @@
   padding-inline: var(--space-4);
 }
 
-.ll-post__author {
-  --uni-cell-padding-top: 0;
-  --uni-cell-padding-bottom: 0;
-  --uni-cell-padding-left: 0;
-  --uni-cell-padding-right: 0;
-  padding: 0 var(--space-4);
-}
-
-.ll-post__author .uni-cell-container {
-  margin: 0;
-  padding: 0;
-  overflow: visible;
-}
-
-.ll-post__author .uni-cell {
-  gap: var(--space-2);
-}
-
 .ll-post__source > .text-feed__media {
   width: 100%;
 }
 
-/* В детальном посте автор цитируемой записи выровнен на 16px от границ
-   reshare-card. Карточка уже имеет собственные 12px, поэтому расширяем строку
-   автора до её внутренних границ и задаём канонический padding отдельно. */
+/* В детальном посте строка автора цитируемой записи получает собственные
+   горизонтальные паддинги 16px — без отрицательного выноса за контейнер. */
 .ll-post .text-feed__reshare-card-author {
   box-sizing: border-box;
-  margin-inline: calc(var(--space-3) * -1);
   padding-inline: var(--space-4);
 }
 
-.ll-post__source > .text-feed__media img,
-.ll-post-ad .text-feed__media img {
+.ll-post__source > .text-feed__media img {
   display: block;
   width: 100%;
   height: 100%;
@@ -69,7 +48,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4) 0;
+  padding: 0 var(--space-4);
 }
 
 .ll-post__counters {
@@ -82,31 +61,32 @@
 
 .ll-post__reactions .actions-bar {
   width: 100%;
+  gap: var(--space-2);
 }
 
 .ll-post__reaction-dots {
   display: inline-flex;
+  align-items: flex-start;
+  flex: 0 0 auto;
   padding-right: 2px;
 }
 
-.ll-post__reaction-dots > span {
-  display: grid;
-  place-items: center;
+.ll-post__reaction-dots > img {
+  display: block;
   width: 20px;
   height: 20px;
   margin-right: -2px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--dynamic-surface-base-secondary);
-  font-size: 13px;
+}
+
+.ll-post__reaction-dots > img:last-child {
+  margin-right: 0;
 }
 
 .ll-post__action .button-container {
-  min-height: 32px;
   height: 32px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: var(--dynamic-surface-contrast-low);
+  --button-background-color: var(--dynamic-surface-contrast-low);
 }
 
 .ll-post__action {
@@ -127,61 +107,21 @@
 
 .ll-post__reactions .actions-bar > .ll-post__action .button-container {
   width: 100%;
-}
-
-.ll-post__reactions .actions-bar > .ll-post__action:nth-child(2) .button-container {
-  padding-right: 14px;
+  height: 32px;
 }
 
 .ll-post__action .button-content {
   gap: 6px;
-  font-size: 13px;
-  line-height: 16px;
+  font-family: var(--scaled-caption-m-font-family, Roboto, Arial, sans-serif);
+  font-size: var(--scaled-caption-m-font-size, 13px);
+  font-weight: var(--scaled-caption-m-font-weight, 400);
+  line-height: var(--scaled-caption-m-line-height, 16px);
+  letter-spacing: var(--scaled-caption-m-letter-spacing, 0);
 }
 
-.ll-post__action .ll-icon,
-.ll-post__action .button-klass__icon-outline,
-.ll-post__action .button-klass__icon-filled {
+.ll-post__action .ll-icon {
   width: 16px;
   height: 16px;
-}
-
-.ll-post-ad {
-  padding-top: var(--space-4);
-  padding-bottom: var(--space-4);
-}
-
-.ll-post-ad.caf.__twitter-like .caf__stack {
-  padding-top: 0;
-}
-
-.ll-post-ad .caf__content > .text-feed__media {
-  margin-top: var(--space-3);
-  border-radius: 12px;
-}
-
-.ll-post-ad .caf__content > .actions-bar {
-  margin-top: var(--space-2);
-}
-
-.ll-post-ad .__full-width,
-.ll-post-ad .__full-width .button-container {
-  display: block;
-  width: 100%;
-}
-
-.ll-comments {
-  min-height: 164px;
-  padding: var(--space-1) var(--space-4) var(--space-4);
-}
-
-.ll-comments h2 {
-  margin: 0;
-  padding-block: var(--space-3);
-}
-
-.ll-comments__mount:empty {
-  display: none;
 }
 
 .ll-answer {

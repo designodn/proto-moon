@@ -67,6 +67,16 @@
   box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
 }
 
+/* Figma 3167:257178: indicator 12px с cutout 2px стоит в bottom-left
+   56px AvaPicture. Координаты принадлежат аватару и не зависят от ячейки. */
+.ds-activity-conveyor .avatar.__size-56 > .avatar__addon.__pos-bl,
+.activity-list .avatar.__size-56 > .avatar__addon.__pos-bl {
+  top: auto;
+  right: auto;
+  bottom: 0;
+  left: 0;
+}
+
 /* ============================================================
    ЛИД-ВИЗУАЛ #2 — ЭМОДЗИ/СТИКЕР + ТРОФЕЙ поверх картинки
    ============================================================ */
@@ -137,6 +147,55 @@
 }
 .photo-pair > .picture:nth-child(1) { width: 30.7px; height: 28.9px; top: 3px;  left: 1px;  transform: rotate(-7.21deg);  z-index: 1; }
 .photo-pair > .picture:nth-child(2) { width: 29.4px; height: 27.7px; top: 12px; left: 12px; transform: rotate(11.57deg);  z-index: 2; }
+
+/* Правый слот hug-ится по вложенному компоненту и всегда стоит сверху.
+   Размер фиксируется у самих photo/avatar/clip, а не у контейнера слота. */
+.activity-cell__clip {
+  flex: 0 0 42px;
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  border-radius: 12px;
+}
+
+.ds-activity-conveyor .activity-cell__right {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  align-self: flex-start;
+}
+.ds-activity-conveyor .activity-cell__right > .avatar,
+.ds-activity-conveyor .activity-cell__right > .picture {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  max-width: 56px;
+  max-height: 56px;
+}
+.ds-activity-conveyor .activity-cell__right > .activity-cell__clip {
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+}
+.ds-activity-conveyor .activity-cell__media-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  z-index: 1;
+  box-shadow: 0 0 0 2px var(--dynamic-surface-base-secondary);
+}
 
 /* ============================================================
    ПОЯВЛЕНИЕ В КОНВЕЙЕРЕ — цветная подложка по категории.

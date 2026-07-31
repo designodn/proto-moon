@@ -9,5 +9,19 @@
  * Чтобы вернуть бёрст — см. историю git (анимация на assets/lottie/like.json).
  */
 (function () {
-  /* no-op: лайк-бёрст скрыт по тапу на «Класс». */
+  /* Вариант с одной иконкой: меняет src без второго скрытого элемента,
+     поэтому геометрия кнопки и gap не меняются между состояниями. */
+  function syncIcon(input) {
+    var button = input && input.closest('.button-klass');
+    var icon = button && button.querySelector('.button-klass__icon-swap');
+    if (!icon) return;
+    icon.src = input.checked ? icon.dataset.srcFilled : icon.dataset.srcOutline;
+  }
+
+  document.addEventListener('change', function (event) {
+    var input = event.target;
+    if (input.matches('.button-klass > input[type="checkbox"]')) syncIcon(input);
+  });
+
+  document.querySelectorAll('.button-klass > input[type="checkbox"]').forEach(syncIcon);
 })();

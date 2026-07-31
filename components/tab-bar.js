@@ -6,8 +6,31 @@
  * Подключение: <script src="components/tab-bar.js"></script> на странице с .tabbar.
  */
 (function () {
+  var EVENTS_MODE_KEY = 'tabbar-events-lenta';
+  var FEED_ROUTE_KEY = 'tabbar-feed-route';
+  var path = location.pathname;
+
+  // Сохраняем, из какого прототипа открыт общий экран (например, Сообщения).
+  // Тогда кнопка «Лента» возвращает в тот же прототип, а состав таббара
+  // остаётся таким же, как на исходной странице.
+  if (/\/events-lenta\//.test(path)) {
+    sessionStorage.setItem(EVENTS_MODE_KEY, '1');
+    sessionStorage.setItem(FEED_ROUTE_KEY, 'events-lenta/lenta.html');
+  } else if (/\/lenta-q3\.html$/.test(path)) {
+    sessionStorage.removeItem(EVENTS_MODE_KEY);
+    sessionStorage.setItem(FEED_ROUTE_KEY, 'lenta-q3.html');
+  }
+
+  var eventsMode = sessionStorage.getItem(EVENTS_MODE_KEY) === '1';
+  if (eventsMode) {
+    document.querySelectorAll('.tabbar-icon.__slot-book').forEach(function (button) {
+      var cell = button.closest('.tabbar__cell');
+      (cell || button).remove();
+    });
+  }
+
   var ROUTES = {
-    feed: 'lenta-q3.html',
+    feed: sessionStorage.getItem(FEED_ROUTE_KEY) || 'lenta-q3.html',
     book: 'tribune.html',
     message: 'messages.html',
     clip: 'klipy.html',
