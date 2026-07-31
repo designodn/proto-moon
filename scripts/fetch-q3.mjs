@@ -1434,7 +1434,7 @@ const postInTab = (p, tab) =>
    свой полноширинный лейаут (clip, memories-clip, marathon и пр.). Флаг твиттера
    (колонка «Твиттер-лайк?») применяется ТОЛЬКО к типам из этого списка. */
 const TW_TYPES = new Set([
-  'photo', 'text', 'video', 'reshare-post', 'group-post',
+  'photo', 'photo-gallery', 'text', 'video', 'reshare-post', 'group-post',
   'ad', 'gift-received', 'ai-gift-received', 'friendversary', 'clip',
 ]);
 
@@ -1550,9 +1550,12 @@ ${birthdayInner(title, text, friendIds)}
   } else {
     const body = title && text ? `${title}. ${text}` : (title || text);
     if (body) inner += '\n' + cafTextTw(body);
-    // Медиа/цитата — по единому правилу twMedia (1 автор → обычное медиа под
-    // текстом; 2 автора → reshare-контейнер с оригиналом).
-    const m = twMedia(ids, photos);
+    // Photo-gallery с включённым «Твиттер-лайк?» остаётся каруселью, но живёт
+    // внутри правой колонки общего twitter-like ряда. Остальные типы используют
+    // единое правило twMedia (1 автор → медиа; 2 → reshare-контейнер).
+    const m = type === 'photo-gallery'
+      ? media(photos, { carousel: IS_EVENTS })
+      : twMedia(ids, photos);
     if (m) inner += '\n' + m;
   }
 

@@ -441,6 +441,9 @@
   -ms-overflow-style: none;
 }
 .text-feed__media.__events-carousel::-webkit-scrollbar { display: none; }
+.caf__content .text-feed__media.__events-carousel {
+  padding-left: 0;
+}
 .text-feed__media-carousel-cell {
   flex: 0 0 auto;
   width: 220px;
