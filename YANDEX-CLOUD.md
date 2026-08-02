@@ -34,7 +34,7 @@ push / merge в main (GitHub)
    proto-design-okds.ru
    → Cloud DNS (зона okds-zone, ANAME на шлюз)
    → API Gateway okds-gw (HTTPS, Let's Encrypt; http-интеграция → VM:80)
-   → VM ok-ds-vm (89.169.132.5), контейнер server.mjs на :80
+   → VM ok-ds-vm (51.250.82.186), контейнер server.mjs на :80
 ```
 
 **Почему VM, а не Serverless:** `server.mjs` пишет файлы в рантайме (синк ленты)
@@ -50,7 +50,7 @@ Railway: один всегда живой процесс, состояние с�
 
 | Ресурс | Имя | ID / адрес |
 |---|---|---|
-| Compute VM | `ok-ds-vm` | `fhm4fsj5ia9nbh9th9p6`, IP `89.169.132.5`, зона `ru-central1-a` |
+| Compute VM | `ok-ds-vm` | `fhm4fsj5ia9nbh9th9p6`, IP `51.250.82.186`, зона `ru-central1-a` |
 | API Gateway | `okds-gw` | `d5dpkskhhsasgbkcguu1` |
 | DNS-зона | `okds-zone` | `dnsckb5gb22r8sh1emn9` |
 | Сертификат (Let's Encrypt) | `okds-cert` | `fpq4v4m5bgdn432b6n0e` |
@@ -59,7 +59,7 @@ Railway: один всегда живой процесс, состояние с�
 **Адреса:**
 - основной (красивый): <https://proto-design-okds.ru/>
 - технический шлюз: `https://d5dpkskhhsasgbkcguu1.kr8f6hld.apigw.yandexcloud.net/`
-- VM напрямую (http, для отладки): `http://89.169.132.5/`
+- VM напрямую (http, для отладки): `http://51.250.82.186/`
 
 **Приватность:** `server.mjs` отдаёт `X-Robots-Tag: noindex` и `robots.txt` с
 полным `Disallow` — из поиска не находится, доступ только по ссылке.
@@ -130,7 +130,7 @@ ssh, токен не светится; `.env` = 600, в git не попадае�
 Заходить на VM нужно приватным деплой-ключом (тем, что лежит в секрете
 `DEPLOY_SSH_KEY`, в декодированном виде):
 ```bash
-ssh -i <путь_к_приватному_ключу> yc-user@89.169.132.5
+ssh -i <путь_к_приватному_ключу> yc-user@51.250.82.186
 
 # на VM код лежит в /opt/proto-moon:
 cd /opt/proto-moon
@@ -156,7 +156,7 @@ docker compose up -d --build  # пересборка вручную
 
 HTTPS — managed-сертификат Let's Encrypt (`okds-cert`) в Certificate Manager,
 привязан к домену на API Gateway. Шлюз проксирует на VM по HTTP
-(`type: http`, `url: http://89.169.132.5/{proxy}`).
+(`type: http`, `url: http://51.250.82.186/{proxy}`).
 
 ### Полезные команды
 ```bash
@@ -165,6 +165,48 @@ yc serverless api-gateway get --name okds-gw
 yc dns zone list-records --name okds-zone
 yc certificate-manager certificate get --id fpq4v4m5bgdn432b6n0e
 ```
+
+---
+
+## Если сайт отдаёт ошибку сертификата (`ERR_CERT_COMMON_NAME_INVALID`)
+
+Симптом: браузер на `proto-design-okds.ru` пишет «Ваше подключение не защищено»,
+хотя домен и сертификат заведены правильно.
+
+Диагностика — одной командой (не через браузер, там видно только ошибку):
+```bash
+curl -sSv https://proto-design-okds.ru/ -o /dev/null 2>&1 | grep -E 'subject:|SSL'
+curl -sS https://d5dpkskhhsasgbkcguu1.kr8f6hld.apigw.yandexcloud.net/healthz
+curl -sS http://51.250.82.186/healthz          # VM напрямую, мимо шлюза
+```
+
+Если в сертификате `CN=*.<shard>.apigw.yandexcloud.net` вместо нашего домена, а
+шлюз отвечает `403 API Gateway … is stopped and cannot be used` — **сертификат
+ни при чём, остановлен сам шлюз**. Остановленный шлюз теряет привязку домена и
+отдаёт свой дефолтный серт, отсюда и ошибка в браузере.
+
+Почему останавливается: чаще всего **закончились деньги на платёжном аккаунте**.
+Облако при блокировке гасит и шлюз, и VM.
+
+Порядок восстановления:
+1. Пополнить кошелёк, дождаться статуса `ACTIVE` (не мгновенно — до получаса).
+2. **Запустить VM руками** — после разблокировки Yandex Cloud сам их не поднимает:
+   Compute Cloud → `ok-ds-vm` → Запустить (`yc compute instance start --name ok-ds-vm`).
+3. ⚠️ **Проверить публичный IP ВМ — он меняется.** Адрес эфемерный: при остановке
+   освобождается, при старте выдаётся новый. Новый IP надо прописать в двух местах:
+   - http-интеграция API Gateway `okds-gw` (`url: http://<IP>/{proxy}`) — иначе
+     шлюз проксирует в пустоту и отдаёт 502;
+   - `.sourcecraft/ci.yaml` → `DEPLOY_HOST` — иначе автодеплой не найдёт машину.
+
+   Чтобы это не повторялось — сделать адрес статическим: VPC → IP-адреса →
+   адрес `ok-ds-vm` → «Сделать статическим». Тогда он переживает остановку.
+4. Проверить шлюз и сертификат (`okds-cert` должен быть `ISSUED`; DNS-запись
+   `_acme-challenge` для перевыпуска остаётся в зоне и трогать её не надо).
+
+Пока облако лежит, прототипы отдаёт GitHub Pages (workflow `deploy-pages.yml`):
+<https://designodn.github.io/proto-moon/> — по реальным путям файлов
+(`/lenta-q3.html`, `/events-lenta/lenta.html`, `/new-vision/lenta.html`),
+без красивых `/q3`, `/nv` и без кнопки синка (их делает `server.mjs`).
 
 ---
 
