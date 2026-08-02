@@ -228,6 +228,30 @@ curl -sS http://51.250.82.186/healthz          # VM напрямую, мимо �
 
 Оба ключа — секреты, в git их не коммитим.
 
+### Доступ к облаку из сессии Claude Code
+
+Контейнер агента эфемерный: репозиторий клонируется заново, всё остальное
+стирается. Поэтому ключ робота **не хранится в репозитории** (это утечка) — он
+лежит в **переменной окружения среды Claude Code** (claude.ai/code → Environment
+→ переменные окружения):
+
+- `YC_SA_KEY_B64` — авторизованный ключ SA `ok-ds-deployer` в base64.
+  Заводится один раз: `base64 -i <key>.json | tr -d '\n' | pbcopy` → вставить
+  в переменную.
+
+Как агент им пользуется:
+```bash
+curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i ./yc -n
+printf '%s' "$YC_SA_KEY_B64" | base64 -d > /tmp/yc-key.json && chmod 600 /tmp/yc-key.json
+./yc/bin/yc config profile create sa
+./yc/bin/yc config set service-account-key /tmp/yc-key.json
+./yc/bin/yc config set cloud-id b1gnhmibe8oinctgao9v
+./yc/bin/yc config set folder-id b1g072enfcmkigbqem47
+```
+
+Роль робота держим на `editor`, а не `admin`: ключ доступен любой сессии в этом
+окружении, а для старта ВМ, правки шлюза и резерва IP админских прав не нужно.
+
 ### Управление ключами
 ```bash
 # SA-ключи (yc)

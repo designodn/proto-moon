@@ -1,1 +1,7 @@
 node_modules/
+
+# Ключи Yandex Cloud — в репозиторий не попадают никогда.
+authorized_key.json
+*-key.json
+key*.json
+.env
