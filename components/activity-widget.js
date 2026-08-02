@@ -25,12 +25,6 @@
    Настройки через data-атрибуты на .ds-activity-conveyor (опционально):
      data-step-ms="3000"                 — период смены ячеек
      data-confetti-src="assets/lottie/confetti.json"  — путь к Lottie-конфетти
-     data-max-cell-h="auto|off|<px>"     — порог высоты ячейки:
-       auto (по умолчанию) — порог считается сам, = самая частая (модальная)
-                             высота пула; ячейки выше в ротацию не берём;
-       <px>                — явный порог, напр. data-max-cell-h="92";
-       off                 — фильтр выключен, прежнее поведение (высота ряда
-                             натуральная, резерв = максимум + медиана).
 */
 (function () {
   var STEP_MS_DEFAULT = 3000;
@@ -112,44 +106,27 @@
         cachedRowHeight = next;
         var rows = Math.round(cssNum('--conv-rows', 2));
         var gap = cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
-        var attr = (conv.getAttribute('data-max-cell-h') || 'auto').trim();
-        var explicit = parseFloat(attr);
-        var threshold = attr === 'off' ? Infinity
-          : (isNaN(explicit) ? modeOf(heights) : explicit);
+        var threshold = modeOf(heights);
 
         // Страховка: если под порог попадает меньше ячеек, чем нужно конвейеру
-        // для ротации (видимые + одна на подмену), фильтр не применяем —
-        // замерший виджет хуже пустоты снизу.
+        // для ротации (видимые + одна на подмену), не фильтруем вовсе — порогом
+        // становится максимум, и в ротации остаётся весь пул. Замерший виджет
+        // хуже лишнего воздуха в коротких ячейках.
         if (heights.filter(function (h) { return h <= threshold; }).length < rows + 1) {
-          threshold = Infinity;
+          threshold = max;
         }
 
         Array.prototype.forEach.call(track.children, function (cell, index) {
           var oversize = heights[index] > threshold;
           cell.classList.toggle('__conv-oversize', oversize);
-          // Прошедшие порог тянем до общей высоты ряда, чтобы стек совпадал
-          // с резервом при любой паре; отфильтрованным оставляем натуральную
-          // (пригодится, если порог отключат).
+          // Ряды в ротации тянем до общей высоты, чтобы резерв совпадал с любой
+          // парой; отсеянным оставляем натуральную (вернутся при пересчёте).
           cell.style.setProperty('--conv-cell-h',
-            (oversize ? heights[index] : Math.max(heights[index], threshold)) + 'px');
+            (oversize ? heights[index] : threshold) + 'px');
         });
 
-        if (threshold === Infinity) {
-          // Фильтр выключен — прежняя эвристика: максимум + типичная (медианная)
-          // строка, чтобы одна аномально высокая не множилась на число рядов.
-          var sorted = heights.slice().sort(function (a, b) { return a - b; });
-          var middle = Math.floor(sorted.length / 2);
-          var median = sorted.length % 2
-            ? sorted[middle]
-            : Math.ceil((sorted[middle - 1] + sorted[middle]) / 2);
-          Array.prototype.forEach.call(track.children, function (cell, index) {
-            cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
-          });
-          cachedStackHeight = (sorted[sorted.length - 1] || 0) + (median || 0) + gap;
-        } else {
-          // Все ротируемые ряды одной высоты — резерв точный, без остатка.
-          cachedStackHeight = threshold * rows + gap;
-        }
+        // Все ротируемые ряды одной высоты — резерв точный, без остатка.
+        cachedStackHeight = threshold * rows + gap;
         conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
         syncPoolVisibility();
       }
