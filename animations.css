@@ -81,6 +81,13 @@
   visibility: hidden;
   pointer-events: none;
 }
+/* Ячейка выше порога --conv-max-cell-h (см. activity-widget.js): в ротацию не
+   берётся, чтобы разброс высот не распирал стек и не наезжал на блок снизу.
+   Из DOM не убираем — порог пересчитывается на ресайзе, ячейка может вернуться. */
+.ds-activity-conveyor__track > .__conv-oversize {
+  visibility: hidden;
+  pointer-events: none;
+}
 /* Режим замера: JS временно снимает фиксированную высоту со всех строк,
    находит самую высокую и записывает её обратно в --conv-row-h. */
 .ds-activity-conveyor.__conv-measuring {

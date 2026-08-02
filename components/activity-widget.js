@@ -25,6 +25,12 @@
    Настройки через data-атрибуты на .ds-activity-conveyor (опционально):
      data-step-ms="3000"                 — период смены ячеек
      data-confetti-src="assets/lottie/confetti.json"  — путь к Lottie-конфетти
+     data-max-cell-h="auto|off|<px>"     — порог высоты ячейки:
+       auto (по умолчанию) — порог считается сам, = самая частая (модальная)
+                             высота пула; ячейки выше в ротацию не берём;
+       <px>                — явный порог, напр. data-max-cell-h="92";
+       off                 — фильтр выключен, прежнее поведение (высота ряда
+                             натуральная, резерв = максимум + медиана).
 */
 (function () {
   var STEP_MS_DEFAULT = 3000;
@@ -49,9 +55,37 @@
     var configuredRows = Math.round(cssNum('--conv-rows', 2));
     conv.style.setProperty('--conv-rows', Math.max(0, Math.min(configuredRows, track.children.length)));
 
-    // Каждая строка сохраняет естественную высоту. Высота всего конвейера —
-    // максимум + медиана + gap, поэтому единичная высокая строка не создаёт
-    // пустоту внутри каждой ячейки. Замер кешируется до изменения viewport.
+    // Ячейки, не прошедшие порог высоты, помечены .__conv-oversize и в ротации
+    // не участвуют — работаем со списком оставшихся.
+    function eligibleCells() {
+      return Array.prototype.filter.call(track.children, function (cell) {
+        return !cell.classList.contains('__conv-oversize');
+      });
+    }
+
+    // Самая частая высота пула. При равенстве частот берём меньшую — так порог
+    // не уползает вверх от пары случайно длинных карточек.
+    function modeOf(list) {
+      var counts = {};
+      var bestCount = 0;
+      var bestValue = 0;
+      list.forEach(function (h) {
+        counts[h] = (counts[h] || 0) + 1;
+        if (counts[h] > bestCount || (counts[h] === bestCount && h < bestValue)) {
+          bestCount = counts[h];
+          bestValue = h;
+        }
+      });
+      return bestValue;
+    }
+
+    // Разброс высот ячеек (1/2/3 строки текста) ломает конвейер с фиксированной
+    // высотой: под низкой парой копится пустота снизу, а высокая пара наоборот
+    // не влезает и наезжает на блок под виджетом. Поэтому в ротацию берём только
+    // ячейки не выше порога и тянем каждую РОВНО до порога — контент внутри
+    // центрируется (justify-content:center у ряда), пустого места не остаётся.
+    // Высокие карточки не теряются: полный список открывается по шеврону.
+    // Замер кешируется до изменения viewport.
     function measureRows() {
       if (animating) return;
       var viewportWidth = Math.round(document.documentElement.clientWidth || window.innerWidth || 0);
@@ -76,20 +110,48 @@
       if (next > 0) {
         measuredViewportWidth = viewportWidth;
         cachedRowHeight = next;
-        Array.prototype.forEach.call(track.children, function (cell, index) {
-          cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
-        });
         var rows = Math.round(cssNum('--conv-rows', 2));
-        var sorted = heights.slice().sort(function (a, b) { return a - b; });
-        var middle = Math.floor(sorted.length / 2);
-        var median = sorted.length % 2
-          ? sorted[middle]
-          : Math.ceil((sorted[middle - 1] + sorted[middle]) / 2);
-        // На любой ширине не умножаем аномально высокую строку на число рядов:
-        // резервируем максимум + типичную (медианную) строку + межстрочный gap.
-        cachedStackHeight = (sorted[sorted.length - 1] || 0) + (median || 0)
-          + cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
+        var gap = cssNum('--conv-gap', 0) * Math.max(0, rows - 1);
+        var attr = (conv.getAttribute('data-max-cell-h') || 'auto').trim();
+        var explicit = parseFloat(attr);
+        var threshold = attr === 'off' ? Infinity
+          : (isNaN(explicit) ? modeOf(heights) : explicit);
+
+        // Страховка: если под порог попадает меньше ячеек, чем нужно конвейеру
+        // для ротации (видимые + одна на подмену), фильтр не применяем —
+        // замерший виджет хуже пустоты снизу.
+        if (heights.filter(function (h) { return h <= threshold; }).length < rows + 1) {
+          threshold = Infinity;
+        }
+
+        Array.prototype.forEach.call(track.children, function (cell, index) {
+          var oversize = heights[index] > threshold;
+          cell.classList.toggle('__conv-oversize', oversize);
+          // Прошедшие порог тянем до общей высоты ряда, чтобы стек совпадал
+          // с резервом при любой паре; отфильтрованным оставляем натуральную
+          // (пригодится, если порог отключат).
+          cell.style.setProperty('--conv-cell-h',
+            (oversize ? heights[index] : Math.max(heights[index], threshold)) + 'px');
+        });
+
+        if (threshold === Infinity) {
+          // Фильтр выключен — прежняя эвристика: максимум + типичная (медианная)
+          // строка, чтобы одна аномально высокая не множилась на число рядов.
+          var sorted = heights.slice().sort(function (a, b) { return a - b; });
+          var middle = Math.floor(sorted.length / 2);
+          var median = sorted.length % 2
+            ? sorted[middle]
+            : Math.ceil((sorted[middle - 1] + sorted[middle]) / 2);
+          Array.prototype.forEach.call(track.children, function (cell, index) {
+            cell.style.setProperty('--conv-cell-h', heights[index] + 'px');
+          });
+          cachedStackHeight = (sorted[sorted.length - 1] || 0) + (median || 0) + gap;
+        } else {
+          // Все ротируемые ряды одной высоты — резерв точный, без остатка.
+          cachedStackHeight = threshold * rows + gap;
+        }
         conv.style.setProperty('--conv-stack-h', cachedStackHeight + 'px');
+        syncPoolVisibility();
       }
     }
 
@@ -132,7 +194,7 @@
 
     function syncPoolVisibility() {
       var rows = Math.round(cssNum('--conv-rows', 3));
-      Array.prototype.forEach.call(track.children, function (cell, index) {
+      eligibleCells().forEach(function (cell, index) {
         cell.classList.toggle('__conv-pool-hidden',
           index >= rows && !cell.classList.contains('__conv-leave'));
       });
@@ -142,19 +204,20 @@
 
     function step() {
       var rows = Math.round(cssNum('--conv-rows', 3));
-      if (animating || track.children.length < rows + 1) return;
+      var pool = eligibleCells();
+      if (animating || pool.length < rows + 1) return;
       animating = true;
 
       // следующую скрытую (первую под видимой зоной) поднимаем наверх
-      var entering = track.children[rows];
-      track.insertBefore(entering, track.firstElementChild);
+      var entering = pool[rows];
+      track.insertBefore(entering, pool[0]);
       entering.classList.remove('__conv-pool-hidden');
       void entering.offsetWidth;                 // reflow → enter стартует с height:0
       entering.classList.add('__conv-enter');    // возникает из точки (animations.css)
       appear(entering);                          // + вспышка категорийной подложки
 
-      // нижняя видимая (теперь снова children[rows]) — сжимается к центру и исчезает
-      var leaving = track.children[rows];
+      // нижняя видимая (теперь снова [rows] в списке) — сжимается и исчезает
+      var leaving = eligibleCells()[rows];
       leaving.classList.remove('__conv-pool-hidden');
       leaving.classList.add('__conv-leave');
 
