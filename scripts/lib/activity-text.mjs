@@ -16,11 +16,38 @@ const CONTEXT_CASES = [
   { pattern: /(^|[\s ])(Поздравьте)([\s ]+)N(?=$|[\s ,.!?—–-])/gi, grammaticalCase: 'accusative' },
 ];
 
-const GENDER_PAIRS = [
-  ['активен', 'активна'], ['добавил', 'добавила'], ['опубликовал', 'опубликовала'],
-  ['подружился', 'подружилась'], ['поставил', 'поставила'], ['оценил', 'оценила'],
-  ['написал', 'написала'], ['поделился', 'поделилась'], ['вернулся', 'вернулась'],
+// Род прошедшего времени в русском задаётся регулярно: мужской род на «-л»
+// («-лся» у возвратных), женский на «-ла» («-лась»). Поэтому основной механизм —
+// ПРАВИЛО, а списки ниже нужны только для того, что под правило не подходит.
+// Раньше здесь был плоский список из девяти пар: любой глагол, которого в нём
+// нет, молча проходил мимо согласования (в живых данных таких было девять).
+
+// Формы, которые правило «-л/-ла» не выводит: краткие прилагательные и глаголы
+// с чередованием основы. Применяются в любом месте текста — они однозначны.
+const IRREGULAR_PAIRS = [
+  ['активен', 'активна'], ['рад', 'рада'], ['готов', 'готова'],
+  ['занят', 'занята'], ['согласен', 'согласна'], ['должен', 'должна'],
+  ['уверен', 'уверена'], ['доволен', 'довольна'], ['болен', 'больна'],
+  ['мог', 'могла'], ['шёл', 'шла'], ['ушёл', 'ушла'], ['пришёл', 'пришла'],
+  ['нашёл', 'нашла'], ['нёс', 'несла'], ['вёл', 'вела'], ['лёг', 'легла'],
 ];
+
+// Слова на «-л»/«-ла», которые глаголами НЕ являются: правило их не трогает,
+// иначе «забил гол» у женщины превратится в «забила гола».
+const NOT_A_VERB = new Set([
+  'гол', 'пол', 'мел', 'стол', 'узел', 'угол', 'отдел', 'футбол', 'вокзал',
+  'финал', 'канал', 'журнал', 'портал', 'сигнал', 'бокал', 'металл', 'квартал',
+  'филиал', 'материал', 'сериал', 'пенал', 'бассейн', 'зал', 'котёл', 'орёл',
+  'школа', 'сила', 'скала', 'пчела', 'метла', 'игла', 'стрела', 'смола',
+  'зола', 'похвала', 'акула', 'формула', 'капсула', 'ветла', 'юла', 'скула',
+]);
+
+// Служебные слова, которые могут стоять ПЕРЕД сказуемым, не разрывая его:
+// «снова активна — добавила момент».
+const PREDICATE_LEAD = new Set([
+  'снова', 'теперь', 'уже', 'впервые', 'недавно', 'сегодня', 'вчера',
+  'также', 'тоже', 'ещё', 'еще', 'только', 'что', 'сейчас', 'и', 'а', 'но',
+]);
 
 const NON_PERSON_SUBJECT = /понравил(?:ся|ась|ось|ись)\s+(?:ваш|ваша|ваше|ваши)(?=\s|$|[,.!?])/i;
 
@@ -108,19 +135,74 @@ export function inflectPersonName(name, gender, grammaticalCase = 'nominative') 
     .join(' ');
 }
 
+// Форма слова, согласованная с родом, или null — если слово вообще не носитель
+// рода (тогда на нём предикатная зона заканчивается).
+function agreedForm(word, gender) {
+  const lower = word.toLowerCase();
+  if (NOT_A_VERB.has(lower)) return null;
+  for (const [male, female] of IRREGULAR_PAIRS) {
+    if (lower === male || lower === female) return keepCase(word, gender === 'ж' ? female : male);
+  }
+  const masculine = /(?:лся|л)$/i.test(word) && word.length >= 3;
+  const feminine = /(?:лась|ла)$/i.test(word) && word.length >= 4;
+  if (!masculine && !feminine) return null;
+  if (gender === 'ж') {
+    if (/лся$/i.test(word)) return word.replace(/лся$/i, 'лась');
+    if (/(?:лась|ла)$/i.test(word)) return word;
+    return word + 'а';
+  }
+  if (/лась$/i.test(word)) return word.replace(/лась$/i, 'лся');
+  if (/лся$/i.test(word)) return word;
+  if (/ла$/i.test(word)) return word.slice(0, -1);
+  return word;
+}
+
+// Текст активности — это сказуемое, идущее ЗА именем («<Имя> опубликовал…»),
+// поэтому носители рода стоят в его начале. Идём слева направо, пока слова
+// согласуются или служебные; первое «содержательное» слово (дополнение,
+// предлог) зону закрывает — дальше правило не применяем, чтобы не тронуть
+// существительное на «-л»/«-ла».
+function scanPredicateZone(raw, gender, onWord) {
+  const parts = String(raw || '').split(/([А-Яа-яЁё]+)/);
+  for (let i = 1; i < parts.length; i += 2) {
+    if (/[.!?]/.test(parts[i - 1] || '')) return i;      // конец предложения
+    const word = parts[i];
+    const agreed = agreedForm(word, gender);
+    if (agreed !== null) { onWord(i, parts, agreed); continue; }
+    if (PREDICATE_LEAD.has(word.toLowerCase())) continue;
+    return i;
+  }
+  return parts.length;
+}
+
 export function agreeGenderText(raw, gender) {
   if (gender !== 'м' && gender !== 'ж') return raw;
   // Здесь человек — получатель, а род глагола задаёт существительное после него:
   // «Сергею понравился ваш момент». Пол Сергея не должен менять «понравился».
   if (NON_PERSON_SUBJECT.test(raw)) return raw;
-  let result = String(raw || '');
-  for (const [male, female] of GENDER_PAIRS) {
-    const source = gender === 'ж' ? male : female;
-    const target = gender === 'ж' ? female : male;
-    result = result.replace(new RegExp(`(^|[^А-Яа-яЁё])(${source})(?=$|[^А-Яа-яЁё])`, 'gi'),
-      (_, before, found) => before + keepCase(found, target));
+  const parts = String(raw || '').split(/([А-Яа-яЁё]+)/);
+  scanPredicateZone(raw, gender, (index, _parts, agreed) => { parts[index] = agreed; });
+  return parts.join('');
+}
+
+// Похожие на глагол прошедшего времени слова ЗА пределами предикатной зоны:
+// автоматически их не правим (там может быть существительное), но и молчать
+// про них нельзя — это ровно те случаи, где правило может недоработать.
+export function agreementWarnings(raw, gender) {
+  if (gender !== 'м' && gender !== 'ж') return [];
+  if (NON_PERSON_SUBJECT.test(raw)) return [];
+  const parts = String(raw || '').split(/([А-Яа-яЁё]+)/);
+  const zoneEnd = scanPredicateZone(raw, gender, () => {});
+  const warnings = [];
+  for (let i = zoneEnd; i < parts.length; i += 2) {
+    const word = parts[i];
+    if (!word || !/^[А-Яа-яЁё]+$/.test(word)) continue;
+    const agreed = agreedForm(word, gender);
+    if (agreed !== null && agreed !== word) {
+      warnings.push(`«${word}» вне сказуемого похоже на глагол не того рода (ожидалось «${agreed}») — проверь вручную`);
+    }
   }
-  return result;
+  return warnings;
 }
 
 export function isDativeRecipientText(raw) {
@@ -141,17 +223,60 @@ export function replacePersonToken(html, name, gender) {
   return result.replace(/\bN\b/g, `<b>${name}</b>`);
 }
 
+export const personIds = who => String(who || '').split(',').map(id => id.trim()).filter(Boolean);
+
+const ADDRESSED_TO_USER = /(?:^|\s)(?:у|для)\s+вас(?=\s|$|[,.!?])/i;
+
+// ЕДИНСТВЕННОЕ место, где решается, кто актёр, кто адресат токена N и надо ли
+// печатать имя актёра перед текстом. Раньше это правило жило двумя копиями —
+// в fetch-activity.mjs и в verify-activity-text.mjs — и они успели разойтись:
+// у верификатора не было ветки primaryIsPlaceholder, поэтому активности с одним
+// человеком и токеном N он молча пропускал вместо проверки.
+export function personTextRoles(activity) {
+  const ids = personIds(activity.who);
+  const text = String(activity.text || '');
+  const addressedToUser = ADDRESSED_TO_USER.test(text);
+  const primaryIsPlaceholder = ids.length === 1 && /\bN\b/.test(text);
+  const primaryId = ids[0] || String(activity.who || '');
+  return {
+    ids,
+    primaryId,
+    addressedToUser,
+    primaryIsPlaceholder,
+    // Кому принадлежит имя, подставляемое вместо N.
+    referencedId: ids[1] || ((addressedToUser || primaryIsPlaceholder) ? primaryId : ''),
+    // Имя актёра не печатаем: текст либо обращён к пользователю, либо уже
+    // содержит имя через N.
+    hideActorName: addressedToUser || primaryIsPlaceholder,
+  };
+}
+
 export function activityTextIssues(activity, people) {
   const issues = [];
   if (activity.lead !== 'person') return issues;
-  const ids = String(activity.who || '').split(',').map(s => s.trim()).filter(Boolean);
   const byId = Array.isArray(people)
     ? Object.fromEntries(people.map(person => [String(person.id), person]))
     : people;
+  const { ids, referencedId } = personTextRoles(activity);
   const primary = byId[String(ids[0])] || null;
   if (!ids[0]) issues.push('не заполнен первый человек в «кто»');
   for (const id of ids) if (!byId[String(id)]) issues.push(`не найден человек «${id}»`);
+
   const corrected = primary ? agreeGenderText(activity.text, primary.gender) : activity.text;
   if (corrected !== activity.text) issues.push(`род: «${activity.text}» → «${corrected}»`);
+  if (primary) for (const warning of agreementWarnings(activity.text, primary.gender)) issues.push(warning);
+
+  // Токен N обязан кем-то разрешаться, иначе он уедет в вёрстку как буква «N».
+  if (/\bN\b/.test(corrected)) {
+    const referenced = byId[String(referencedId)];
+    if (!referencedId) issues.push('в тексте есть N, но некого подставить (нет второго id в «кто»)');
+    else if (!referenced) issues.push(`не найден человек «${referencedId}» для подстановки N`);
+    else {
+      const name = String(referenced.name || '').replace(/\s*\(.*$/, '').trim();
+      if (/\bN\b/.test(replacePersonToken(corrected, name, referenced.gender))) {
+        issues.push('N не удалось заменить');
+      }
+    }
+  }
   return issues;
 }

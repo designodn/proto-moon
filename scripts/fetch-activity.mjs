@@ -39,6 +39,8 @@ import {
   agreeGenderText,
   inflectPersonName,
   isDativeRecipientText,
+  personIds,
+  personTextRoles,
   replacePersonToken,
 } from './lib/activity-text.mjs';
 
@@ -162,7 +164,8 @@ function badgeElement(raw, extraClass = '') {
   return `<span class="badge __size-20 __type-${badge.type}${extraClass ? ` ${extraClass}` : ''}">${content}</span>`;
 }
 
-const personIds = who => (who || '').split(',').map(id => id.trim()).filter(Boolean);
+// personIds — из общей либы (см. импорт выше): разбор «кто» должен быть один
+// и тот же у генератора и у верификатора.
 
 // Безопасная нормализация известных опечаток в контентном листе. Источник
 // остаётся таблицей, но прототип не публикует заведомо неверные формы.
@@ -331,19 +334,18 @@ function renderCell(a, options = {}) {
   const catClass = a.category ? ` __cat-${a.category}` : '';
   let text;
   if (a.lead === 'person') {
-    const ids = personIds(a.who);
-    const primaryId = ids[0] || a.who;
+    // Роли (актёр / адресат N / печатать ли имя) считает общая либа — то же
+    // правило использует verify-activity-text.mjs, чтобы проверка и генерация
+    // не могли разойтись.
+    const { ids, primaryId, referencedId, hideActorName } = personTextRoles(a);
     const name = nameOf(primaryId);
     const gender = genderOf(primaryId);
     const dativeActor = isDativeRecipientText(a.text);
     const actionSource = agreeGenderText(a.text, gender);
     let action = renderText(actionSource, gender);
-    const addressedToUser = /(?:^|\s)(?:у|для)\s+вас(?=\s|$|[,.!?])/i.test(a.text);
-    const primaryIsPlaceholder = ids.length === 1 && /\bN\b/.test(a.text);
-    const referencedId = ids[1] || ((addressedToUser || primaryIsPlaceholder) ? primaryId : '');
     if (referencedId) action = replacePersonToken(action, esc(nameOf(referencedId)), genderOf(referencedId));
     const actorName = dativeActor ? inflectPersonName(name, gender, 'dative') : name;
-    text = (addressedToUser || primaryIsPlaceholder) ? action : `<b>${esc(actorName)}</b> ${action}`;
+    text = hideActorName ? action : `<b>${esc(actorName)}</b> ${action}`;
   } else {
     text = renderText(a.text, '');
   }
