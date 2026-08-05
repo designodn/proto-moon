@@ -10,6 +10,5 @@ node_modules
 *.md
 *.sh
 .nojekyll
-.fig2.png
 Dockerfile
 .dockerignore

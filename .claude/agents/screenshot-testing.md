@@ -216,7 +216,7 @@ console.log('invariant cx delta:', after - before);   // ждём 0.00
 
 ## Project-specific tips
 
-- Страницы: `start.html` (локскрин/меню/сплеш), `lenta-q3.html` (лента), `start-lenta.html` (вариант стартового).
+- Страницы: `q3-view.html` (локскрин/меню/сплеш), `lenta-q3.html` (лента).
 - Unlock = клик по локскрину НИЖЕ области уведомлений (например, `page.mouse.click(195, 720)`), потому что пуш в верхней зоне ловит клик первым.
 - Тап по иконке приложения в меню → splash-анимация ~1150 ms → переход в `lenta-q3.html`. Жди `page.waitForURL('**/lenta-q3.html', { timeout: 6000 })`.
 - Стрим уведомлений в `sessionStorage`: ключи `ok_notif_idx`, `ok_notif_next_at`, `okstart_at_home`. Их значения говорят, продвинулся ли стрим/в каком состоянии экран.

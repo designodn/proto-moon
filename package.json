@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Статический прототип OK DS + сервер с автообновлением ленты из Google-таблицы",
+  "description": "Статический прототип OK DS: контент запекается локально скриптами scripts/fetch-*.mjs и коммитится в репозиторий",
   "scripts": {
     "start": "node server.mjs",
     "sync": "node scripts/fetch-all.mjs",
@@ -13,7 +13,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.726.0",
     "sharp": "^0.35.2"
   }
 }

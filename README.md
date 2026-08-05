@@ -25,11 +25,11 @@ ds-design/
     │
     ├── avatar.css              # Avatar (24–56px, image / initials)
     ├── pulse-dot.css           # PulseDot (анимированный индикатор)
-    ├── category-path.css       # CategoryPath (хлебные крошки)
+    ├── breadcrumbs.css         # Breadcrumbs (хлебные крошки)
     ├── feed-base.css           # FeedBase (карточка ленты)
-    ├── feed-tabs.css           # FeedTabs (большие табы сверху)
-    ├── tab-bar.css             # TabBar (нижняя навигация)
-    ├── page-header.css         # StatusBar + NavBar
+    ├── tabs.css                # Tabs (большие табы сверху)
+    ├── tabbar.css              # TabBar (нижняя навигация)
+    ├── header.css              # StatusBar + NavBar
     ├── comment-input.css       # CommentInput (поле + кнопка отправки)
     └── phone-frame.css         # PhoneFrame (375px-viewport для превью)
 ```

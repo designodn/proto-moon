@@ -19,9 +19,9 @@
 ## 1. Что это за проект
 
 Статический HTML-прототип мобильного соцсетевого приложения. Ни сборки, ни
-фреймворка, ни рантайма: 47 HTML-страниц, CSS-компоненты, ванильный JS, статика.
-`package.json` держит ровно две зависимости (`sharp`, `@aws-sdk/client-s3`) — и обе
-нужны **только скриптам сбора контента**, не странице.
+фреймворка, ни рантайма: 44 HTML-страницы, CSS-компоненты, ванильный JS, статика.
+`package.json` держит ровно одну зависимость (`sharp`) — и та нужна
+**только скриптам сбора контента**, не странице.
 
 Из этого следует главное архитектурное свойство: **страница = файл**, а структура
 папок == публичные URL. Всё остальное (роуты сервера, «контейнер» прототипа, пути в
@@ -36,8 +36,8 @@
 
 | Слой | Что это | Переносимость между БЮ |
 |---|---|---|
-| **ДС** | Токены, шрифты, ~82 CSS-компонента, 975 иконок, витрина `preview.html` | Берётся **как есть** |
-| **Приложение** | 47 страниц-экранов, 4 папки-прототипа, контент (`data/`, `assets/`) | **Пишется заново** под свой БЮ |
+| **ДС** | Токены, шрифты, ~80 CSS-компонентов, 975 иконок, витрина `preview.html` | Берётся **как есть** |
+| **Приложение** | 44 страницы-экрана, 4 папки-прототипа, контент (`data/`, `assets/`) | **Пишется заново** под свой БЮ |
 | **Инфра + правила** | Сервер, деплой, скрипты сбора, git-хук, `.claude/` агенты и правила | Берётся **с правкой конфигов** |
 
 Граница ДС/приложение проходит не по папкам, а по вопросу «есть ли здесь знание о
@@ -55,10 +55,10 @@
 | Путь | Что внутри | Переносимо |
 |---|---|---|
 | `tokens.css` | 30 КБ, 509 CSS-переменных: базовые, типографика + `ds-*`-хелперы, светлая/тёмная темы, альт-тема `theme-cocktail` | **Да** (палитра — под бренд) |
-| `index.css` | Единая точка входа ДС: 73 `@import` + минимальный reset + `--tabbar-height` | **Да**, но список импортов чистится под свой набор компонентов |
+| `index.css` | Единая точка входа ДС: 71 `@import` + минимальный reset + `--tabbar-height` | **Да**, но список импортов чистится под свой набор компонентов |
 | `fonts.css`, `fonts/` | `@font-face` OK Sans (5 otf + 2 ttf, 304 КБ) | **С правкой** — шрифт свой |
 | `animations.css` | Keyframes и transition-хелперы | **Да** |
-| `components/` | 82 CSS + 35 JS, ~980 КБ. Примитивы ДС и поведение | **Частично** — см. ниже |
+| `components/` | 80 CSS + 34 JS, ~970 КБ. Примитивы ДС и поведение | **Частично** — см. ниже |
 | `assets/icons/` | 975 SVG плоским списком; `components/icon.css` мапит 32 класса `__slot-*` на файлы | **Да** |
 | `preview.html` | 75 КБ, витрина ДС (роут `/preview`, и `index.html` редиректит сюда) | **Да** |
 
@@ -74,39 +74,39 @@
 
 | Путь | Что внутри | Переносимо |
 |---|---|---|
-| 29 `*.html` в корне | Экраны: `lenta-q3`, `q3-view`, `profile`, `klipy`, `messages`, `menu`, `tribune`, `gifts`, `gifts-catalog`, `send-gift`, `marathon*`, `notifications`, `vvz`, `today`, `friends`, `guests`, `post`, `chat`, `start-lenta`, `add-friends-sheet`, `new-vision`, `lenta`, `clip-edit`, `text-feed-prototype`, `comment-as-feed-twitter`, `index` | **Нет** — контент БЮ |
+| 26 `*.html` в корне | Экраны: `lenta-q3`, `q3-view`, `profile`, `klipy`, `messages`, `menu`, `tribune`, `gifts`, `gifts-catalog`, `send-gift`, `marathon*`, `notifications`, `vvz`, `today`, `friends`, `guests`, `post`, `chat`, `add-friends-sheet`, `new-vision`, `lenta`, `clip-edit`, `index` | **Нет** — контент БЮ |
 | `activity-lenta/` | 4 страницы: `lenta`, `view`, `okruzhenie`, `add-friends-sheet`. `<base href="../">` + `proto-contain.js` | **Нет** (шаблон полезен) |
 | `events-lenta/` | Копия activity-прототипа под другой сценарий, те же 4 страницы | **Нет** |
 | `new-vision/` | 4 страницы + свой подслой стилей: `new-vision.css`, `nv-fonts.css`, `around-you.css`, `components/` (7 файлов), `feeds/` (5 файлов) | **Нет** (пример надстройки — да) |
 | `koleso/` | 5 страниц игрового прототипа, подключает `../index.css` напрямую | **Нет** |
-| `data/` | 29 JSON + 4 JS, 380 КБ запечённого контента + `.sync-state.json` + 2 схемы | **Нет** — формат да, данные нет |
-| `assets/` | 133 МБ медиа: `clips` 37 МБ, `embedded` 25 МБ, `koleso` 13 МБ, `today` 7.7 МБ, `gifts`, `q3`, `activity`, `people`, `stories`, `vvz`… + `icons` (ДС) | **Нет**, кроме `icons/` |
+| `data/` | 27 JSON + 4 JS, ~370 КБ запечённого контента + `.sync-state.json` + схема `q3-feed.schema.json` | **Нет** — формат да, данные нет |
+| `assets/` | 103 МБ медиа: `clips` 37 МБ, `embedded` 10 МБ, `today` 8 МБ, `q3`, `gifts`, `activity` по 7 МБ, `koleso` 6 МБ, `people`, `stories`, `vvz`… + `icons` 6 МБ (ДС) | **Нет**, кроме `icons/` |
 
 ### Инфра и правила
 
 | Путь | Что внутри | Переносимо |
 |---|---|---|
 | `server.mjs` | 7.5 КБ: статик-сервер, карта `PROTOTYPES` (красивый путь → редирект), инлайн-лендинг, `/healthz`, `/robots.txt`, `X-Robots-Tag: noindex` | **С правкой** — переписать `PROTOTYPES` и лендинг |
-| `scripts/` | 10 `fetch-*.mjs`, оркестратор `fetch-all.mjs`, `lib/` (bucket, media-cache, sheet-cache, activity-text + тест), `nbsp.mjs`, `wire-vvz.mjs`, `verify-activity-text.mjs`, миграции | **С правкой** — `lib/` как есть, `fetch-*` под свои листы |
+| `scripts/` | 10 `fetch-*.mjs`, оркестратор `fetch-all.mjs`, `lib/` (media-cache, sheet-cache, activity-text + тест), `nbsp.mjs`, `wire-vvz.mjs`, `verify-activity-text.mjs` | **С правкой** — `lib/` как есть, `fetch-*` под свои листы |
 | `.githooks/pre-commit` | Прогоняет `scripts/nbsp.mjs` по staged `.html` и пере-добавляет их в коммит | **Да** |
 | `.claude/` | 4 агента (`macket-rules-checker`, `macket-insights-curator`, `screenshot-testing`, `kirill`), скилл `fetch-all`, `settings.json` с SessionStart-хуком | **С правкой** |
 | `.github/workflows/` | `deploy-pages.yml` (публикует корень репо как есть), `mirror-sourcecraft.yml` (зеркало на каждый push) | **Да** |
 | `.sourcecraft/` | `ci.yaml`, `sites.yaml` — конфиг зеркала | **С правкой** |
 | `Dockerfile`, `docker-compose.yml`, `deploy.sh`, `setup-yandex.sh` | Контейнер (node:22-slim) и деплой в Yandex Cloud / Object Storage | **С правкой** |
 | `CLAUDE.md`, `SESSION-INSIGHTS.md`, `docs/` | Правила сборки макетов, накопленные грабли, спека фидов | **Да** — это методология, не контент |
-| `README.md`, `DEPLOY.md`, `RAILWAY.md`, `YANDEX-CLOUD.md`, `UPLOADS.md` | Операционные доки | **С правкой** |
+| `README.md`, `DEPLOY.md`, `RAILWAY.md`, `YANDEX-CLOUD.md` | Операционные доки | **С правкой** |
 
 ---
 
 ## 4. Как устроен ДС
 
 **Точка входа одна — `index.css`.** Страница подключает её (`<link rel="stylesheet"
-href="index.css">`), дальше 73 `@import` тянут всё остальное в фиксированном порядке:
+href="index.css">`), дальше 71 `@import` тянут всё остальное в фиксированном порядке:
 `tokens.css` → `fonts.css` → `animations.css` → примитивы → производные компоненты →
 `type-scale.css`. У части импортов кэш-бастер (`?v=20260731-2`) — способ пробить
 кэш прототипа без переименования файла.
 
-35 из 47 страниц подключают `index.css`; 14 дополнительно тянут отдельные
+34 из 44 страниц подключают `index.css`; часть дополнительно тянет отдельные
 `components/*.css` (то, чего нет в общем входе, или NV-оверрайды).
 
 **Токены (`tokens.css`).** 509 переменных, разложенных по секциям:
@@ -207,7 +207,6 @@ Google Sheets (лист = раздел, gviz CSV)
         │
         ├─ media-cache.mjs  → качает чужие CDN-картинки локально, sharp: ≤1600px, webp q80,
         │                     манифест data/<feed>-media.json (URL → файл + хэш, prune сирот)
-        │                     (bucket.mjs — опциональная выгрузка в S3 вместо assets/)
         │
         └─ два вида выхода:
              (а) data/*.json  (+ data/*.js — зеркало для браузера)
@@ -215,11 +214,10 @@ Google Sheets (лист = раздел, gviz CSV)
                  <!-- FEED:START … --> и <!-- FEED:END -->
 ```
 
-**Выход (а) — данные файлом.** 29 JSON + 4 JS в `data/`. JS-зеркала — просто
+**Выход (а) — данные файлом.** 27 JSON + 4 JS в `data/`. JS-зеркала — просто
 `window.DS_PEOPLE_DATA = [...]`, подключаются тегом (`<script src="data/people.js">`)
 и читаются `components/people-data.js` / `user-data.js`; на `data/people.js`
-ссылаются 34 страницы. Схемы карточек лежат рядом: `data/q3-feed.schema.json`,
-`data/feed.schema.json`.
+ссылаются 34 страницы. Контракт карточек — `data/q3-feed.schema.json`.
 
 **Выход (б) — запечённый HTML.** Маркеры `FEED:START` / `FEED:END` есть в 6
 страницах: `lenta-q3.html`, `tribune.html`, `marathon.html`, `new-vision/lenta.html`,
@@ -310,8 +308,7 @@ Activity и События — различие сидит в объекте `FE
   `smart-crop.js`, `image-skeleton.js`, `back-trap.js`;
 - `assets/icons/` + маппинг `__slot-*` в `icon.css`;
 - `preview.html` как каркас витрины (содержимое — под свой набор компонентов);
-- `scripts/lib/`: `media-cache.mjs`, `sheet-cache.mjs` (`bucket.mjs` — мёртвый S3-контур,
-  тащить не нужно);
+- `scripts/lib/`: `media-cache.mjs`, `sheet-cache.mjs`;
 - `scripts/nbsp.mjs` + `.githooks/pre-commit`;
 - `CLAUDE.md`, `.claude/agents/macket-rules-checker.md`, `.github/workflows/deploy-pages.yml`.
 

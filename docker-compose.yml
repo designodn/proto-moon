@@ -2,8 +2,10 @@
 #
 # На VM лежит копия репозитория в /opt/proto-moon; SourceCraft CI на каждый
 # push в main заливает свежий код и делает `docker compose up -d --build`.
-# Сервис — тот же server.mjs: раздаёт статику + синкает ленту из Google-таблицы
-# (живая кнопка «Обновить ленту» работает, т.к. VM всегда включена).
+# Сервис — server.mjs: раздаёт готовую статику и больше ничего. Контент
+# («запечённые» data/*.json|js и HTML) обновляет автор локально скриптами
+# scripts/fetch-*.mjs и коммитит в репозиторий — ни синка из Google-таблицы,
+# ни выгрузки медиа в облако на сервере нет.
 services:
   web:
     build: .
@@ -12,24 +14,3 @@ services:
       - "80:8080"          # наружу 80 → внутри контейнера PORT=8080
     environment:
       - PORT=8080
-      - SYNC_ON_START=true # синкать ленту при старте, как было на Railway
-      # Кнопка-синк коммитит результат и пушит. Значения берутся из окружения VM
-      # или из /opt/proto-moon/.env (НЕ коммить .env с токеном!). Без токена/URL
-      # коммит сделается, но пуш не пройдёт. Подробно — в YANDEX-CLOUD.md.
-      - GITHUB_TOKEN=${GITHUB_TOKEN:-}              # для пуша на GitHub
-      - SYNC_GIT_PUSH_URL=${SYNC_GIT_PUSH_URL:-}    # или готовый remote (Sourcecraft) — приоритетнее
-      - SYNC_GIT_BRANCH=${SYNC_GIT_BRANCH:-main}
-      - SYNC_GIT_NAME=${SYNC_GIT_NAME:-proto-moon sync}
-      - SYNC_GIT_EMAIL=${SYNC_GIT_EMAIL:-sync@proto-moon.local}
-      - SYNC_GIT_COMMIT=${SYNC_GIT_COMMIT:-true}    # false — выключить авто-коммит
-      # Облако для медиа (S3 / Yandex Object Storage). Значения — из окружения VM
-      # или /opt/proto-moon/.env (см. UPLOADS.md). Пока пусто — дисковый режим, как
-      # раньше; заданы → server.mjs/пайплайн пишут и отдают медиа из бакета.
-      - UPLOADS_BUCKET=${UPLOADS_BUCKET:-}
-      - UPLOADS_ACCESS_KEY_ID=${UPLOADS_ACCESS_KEY_ID:-}
-      - UPLOADS_SECRET_ACCESS_KEY=${UPLOADS_SECRET_ACCESS_KEY:-}
-      - UPLOADS_PUBLIC_BASE=${UPLOADS_PUBLIC_BASE:-}
-      - UPLOAD_PASSWORD=${UPLOAD_PASSWORD:-}
-      - UPLOADS_ENDPOINT=${UPLOADS_ENDPOINT:-}      # необяз. (по умолч. storage.yandexcloud.net)
-      - UPLOADS_REGION=${UPLOADS_REGION:-}          # необяз. (по умолч. ru-central1)
-      - UPLOADS_PREFIX=${UPLOADS_PREFIX:-}          # необяз. префикс ключей
