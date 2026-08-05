@@ -28,11 +28,89 @@ unlock-паттерны). Пиши коротко, фактами. Держи к
 > файла И признак точный.**
 
 - twitter-карта НЕ должна иметь одновременно крошки и activity-строку → признак: `article.caf.__twitter-like` содержит И `.breadcrumbs/.caf__crumbs` И `> .text-feed__activity` → FAIL → hits:1 (файлы: activity-lenta/lenta.html). «Шапка важнее крошек»: ровно одно из двух. Ловится grep'ом/селектором по диффу.
-- CSS-маска с относительным `url()` в external stylesheet → признак: `mask`/`-webkit-mask`/`background`/`mask-image` со значением `url(assets/...)` (относительный путь БЕЗ ведущего `/` или `../`) внутри файла в `components/*.css`, либо через inline `--var: url(assets/...)`, который потребляется `mask:` в `components/*.css` → severity WARN → hits:1 (файлы: components/today-widgets.css). Причина: относительный url в CSS резолвится от расположения СТИЛЯ (`/components/`), а не от HTML → реальный путь `components/assets/...` = 404, маска пустая, иконка невидима. Фикс: `url(../assets/...)` или абсолютный `/assets/...`.
+- CSS-маска с относительным `url()` в external stylesheet → признак: `mask`/`-webkit-mask`/`background`/`mask-image` со значением `url(assets/...)` (относительный путь БЕЗ ведущего `/` или `../`) внутри файла в `components/*.css`, либо через inline `--var: url(assets/...)`, который потребляется `mask:` в `components/*.css` → severity WARN → hits:2 (файлы: components/today-widgets.css, preview.html). Причина: относительный url в CSS резолвится от расположения СТИЛЯ (`/components/`), а не от HTML → реальный путь `components/assets/...` = 404, маска пустая, иконка невидима. Фикс: `url(../assets/...)` или абсолютный `/assets/...`.
+  - hit#2 (2026-08-05, аудит чистки): `preview.html` — 25 штук inline `style="--icon-src:url('assets/icons/*.svg')"` (строки ~69, 116, 363, 390, 585-588 …). `--icon-src` потребляется `mask` в `components/icon.css`, `--tabbar-icon-src` — в `components/tabbar.css`. Все дают 404 `/components/assets/icons/*.svg`. Баг ПРЕД-существующий (подтверждено A/B против `a0b9fb4^`), но витрина ДС — самое видное место. Grep-признак точный: `--icon-src:url('assets/` / `--tabbar-icon-src:url('assets/` в .html.
+- Относительные `assets/...` в страницах подпапки БЕЗ `<base href="../">` → признак: файл в подпапке (`new-vision/`, `koleso/`, …) ссылается на `assets/…` (в HTML или из JS вроде `people-data.js`) и при этом в нём НЕТ `<base href="../">` → severity WARN → hits:1 (файлы: new-vision/profile.html, new-vision/lenta.html, new-vision/menu.html). Симптом: 404 `/new-vision/assets/people/*.webp`, реальные файлы лежат в `assets/people/`. NB: `koleso/*.html` делают правильно — `../assets/koleso/…`.
 
 ---
 
 ## Прогоны: тайминги · селекторы · ловушки
+
+### ⚠️ ЛЕНТЫ СКРОЛЛЯТСЯ НЕ ОКНОМ, А `.phone-frame__feed` (главная ловушка скролла)
+- `window.scrollBy()` / `document.scrollingElement.scrollTop` на лентах **не делает
+  ничего**: `document.scrollingElement.scrollHeight === innerHeight === 844`.
+  Реальный скролл-контейнер — `DIV.phone-frame__feed` (на `lenta-q3.html` его
+  `scrollHeight` ≈ 21542; на `activity-lenta`/`events-lenta` ≈ 7025). На
+  `new-vision/lenta.html` контейнер называется `.phone-frame` (без `__feed`).
+- Симптом «скролл сделал вид, что сработал»: скриншот остаётся на самом верху ленты,
+  ленивые картинки не догружаются → **404 по медиа не всплывают, прогон ложно-зелёный**.
+- Рабочий рецепт (универсальный, не завязан на имя класса):
+  ```js
+  const el = [...document.querySelectorAll('*')]
+    .filter(e => e.scrollHeight > e.clientHeight + 100 &&
+                 ['auto','scroll'].includes(getComputedStyle(e).overflowY))
+    .sort((a,b) => b.scrollHeight - a.scrollHeight)[0];
+  el.scrollTop += el.clientHeight * 0.8;   // в цикле, пока scrollTop не перестанет расти
+  ```
+  Потом дождаться `img.complete` по всем `<img>` — иначе ленивые ещё в полёте.
+- Для полного прохода `lenta-q3.html` нужно ~31 шаг по 0.8 экрана (247 `<img>`).
+
+### Таб-бар: селектор — `.tabbar-icon.__slot-*`, НЕ `[data-slot]`
+- `[data-slot]` в DOM **нет вообще** (`querySelectorAll('[data-slot]')` → пусто).
+  Разметка: `.ll-tabbar > .tabbar.__platform-android > .tabbar__row >
+  button.tabbar-icon.__slot-feed|book|message|clip|menu` + `aria-label`.
+  `components/tab-bar.js` матчит слот именно по классу `__slot-<name>`.
+- Проверено на `lenta-q3.html` (2026-08-05), все навигируют:
+  `__slot-message → /messages.html`, `__slot-clip → /klipy.html`,
+  `__slot-menu → /menu.html`, `__slot-book → /tribune.html`. `__slot-feed` = `__state-on`,
+  не навигирует (норма).
+
+### q3-view.html: разблокировка и запуск приложения
+- Тап `page.mouse.click(195, 760)` → `#device` меняет класс `device` → `device unlocked`.
+  Проверять именно по классу, а не по скриншоту.
+- Иконка ОК на рабочем столе: `button.app`, содержащий `span.app__icon.icon-ok`
+  (локатор: `page.locator('button.app').filter({ has: page.locator('.icon-ok') })`).
+  Селектор `img[src*="appLogoDefault"]` НЕ кликается — это иконки в пушах/статусбаре.
+- ⚠️ После запуска приложение уходит **не на `lenta-q3.html`, а на
+  `/add-friends-sheet.html`**, даже если заранее выставлен `afs-seen` через
+  `addInitScript`. Т.е. `waitForURL('**/lenta-q3.html')` тут всегда таймаутит.
+  Гейт при переходе с лаунчера обходит sessionStorage-флаг. Хочешь саму ленту —
+  открывай `lenta-q3.html` напрямую с `afs-seen`.
+
+### Онбординг марафона живёт на ЛЕНТАХ, а не на `marathon.html`
+- `components/onboarding-marathon.js` подключён в `lenta-q3.html`,
+  `activity-lenta/lenta.html`, `events-lenta/lenta.html`. На `marathon.html`
+  `window.OnboardingMarathon` === undefined — не там искал, если count=0.
+- Форс-показ: `window.OnboardingMarathon.reset(); window.OnboardingMarathon.open();`
+  (флаг `omar-seen` в **localStorage**, не session). Картинки:
+  `assets/onboarding/marathon/{weight,pizza,plant,smile}.png`, все 360×360.
+
+### Битые `<img>`, которые НЕ являются поломкой (не гоняйся за ними)
+- `lenta-q3.html`: `img.moment__media` **без атрибута src** (`getAttribute('src') === null`)
+  внутри `.moment__card` + один `<img src="">` внутри `.avatar.__size-36.__type-image`.
+  `naturalWidth === 0`, но это слоты под ленивое заполнение, а не 404. Присутствуют
+  и до, и после любых чисток — проверял A/B.
+- Внешние хосты в контейнере **недоступны** (proxy): `fonts.googleapis.com`,
+  `i.pravatar.cc`, `picsum.photos`, `upload.wikimedia.org`, `i.okcdn.ru`,
+  `cdn.jsdelivr.net` → всегда `ERR_CONNECTION_RESET`/404. При аудите **всегда
+  разделяй локальные (`url.startsWith(BASE)`) и внешние 404**, иначе отчёт — шум.
+
+### A/B «сломала ли правка что-то»: сравнивай с прошлым коммитом на втором порту
+- Рецепт read-only (не трогает worktree, в отличие от `git stash`/`git worktree`):
+  ```bash
+  git archive <commit>^ | tar -x -C /tmp/pristine
+  cd /tmp/pristine && PORT=3011 SYNC_ON_START=false nohup node server.mjs &
+  ```
+  Затем один и тот же обход на 3000 и 3011, diff множеств локальных 404.
+  Так пред-существующий баг отделяется от регрессии за одну минуту.
+- ⚠️ `HEAD` может **уехать посреди прогона** (родительский агент коммитит) —
+  фиксируй SHA в начале (`git rev-parse HEAD`) и сравнивай с ним, а не с «HEAD~1».
+- ⚠️ NV-профиль подставляет аватарки **случайно**: между прогонами набор
+  `/new-vision/assets/people/<N>.webp` меняется (13.webp «появился», 6/8/9/10
+  «пропали»). Разница в конкретных номерах — это шум рандома, а не регрессия;
+  сравнивай ПАТТЕРН пути, а не список файлов.
+- `pkill -f "PORT=3011"` в bash-туле убивает собственную сессию (exit 144) —
+  не делай так; поднимай сервер через `nohup … &` и просто оставляй.
 
 ### Node-сервер `server.mjs` (НЕ статика python)
 - Прототип может обслуживаться Node-сервером `server.mjs` (порт из `PORT`, синк
