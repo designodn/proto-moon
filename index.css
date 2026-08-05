@@ -22,7 +22,6 @@
 
 /* Canonical primitives */
 @import url('./components/icon.css');
-@import url('./components/icon-glyph.css');
 @import url('./components/badge.css');
 @import url('./components/button.css');
 @import url('./components/button-inline.css');
@@ -80,7 +79,6 @@
 @import url('./components/gift-card.css');
 @import url('./components/friend-big-card.css');
 @import url('./components/calendar-date.css');
-@import url('./components/collage-card.css');
 @import url('./components/cover-card.css');
 @import url('./components/user-cell.css');
 @import url('./components/vvz-portlet.css');
